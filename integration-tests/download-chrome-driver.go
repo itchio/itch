@@ -120,7 +120,7 @@ func downloadChromeDriver(r *runner) error {
 }
 
 const electronVersion = "7.1.9"
-const chromeDriverVersionString = "ChromeDriver 78.0.3904.130 (0cc986798a715e6ebaf22c71f88d85da8a89f86c-refs/heads/master@{#709924})"
+const chromeDriverVersionString = "ChromeDriver 78.0.3904.130 (3da3ae89fabe8ebe6525e57da3cab29f91c04293-refs/heads/master@{#709924})"
 
 func chromeDriverURL(r *runner) string {
 	suffix := ""

@@ -41,8 +41,7 @@ type runner struct {
 	testStart          time.Time
 	readyForScreenshot bool
 
-	mainWindow    string
-	webviewWindow string
+	mainWindow string
 }
 
 func (r *runner) chromelogf(format string, args ...interface{}) {
@@ -259,7 +258,7 @@ func doMain() error {
 
 	r.testStart = time.Now()
 
-	allFlows(r)
+	runTests(r)
 
 	r.logf("Succeeded in %s", time.Since(r.testStart))
 	r.logf("Total time %s", time.Since(bootTime))

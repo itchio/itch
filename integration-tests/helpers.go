@@ -282,10 +282,6 @@ func (r *runner) mustSwitchToMainWindow() {
 	r.mustSwitchToWindow(r.mainWindow)
 }
 
-func (r *runner) mustSwitchToWebviewWindow() {
-	r.mustSwitchToWindow(r.webviewWindow)
-}
-
 func (r *runner) mustCloseCurrentWindowAndSwitchTo(handle string) {
 	_, err := r.driver.CloseWindow()
 	must(err)

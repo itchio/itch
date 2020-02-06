@@ -27,6 +27,10 @@ const logger = mainLogger.childWithName("queries-launch");
 
 export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
   onQuery(queries.launchGame, async params => launchGame(ms, params));
+  onQuery(queries.cancelLaunch, async params => {
+    const { launchId, reason } = params;
+    ms.launchControllers[launchId]?.cancel(reason);
+  });
 }
 
 export async function launchGame(
@@ -129,6 +133,13 @@ async function launchGameInner(
         sandbox: ms.preferences.isolateApps,
       },
       convo => {
+        ms.launchControllers[launchId] = {
+          cancel: (reason: string) => {
+            logger.warn(`Cancelling launch, reason: ${reason}`);
+            convo.cancel();
+          },
+        };
+
         hookLogging(convo, logger);
         convo.onNotification(messages.PrereqsStarted, ({ tasks }) => {
           logger.info(`Handling prereqs...`);
@@ -196,6 +207,7 @@ async function launchGameInner(
       }
     );
   } finally {
+    delete ms.launchControllers[launchId];
     delete ms.ongoingLaunches[launchId];
     broadcastPacket(ms, packets.launchEnded, { launchId });
   }

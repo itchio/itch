@@ -43,6 +43,10 @@ export interface LocalesConfig {
   }[];
 }
 
+export interface LaunchController {
+  cancel: (reason: string) => void;
+}
+
 export interface MainState {
   startedAt: number;
   butler?: ButlerState;
@@ -53,6 +57,9 @@ export interface MainState {
   localesConfig?: LocalesConfig;
   localeState?: LocaleState;
   ongoingLaunches: OngoingLaunches;
+  launchControllers: {
+    [launchId: string]: LaunchController;
+  };
   preparingLaunches: {
     [gameId: string]: boolean;
   };
@@ -80,6 +87,7 @@ const ms: MainState = {
   },
   ongoingLaunches: {},
   preparingLaunches: {},
+  launchControllers: {},
   modals: {},
 };
 

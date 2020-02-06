@@ -1,29 +1,20 @@
-import { modalWidget } from "renderer/modals/ModalRouter";
-import { modals } from "common/modals";
-import { HardModal } from "renderer/modals/HardModal";
-import React, { useState } from "react";
-import { useAsync } from "renderer/use-async";
-import { Game, Upload } from "common/butlerd/messages";
-import { useSocket } from "renderer/contexts";
 import { messages } from "common/butlerd";
-import { Ellipsis } from "renderer/basics/Ellipsis";
-import { gameCover } from "common/game-cover";
-import { Button } from "renderer/basics/Button";
-import styled from "styled-components";
-import { fontSizes } from "renderer/theme";
-import { useIntl, FormattedMessage } from "react-intl";
-import { useAsyncCb } from "renderer/use-async-cb";
+import { Game, Upload } from "common/butlerd/messages";
+import { modals } from "common/modals";
 import _ from "lodash";
+import React, { useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Button } from "renderer/basics/Button";
+import { Ellipsis } from "renderer/basics/Ellipsis";
 import { ErrorState } from "renderer/basics/ErrorState";
-
-const GameBox = styled.div`
-  width: 100%;
-  padding: 4px;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
+import { useSocket } from "renderer/contexts";
+import { HardModal } from "renderer/modals/HardModal";
+import { modalWidget } from "renderer/modals/ModalRouter";
+import { fontSizes } from "renderer/theme";
+import { useAsync } from "renderer/use-async";
+import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
+import { SimpleGameRow } from "renderer/basics/SimpleGameRow";
 
 const ErrorDiv = styled.div`
   font-size: ${fontSizes.large};
@@ -33,38 +24,9 @@ const ErrorMessage = styled.div`
   font-size: ${fontSizes.large};
 `;
 
-let coverWidth = 290;
-let coverHeight = 230;
-
-let ratio = 0.4;
-
 const Message = styled.div`
   padding: 15px 0;
   padding-bottom: 25px;
-`;
-
-const Cover = styled.img`
-  width: ${coverWidth * ratio}px;
-  height: ${coverHeight * ratio}px;
-
-  margin-right: 10px;
-`;
-
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  line-height: 1.6;
-`;
-
-const Title = styled.div`
-  font-size: ${fontSizes.enormous};
-  font-weight: 900;
-`;
-
-const ShortText = styled.div`
-  font-size: ${fontSizes.normal};
-  color: ${p => p.theme.colors.text2};
 `;
 
 interface Data {
@@ -149,14 +111,7 @@ export const InstallModal = modalWidget(modals.install, props => {
                 values={{ title: data.game.title }}
               />
             </Message>
-            <GameBox>
-              <Cover src={gameCover(data.game)} />
-              <Info>
-                <Title>{data.game.title}</Title>
-                <ShortText>{data.game.shortText}</ShortText>
-                <a href={data.game.url}>{data.game.url}</a>
-              </Info>
-            </GameBox>
+            <SimpleGameRow game={data.game} upload={data.upload} />
           </>
         ) : (
           <Ellipsis />

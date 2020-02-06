@@ -329,7 +329,10 @@ export const SearchModal = (props: { onClose: () => void }) => {
               let isCurrent = i === current;
               return (
                 <SearchResult
-                  className={classNames({ current: isCurrent })}
+                  className={classNames("search-result", {
+                    current: isCurrent,
+                  })}
+                  data-game-id={`${game.id}`}
                   key={`${game.id}`}
                   onClick={() => openGame(game)}
                   ref={isCurrent ? currentRef : undefined}
@@ -351,10 +354,16 @@ export const SearchModal = (props: { onClose: () => void }) => {
   };
 
   return (
-    <SearchModalContainer easyClose hideTitleBar onClose={props.onClose}>
+    <SearchModalContainer
+      easyClose
+      hideTitleBar
+      onClose={props.onClose}
+      className="search-modal"
+    >
       <SearchTopBar>
         <SearchInputContainer>
           <SearchInput
+            className="search-input"
             placeholder={intl.formatMessage({ id: "search.placeholder" })}
             ref={inputRef}
             type="text"
@@ -365,7 +374,9 @@ export const SearchModal = (props: { onClose: () => void }) => {
           {loading && <Ellipsis />}
         </SearchInputContainer>
       </SearchTopBar>
-      <SearchResults>{renderSearchResults()}</SearchResults>
+      <SearchResults className="search-results">
+        {renderSearchResults()}
+      </SearchResults>
       {state === "results" && (
         <SearchBottomBar>
           <Button

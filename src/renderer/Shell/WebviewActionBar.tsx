@@ -115,7 +115,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   };
 
   return (
-    <Container>
+    <Container className="webview-action-bar">
       <Cover src={game.stillCoverUrl || game.coverUrl} />
       <Info>
         <span>{game.title}</span>
@@ -125,6 +125,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         <>
           {makeInstallModal(
             <IconButton
+              className="install-button"
               ref={coref("install-icon")}
               icon="install"
               onClick={ev => {
@@ -134,6 +135,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
           )}
           <Spacer />
           <Button
+            className="launch-button"
             label={<FormattedMessage id="grid.item.launch" />}
             disabled={launchGameLoading}
             onClick={() => launchGame(gameId)}
@@ -142,6 +144,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       ) : (
         makeInstallModal(
           <Button
+            className="install-button"
             ref={coref("install-button")}
             icon="install"
             label={<FormattedMessage id="grid.item.install" />}

@@ -353,7 +353,7 @@ export const InstallPopoverContents = React.forwardRef(
 
     return (
       <>
-        <InstallMenuContents ref={ref}>
+        <InstallMenuContents className="install-popover" ref={ref}>
           <div ref={divRef} />
           {loading ? (
             <EllipsisContainer>
@@ -493,7 +493,7 @@ const UploadGroup = (props: {
             interactive
             trigger="click"
             content={
-              <UploadInfoDiv>
+              <UploadInfoDiv className="upload-info" data-upload-id={`${u.id}`}>
                 {dl && dl.progress ? (
                   <p>
                     {(dl.progress.progress * 100).toFixed()}% &mdash;{" "}
@@ -567,7 +567,7 @@ const UploadGroup = (props: {
                     <>
                       {dl ? null : (
                         <Button
-                          className="real-button"
+                          className="real-button install-button"
                           icon="install"
                           label={<FormattedMessage id="grid.item.install" />}
                           onClick={() => install(u)}
@@ -582,6 +582,8 @@ const UploadGroup = (props: {
             boundary="viewport"
           >
             <Button
+              className="upload-button"
+              data-upload-id={`${u.id}`}
               label={
                 <UploadTitle
                   showIcon={false}

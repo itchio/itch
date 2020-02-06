@@ -36,6 +36,13 @@ export const modals = wireModals({
   install: modal<{ gameId: number; uploadId?: number; buildId?: number }, {}>({
     dimensions: { width: 600, height: 320 },
   }),
+  forceClose: modal<
+    {
+      game: Game;
+      launchId: string;
+    },
+    {}
+  >({}),
 });
 
 function modal<Params, Result>(

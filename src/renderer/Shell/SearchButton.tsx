@@ -31,7 +31,11 @@ export const SearchButton = (props: Props) => {
   return (
     <>
       {open ? <SearchModal onClose={onClose} /> : null}
-      <IconButton className="topbar-item" icon="search" onClick={toggleOpen} />
+      <IconButton
+        className="topbar-item search"
+        icon="search"
+        onClick={toggleOpen}
+      />
     </>
   );
 };
