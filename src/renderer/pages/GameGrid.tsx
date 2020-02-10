@@ -13,6 +13,7 @@ import { useAsyncCb } from "renderer/use-async-cb";
 import { useDownloads } from "renderer/use-downloads";
 import { useLaunches } from "renderer/use-launches";
 import styled from "styled-components";
+import { modals } from "common/modals";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -101,17 +102,6 @@ const GameGridContainer = styled.div`
   }
 `;
 
-const findGameId = (el: HTMLElement): number | undefined => {
-  if (el.dataset.gameId) {
-    return Number(el.dataset.gameId);
-  }
-
-  if (el.parentElement) {
-    return findGameId(el.parentElement);
-  }
-  return undefined;
-};
-
 interface Props {
   records: GameRecord[];
   setRecords: React.Dispatch<React.SetStateAction<GameRecord[]>>;
@@ -131,24 +121,38 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   });
 
   const [launch] = useAsyncCb(
-    async function(ev: React.MouseEvent<HTMLButtonElement>) {
-      const gameId = findGameId(ev.currentTarget);
-      if (!gameId) {
-        return;
-      }
+    async function(gameId: number) {
       await socket.query(queries.launchGame, { gameId });
     },
     [socket]
   );
 
-  const [install] = useAsyncCb(
-    async function(ev: React.MouseEvent<HTMLButtonElement>) {
-      const gameId = findGameId(ev.currentTarget);
-      if (!gameId) {
-        console.warn(`no game id found for `, ev.currentTarget);
+  const [forceClose] = useAsyncCb(
+    async function(gameId: number) {
+      const res = await socket.query(queries.getOngoingLaunches);
+      const currentLaunchId = _.findKey(res.launches, l => l.gameId === gameId);
+      if (!currentLaunchId) {
         return;
       }
 
+      const { game } = await socket.call(messages.FetchGame, { gameId });
+      if (!game) {
+        console.warn(
+          `Could not force close because game ${gameId} can't be fetched`
+        );
+        return;
+      }
+
+      await socket.showModal(modals.forceClose, {
+        game,
+        launchId: currentLaunchId,
+      });
+    },
+    [socket]
+  );
+
+  const [install] = useAsyncCb(
+    async function(gameId: number) {
       const { game } = await socket.call(messages.FetchGame, { gameId });
       setGameBeingInstalled(game);
     },
@@ -156,15 +160,9 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   );
 
   const [purchase] = useAsyncCb(
-    async function(ev: React.MouseEvent<HTMLButtonElement>) {
-      const gameId = findGameId(ev.currentTarget);
-      if (!gameId) {
-        console.warn(`no game id found for `, ev.currentTarget);
-        return;
-      }
-
+    async function(gameId: number) {
       try {
-        const { game } = await socket.callWithRefresh(messages.FetchGame, {
+        const { game } = await socket.call(messages.FetchGame, {
           gameId,
         });
         if (game) {
@@ -228,6 +226,7 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
               coref={coref}
               install={install}
               launch={launch}
+              forceClose={forceClose}
               purchase={purchase}
               stopInstall={stopInstall}
               gameBeingInstalled={

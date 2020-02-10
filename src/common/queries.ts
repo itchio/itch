@@ -47,10 +47,6 @@ export const queries = wireQueries({
   uninstallGame: query<{ cave: Cave }, void>(),
 
   launchGame: query<{ gameId: number; caveId?: string }, void>(),
-  getOngoingLaunchesForGame: query<
-    { gameId: number },
-    { launches: OngoingLaunch[] }
-  >(),
   getOngoingLaunches: query<void, { launches: OngoingLaunches }>(),
   cancelLaunch: query<{ launchId: string; reason: string }, void>(),
 

@@ -1,26 +1,26 @@
 import classNames from "classnames";
 import { Game, GameRecord } from "common/butlerd/messages";
+import { DownloadWithProgress } from "common/downloads";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
-import React from "react";
+import React, { useCallback } from "react";
 import { FormattedMessage } from "react-intl";
-import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
 import { IconButton } from "renderer/basics/IconButton";
+import { LaunchButtonBase } from "renderer/basics/LaunchButton";
 import { MenuTippy } from "renderer/basics/Menu";
 import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
-import { DownloadWithProgress } from "common/downloads";
-
-type ClickHandler = (ev: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+import { Button } from "renderer/basics/Button";
 
 interface Props {
   coref: ClickOutsideRefer;
   game: GameRecord;
-  launch: ClickHandler;
-  install: ClickHandler;
-  purchase: ClickHandler;
+  launch: (gameId: number) => Promise<void>;
+  forceClose: (gameId: number) => Promise<void>;
+  install: (gameId: number) => Promise<void>;
+  purchase: (gameId: number) => Promise<void>;
   dl?: DownloadWithProgress;
   stopInstall: () => void;
   gameBeingInstalled?: Game;
@@ -32,12 +32,20 @@ export const GameGridItem = React.memo((props: Props) => {
     coref,
     game,
     dl,
-    install,
-    purchase,
     launch,
+    forceClose,
     stopInstall,
     gameBeingInstalled,
+    beingLaunched,
   } = props;
+
+  const install = useCallback(() => {
+    return props.install(game.id);
+  }, [game, props.install]);
+
+  const purchase = useCallback(() => {
+    return props.purchase(game.id);
+  }, [game, props.purchase]);
 
   let wrapInTippyIfNeeded = (content: JSX.Element): JSX.Element => {
     if (gameBeingInstalled) {
@@ -86,15 +94,17 @@ export const GameGridItem = React.memo((props: Props) => {
         )}
 
         <InstallButton
+          gameId={game.id}
           icon={!!game.installedAt}
           install={install}
           wrapper={wrapInTippyIfNeeded}
         />
         {game.installedAt && (
-          <Button
-            label={<FormattedMessage id="grid.item.launch" />}
-            disabled={props.beingLaunched}
-            onClick={launch}
+          <LaunchButtonBase
+            beingLaunched={beingLaunched}
+            launch={launch}
+            forceClose={forceClose}
+            gameId={game.id}
           />
         )}
       </div>
@@ -132,12 +142,17 @@ const InstallButton = React.forwardRef(
   (
     props: {
       icon: boolean;
-      install: ClickHandler;
+      gameId: number;
+      install: (gameId: number) => Promise<void>;
       wrapper: (el: JSX.Element) => JSX.Element;
     },
     ref: any
   ) => {
-    const { icon, install, wrapper } = props;
+    const { gameId, icon, wrapper } = props;
+
+    const install = useCallback(() => {
+      return props.install(gameId);
+    }, [gameId, props.install]);
 
     if (icon) {
       return wrapper(<IconButton ref={ref} icon="install" onClick={install} />);

@@ -9,28 +9,37 @@ import { Button } from "renderer/basics/Button";
 import { useSocket } from "renderer/contexts";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useLaunches } from "renderer/use-launches";
+import { messages } from "common/butlerd";
+import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 interface HighLevelProps {
-  game: Game;
+  gameId: number;
   className?: string;
   wide?: boolean;
 }
 
 type LowLevelProps = HighLevelProps & {
-  launch: (game: Game) => Promise<void>;
-  forceClose: (game: Game) => Promise<void>;
+  launch: (gameId: number) => Promise<void>;
+  forceClose: (gameId: number) => Promise<void>;
   beingLaunched?: boolean;
 };
 
 export const LaunchButtonBase = (props: LowLevelProps) => {
-  const { beingLaunched, launch, forceClose, game, className, ...rest } = props;
+  const {
+    beingLaunched,
+    launch,
+    forceClose,
+    gameId,
+    className,
+    ...rest
+  } = props;
   const click = useCallback(() => {
     if (beingLaunched) {
-      forceClose(game);
+      forceClose(gameId);
     } else {
-      launch(game);
+      launch(gameId);
     }
-  }, [beingLaunched, launch, forceClose, game]);
+  }, [beingLaunched, launch, forceClose, gameId]);
 
   return (
     <>
@@ -53,23 +62,31 @@ export const LaunchButtonBase = (props: LowLevelProps) => {
 };
 
 export const LaunchButton = (props: HighLevelProps) => {
-  const { game } = props;
+  const { gameId } = props;
 
   const socket = useSocket();
-  const launches = useLaunches({ gameId: game.id });
+  const launches = useLaunches({ gameId });
 
   const currentLaunchId = _.first(_.keys(launches));
 
   const [launch] = useAsyncCb(
-    async (game: Game) => {
-      await socket.query(queries.launchGame, { gameId: game.id });
+    async (gameId: number) => {
+      await socket.query(queries.launchGame, { gameId });
     },
-    [socket, game.id]
+    [socket, gameId]
   );
 
   const [forceClose] = useAsyncCb(
-    async (game: Game) => {
+    async (gameId: number) => {
       if (!currentLaunchId) {
+        return;
+      }
+
+      const { game } = await socket.call(messages.FetchGame, { gameId });
+      if (!game) {
+        console.warn(
+          `Could not force close because game ${gameId} can't be fetched`
+        );
         return;
       }
 
@@ -78,7 +95,7 @@ export const LaunchButton = (props: HighLevelProps) => {
         launchId: currentLaunchId,
       });
     },
-    [socket, game.id, currentLaunchId]
+    [socket, gameId, currentLaunchId]
   );
 
   return (

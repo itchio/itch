@@ -26,6 +26,9 @@ import { triggerTrayMenuUpdate } from "main/tray";
 const logger = mainLogger.childWithName("queries-launch");
 
 export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
+  onQuery(queries.getOngoingLaunches, async params => {
+    return { launches: ms.ongoingLaunches };
+  });
   onQuery(queries.launchGame, async params => launchGame(ms, params));
   onQuery(queries.cancelLaunch, async params => {
     const { launchId, reason } = params;
