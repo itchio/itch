@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func runTests(r *runner) {
 	login(r)
@@ -59,79 +62,92 @@ func installAndLaunchGame(r *runner) {
 	must(r.click(gameResultSelector))
 
 	r.logf("Installing it")
+
+	r.logf("Opening popover...")
 	must(r.click(".webview-action-bar .install-button"))
+	time.Sleep(1 * time.Second)
+
+	r.logf("Clicking on upload button...")
 	must(r.click(".install-popover .upload-button"))
+	time.Sleep(1 * time.Second)
+
+	r.logf("Clicking on upload's install button...")
 	must(r.click(".install-popover .upload-info .install-button"))
+	time.Sleep(1 * time.Second)
 
 	r.logf("Launching it")
 	must(r.click(".webview-action-bar .launch-button"))
 
-	// TODO: fixme
-	var mainActionSelector = ".fixme"
-
 	r.logf("Force-closing it")
-	must(r.waitUntilTextExists(mainActionSelector, "Running"))
-	must(r.click(mainActionSelector))
-	must(r.click("#modal-force-close"))
-
-	r.logf("Making sure it's closed")
-	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
-
-	r.logf("Switching to downloads window")
-	must(r.click("#sidebar a[href='itch://downloads']"))
-	r.mustWaitForWindowQuantity(2)
+	must(r.click(".webview-action-bar .force-close-button"))
 
 	mainWindowHandle := r.mustGetSingleWindowHandle()
+	r.mustWaitForWindowQuantity(2)
+
 	r.mustSwitchToOtherWindow(mainWindowHandle)
+	must(r.click(".webview-action-bar .force-close-confirm"))
 
-	r.logf("Making sure our download shows up as finished")
-	var downloadRowSelector = fmt.Sprintf(".meat-tab.visible .download-row-item.finished[data-game-id='%d'] .control--title", testGameID)
-	must(r.waitUntilTextExists(downloadRowSelector, "111 first"))
+	r.mustWaitForWindowQuantity(1)
+	r.mustSwitchToMainWindow()
 
-	must(r.takeScreenshot("finished download"))
+	r.logf("Making sure it's closed")
+	must(r.waitUntilTextExists(".webview-action-bar .launch-button", "Launch"))
 
-	r.logf("Clearing downloads")
-	must(r.click(".meat-tab.visible .downloads-clear-all"))
+	// r.logf("Switching to downloads window")
+	// must(r.click("#sidebar a[href='itch://downloads']"))
+	// r.mustWaitForWindowQuantity(2)
 
-	r.logf("Making sure downloads list is empty now")
-	must(r.waitForVisible(".meat-tab.visible .no-active-downloads"))
+	// mainWindowHandle := r.mustGetSingleWindowHandle()
+	// r.mustSwitchToOtherWindow(mainWindowHandle)
 
-	r.logf("Closing downloads window")
-	r.mustCloseCurrentWindowAndSwitchTo(mainWindowHandle)
+	// r.logf("Making sure our download shows up as finished")
+	// var downloadRowSelector = fmt.Sprintf(".meat-tab.visible .download-row-item.finished[data-game-id='%d'] .control--title", testGameID)
+	// must(r.waitUntilTextExists(downloadRowSelector, "111 first"))
 
-	must(r.takeScreenshot("installed game tab"))
+	// must(r.takeScreenshot("finished download"))
 
-	r.logf("Re-installing it")
-	must(r.click(".meat-tab.visible .manage-game"))
-	must(r.click(".manage-cave"))
-	must(r.click(".manage-reinstall"))
-	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
+	// r.logf("Clearing downloads")
+	// must(r.click(".meat-tab.visible .downloads-clear-all"))
 
-	r.logf("Closing downloads window")
-	r.mustCloseAllOtherWindows()
+	// r.logf("Making sure downloads list is empty now")
+	// must(r.waitForVisible(".meat-tab.visible .no-active-downloads"))
 
-	r.logf("Opening library")
-	must(r.click("#sidebar a[href='itch://library']"))
+	// r.logf("Closing downloads window")
+	// r.mustCloseCurrentWindowAndSwitchTo(mainWindowHandle)
 
-	r.logf("Opening installed items")
-	must(r.click("#library-installed"))
+	// must(r.takeScreenshot("installed game tab"))
 
-	r.logf("Opening install locations")
-	must(r.click("#manage-install-locations"))
+	// r.logf("Re-installing it")
+	// must(r.click(".meat-tab.visible .manage-game"))
+	// must(r.click(".manage-cave"))
+	// must(r.click(".manage-reinstall"))
+	// must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
-	must(r.takeScreenshot("install location tab"))
+	// r.logf("Closing downloads window")
+	// r.mustCloseAllOtherWindows()
 
-	r.logf("Making sure our installed game shows up")
-	var rowSelector = fmt.Sprintf(".meat-tab.visible .stripe--item[data-game-id='%d']", testGameID)
-	must(r.click(rowSelector))
+	// r.logf("Opening library")
+	// must(r.click("#sidebar a[href='itch://library']"))
 
-	r.logf("Uninstalling it")
-	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
-	must(r.click(".meat-tab.visible .manage-game"))
-	must(r.takeScreenshot("managing uploads"))
-	must(r.click(".manage-cave"))
-	must(r.click(".manage-uninstall"))
-	must(r.waitUntilTextExists(mainActionSelector, "Install"))
+	// r.logf("Opening installed items")
+	// must(r.click("#library-installed"))
 
-	r.mustCloseAllOtherWindows()
+	// r.logf("Opening install locations")
+	// must(r.click("#manage-install-locations"))
+
+	// must(r.takeScreenshot("install location tab"))
+
+	// r.logf("Making sure our installed game shows up")
+	// var rowSelector = fmt.Sprintf(".meat-tab.visible .stripe--item[data-game-id='%d']", testGameID)
+	// must(r.click(rowSelector))
+
+	// r.logf("Uninstalling it")
+	// must(r.waitUntilTextExists(mainActionSelector, "Launch"))
+	// must(r.click(".meat-tab.visible .manage-game"))
+	// must(r.takeScreenshot("managing uploads"))
+	// must(r.click(".manage-cave"))
+	// must(r.click(".manage-uninstall"))
+	// must(r.waitUntilTextExists(mainActionSelector, "Install"))
+
+	// r.mustCloseAllOtherWindows()
 }

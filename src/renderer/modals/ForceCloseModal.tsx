@@ -44,6 +44,7 @@ export const ForceCloseModal = modalWidget(modals.forceClose, props => {
           />
           <Button
             icon="stop"
+            className="force-close-confirm"
             label={<FormattedMessage id="prompt.action.force_close" />}
             onClick={forceClose}
           />
