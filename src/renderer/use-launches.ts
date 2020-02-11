@@ -12,6 +12,14 @@ export interface LaunchFilter {
   gameId?: number;
 }
 
+function applyFilter(l: OngoingLaunch, filter?: LaunchFilter): boolean {
+  if (filter?.gameId) {
+    return l.gameId == filter.gameId;
+  } else {
+    return true;
+  }
+}
+
 /**
  * Return ongoing launches, optionally filtered by something
  */
@@ -20,16 +28,9 @@ export function useLaunches(filter?: LaunchFilter): OngoingLaunches {
 
   const [launches, setLaunches] = useState<OngoingLaunches>({});
   const mergeLaunches = (fresh: OngoingLaunches) => {
-    console.log(`merging fresh = `, fresh);
     setLaunches(old => ({
       ...old,
-      ...filterObject(fresh, l => {
-        if (filter?.gameId) {
-          return l.gameId === filter.gameId;
-        } else {
-          return true;
-        }
-      }),
+      ...filterObject(fresh, l => applyFilter(l, filter)),
     }));
   };
 

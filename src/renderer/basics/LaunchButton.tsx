@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Game } from "common/butlerd/messages";
+import { messages } from "common/butlerd";
 import { modals } from "common/modals";
 import { queries } from "common/queries";
 import _ from "lodash";
@@ -9,8 +9,6 @@ import { Button } from "renderer/basics/Button";
 import { useSocket } from "renderer/contexts";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useLaunches } from "renderer/use-launches";
-import { messages } from "common/butlerd";
-import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 interface HighLevelProps {
   gameId: number;

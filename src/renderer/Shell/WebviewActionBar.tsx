@@ -135,7 +135,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
             />
           )}
           <Spacer />
-          <LaunchButton game={game} />
+          <LaunchButton gameId={gameId} />
         </>
       ) : (
         makeInstallModal(

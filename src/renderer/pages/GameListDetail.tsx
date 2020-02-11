@@ -20,6 +20,7 @@ import { useAsyncCb } from "renderer/use-async-cb";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";
 import { LaunchButton } from "renderer/basics/LaunchButton";
+import { InstallButton } from "renderer/Shell/InstallButton";
 
 interface Props {
   game?: Game;
@@ -115,37 +116,8 @@ export const GameListDetail = (props: Props) => {
               )}
             </a>
             <div className="controls">
-              <MenuTippy
-                placement="left-start"
-                appendTo={document.body}
-                interactive
-                visible={!!gameBeingInstalled}
-                content={
-                  gameBeingInstalled ? (
-                    <InstallPopoverContents
-                      ref={coref("install-modal-contents")}
-                      coref={coref}
-                      game={gameBeingInstalled}
-                      onClose={() => setGameBeingInstalled(undefined)}
-                    />
-                  ) : (
-                    <></>
-                  )
-                }
-              >
-                {lastCave ? (
-                  <IconButton wide icon="install" onClick={install} />
-                ) : (
-                  <Button
-                    wide
-                    icon="install"
-                    label={<FormattedMessage id="grid.item.install" />}
-                    onClick={install}
-                    secondary
-                  />
-                )}
-              </MenuTippy>
-              {lastCave ? <LaunchButton wide game={game} /> : null}
+              <InstallButton wide gameId={game.id} />
+              {lastCave ? <LaunchButton wide gameId={game.id} /> : null}
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { PreferencesModal } from "renderer/modals/PreferencesModal";
 import { PickManifestActionModal } from "renderer/modals/PickManifestActionModal";
 import { InstallModal } from "renderer/modals/InstallModal";
 import { ForceCloseModal } from "renderer/modals/ForceCloseModal";
+import { InstallQueueModal } from "renderer/modals/InstallQueueModal";
 
 export interface ModalProps<Params, Result> {
   params: Params;
@@ -62,6 +63,8 @@ export const ModalRouter = () => {
       return <InstallModal {...props} />;
     case modals.forceClose.__kind:
       return <ForceCloseModal {...props} />;
+    case modals.installQueue.__kind:
+      return <InstallQueueModal {...props} />;
     default:
       return <div></div>;
   }
