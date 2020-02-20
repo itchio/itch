@@ -33,12 +33,12 @@ export async function startButler(ms: MainState) {
     logger.info(`===================================================`);
     butlerExecutable = which.sync("butler");
   } else {
-    butlerExecutable = path.join(
-      app.getAppPath(),
-      "deps",
-      "butler",
-      exeName("butler")
-    );
+    const exePath = app.getPath("exe");
+    logger.info(`exe path = ${exePath}`);
+    const exeDir = path.dirname(exePath);
+    logger.info(`exe dir = ${exeDir}`);
+    butlerExecutable = path.join(exeDir, "deps", "butler", exeName("butler"));
+    logger.info(`butler executable = ${butlerExecutable}`);
   }
 
   const instance = new Instance({

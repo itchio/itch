@@ -15,11 +15,8 @@ module.exports.compile = async () => {
   $(await $.sh("npm run compile"));
 
   $.say("Copying dist to prefix...");
+  $(await $.sh("cp electron-index.js prefix/"));
   $(await $.sh("cp -rf dist prefix/"));
-
-  $.say("Copying static resources to prefix...");
-  $(await $.sh("mkdir prefix/src"));
-  $(await $.sh("cp -rf src/static prefix/src"));
 
   $.say("Generating custom package.json...");
   const pkg = JSON.parse(await $.readFile("package.json"));
@@ -30,4 +27,9 @@ module.exports.compile = async () => {
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`prefix/package.json`, pkgContents);
+
+  $.say("Running npm install in prefix")
+  await $.cd("prefix", async () => {
+    $(await $.sh("npm i --production"));
+  });
 }

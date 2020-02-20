@@ -16,7 +16,7 @@ async function ciPackage(args) {
 
   if (!$.OSES[os]) {
     const msg = `invalid os ${os}, must be in ${Object.keys($.OSES).join(
-      " ::: ",
+      " ::: "
     )}`;
     throw new Error(msg);
   }
@@ -24,7 +24,7 @@ async function ciPackage(args) {
   const archInfo = $.ARCHES[arch];
   if (!archInfo) {
     const msg = `invalid arch ${arch}, must be in ${Object.keys($.ARCHES).join(
-      " ::: ",
+      " ::: "
     )}`;
     throw new Error(msg);
   }
@@ -34,7 +34,7 @@ async function ciPackage(args) {
   $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
 
   const electronVersion = JSON.parse(
-    await $.readFile("package.json"),
+    await $.readFile("package.json")
   ).devDependencies.electron.replace(/^\^/, "");
   $.say(`Using electron ${electronVersion}`);
 
@@ -47,18 +47,20 @@ async function ciPackage(args) {
   var icoPath = ospath.join(iconsPath, "itch.ico");
   var icnsPath = ospath.join(iconsPath, "itch.icns");
 
-  const electronSharedOptions = {
+  const sharedOptions = {
     dir: "prefix",
     name: appName,
     electronVersion,
     appVersion,
     asar: true,
-    prune: true,
     overwrite: true,
     out: outDir,
   };
 
-  const electronWindowsOptions = Object.assign({}, electronSharedOptions, {
+  const shouldSign = (!!process.env.CI) || (!!process.env.FORCE_CODESIGN);
+  $.say(`Code signing: ${shouldSign ? "enabled" : "disabled"}`);
+
+  const windowsOptions = {
     platform: "win32",
     icon: icoPath,
     win32metadata: {
@@ -71,38 +73,62 @@ async function ciPackage(args) {
       ProductName: appName,
       InternalName: appName + ".exe",
     },
-  });
+  };
+  if (shouldSign) {
+    Object.assign(windowsOptions, {});
+  }
+
+  const osxOptions = {
+    platform: "darwin",
+    arch: "x64",
+    icon: icnsPath,
+    appBundleId: $.appBundleId(),
+    appCategoryType: "public.app-category.games",
+    protocols: [
+      {
+        name: appName + ".io",
+        schemes: [appName + "io"],
+      },
+      {
+        name: appName,
+        schemes: [appName],
+      },
+    ],
+  };
+
+  if (shouldSign) {
+    if (!process.env.APPLE_ID_PASSWORD && os === "darwin") {
+      throw new Error(
+        `Code signing enabled, but $APPLE_ID_PASSWORD environment variable unset or empty`
+      );
+    }
+
+    Object.assign(osxOptions, {
+      osxSign: {
+        identity: "Developer ID Application: Amos Wenger (B2N6FSRTPV)",
+      },
+      osxNotarize: {
+        appleId: "amoswenger@gmail.com",
+        appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      },
+    });
+  }
 
   const electronOptions = {
-    "windows-ia32": Object.assign({ arch: "ia32" }, electronWindowsOptions),
-    "windows-x64": Object.assign({ arch: "x64" }, electronWindowsOptions),
-    "darwin-x64": Object.assign({}, electronSharedOptions, {
-      platform: "darwin",
-      arch: "x64",
-      icon: icnsPath,
-      appBundleId: $.appBundleId(),
-      appCategoryType: "public.app-category.games",
-      protocols: [
-        {
-          name: appName + ".io",
-          schemes: [appName + "io"],
-        },
-        {
-          name: appName,
-          schemes: [appName],
-        },
-      ],
+    "windows-ia32": Object.assign({}, sharedOptions, windowsOptions, {
+      arch: "ia32",
     }),
-    "linux-x64": Object.assign({}, electronSharedOptions, {
+    "windows-x64": Object.assign({}, sharedOptions, windowsOptions, {
+      arch: "x64",
+    }),
+    "darwin-x64": Object.assign({}, sharedOptions, osxOptions),
+    "linux-x64": Object.assign({}, sharedOptions, {
       platform: "linux",
       arch: "x64",
     }),
   };
 
   $(await $.sh("mkdir -p packages"));
-
-  const darwin = require("./package/darwin");
-  const windows = require("./package/windows");
 
   const electronPackager = require("electron-packager");
 
@@ -127,7 +153,7 @@ async function ciPackage(args) {
           try {
             await $.cd(buildPath, async function() {
               await $.sh(
-                `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`,
+                `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`
               );
             });
           } catch (err) {
@@ -138,60 +164,56 @@ async function ciPackage(args) {
           callback();
         },
       ],
-    },
+    }
   );
   $.say(
     `electron-packager options: ${JSON.stringify(
       electronFinalOptions,
       null,
-      2,
-    )}`,
+      2
+    )}`
   );
   const appPaths = await $.measure("electron package", async () => {
     return await electronPackager(electronFinalOptions);
   });
   let buildPath = appPaths[0].replace(/\\/g, "/");
 
-	if (os === "linux") {
-		// see https://github.com/itchio/itch/issues/2121
-		$.say(`Adding libgconf library...`);
-		const debArch = (arch === "386" ? "i386" : "amd64");
-		const baseURL = `https://dl.itch.ovh/libgconf-2-4-bin`;
-		const fileName = `libgconf-2.so.4`;
-		const fileURL = `${baseURL}/${debArch}/${fileName}`;
-		const dest = `${buildPath}/${fileName}`;
-		$.say(`Downloading (${fileURL})`);
-		$.say(`  to (${dest})`);
-		$(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
-		$(await $.sh(`chmod +x ${dest}`));
-	}
+  if (shouldSign && os === "windows") {
+    $.say("Signing Windows executable...");
+    const windows = require("./package/windows");
+    await windows.sign(buildPath);
+  }
+
+  if (os === "linux") {
+    // see https://github.com/itchio/itch/issues/2121
+    $.say(`Adding libgconf library...`);
+    const debArch = arch === "386" ? "i386" : "amd64";
+    const baseURL = `https://dl.itch.ovh/libgconf-2-4-bin`;
+    const fileName = `libgconf-2.so.4`;
+    const fileURL = `${baseURL}/${debArch}/${fileName}`;
+    const dest = `${buildPath}/${fileName}`;
+    $.say(`Downloading (${fileURL})`);
+    $.say(`  to (${dest})`);
+    $(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
+    $(await $.sh(`chmod +x ${dest}`));
+  }
 
   $.say(`Built app is in ${buildPath}`);
 
-  if (process.env.CI) {
-    $.say(`We're on CI, signing app...`);
-    switch (os) {
-      case "windows":
-        await windows.sign(arch, buildPath);
-        break;
-      case "darwin":
-        await darwin.sign(arch, buildPath);
-        break;
-      case "linux":
-        // tl;dr code-signing on Linux isn't a thing
-        break;
-    }
-  } else {
-    $.say(`Not on CI, not signing app`)
-  }
-
-  let ext = os === "windows" ? ".exe" : "";
-
-  let exeName = $.appName() + ext;
+  let binaryDir = buildPath;
   if (os === "darwin") {
-    exeName = ospath.join($.appName() + ".app", "Contents", "MacOS", exeName);
+    binaryDir = ospath.join(binaryDir, $.appName() + ".app", "Contents", "MacOS");
   }
-  let binaryPath = ospath.join(buildPath, exeName);
+  let ext = os === "windows" ? ".exe" : "";
+  let exeName = $.appName() + ext;
+  let binaryPath = ospath.join(binaryDir, exeName);
+
+  $.say(`Downloading dependencies`)
+  await $.cd("install-deps", async () => {
+    $(await $.sh("go build"));
+  });
+  // TODO: change to --production once stable butler versions start being tagged again
+  $(await $.sh(`install-deps/install-deps --manifest package.json --dir "${binaryDir}" --development`));
 
   $.say(`Running integration tests on ${binaryPath}`);
   process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
@@ -208,7 +230,7 @@ async function ciPackage(args) {
 
   if (process.env.CI) {
     if ($.hasTag()) {
-      $.say(`We're on CI and we have a tag, preparing artifacts...`)
+      $.say(`We're on CI and we have a tag, preparing artifacts...`);
       $(await $.sh(`mkdir -p packages`));
       if (os === "darwin") {
         $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
@@ -216,10 +238,12 @@ async function ciPackage(args) {
         $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
       }
     } else {
-      $.say(`We're on CI but we don't have a build tag, not preparing artifacts.`)
+      $.say(
+        `We're on CI but we don't have a build tag, not preparing artifacts.`
+      );
     }
   } else {
-    $.say(`Not on CI, not preparing artifacts.`)
+    $.say(`Not on CI, not preparing artifacts.`);
   }
 }
 

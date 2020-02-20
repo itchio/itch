@@ -2,7 +2,7 @@ const $ = require("../common");
 const { join } = require("path").posix;
 
 module.exports = {
-  sign: async function(arch, buildPath) {
+  sign: async function(buildPath) {
     let exeName = `${$.appName()}.exe`;
     let exePath = join(buildPath, exeName);
     // see package function

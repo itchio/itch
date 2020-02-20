@@ -3,12 +3,10 @@ import { preferencesPath } from "common/util/paths";
 import {
   readJSONFile,
   writeJSONFile,
-  symlink,
   readFile,
   exists,
   writeFile,
 } from "main/fs";
-import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
 import { LocaleStrings } from "common/locales";
 import { mainLogger } from "main/logger";
 import { PreferencesState } from "common/preferences";
@@ -17,6 +15,7 @@ import { packets } from "common/packets";
 import { app } from "electron";
 import { join } from "path";
 import { unlink } from "main/fs";
+import * as locales from "main/locales";
 import _ from "lodash";
 
 const wasOpenedAtLoginFlag = "--wasOpenedAtLogin";
@@ -60,10 +59,10 @@ export async function loadPreferences(ms: MainState) {
       preventDisplaySleep: true,
     };
   }
-  let localesConfig: LocalesConfig = await readJSONFile(getLocalesConfigPath());
+  let localesConfig: LocalesConfig = await locales.list;
 
   let englishStrings: LocaleStrings = processLocaleStrings(
-    await readJSONFile(getLocalePath(`en.json`))
+    await locales.strings.en
   );
   logger.debug(
     `Loaded ${Object.keys(englishStrings).length} strings for base locale (en)`
@@ -113,7 +112,7 @@ export async function loadLocale(ms: MainState, lang: string) {
   }
 
   let strings: LocaleStrings = processLocaleStrings(
-    await readJSONFile(getLocalePath(`${normalizedLang}.json`))
+    await (locales.strings[normalizedLang] || Promise.resolve({}))
   );
   logger.info(
     `Loaded ${
