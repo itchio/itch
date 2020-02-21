@@ -106,6 +106,7 @@ async function ciPackage(args) {
     Object.assign(osxOptions, {
       osxSign: {
         identity: "Developer ID Application: Amos Wenger (B2N6FSRTPV)",
+        hardenedRuntime: true,
       },
       osxNotarize: {
         appleId: "amoswenger@gmail.com",
