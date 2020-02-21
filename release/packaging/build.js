@@ -1,7 +1,7 @@
 const $ = require("../common");
 
-module.exports.compile = async () => {
-  $.say(`Preparing to compile ${$.appName()} ${$.buildVersion()}`);
+module.exports.build = async function build() {
+  $.say(`Building ${$.appName()} ${$.buildVersion()}`);
 
   await $.showVersions(["npm", "node"]);
 

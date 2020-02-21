@@ -29,7 +29,7 @@
     "@tippy.js/react": "^3.1.1",
     "@types/emojione": "^2.2.5",
     "@types/lru-cache": "^5.1.0",
-    "@types/styled-components": "^4.1.16",
+    "@types/styled-components": "^5.0.0",
     "@types/ws": "^6.0.3",
     "btoa": "^1.2.1",
     "butlerd": "^14.1.0",
@@ -58,7 +58,7 @@
     "shell-quote": "^1.6.0",
     "source-map-support": "^0.5.16",
     "split2": "^3.1.1",
-    "styled-components": "^5.0.0-rc.2",
+    "styled-components": "^5.0.1",
     "systeminformation": "^4.14.1",
     "term-color": "^1.0.1",
     "tinycolor2": "^1.3.0",
@@ -106,7 +106,6 @@
     "cache-loader": "^4.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "codecov": "^3.5.0",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
     "electron": "^7.1.9",
@@ -115,8 +114,6 @@
     "electron-packager": "^14.0.6",
     "file-loader": "^4.0.0",
     "html-webpack-plugin": "^3.2.0",
-    "husky": "^3.0.0",
-    "lint-staged": "^9.0.2",
     "mocha": "^6.1.4",
     "prettier": "^1.19.1",
     "react-container-dimensions": "^1.4.1",
@@ -141,25 +138,13 @@
     "compile": "webpack-cli --config webpack.config.prod.js",
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
     "integration-tests": "node release/ci-integration-tests.js",
-    "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",
     "react-lint": "react-lint ./src/renderer/index.tsx"
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --trailing-comma es5 --write",
-      "git add"
-    ]
-  },
   "butler": {
     "development": "77c9dd05016a9c6b4deb16fc9b0554a1afcbb1ee",
     "production": ""
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }

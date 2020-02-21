@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-const { test } = require("./packaging/test");
+const { build } = require("./packaging/build");
 const { parseContext } = require("./packaging/context");
 
 async function main() {
   const cx = await parseContext();
-  await test(cx);
+  await build(cx);
 }
 
 main();
