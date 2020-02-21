@@ -36,9 +36,6 @@ module.exports.package = async function package(cx) {
     ],
   };
 
-  $.say(
-    `electron-packager options: ${JSON.stringify(electronOptions, null, 2)}`
-  );
   const appPaths = await $.measure(
     "electron package",
     async () => await electronPackager(electronOptions)
