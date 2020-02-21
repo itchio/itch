@@ -1,13 +1,10 @@
 const $ = require("../common");
-const validateContext = require("./context");
-const ospath = require("ospath");
+const { validateContext } = require("./context");
+const ospath = require("path");
 
 module.exports.test = async function test(cx) {
   validateContext(cx);
 
-  // TODO: test the just-built binary
-
-  let binName = `itch-integration-tests`;
   await $.cd("integration-tests", async () => {
     $(await $.sh(`go build -o runner -v`));
   });
@@ -16,10 +13,11 @@ module.exports.test = async function test(cx) {
   if (cx.testDev) {
     $.say("Will test development version");
     delete process.env.ITCH_INTEGRATION_BINARY_PATH;
+    process.env.LOCAL_BUTLER = 1;
   } else {
-    const binaryPath = ospath.join(cx.packageDir, binarySubdir);
-    $.say("Will test production version");
-    delete process.env.ITCH_INTEGRATION_BINARY_PATH;
+    const binaryPath = ospath.join(cx.packageDir, cx.binarySubdir, cx.binaryName);
+    $.say(`Will test production binary at (${binaryPath})`);
+    process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
   }
 
   if (process.platform === "linux" && process.CI) {

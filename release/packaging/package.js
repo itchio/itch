@@ -1,52 +1,67 @@
+const $ = require("../common");
+const ospath = require("path");
+const fs = require("fs");
 const { validateContext } = require("./context");
 const electronPackager = require("electron-packager");
 
 module.exports.package = async function package(cx) {
   validateContext(cx);
 
-  const { os, arch, archInfo } = cx;
+  const { os, arch } = cx;
   $.say(`Packaging ${cx.appName} for ${os}-${arch}`);
 
   const appName = $.appName();
   const appVersion = $.buildVersion();
   const outDir = ospath.join("build", `v${appVersion}`);
 
+  if (!fs.existsSync("prefix")) {
+    throw new Error("Missing prefix/ folder, bailing out");
+  }
+
   let electronOptions = {
     dir: "prefix",
     name: appName,
-    electronVersion,
+    electronVersion: cx.electronVersion,
     appVersion,
     asar: true,
     overwrite: true,
     out: outDir,
     ...getElectronOptions(cx),
     afterCopy: [
-      async buildPath => {
+      async (buildPath, electronVersion, platform, arch, callback) => {
         await cleanModules(cx, buildPath);
-      },
-      async buildPath => {
         await installDeps(cx, buildPath);
+        callback();
       },
     ],
   };
 
   $.say(
     `electron-packager options: ${JSON.stringify(
-      electronFinalOptions,
+      electronOptions,
       null,
       2
     )}`
   );
   const appPaths = await $.measure(
     "electron package",
-    async () => await electronPackager(electronFinalOptions)
+    async () => await electronPackager(electronOptions)
   );
-  let buildPath = normalizePath(appPaths[0]);
+  let buildPath = toUnixPath(appPaths[0]);
 
-  if (shouldSign && os === "windows") {
+  $.say(`Built app is in ${buildPath}`);
+
+  $.say(`Moving to ${cx.packageDir}`);
+  $(await $.sh(`rm -rf packages`));
+  $(await $.sh(`mkdir -p packages`));
+
+  // XXX: this used to be 'ditto' on macOS, not sure why
+  $(await $.sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`));
+
+  if (cx.shouldSign && os === "windows") {
     $.say("Signing Windows executable...");
     const windows = require("./package/windows");
-    await windows.sign(buildPath);
+    await windows.sign(cx);
   }
 
   if (os === "linux") {
@@ -56,23 +71,12 @@ module.exports.package = async function package(cx) {
     const baseURL = `https://dl.itch.ovh/libgconf-2-4-bin`;
     const fileName = `libgconf-2.so.4`;
     const fileURL = `${baseURL}/${debArch}/${fileName}`;
-    const dest = `${buildPath}/${fileName}`;
+    const dest = `${cx.packageDir}/${cx.binarySubdir}/${fileName}`;
     $.say(`Downloading (${fileURL})`);
     $.say(`  to (${dest})`);
     $(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
     $(await $.sh(`chmod +x ${dest}`));
   }
-
-  $.say(`Built app is in ${buildPath}`);
-  $.say(`Moving to ${packageDir}`);
-
-  $(await $.sh(`mkdir -p packages`));
-  $(await $.sh(`rm -rf ${packageDir}`));
-
-  // XXX: this used to be 'ditto' on macOS, not sure why
-  $(await $.sh(`mv "${buildPath}" "${packageDir}"`));
-
-  process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
 };
 
 function getElectronOptions(cx) {
@@ -172,7 +176,8 @@ async function cleanModules(cx, buildPath) {
 async function installDeps(cx, buildPath) {
   validateContext(cx);
 
-  const binaryDir = ospath.join(buildPath, cx.binarySubdir);
+  // at this point, `buildPath` is `kitch-win32-x64/resources/app`
+  const binaryDir = ospath.join(buildPath, "..", "..", cx.binarySubdir);
 
   $.say(`Downloading dependencies`);
   await $.cd(ospath.join(cx.projectDir, "install-deps"), async () => {

@@ -1,10 +1,7 @@
-const $ = require("./common");
+const $ = require("../common");
 const ospath = require("path");
 
 module.exports.parseContext = async function parseContext() {
-  process.env.DEBUG =
-    "electron-packager:*,electron-osx-sign:*,electron-notarize:*";
-
   let args = process.argv;
   let os = undefined;
   let arch = undefined;
@@ -23,7 +20,7 @@ module.exports.parseContext = async function parseContext() {
     }
   }
 
-  if (!os || !$.OSES(os)) {
+  if (!os || !$.OSES[os]) {
     throw new Error(
       `Missing/wrong --os argument (should be one of ${Object.keys(
         $.OSES
@@ -58,14 +55,14 @@ module.exports.parseContext = async function parseContext() {
   ).devDependencies.electron.replace(/^\^/, "");
 
   $.say(`============= Context info =============`);
-  $.say(`App name: ${appName}`);
+  $.say(`App name (${appName})`);
   $.say(`OS (${os}), Arch (${arch})`);
-  $.say(`Electron version: ${electronVersion}`);
+  $.say(`Electron version (${electronVersion})`);
   $.say(`Code signing enabled: (${shouldSign})`);
-  $.say(`Project dir: ${projectDir}`);
-  $.say(`Package dir: ${packageDir}`);
-  $.say(`Binary subPath: ${binarySubdir}`);
-  $.say(`Binary name: ${binaryName}`);
+  $.say(`Project dir (${projectDir})`);
+  $.say(`Package dir (${packageDir})`);
+  $.say(`Binary subPath (${binarySubdir})`);
+  $.say(`Binary name (${binaryName})`);
   $.say(`========================================`);
 
   return {

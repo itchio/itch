@@ -9,7 +9,7 @@ package-linux-amd64:
   tags:
     - linux
   script:
-    - release/ci-package.js linux amd64
+    - release/ci-package-all.js --os linux --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
@@ -21,7 +21,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
-    - release/ci-package.js darwin amd64
+    - release/ci-package-all.js --os darwin --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
@@ -30,11 +30,10 @@ package-darwin-amd64:
 # windows 32-bit build
 package-windows-386:
   stage: package
-  retry: 2
   tags:
     - windows
   script:
-    - release/ci-package.js windows 386
+    - release/ci-package-all.js --os windows --arch 386
   artifacts:
     expire_in: 1 week
     paths:
@@ -43,11 +42,10 @@ package-windows-386:
 # windows 64-bit build
 package-windows-amd64:
   stage: package
-  retry: 2
   tags:
     - windows
   script:
-    - release/ci-package.js windows amd64
+    - release/ci-package-all.js --os windows --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
