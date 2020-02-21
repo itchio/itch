@@ -140,8 +140,6 @@
     "start": "node develop.js",
     "compile": "webpack-cli --config webpack.config.prod.js",
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
-    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
-    "single-test": "mocha -r ts-node/register -r tsconfig-paths/register",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
