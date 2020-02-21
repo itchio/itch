@@ -1,7 +1,7 @@
 const $ = require("../common");
 const ospath = require("path");
 const fs = require("fs");
-const { validateContext } = require("./context");
+const { validateContext, toUnixPath } = require("./context");
 const electronPackager = require("electron-packager");
 
 module.exports.package = async function package(cx) {
@@ -37,11 +37,7 @@ module.exports.package = async function package(cx) {
   };
 
   $.say(
-    `electron-packager options: ${JSON.stringify(
-      electronOptions,
-      null,
-      2
-    )}`
+    `electron-packager options: ${JSON.stringify(electronOptions, null, 2)}`
   );
   const appPaths = await $.measure(
     "electron package",
@@ -60,7 +56,7 @@ module.exports.package = async function package(cx) {
 
   if (cx.shouldSign && os === "windows") {
     $.say("Signing Windows executable...");
-    const windows = require("./package/windows");
+    const windows = require("./windows");
     await windows.sign(cx);
   }
 
@@ -190,12 +186,4 @@ async function installDeps(cx, buildPath) {
   // TODO: change to --production once stable butler versions start being tagged again
   let args = `--manifest package.json --dir "${binaryDir}" --development`;
   $(await $.sh(`${installDepsPath} ${args}`));
-}
-
-function toUnixPath(s) {
-  if (process.platform === "win32") {
-    return s.replace(/\\/g, "/");
-  } else {
-    return s;
-  }
 }

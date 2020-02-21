@@ -1,12 +1,12 @@
 const $ = require("../common");
-const { validateContext } = require("./context");
+const { validateContext, toUnixPath } = require("./context");
 const { join } = require("path").posix;
 
 module.exports = {
   sign: async function(cx) {
     validateContext(cx);
 
-    const exePath = join(cx.packageDir, cx.binarySubdir, cx.binaryName);
+    const exePath = toUnixPath(join(cx.packageDir, cx.binarySubdir, cx.binaryName));
     // see package function
     // forward-slashes are doubled because of mingw, see http://www.mingw.org/wiki/Posix_path_conversion
     let signParams =

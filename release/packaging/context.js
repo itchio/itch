@@ -106,3 +106,11 @@ module.exports.validateContext = function validateContext(context) {
     }
   }
 };
+
+module.exports.toUnixPath = function toUnixPath(s) {
+  if (process.platform === "win32") {
+    return s.replace(/\\/g, "/");
+  } else {
+    return s;
+  }
+}
