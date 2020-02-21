@@ -9,6 +9,7 @@ package-linux-amd64:
   tags:
     - linux
   script:
+    - npm ci
     - release/ci-package-all.js --os linux --arch amd64
   artifacts:
     expire_in: 1 week
@@ -21,6 +22,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
+    - npm ci
     - release/ci-package-all.js --os darwin --arch amd64
   artifacts:
     expire_in: 1 week
@@ -33,6 +35,7 @@ package-windows-386:
   tags:
     - windows
   script:
+    - npm ci
     - release/ci-package-all.js --os windows --arch 386
   artifacts:
     expire_in: 1 week
@@ -45,6 +48,7 @@ package-windows-amd64:
   tags:
     - windows
   script:
+    - npm ci
     - release/ci-package-all.js --os windows --arch amd64
   artifacts:
     expire_in: 1 week
