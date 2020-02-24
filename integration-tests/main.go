@@ -163,9 +163,13 @@ func doMain() error {
 
 	r.cleanup = func() {
 		r.logf("deleting session")
-		_, err := r.driver.DeleteSession()
-		if err != nil {
-			r.logf("could not delete session: %+s", err)
+		if r.driver != nil {
+			_, err := r.driver.DeleteSession()
+			if err != nil {
+				r.logf("could not delete session: %+s", err)
+			}
+		} else {
+			r.logf("no driver yet!")
 		}
 
 		r.logf("cancelling chrome-driver context...")

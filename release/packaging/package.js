@@ -64,6 +64,8 @@ module.exports.package = async function package(cx) {
     $(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
     $(await $.sh(`chmod +x ${dest}`));
   }
+
+  await sign(cx, cx.packageDir);
 };
 
 function getElectronOptions(cx) {
@@ -167,25 +169,26 @@ async function installDeps(cx, buildPath) {
   $(await $.sh(`${installDepsPath} ${args}`));
 }
 
-async function sign(cx, buildPath) {
+async function sign(cx) {
   validateContext(cx);
 
-  // at this point, `buildPath` is `kitch-win32-x64/resources/app`
-  const installDir = ospath.join(buildPath, "..", "..");
-  $.say(`installDir is (${installDir})`);
+  const packageDir = cx.packageDir;
+  $.say(`packageDir is (${packageDir})`);
 
   if (!cx.shouldSign) {
     $.say("Code signing disabled, skipping");
     return;
   }
 
-  if (os === "windows") {
+  if (cx.os === "windows") {
     $.say("Signing Windows executable...");
     const windows = require("./windows");
-    await windows.sign(cx, installDir);
-  } else if (os === "darwin") {
+    await windows.sign(cx, packageDir);
+  } else if (cx.os === "darwin") {
     $.say("Signing macOS app bundle...");
     const darwin = require("./darwin");
-    await darwin.sign(cx, installDir);
+    await darwin.sign(cx, packageDir);
+  } else {
+    $.say("Not signing Linux executables, that's not a thing");
   }
 }

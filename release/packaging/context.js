@@ -44,7 +44,7 @@ module.exports.parseContext = async function parseContext() {
   const appName = $.appName();
   let ext = os === "windows" ? ".exe" : "";
   const binaryName = `${appName}${ext}`;
-  const binarySubdir = (os === "darwin") ? "./Contents/MacOS" : ".";
+  const binarySubdir = (os === "darwin") ? `./${appName}.app/Contents/MacOS` : ".";
 
   const iconsPath = ospath.join("release", "images", `${appName}-icons`);
   const electronVersion = JSON.parse(

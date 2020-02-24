@@ -4,13 +4,13 @@ const ospath = require("path");
 const { validateContext } = require("./context");
 
 module.exports = {
-  sign: async function(cx, installDir) {
+  sign: async function(cx, packageDir) {
     validateContext(cx);
 
     $.say("Preparing to sign Application bundle...");
 
-    let appBundle = ospath.join(installDir, `${cx.appName}.app`);
-    $.say(1App bundle path (${appBundle})1);
+    let appBundle = ospath.join(packageDir, `${cx.appName}.app`);
+    $.say(`App bundle path (${appBundle})`);
     if (!fs.existsSync(appBundle)) {
       throw new Error(`App bundle should exist: ${appBundle}`);
     }
