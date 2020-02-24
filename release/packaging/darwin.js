@@ -16,13 +16,13 @@ module.exports = {
     }
 
     let depsDir = ospath.join(appBundle, "Contents", "MacOS", "deps");
-    $.say(`Deps dir (${appBundle})`);
+    $.say(`Deps dir (${depsDir})`);
     if (!fs.existsSync(depsDir)) {
       throw new Error(`Deps dir should exist: ${depsDir}`);
     }
 
     let extraBinaries = [
-      ospath.join(depsDir, "butler", "7z.dylib"),
+      ospath.join(depsDir, "butler", "7z.so"),
       ospath.join(depsDir, "butler", "libc7zip.dylib"),
       ospath.join(depsDir, "butler", "butler"),
     ];
