@@ -30,7 +30,6 @@ module.exports.package = async function package(cx) {
     afterCopy: [
       async (buildPath, electronVersion, platform, arch, callback) => {
         await cleanModules(cx, buildPath);
-        await installDeps(cx, buildPath);
         callback();
       },
     ],
@@ -50,6 +49,8 @@ module.exports.package = async function package(cx) {
 
   // XXX: this used to be 'ditto' on macOS, not sure why
   $(await $.sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`));
+
+  await installDeps(cx);
 
   if (os === "linux") {
     // see https://github.com/itchio/itch/issues/2121
@@ -150,20 +151,29 @@ async function cleanModules(cx, buildPath) {
   });
 }
 
-async function installDeps(cx, buildPath) {
+async function installDeps(cx) {
   validateContext(cx);
 
-  // at this point, `buildPath` is `kitch-win32-x64/resources/app`
-  const binaryDir = ospath.join(buildPath, "..", "..", cx.binarySubdir);
+  const binaryDir = ospath.join(cx.packageDir, cx.binarySubdir);
+  $.say(`Will install dependencies into (${binaryDir})`);
+  if (!fs.existsSync(binaryDir)) {
+    throw new Error(`binaryDir should exist: ${binaryDir}`);
+  }
 
-  $.say(`Downloading dependencies`);
+  $.say(`Building install-deps tool`);
   await $.cd(ospath.join(cx.projectDir, "install-deps"), async () => {
     $(await $.sh("go build"));
   });
 
+  let ext = cx.os === "windows" ? ".exe" : "";
   let installDepsPath = toUnixPath(
-    ospath.join(cx.projectDir, "install-deps", "install-deps")
+    ospath.join(cx.projectDir, "install-deps", `install-deps${ext}`)
   );
+  $.say(`Built at (${installDepsPath})`);
+  if (!fs.existsSync(installDepsPath)) {
+    throw new Error(`installDepsPath should exist: ${installDepsPath}`);
+  }
+
   // TODO: change to --production once stable butler versions start being tagged again
   let args = `--manifest package.json --dir "${binaryDir}" --development`;
   $(await $.sh(`${installDepsPath} ${args}`));
