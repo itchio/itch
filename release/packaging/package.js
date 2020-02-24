@@ -52,7 +52,7 @@ module.exports.package = async function package(cx) {
 
   await installDeps(cx);
 
-  if (os === "linux") {
+  if (cx.os === "linux") {
     // see https://github.com/itchio/itch/issues/2121
     $.say(`Adding libgconf library...`);
     const debArch = arch === "386" ? "i386" : "amd64";
@@ -129,7 +129,7 @@ function darwinOptions(cx) {
   };
 
   if (cx.shouldSign) {
-    if (!process.env.APPLE_ID_PASSWORD && os === "darwin") {
+    if (!process.env.APPLE_ID_PASSWORD && cx.os === "darwin") {
       throw new Error(
         `Code signing enabled, but $APPLE_ID_PASSWORD environment variable unset or empty`
       );

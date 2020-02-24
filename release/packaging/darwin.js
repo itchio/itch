@@ -9,6 +9,15 @@ module.exports = {
 
     $.say("Preparing to sign Application bundle...");
 
+    // enable debug namespaces
+    const namespaces = [
+      "electron-osx-sign",
+      "electron-osx-sign:warn",
+      "electron-notarize:spawn",
+      "electron-notarize:helpers",
+    ];
+    process.env.DEBUG = namespaces.join(",");
+
     let appBundle = ospath.join(packageDir, `${cx.appName}.app`);
     $.say(`App bundle path (${appBundle})`);
     if (!fs.existsSync(appBundle)) {
@@ -31,19 +40,21 @@ module.exports = {
         throw new Error(`Extra binary should exist: ${binary}`);
       }
     }
-    $.say("Will sign those extra binaries: ");
+    $.say("Signing extra binaries...");
+    const identity = "Developer ID Application: Amos Wenger (B2N6FSRTPV)";
     for (const binary of extraBinaries) {
-      $.say(`- (${binary})`);
+      $.say(`Signing (${binary})`);
+      $(await $.sh(`codesign --sign "${identity}" --force --timestamp --options runtime "${binary}"`));
     }
 
     $.say("Signing Application bundle...");
     await $.measure("electron-osx-sign", async () => {
-      require("debug").enable("electron-osx-sign:*");
+      require("debug").enable("electron-osx-sign");
       const sign = require("electron-osx-sign").signAsync;
       await sign({
         app: appBundle,
         hardenedRuntime: true,
-        identity: "Developer ID Application: Amos Wenger (B2N6FSRTPV)",
+        identity,
         platform: "darwin",
         version: cx.electronVersion,
       });
@@ -55,7 +66,7 @@ module.exports = {
 
     $.say("Notarizing...");
     await $.measure("electron-notarize", async () => {
-      require("debug").enable("electron-notarize:*");
+      require("debug").enable("electron-notarize");
       const { notarize } = require("electron-notarize");
       await notarize({
         appBundleId: $.appBundleId(),
