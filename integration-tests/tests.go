@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func runTests(r *runner) {
@@ -63,35 +62,35 @@ func installAndLaunchGame(r *runner) {
 
 	r.logf("Installing it")
 
-	r.logf("Opening popover...")
-	must(r.click(".webview-action-bar .install-button"))
-	time.Sleep(1 * time.Second)
+	// r.logf("Opening popover...")
+	// must(r.click(".webview-action-bar .install-button"))
+	// time.Sleep(1 * time.Second)
 
-	r.logf("Clicking on upload button...")
-	must(r.click(".install-popover .upload-button"))
-	time.Sleep(1 * time.Second)
+	// r.logf("Clicking on upload button...")
+	// must(r.click(".install-popover .upload-button"))
+	// time.Sleep(1 * time.Second)
 
-	r.logf("Clicking on upload's install button...")
-	must(r.click(".install-popover .upload-info .install-button"))
-	time.Sleep(1 * time.Second)
+	// r.logf("Clicking on upload's install button...")
+	// must(r.click(".install-popover .upload-info .install-button"))
+	// time.Sleep(1 * time.Second)
 
-	r.logf("Launching it")
-	must(r.click(".webview-action-bar .launch-button"))
+	// r.logf("Launching it")
+	// must(r.click(".webview-action-bar .launch-button"))
 
-	r.logf("Force-closing it")
-	must(r.click(".webview-action-bar .force-close-button"))
+	// r.logf("Force-closing it")
+	// must(r.click(".webview-action-bar .force-close-button"))
 
-	mainWindowHandle := r.mustGetSingleWindowHandle()
-	r.mustWaitForWindowQuantity(2)
+	// mainWindowHandle := r.mustGetSingleWindowHandle()
+	// r.mustWaitForWindowQuantity(2)
 
-	r.mustSwitchToOtherWindow(mainWindowHandle)
-	must(r.click(".webview-action-bar .force-close-confirm"))
+	// r.mustSwitchToOtherWindow(mainWindowHandle)
+	// must(r.click(".webview-action-bar .force-close-confirm"))
 
-	r.mustWaitForWindowQuantity(1)
-	r.mustSwitchToMainWindow()
+	// r.mustWaitForWindowQuantity(1)
+	// r.mustSwitchToMainWindow()
 
-	r.logf("Making sure it's closed")
-	must(r.waitUntilTextExists(".webview-action-bar .launch-button", "Launch"))
+	// r.logf("Making sure it's closed")
+	// must(r.waitUntilTextExists(".webview-action-bar .launch-button", "Launch"))
 
 	// r.logf("Switching to downloads window")
 	// must(r.click("#sidebar a[href='itch://downloads']"))

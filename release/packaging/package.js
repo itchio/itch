@@ -51,12 +51,6 @@ module.exports.package = async function package(cx) {
   // XXX: this used to be 'ditto' on macOS, not sure why
   $(await $.sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`));
 
-  if (cx.shouldSign && os === "windows") {
-    $.say("Signing Windows executable...");
-    const windows = require("./windows");
-    await windows.sign(cx);
-  }
-
   if (os === "linux") {
     // see https://github.com/itchio/itch/issues/2121
     $.say(`Adding libgconf library...`);
@@ -137,19 +131,7 @@ function darwinOptions(cx) {
         `Code signing enabled, but $APPLE_ID_PASSWORD environment variable unset or empty`
       );
     }
-
-    Object.assign(options, {
-      osxSign: {
-        identity: "Developer ID Application: Amos Wenger (B2N6FSRTPV)",
-        hardenedRuntime: true,
-      },
-      osxNotarize: {
-        appleId: "amoswenger@gmail.com",
-        appleIdPassword: process.env.APPLE_ID_PASSWORD,
-      },
-    });
   }
-
   return options;
 }
 
@@ -183,4 +165,27 @@ async function installDeps(cx, buildPath) {
   // TODO: change to --production once stable butler versions start being tagged again
   let args = `--manifest package.json --dir "${binaryDir}" --development`;
   $(await $.sh(`${installDepsPath} ${args}`));
+}
+
+async function sign(cx, buildPath) {
+  validateContext(cx);
+
+  // at this point, `buildPath` is `kitch-win32-x64/resources/app`
+  const installDir = ospath.join(buildPath, "..", "..");
+  $.say(`installDir is (${installDir})`);
+
+  if (!cx.shouldSign) {
+    $.say("Code signing disabled, skipping");
+    return;
+  }
+
+  if (os === "windows") {
+    $.say("Signing Windows executable...");
+    const windows = require("./windows");
+    await windows.sign(cx, installDir);
+  } else if (os === "darwin") {
+    $.say("Signing macOS app bundle...");
+    const darwin = require("./darwin");
+    await darwin.sign(cx, installDir);
+  }
 }
