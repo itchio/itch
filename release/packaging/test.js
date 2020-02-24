@@ -20,12 +20,13 @@ module.exports.test = async function test(cx) {
     process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
   }
 
-  if (process.platform === "linux" && process.CI) {
+  if (process.platform === "linux" && process.env.CI) {
     $.say("Running through xvfb");
     await $.sh(
       `xvfb-run -a -s "-screen 0 1280x720x24" ./integration-tests/runner`
     );
   } else {
+    $.say("Running normally - requires a running desktop environment");
     $(await $.sh(`./integration-tests/runner`));
   }
 };
