@@ -70,6 +70,7 @@ module.exports = env => {
         new CleanWebpackPlugin(),
         new DefinePlugin({
           "process.type": JSON.stringify("renderer"),
+          "process.env.NODE_ENV": JSON.stringify(env.mode),
         }),
         new WebpackBuildNotifierPlugin({
           title: "itch (renderer)",

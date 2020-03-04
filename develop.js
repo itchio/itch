@@ -109,10 +109,10 @@ async function ensureButler() {
     return;
   }
 
-  await run("go build", {cwd: "./install-deps"});
-  await run(
-    "install-deps/install-deps --manifest package.json --dir . --development"
-  );
+  await run("go build", { cwd: "./install-deps" });
+  await run("install-deps --manifest ../package.json --dir .. --development", {
+    cwd: "./install-deps",
+  });
 }
 
 async function run(command, options) {

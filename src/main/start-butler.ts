@@ -33,9 +33,14 @@ export async function startButler(ms: MainState) {
     logger.info(`===================================================`);
     butlerExecutable = which.sync("butler");
   } else {
-    const exePath = app.getPath("exe");
-    logger.info(`exe path = ${exePath}`);
-    const exeDir = path.dirname(exePath);
+    let exeDir;
+    if (process.env.NODE_ENV === "production") {
+      const exePath = app.getPath("exe");
+      logger.info(`exe path = ${exePath}`);
+      exeDir = path.dirname(exePath);
+    } else {
+      exeDir = ".";
+    }
     logger.info(`exe dir = ${exeDir}`);
     butlerExecutable = path.join(exeDir, "deps", "butler", exeName("butler"));
     logger.info(`butler executable = ${butlerExecutable}`);
