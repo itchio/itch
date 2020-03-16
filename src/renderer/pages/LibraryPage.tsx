@@ -3,7 +3,6 @@ import { messages } from "common/butlerd";
 import {
   Collection,
   FetchGameRecordsParams,
-  GameClassification,
   GameRecord,
   GameRecordsSource,
 } from "common/butlerd/messages";
@@ -11,9 +10,9 @@ import { LocalizedString } from "common/types";
 import _ from "lodash";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
+import { Ellipsis } from "renderer/basics/Ellipsis";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { Icon } from "renderer/basics/Icon";
-import { Spinner } from "renderer/basics/LoadingCircle";
 import { MultiDropdown } from "renderer/basics/MultiDropdown";
 import { useProfile, useSocket } from "renderer/contexts";
 import { Dropdown } from "renderer/Dropdown";
@@ -21,7 +20,6 @@ import { GameGrid } from "renderer/pages/GameGrid";
 import { GameList } from "renderer/pages/GameList";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
-import { Ellipsis } from "renderer/basics/Ellipsis";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -325,9 +323,6 @@ const Viewport = React.forwardRef(
     const [layout, setLayout] = useState<"grid" | "list">("grid");
     const [sortBy, setSortBy] = useState<SortBy>("default");
     const [filterBy, setFilterBy] = useState<string[]>([]);
-    const [classification, setClassification] = useState<
-      GameClassification | "any"
-    >("any");
     const [reverse, setReverse] = useState(false);
 
     useEffect(() => {
@@ -360,8 +355,6 @@ const Viewport = React.forwardRef(
             filters: {
               installed: _.includes(filterBy, "installed"),
               owned: _.includes(filterBy, "owned"),
-              classification:
-                classification === "any" ? undefined : classification,
             },
             reverse,
           };

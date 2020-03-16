@@ -2,15 +2,14 @@ import { ExtendedWebContents } from "common/extended-web-contents";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import { partitionForUser } from "common/util/partitions";
+import { WebviewState } from "common/webview-state";
 import { WebviewTag } from "electron";
-import { WebviewState } from "main";
 import React, { useEffect, useRef, useState } from "react";
 import { useProfile, useSocket } from "renderer/contexts";
 import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { modals } from "common/modals";
 const WebviewActionBar = React.lazy(() =>
   import("renderer/Shell/WebviewActionBar")
 );
@@ -125,20 +124,25 @@ export const Webview = (props: WebviewProps) => {
     });
   }, [viewRef]);
 
+  const [domReady, setDomReady] = useState(false);
+  useEffect(() => {
+    viewRef.current?.addEventListener("dom-ready", () => {
+      setDomReady(true);
+    });
+  }, [setDomReady, viewRef.current]);
+
   useListen(
     socket,
     packets.navigate,
     ({ url: href }) => {
-      let wv = viewRef.current;
-      if (wv) {
-        try {
-          wv.loadURL(href);
-        } catch (e) {
-          console.warn(e.stack);
-        }
+      if (!domReady) {
+        console.warn(`Webview not ready yet, ignoring: ${href}`);
+        return;
       }
+
+      viewRef.current?.loadURL(href);
     },
-    []
+    [domReady]
   );
 
   return (

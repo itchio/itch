@@ -1,6 +1,4 @@
 import * as fs from "fs";
-import { resolve } from "dns";
-import { rejects } from "assert";
 
 export async function readFile(
   path: string,

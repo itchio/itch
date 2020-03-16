@@ -3,13 +3,12 @@ import _ from "lodash";
 import React, { useCallback, useState } from "react";
 import { Button } from "renderer/basics/Button";
 import { MenuTippy } from "renderer/basics/Menu";
-import { useSocket } from "renderer/contexts";
+import {
+  ClickOutsideRefer,
+  useClickOutside,
+} from "renderer/basics/useClickOutside";
 import { InstallMenu } from "renderer/Shell/InstallMenu";
 import { useDownloads } from "renderer/use-downloads";
-import {
-  useClickOutside,
-  ClickOutsideRefer,
-} from "renderer/basics/useClickOutside";
 
 interface HighLevelProps {
   wide?: boolean;

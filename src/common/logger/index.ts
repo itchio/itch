@@ -1,5 +1,3 @@
-import { string } from "prop-types";
-
 export const levelNumbers = {
   silent: 100,
   error: 50,

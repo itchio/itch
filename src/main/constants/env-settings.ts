@@ -1,6 +1,4 @@
 import { levelNumbers } from "common/logger";
-import { mainLogger } from "main/logger";
-import dump from "common/util/dump";
 
 export const envSettings = {
   //-----------------------

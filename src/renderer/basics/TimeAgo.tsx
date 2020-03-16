@@ -18,7 +18,8 @@ export const TimeAgo = (props: Props) => {
     typeof date === "number" ? new Date(date).toISOString() : date;
   const { value, unit } = selectUnit(dateNumber);
 
-  const [displayNumber, setDisplayNumber] = useState(0);
+  // used to force-rerender every 30s-33s
+  const [, setDisplayNumber] = useState(0);
   useEffect(() => {
     let jitter = Math.random() * 3000;
     let interval = setInterval(() => {
@@ -27,9 +28,6 @@ export const TimeAgo = (props: Props) => {
     return () => clearInterval(interval);
   }, []);
 
-  // TODO: since we're passing a relative value, do we need to update it
-  // ourselves now? If so, do we want to? Using hooks maybe?
-  // TODO: review react-hint usage
   return (
     <span className={`time-ago ${className}`} title={dateString}>
       {before ? <>{before} </> : null}

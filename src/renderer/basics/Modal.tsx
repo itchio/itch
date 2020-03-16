@@ -4,7 +4,6 @@ import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { animations, fontSizes } from "renderer/theme";
 import styled from "styled-components";
-import { close } from "inspector";
 
 const ModalShroud = styled.div`
   position: fixed;

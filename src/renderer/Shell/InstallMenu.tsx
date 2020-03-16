@@ -53,8 +53,11 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
   const socket = useSocket();
   const [uploads, setUploads] = useState<Upload[] | undefined>();
 
+  console.log(`In InstallMenu`);
+
   useAsync(async () => {
     try {
+      console.log(`Fetching uploads for game ${gameId}`);
       const { uploads } = await socket.call(messages.FetchGameUploads, {
         gameId,
         compatible: true,

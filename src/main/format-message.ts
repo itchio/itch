@@ -3,8 +3,6 @@ import IntlMessageFormat from "intl-messageformat";
 import { MainState } from "main";
 import _ from "lodash";
 
-const emptyObj = {};
-
 export function formatMessage(
   ms: MainState,
   template: {

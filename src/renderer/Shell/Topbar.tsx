@@ -1,18 +1,17 @@
+import { modals } from "common/modals";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { useProfile, useSocket } from "renderer/contexts";
 import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 import { ProfileButton } from "renderer/Shell/ProfileButton";
+import { SearchButton } from "renderer/Shell/SearchButton";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { modals } from "common/modals";
-import { SearchButton } from "renderer/Shell/SearchButton";
 
 const TopbarDiv = styled.div`
   display: flex;

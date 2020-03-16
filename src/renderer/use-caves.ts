@@ -15,14 +15,6 @@ interface CaveFilter {
   gameId?: number;
 }
 
-function applyFilter(cave: Cave, filter?: CaveFilter): boolean {
-  if (filter?.gameId) {
-    return cave.game?.id == filter?.gameId;
-  } else {
-    return true;
-  }
-}
-
 export function useCaves(filter?: CaveFilter): Caves {
   const filterState = JSON.stringify(filter);
 

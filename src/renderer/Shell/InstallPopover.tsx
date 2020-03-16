@@ -6,6 +6,7 @@ import {
   Upload,
   UploadType,
 } from "common/butlerd/messages";
+import { DownloadWithProgress } from "common/downloads";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
 import { packets } from "common/packets";
@@ -14,9 +15,10 @@ import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
+import { Ellipsis } from "renderer/basics/Ellipsis";
 import { Icon } from "renderer/basics/Icon";
 import { IconButton } from "renderer/basics/IconButton";
-import { LoadingCircle, Spinner } from "renderer/basics/LoadingCircle";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { uploadIcons, UploadTitle } from "renderer/basics/upload";
@@ -27,8 +29,6 @@ import { useListen } from "renderer/Socket";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { DownloadWithProgress } from "common/downloads";
-import { Ellipsis } from "renderer/basics/Ellipsis";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;

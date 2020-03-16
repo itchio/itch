@@ -1,11 +1,11 @@
-import { OngoingLaunches, OngoingLaunch } from "common/launches";
-import { useSocket } from "renderer/contexts";
-import { useState, useEffect } from "react";
-import { queries } from "common/queries";
-import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
-import _ from "lodash";
 import { filterObject } from "common/filter-object";
+import { OngoingLaunch, OngoingLaunches } from "common/launches";
+import { packets } from "common/packets";
+import { queries } from "common/queries";
+import _ from "lodash";
+import { useState } from "react";
+import { useSocket } from "renderer/contexts";
+import { useListen } from "renderer/Socket";
 import { useAsync } from "renderer/use-async";
 
 export interface LaunchFilter {

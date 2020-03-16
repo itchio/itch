@@ -2,15 +2,13 @@ import { Profile } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import React, { useEffect, useState } from "react";
 import { ProfileContext, useSocket } from "renderer/contexts";
+import { ModalRouter } from "renderer/modals/ModalRouter";
 import { useListen } from "renderer/Socket";
+import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
 import { queries } from "../common/queries";
-import { PickCaveModal } from "renderer/modals/PickCaveModal";
-import { ModalRouter } from "renderer/modals/ModalRouter";
-import { fontSizes } from "renderer/theme";
 
 const App = React.lazy(() => import("renderer/Shell"));
-const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
 const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
 
 const RouteContentsDiv = styled.div`

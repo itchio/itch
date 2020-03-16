@@ -1,10 +1,10 @@
 import { Cave, Profile } from "common/butlerd/messages";
-import { OngoingLaunch, OngoingLaunches } from "common/launches";
-import { CurrentLocale } from "common/locales";
-import { WebviewState } from "main";
 import { DownloadsState } from "common/downloads";
+import { OngoingLaunches } from "common/launches";
+import { CurrentLocale } from "common/locales";
 import { ModalCreator } from "common/modals";
 import { PreferencesState } from "common/preferences";
+import { WebviewState } from "common/webview-state";
 
 /**
  * Queries are asynchronous calls made from a renderer process

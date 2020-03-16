@@ -1,10 +1,4 @@
-import {
-  Cave,
-  PickManifestActionParams,
-  PickManifestActionResult,
-  Action,
-  Game,
-} from "common/butlerd/messages";
+import { Action, Cave, Game } from "common/butlerd/messages";
 import { BrowserWindow } from "electron";
 
 interface Dimensions {

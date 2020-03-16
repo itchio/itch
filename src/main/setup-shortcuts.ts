@@ -1,13 +1,13 @@
-import { BrowserWindow, WebContents, webContents } from "electron";
+import { ExtendedWebContents } from "common/extended-web-contents";
+import { modals } from "common/modals";
+import { packets } from "common/packets";
+import dump from "common/util/dump";
+import { WebContents, webContents } from "electron";
 import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { mainLogger } from "main/logger";
-import dump from "common/util/dump";
-import { ExtendedWebContents } from "common/extended-web-contents";
 import { showModal } from "main/show-modal";
-import { modals } from "common/modals";
 import { broadcastPacket } from "main/websocket-handler";
-import { packets } from "common/packets";
 
 const logger = mainLogger.childWithName("shortcuts");
 

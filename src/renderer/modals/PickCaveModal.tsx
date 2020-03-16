@@ -95,7 +95,7 @@ export const PickCaveModal = modalWidget(modals.pickCave, props => {
                 <div className="button">
                   <Button
                     label={<FormattedMessage id="grid.item.launch" />}
-                    onClick={() => props.onResult({ index })}
+                    onClick={() => onResult({ index })}
                   />
                 </div>
               </CaveItem>

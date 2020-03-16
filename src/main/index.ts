@@ -3,36 +3,28 @@ import { DownloadsState } from "common/downloads";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
+import { modals, ModalsState } from "common/modals";
 import { packets } from "common/packets";
+import { PreferencesState } from "common/preferences";
 import dump from "common/util/dump";
 import { partitionForApp } from "common/util/partitions";
-import {
-  app,
-  BrowserWindow,
-  dialog,
-  session,
-  shell,
-  Tray,
-  Menu,
-} from "electron";
+import { WebviewState } from "common/webview-state";
+import { app, BrowserWindow, dialog, session, shell, Tray } from "electron";
 import { envSettings } from "main/constants/env-settings";
 import {
   registerItchProtocol,
   registerSchemesAsPrivileged,
 } from "main/itch-protocol";
-import { loadPreferences, wasOpenedAsHidden } from "main/preferences";
 import { mainLogger } from "main/logger";
+import { loadPreferences, wasOpenedAsHidden } from "main/preferences";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
+import { showModal } from "main/show-modal";
 import { ButlerState, startButler } from "main/start-butler";
+import { initTray } from "main/tray";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
-import { ModalsState, modals } from "common/modals";
-import { PreferencesState } from "common/preferences";
-import { join } from "path";
-import { initTray } from "main/tray";
-import { showModal } from "main/show-modal";
 
 let logger = mainLogger.childWithName("main");
 
@@ -72,11 +64,6 @@ export interface MainState {
 export interface LocaleState {
   englishStrings: LocaleStrings;
   current: CurrentLocale;
-}
-
-export interface WebviewState {
-  history: string[];
-  currentIndex: number;
 }
 
 const ms: MainState = {

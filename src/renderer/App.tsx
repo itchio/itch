@@ -7,13 +7,14 @@ import { queries } from "common/queries";
 import React, { Suspense, useEffect, useState } from "react";
 import { hot } from "react-hot-loader/root";
 import { IntlProvider } from "react-intl";
-import { Spinner, FullScreenSpinner } from "renderer/basics/LoadingCircle";
+import { FullScreenSpinner } from "renderer/basics/LoadingCircle";
 import { SocketContext } from "renderer/contexts";
 import { Route } from "renderer/Route";
 import { theme } from "renderer/theme";
 import { ThemeProvider, StyleSheetManager } from "styled-components";
 import { Socket } from "renderer/Socket";
 import GlobalStyles from "renderer/global-styles";
+import { CurrentLocale } from "common/locales";
 
 // whilst we wait for styled-components@5 typings
 const ExtendedStyleSheetManager = (StyleSheetManager as any) as React.ComponentClass<{
@@ -23,8 +24,8 @@ const ExtendedStyleSheetManager = (StyleSheetManager as any) as React.ComponentC
 }>;
 
 export const App = hot(() => {
-  let [socket, setSocket] = useState();
-  let [currentLocale, setCurrentLocale] = useState();
+  let [socket, setSocket] = useState<Socket | undefined>();
+  let [currentLocale, setCurrentLocale] = useState<CurrentLocale | undefined>();
 
   useEffect(() => {
     establishSocketConnection()

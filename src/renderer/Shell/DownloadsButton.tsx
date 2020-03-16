@@ -1,7 +1,10 @@
 import { messages } from "common/butlerd";
 import { Download } from "common/butlerd/messages";
+import { DownloadWithProgress } from "common/downloads";
+import { gameCover } from "common/game-cover";
 import { queries } from "common/queries";
-import React, { useEffect, useState } from "react";
+import _ from "lodash";
+import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
@@ -11,11 +14,8 @@ import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
-import styled from "styled-components";
 import { useDownloads } from "renderer/use-downloads";
-import _ from "lodash";
-import { DownloadWithProgress } from "common/downloads";
-import { gameCover } from "common/game-cover";
+import styled from "styled-components";
 
 interface Props {}
 

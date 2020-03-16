@@ -1,13 +1,11 @@
-import { levels, LogEntry } from "common/logger";
-import { Cave, CaveSummary, Code } from "common/butlerd/messages";
-import { formatDate, DATE_FORMAT } from "common/format/datetime";
 import {
-  RequestError,
   asRequestError,
-  InternalCode,
   getErrorStack,
+  InternalCode,
 } from "butlerd/lib/support";
-import { Conversation } from "butlerd";
+import { Cave, CaveSummary, Code } from "common/butlerd/messages";
+import { DATE_FORMAT, formatDate } from "common/format/datetime";
+import { levels, LogEntry } from "common/logger";
 
 export function getCaveSummary(cave: Cave): CaveSummary {
   return {

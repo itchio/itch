@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useSocket } from "renderer/contexts";
-import { PreferencesState } from "common/preferences";
-import { useAsync } from "renderer/use-async";
-import { queries } from "common/queries";
-import { useListen } from "renderer/Socket";
 import { packets } from "common/packets";
+import { PreferencesState } from "common/preferences";
+import { queries } from "common/queries";
+import { useState } from "react";
+import { useSocket } from "renderer/contexts";
+import { useListen } from "renderer/Socket";
+import { useAsync } from "renderer/use-async";
 
 export function usePreferences(): PreferencesState | undefined {
   const socket = useSocket();

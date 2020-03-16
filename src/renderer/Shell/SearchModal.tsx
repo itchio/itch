@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import { searchExamples } from "common/constants/search-examples";
@@ -13,9 +14,7 @@ import { useDebounce } from "renderer/basics/useDebounce";
 import { useProfile, useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
-import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import classNames from "classnames";
 
 const SearchModalContainer = styled(Modal)`
   width: 60vw;

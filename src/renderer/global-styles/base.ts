@@ -29,7 +29,7 @@ export default css`
   }
 
   img {
-    user-drag: none;
+    -webkit-user-drag: none;
   }
 
   code {

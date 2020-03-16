@@ -1,5 +1,4 @@
 import { ModalCreator, modals, ModalPayload } from "common/modals";
-import { packets } from "common/packets";
 import React from "react";
 import { useSocket } from "renderer/contexts";
 import { PickCaveModal } from "renderer/modals/PickCaveModal";

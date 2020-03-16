@@ -1,19 +1,17 @@
 import { messages } from "common/butlerd";
-import { queries } from "common/queries";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
+import { LaunchButton } from "renderer/basics/LaunchButton";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
-import { useAsyncCb } from "renderer/use-async-cb";
 import { useCaves } from "renderer/use-caves";
 import styled from "styled-components";
-import { Cave, Game } from "../../common/butlerd/messages";
+import { Game } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
-import { LaunchButtonBase, LaunchButton } from "renderer/basics/LaunchButton";
 
 const Container = styled.div`
   display: flex;
@@ -54,10 +52,6 @@ interface Props {
   path: string;
 }
 
-interface CavesForGame {
-  [caveId: string]: Cave;
-}
-
 const WebviewGameActionBar = (props: { gameId: number }) => {
   const socket = useSocket();
   const { gameId } = props;
@@ -84,13 +78,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
     setInstalling(false);
   });
 
-  const [launchGame, launchGameLoading] = useAsyncCb(
-    async (gameId: number) => {
-      await socket.query(queries.launchGame, { gameId });
-    },
-    [socket]
-  );
-
   if (!game) {
     return null;
   }
@@ -98,6 +85,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   let makeInstallModal = (children: React.ReactElement<any>): JSX.Element => {
     return (
       <MenuTippy
+        appendTo={document.body}
         placement="top-end"
         content={
           <InstallPopoverContents

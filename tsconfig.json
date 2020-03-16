@@ -8,6 +8,7 @@
 
     "noEmit": true,
     "skipLibCheck": true,
+    "noUnusedLocals": true,
     "isolatedModules": true,
 
     "importHelpers": true,
