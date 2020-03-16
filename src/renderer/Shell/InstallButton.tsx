@@ -33,7 +33,12 @@ export const InstallButtonBase = (props: LowLevelProps) => {
     gameId,
     downloadProgress,
     beingInstalled,
+    install,
   } = props;
+
+  const onInstall = useCallback(() => {
+    install(gameId);
+  }, [install, gameId]);
 
   if (downloadProgress) {
     return <Button label="Downloading..." />;
@@ -58,10 +63,6 @@ export const InstallButtonBase = (props: LowLevelProps) => {
     }
   };
 
-  const install = useCallback(() => {
-    props.install(gameId);
-  }, [props.install, gameId]);
-
   return wrap(
     beingInstalled ? (
       <Button
@@ -76,7 +77,7 @@ export const InstallButtonBase = (props: LowLevelProps) => {
         wide={wide}
         label="Install"
         secondary
-        onClick={install}
+        onClick={onInstall}
       />
     )
   );

@@ -242,11 +242,12 @@ export const GameList = (props: Props) => {
 
   const listRef = useRef<HTMLDivElement | null>(null);
 
+  let recordsLength = props.records.length;
   useEffect(() => {
-    if (currentIndex >= props.records.length) {
+    if (currentIndex >= recordsLength) {
       setCurrentIndex(0);
     }
-  }, [props.records.length]);
+  }, [currentIndex, recordsLength]);
 
   const game = useGame(currentRecord?.id);
 
@@ -258,9 +259,10 @@ export const GameList = (props: Props) => {
     setCurrentIndex(index);
   }, []);
 
+  let listRefCurrent = listRef.current;
   const focusIndex = useCallback(
     (index: number) => {
-      listRef.current
+      listRefCurrent
         ?.querySelector(`.row[data-index='${index}']`)
         ?.scrollIntoView({
           behavior: "auto",
@@ -268,7 +270,7 @@ export const GameList = (props: Props) => {
           inline: "nearest",
         });
     },
-    [listRef.current]
+    [listRefCurrent]
   );
 
   const listKeyDown = useCallback(
@@ -279,7 +281,7 @@ export const GameList = (props: Props) => {
         case "ArrowDown":
           ev.preventDefault();
           setCurrentIndex(i => {
-            let index = (i + 1) % props.records.length;
+            let index = (i + 1) % recordsLength;
             focusIndex(index);
             return index;
           });
@@ -287,14 +289,14 @@ export const GameList = (props: Props) => {
         case "ArrowUp":
           ev.preventDefault();
           setCurrentIndex(i => {
-            let index = i == 0 ? props.records.length - 1 : i - 1;
+            let index = i == 0 ? recordsLength - 1 : i - 1;
             focusIndex(index);
             return index;
           });
           break;
       }
     },
-    [props.records.length]
+    [focusIndex, recordsLength]
   );
 
   return (

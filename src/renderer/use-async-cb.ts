@@ -34,6 +34,7 @@ export function useAsyncCb<T extends (...args: any[]) => Promise<any>>(
         setIsExecuting(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [...deps, setIsExecuting, setError]
   ) as T;
 

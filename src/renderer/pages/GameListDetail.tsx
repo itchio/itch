@@ -20,12 +20,20 @@ interface Props {
   downloads: DownloadsState;
 }
 
+type InternalProps = Props & {
+  game: Game;
+};
+
 export const GameListDetail = (props: Props) => {
-  const { game, downloads } = props;
-  if (!game) {
+  if (!props.game) {
     return <Spinner />;
   }
 
+  return <GameListDetailInternal {...props} game={props.game} />;
+};
+
+const GameListDetailInternal = (props: InternalProps) => {
+  const { game, downloads } = props;
   const caves = useCaves({ gameId: game.id });
   const lastCave = _.last(_.sortBy(caves, c => c.stats.lastTouchedAt));
 

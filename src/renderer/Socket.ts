@@ -28,9 +28,13 @@ export function useListen<T>(
   cb: (payload: T) => void,
   deps: React.DependencyList
 ) {
-  useEffect(() => {
-    return socket.listen(pc, cb);
-  }, deps);
+  useEffect(
+    () => {
+      return socket.listen(pc, cb);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    deps
+  );
 }
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {

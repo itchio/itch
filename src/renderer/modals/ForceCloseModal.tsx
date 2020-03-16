@@ -19,7 +19,7 @@ export const ForceCloseModal = modalWidget(modals.forceClose, props => {
       launchId,
       reason: "User clicked force close button in modal",
     });
-  }, [socket]);
+  }, [launchId, socket]);
 
   return (
     <HardModal

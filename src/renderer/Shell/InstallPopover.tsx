@@ -164,40 +164,43 @@ export const InstallPopoverContents = React.forwardRef(
     };
     const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
+    const gameId = props.game.id;
+    const { onClose } = props;
+
     useEffect(() => {
       (async () => {
         const { downloads } = await socket.query(queries.getDownloadsForGame, {
-          gameId: props.game.id,
+          gameId,
         });
         setDownloads(_.keyBy(downloads, x => x.upload.id));
 
         const { items } = await socket.call(messages.FetchCaves, {
           filters: {
-            gameId: props.game.id,
+            gameId,
           },
         });
         setCaves(_.keyBy(items, x => x.upload.id));
 
-        const fguParams: FetchGameUploadsParams = {
-          gameId: props.game.id,
+        const fetchParams: FetchGameUploadsParams = {
+          gameId,
           compatible: false,
         };
 
         try {
           const resAll = await socket.call(messages.FetchGameUploads, {
-            ...fguParams,
+            ...fetchParams,
             fresh: true,
           });
 
           const resCompat = await socket.call(messages.FetchGameUploads, {
-            ...fguParams,
+            ...fetchParams,
             compatible: true,
           });
 
           const caves = (
             await socket.call(messages.FetchCaves, {
               filters: {
-                gameId: props.game.id,
+                gameId,
               },
             })
           ).items;
@@ -224,7 +227,7 @@ export const InstallPopoverContents = React.forwardRef(
           alert(e.stack);
         }
       })();
-    }, [fetchNumber]);
+    }, [fetchNumber, gameId, socket]);
 
     useListen(
       socket,
@@ -276,7 +279,7 @@ export const InstallPopoverContents = React.forwardRef(
     const [install] = useAsyncCb(
       async (upload: Upload) => {
         try {
-          setQueued({ ...queued, [upload.id]: true });
+          setQueued(queued => ({ ...queued, [upload.id]: true }));
           const locsRes = await socket.call(messages.InstallLocationsList, {});
 
           await socket.call(messages.InstallQueue, {
@@ -288,19 +291,19 @@ export const InstallPopoverContents = React.forwardRef(
           });
           props.onClose();
         } catch (e) {
-          setQueued(_.omit(queued, upload.id));
+          setQueued(queued => _.omit(queued, upload.id));
         }
       },
-      [socket]
+      [props, socket]
     );
 
     const [uninstall] = useAsyncCb(
       async (upload: Upload) => {
         try {
-          setQueued({ ...queued, [upload.id]: true });
+          setQueued(queued => ({ ...queued, [upload.id]: true }));
           const { items } = await socket.call(messages.FetchCaves, {
             filters: {
-              gameId: props.game.id,
+              gameId,
             },
           });
           const existingCave = _.find<Cave>(
@@ -308,37 +311,37 @@ export const InstallPopoverContents = React.forwardRef(
             x => x.upload.id === upload.id
           );
           if (existingCave) {
-            setQueued(_.omit(queued, upload.id));
+            setQueued(queued => _.omit(queued, upload.id));
 
             // in this case, uninstall, but confirm first
             await socket.query(queries.uninstallGame, { cave: existingCave });
-            props.onClose();
+            onClose();
           }
         } catch (e) {
-          setQueued(_.omit(queued, upload.id));
+          setQueued(queued => _.omit(queued, upload.id));
         }
       },
-      [socket]
+      [socket, gameId, onClose]
     );
 
     const [launch] = useAsyncCb(
       async (caveId: string) => {
-        props.onClose();
+        onClose();
 
         await socket.query(queries.launchGame, {
-          gameId: props.game.id,
+          gameId,
           caveId,
         });
       },
-      [socket, props.game.id]
+      [onClose, socket, gameId]
     );
 
     const [explore] = useAsyncCb(
       async (caveId: string) => {
-        props.onClose();
+        onClose();
         await socket.query(queries.exploreCave, { caveId });
       },
-      [socket]
+      [onClose, socket]
     );
 
     const [showOthers, setShowOthers] = useState(false);

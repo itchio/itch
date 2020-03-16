@@ -1,16 +1,17 @@
 import { modals } from "common/modals";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
-import { useProfile, useSocket } from "renderer/contexts";
+import { useSocket, useOptionalProfile } from "renderer/contexts";
 import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 import { ProfileButton } from "renderer/Shell/ProfileButton";
 import { SearchButton } from "renderer/Shell/SearchButton";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
+import { useAsync } from "renderer/use-async";
 import styled from "styled-components";
 
 const TopbarDiv = styled.div`
@@ -43,7 +44,6 @@ export const Topbar = () => {
   const socket = useSocket();
   const [maximized, setMaximized] = useState(false);
   const [popover, setPopover] = useState<PopoverName>(null);
-  let profile = useProfile();
 
   let [close] = useAsyncCb(async () => {
     await socket.query(queries.close);
@@ -61,16 +61,10 @@ export const Topbar = () => {
     await socket.query(queries.toggleMaximized);
   }, [socket]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { maximized } = await socket.query(queries.isMaximized);
-        setMaximized(maximized);
-      } catch (e) {
-        // ignore
-      }
-    })();
-  }, []);
+  useAsync(async () => {
+    const { maximized } = await socket.query(queries.isMaximized);
+    setMaximized(maximized);
+  }, [socket]);
 
   useListen(
     socket,
@@ -81,19 +75,16 @@ export const Topbar = () => {
     []
   );
 
+  const profile = useOptionalProfile();
+
+  let onOpenPreferences = useCallback(() => {
+    socket.showModal(modals.preferences, {}).catch(e => console.warn(e.stack));
+  }, [socket]);
+
   return (
     <TopbarDiv className="topbar">
       {profile && (
-        <>
-          <ProfileButton
-            profile={profile}
-            openPreferences={() =>
-              socket
-                .showModal(modals.preferences, {})
-                .catch(e => console.warn(e.stack))
-            }
-          />
-        </>
+        <ProfileButton profile={profile} openPreferences={onOpenPreferences} />
       )}
       {profile && <DownloadsButton />}
       {profile && <SearchButton />}

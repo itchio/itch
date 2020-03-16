@@ -151,7 +151,7 @@ export const Dropdown = function<T>(props: Props<T>) {
         }
       }
     },
-    [currentValue]
+    [currentValue, props.options, props.value]
   );
 
   return (

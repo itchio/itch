@@ -37,15 +37,19 @@ export const GameGridItem = React.memo((props: Props) => {
     stopInstall,
     gameBeingInstalled,
     beingLaunched,
+    install,
+    purchase,
   } = props;
 
-  const install = useCallback(() => {
-    return props.install(game.id);
-  }, [game, props.install]);
+  const gameId = game.id;
 
-  const purchase = useCallback(() => {
-    return props.purchase(game.id);
-  }, [game, props.purchase]);
+  const onInstall = useCallback(() => {
+    return install(gameId);
+  }, [gameId, install]);
+
+  const onPurchase = useCallback(() => {
+    return purchase(gameId);
+  }, [gameId, purchase]);
 
   let wrapInTippyIfNeeded = (content: JSX.Element): JSX.Element => {
     if (gameBeingInstalled) {
@@ -90,13 +94,13 @@ export const GameGridItem = React.memo((props: Props) => {
       <div className="buttons">
         <div className="filler" />
         {game.owned ? null : (
-          <IconButton icon="heart-filled" onClick={purchase} />
+          <IconButton icon="heart-filled" onClick={onPurchase} />
         )}
 
         <InstallButton
           gameId={game.id}
           icon={!!game.installedAt}
-          install={install}
+          install={onInstall}
           wrapper={wrapInTippyIfNeeded}
         />
         {game.installedAt && (
@@ -148,21 +152,23 @@ const InstallButton = React.forwardRef(
     },
     ref: any
   ) => {
-    const { gameId, icon, wrapper } = props;
+    const { gameId, icon, wrapper, install } = props;
 
-    const install = useCallback(() => {
-      return props.install(gameId);
-    }, [gameId, props.install]);
+    const onInstall = useCallback(() => {
+      return install(gameId);
+    }, [gameId, install]);
 
     if (icon) {
-      return wrapper(<IconButton ref={ref} icon="install" onClick={install} />);
+      return wrapper(
+        <IconButton ref={ref} icon="install" onClick={onInstall} />
+      );
     } else {
       return wrapper(
         <Button
           ref={ref}
           icon="install"
           label={<FormattedMessage id="grid.item.install" />}
-          onClick={install}
+          onClick={onInstall}
           secondary
         />
       );

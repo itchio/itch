@@ -46,7 +46,7 @@ export function useGame(gameId?: number): Game | undefined {
     return () => {
       cancelled = true;
     };
-  }, [gameId]);
+  }, [gameId, socket]);
 
   return game;
 }

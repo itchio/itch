@@ -15,7 +15,8 @@ export function usePreferences(): PreferencesState | undefined {
   useAsync(async () => {
     const { preferences } = await socket.query(queries.getPreferences);
     setPreferences(preferences);
-  }, []);
+  }, [socket]);
+
   useListen(
     socket,
     packets.preferencesUpdated,

@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Topbar } from "renderer/Shell/Topbar";
 import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
-import { useProfile, useSocket } from "renderer/contexts";
+import {
+  useSocket,
+  useOptionalProfile,
+  ProfileContext,
+} from "renderer/contexts";
 import styled from "styled-components";
 import LibraryPage from "renderer/pages/LibraryPage";
 import { Icon } from "renderer/basics/Icon";
@@ -97,7 +101,7 @@ const WebviewContainer = styled.div`
 
 export const Shell = () => {
   const socket = useSocket();
-  const profile = useProfile();
+  const profile = useOptionalProfile();
   const [webviewOpen, setWebviewOpen] = useState(false);
   const [firstUrl, setFirstUrl] = useState("");
 
@@ -123,18 +127,20 @@ export const Shell = () => {
   }
 
   return (
-    <ShellDiv>
-      <Topbar />
-      <MainDiv>
-        <LibraryPage />
-        <WebviewContainer className={classNames({ open: webviewOpen })}>
-          <nav>
-            <Icon onClick={() => setWebviewOpen(false)} icon="arrow-left" />
-          </nav>
-          <Webview url={firstUrl} />
-        </WebviewContainer>
-      </MainDiv>
-    </ShellDiv>
+    <ProfileContext.Provider value={profile}>
+      <ShellDiv>
+        <Topbar />
+        <MainDiv>
+          <LibraryPage />
+          <WebviewContainer className={classNames({ open: webviewOpen })}>
+            <nav>
+              <Icon onClick={() => setWebviewOpen(false)} icon="arrow-left" />
+            </nav>
+            <Webview url={firstUrl} />
+          </WebviewContainer>
+        </MainDiv>
+      </ShellDiv>
+    </ProfileContext.Provider>
   );
 };
 

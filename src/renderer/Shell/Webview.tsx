@@ -122,14 +122,15 @@ export const Webview = (props: WebviewProps) => {
         });
       }
     });
-  }, [viewRef]);
+  }, [setWebviewHistory, socket, viewRef]);
 
+  let viewRefCurrent = viewRef.current;
   const [domReady, setDomReady] = useState(false);
   useEffect(() => {
-    viewRef.current?.addEventListener("dom-ready", () => {
+    viewRefCurrent?.addEventListener("dom-ready", () => {
       setDomReady(true);
     });
-  }, [setDomReady, viewRef.current]);
+  }, [setDomReady, viewRefCurrent]);
 
   useListen(
     socket,

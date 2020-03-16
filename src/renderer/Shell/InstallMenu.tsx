@@ -1,19 +1,20 @@
 import { messages } from "common/butlerd";
 import { Upload } from "common/butlerd/messages";
-import React, { useState } from "react";
+import { fileSize } from "common/format/filesize";
+import { modals } from "common/modals";
+import _ from "lodash";
+import React, { useEffect, useRef, useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { MenuContents } from "renderer/basics/Menu";
-import { useSocket } from "renderer/contexts";
-import { useAsync } from "renderer/use-async";
-import styled from "styled-components";
-import _ from "lodash";
 import { UploadTitle } from "renderer/basics/upload";
-import { FormattedMessage } from "react-intl";
-import { useAsyncCb } from "renderer/use-async-cb";
-import { modals } from "common/modals";
-import { fileSize } from "common/format/filesize";
+import { useSocket } from "renderer/contexts";
+import { pokeTippy } from "renderer/poke-tippy";
 import { fontSizes } from "renderer/theme";
+import { useAsync } from "renderer/use-async";
+import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
 
 interface Props {
   gameId: number;
@@ -68,7 +69,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
       console.warn(e.stack);
       setUploads([]);
     }
-  }, [gameId]);
+  }, [gameId, socket]);
 
   const upload = _.first(uploads);
 
@@ -85,12 +86,19 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
     });
   }, [socket, gameId, upload]);
 
+  const uploadId = upload?.id;
+
   const [showInstallDialog] = useAsyncCb(async () => {
     await socket.showModal(modals.installQueue, {
       gameId,
-      uploadId: upload?.id,
+      uploadId,
     });
-  }, [socket, gameId]);
+  }, [socket, gameId, uploadId]);
+
+  const pokeRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    pokeTippy(pokeRef);
+  });
 
   if (!uploads) {
     return (
@@ -104,6 +112,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
 
   return (
     <InstallMenuContents ref={ref}>
+      <div ref={pokeRef}></div>
       {upload ? (
         <Button
           onClick={quickInstall}

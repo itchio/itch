@@ -257,9 +257,11 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
     });
   }, [socket]);
 
+  const { setState, stage: propsStage } = props;
+
   let [onLogin, onLoginLoading, onLoginError] = useAsyncCb(async () => {
-    const { error: _, ...stage } = props.stage;
-    props.setState({
+    const { error: _, ...stage } = propsStage;
+    setState({
       type: "form",
       stage,
     });
@@ -268,7 +270,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       return;
     }
 
-    if (props.stage.username === "#api-key") {
+    if (stage.username === "#api-key") {
       // for integration tests
       const { profile } = await socket.call(messages.ProfileLoginWithAPIKey, {
         apiKey: passwordRef.current.value,
@@ -284,7 +286,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       const { profile, cookie } = await socket.call(
         messages.ProfileLoginWithPassword,
         {
-          username: props.stage.username,
+          username: stage.username,
           password: passwordRef.current.value,
         },
         convo => {
@@ -317,7 +319,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       await delay(500);
       throw e;
     }
-  }, [socket]);
+  }, [socket, propsStage, setState]);
 
   const error = onLoginError || props.stage.error;
 

@@ -15,17 +15,17 @@ export function useDownloadKeys(filters?: { gameId?: number }): DownloadKeys {
   const [keys, setKeys] = useState<DownloadKeys>({});
 
   const socket = useSocket();
-  useAsync(async () => {
-    if (!profile) {
-      return;
-    }
-
-    const { items } = await socket.call(messages.FetchDownloadKeys, {
-      profileId: profile.id,
-      filters,
-    });
-    setKeys(_.keyBy(items, k => k.id));
-  }, [JSON.stringify(filters)]);
+  useAsync(
+    async () => {
+      const { items } = await socket.call(messages.FetchDownloadKeys, {
+        profileId: profile.id,
+        filters,
+      });
+      setKeys(_.keyBy(items, k => k.id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(filters)]
+  );
 
   return keys;
 }

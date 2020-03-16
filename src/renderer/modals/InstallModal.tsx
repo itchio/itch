@@ -36,7 +36,7 @@ interface Data {
 
 export const InstallModal = modalWidget(modals.install, props => {
   const socket = useSocket();
-  const { gameId, buildId, uploadId } = props.params;
+  const { gameId, uploadId } = props.params;
 
   const [data, setData] = useState<Data | undefined>();
 
@@ -71,7 +71,7 @@ export const InstallModal = modalWidget(modals.install, props => {
       console.warn(e.stack);
       setInstallError(e);
     }
-  }, [socket, data, gameId, buildId, uploadId]);
+  }, [socket, data]);
 
   useAsync(async () => {
     const { game } = await socket.call(messages.FetchGame, {
@@ -87,7 +87,7 @@ export const InstallModal = modalWidget(modals.install, props => {
       upload: _.find(uploads, u => u.id === uploadId),
     };
     setData(data);
-  }, [socket]);
+  }, [gameId, socket, uploadId]);
 
   const intl = useIntl();
 

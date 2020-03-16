@@ -76,21 +76,21 @@ export const Modal = React.forwardRef((props: ModalProps, ref: any) => {
   const hasTitle = (!!props.title || !!props.onClose) && !hideTitleBar;
   const onShroudClick = useCallback(() => {
     if (easyClose) {
-      if (props.onClose) {
-        props.onClose();
+      if (onClose) {
+        onClose();
       }
     }
-  }, [easyClose]);
+  }, [easyClose, onClose]);
 
   const onShroudKeyDown = useCallback(
     (ev: React.KeyboardEvent<any>) => {
       if (ev.key === "Escape" && easyClose) {
-        if (props.onClose) {
-          props.onClose;
+        if (onClose) {
+          onClose();
         }
       }
     },
-    [easyClose]
+    [easyClose, onClose]
   );
 
   const onContentClick = useCallback((ev: React.MouseEvent<any>) => {

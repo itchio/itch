@@ -8,10 +8,15 @@ import {
 } from "common/butlerd/messages";
 import { LocalizedString } from "common/types";
 import _ from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import { FormattedMessage } from "react-intl";
 import { Ellipsis } from "renderer/basics/Ellipsis";
-import { ErrorState } from "renderer/basics/ErrorState";
 import { Icon } from "renderer/basics/Icon";
 import { MultiDropdown } from "renderer/basics/MultiDropdown";
 import { useProfile, useSocket } from "renderer/contexts";
@@ -169,15 +174,6 @@ export const LibraryPage = () => {
   });
   let iprops = makeItemProps(source, setSource);
 
-  const profile = useProfile();
-  if (!profile) {
-    return (
-      <ErrorState
-        error={new Error("Missing profile - this should never happen")}
-      />
-    );
-  }
-
   const bodyRef = useRef<HTMLDivElement>(null);
   const scrollToTop = useCallback(() => {
     bodyRef.current?.scrollTo({
@@ -313,17 +309,24 @@ const sorts = (originalSorts as any) as {
 
 const Viewport = React.forwardRef(
   (props: { source: Source; scrollToTop: () => void }, ref: any) => {
-    const { source } = props;
+    const { source, scrollToTop } = props;
 
     const profile = useProfile();
     const socket = useSocket();
-    let [loading, setLoading] = useState(true);
-    let [records, setRecords] = useState<GameRecord[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [records, setRecords] = useState<GameRecord[]>([]);
 
     const [layout, setLayout] = useState<"grid" | "list">("grid");
     const [sortBy, setSortBy] = useState<SortBy>("default");
     const [filterBy, setFilterBy] = useState<string[]>([]);
     const [reverse, setReverse] = useState(false);
+
+    const filterByInstalled = useMemo(() => _.includes(filterBy, "installed"), [
+      filterBy,
+    ]);
+    const filterByOwned = useMemo(() => _.includes(filterBy, "owned"), [
+      filterBy,
+    ]);
 
     useEffect(() => {
       if (
@@ -334,27 +337,28 @@ const Viewport = React.forwardRef(
       ) {
         setSortBy("default");
       }
-    }, [source.source]);
+    }, [source.source, sortBy]);
+
+    const sourceSource = source.source;
+    const sourceCollectionId =
+      source.source === GameRecordsSource.Collection
+        ? source.collection.id
+        : undefined;
 
     useEffect(() => {
       let cancelled = false;
       (async () => {
         try {
-          // TODO: pagination
-
           setLoading(true);
           let params: FetchGameRecordsParams = {
-            profileId: profile!.id,
-            source: props.source.source,
-            limit: 200,
-            collectionId:
-              source.source === GameRecordsSource.Collection
-                ? source.collection.id
-                : undefined,
+            profileId: profile.id,
+            limit: 200, // TODO: pagination
+            source: sourceSource,
+            collectionId: sourceCollectionId,
             sortBy: sortBy === "default" ? undefined : sortBy,
             filters: {
-              installed: _.includes(filterBy, "installed"),
-              owned: _.includes(filterBy, "owned"),
+              installed: filterByInstalled,
+              owned: filterByOwned,
             },
             reverse,
           };
@@ -371,7 +375,7 @@ const Viewport = React.forwardRef(
           if (cancelled) {
             return;
           }
-          props.scrollToTop();
+          scrollToTop();
           setRecords(res.records);
 
           if (res.stale) {
@@ -391,11 +395,15 @@ const Viewport = React.forwardRef(
         cancelled = true;
       };
     }, [
-      JSON.stringify(source),
-      JSON.stringify(filterBy),
+      sourceSource,
+      sourceCollectionId,
+      filterByInstalled,
+      filterByOwned,
       sortBy,
       reverse,
-      props.scrollToTop,
+      profile,
+      scrollToTop,
+      socket,
     ]);
 
     let currentSort = _.find(sorts[source.source], s => s.value === sortBy);
@@ -552,7 +560,7 @@ const CollectionList = (props: {
       );
       setCollections(items);
     })();
-  }, []);
+  }, [socket, profile]);
 
   return (
     <>

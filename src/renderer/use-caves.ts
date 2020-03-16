@@ -22,12 +22,16 @@ export function useCaves(filter?: CaveFilter): Caves {
   const [fetchNumber, setFetchNumber] = useState(0);
 
   const socket = useSocket();
-  useAsync(async () => {
-    const { items } = await socket.call(messages.FetchCaves, {
-      filters: filter,
-    });
-    setCaves(_.keyBy(items, c => c.id));
-  }, [filterState, fetchNumber]);
+  useAsync(
+    async () => {
+      const { items } = await socket.call(messages.FetchCaves, {
+        filters: filter,
+      });
+      setCaves(_.keyBy(items, c => c.id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterState, fetchNumber]
+  );
 
   const pokeGame = useCallback(
     (gameId?: number) => {
@@ -35,6 +39,7 @@ export function useCaves(filter?: CaveFilter): Caves {
         setFetchNumber(x => x + 1);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterState]
   );
 

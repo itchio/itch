@@ -1,7 +1,7 @@
 import { Profile } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import React, { useEffect, useState } from "react";
-import { ProfileContext, useSocket } from "renderer/contexts";
+import { useSocket, OptionalProfileContext } from "renderer/contexts";
 import { ModalRouter } from "renderer/modals/ModalRouter";
 import { useListen } from "renderer/Socket";
 import { fontSizes } from "renderer/theme";
@@ -79,11 +79,11 @@ export const Route = () => {
 
   if (profile || elements[0] === "app") {
     return (
-      <ProfileContext.Provider value={profile}>
+      <OptionalProfileContext.Provider value={profile}>
         <RouteContentsDiv>
           <RouteContents elements={elements} />
         </RouteContentsDiv>
-      </ProfileContext.Provider>
+      </OptionalProfileContext.Provider>
     );
   } else {
     return <div>...</div>;

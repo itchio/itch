@@ -31,23 +31,28 @@ export function useButlerd<T, U>(
   const [state, setState] = useState<ButlerdState<U>>({ state: "loading" });
   const socket = useSocket();
 
-  useEffect(() => {
-    setState({ state: "loading" });
-    socket
-      .call(rc, params)
-      .then(result => {
-        setState({
-          state: "success",
-          result,
+  useEffect(
+    () => {
+      setState({ state: "loading" });
+      socket
+        .call(rc, params)
+        .then(result => {
+          setState({
+            state: "success",
+            result,
+          });
+        })
+        .catch(error => {
+          setState({
+            state: "error",
+            error,
+          });
         });
-      })
-      .catch(error => {
-        setState({
-          state: "error",
-          error,
-        });
-      });
-  }, [JSON.stringify(params)]);
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(params)]
+  );
 
   return state;
 }

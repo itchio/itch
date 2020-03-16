@@ -72,7 +72,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         console.warn(e);
       }
     })();
-  }, [gameId]);
+  }, [gameId, socket]);
 
   const coref = useClickOutside(() => {
     setInstalling(false);

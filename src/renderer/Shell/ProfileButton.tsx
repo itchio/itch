@@ -30,16 +30,12 @@ const ProfileButtonDiv = styled.div`
 `;
 
 interface Props {
-  profile?: Profile;
+  profile: Profile;
   openPreferences: () => void;
 }
 
 export const ProfileButton = (props: Props) => {
   const { profile } = props;
-  if (!profile) {
-    return null;
-  }
-
   const [shown, setShown] = useState(false);
   const coref = useClickOutside(() => {
     setShown(false);

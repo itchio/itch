@@ -32,14 +32,19 @@ export function useDownloads(filter?: DownloadFilter): DownloadsState {
         ...filterObject(fresh, dl => applyFilter(dl, filter)),
       }));
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterState]
   );
 
   const socket = useSocket();
-  useAsync(async () => {
-    const { downloads } = await socket.query(queries.getDownloads);
-    mergeDownloads(downloads);
-  }, [filterState]);
+  useAsync(
+    async () => {
+      const { downloads } = await socket.query(queries.getDownloads);
+      mergeDownloads(downloads);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterState]
+  );
 
   let downloadChanged = ({ download }: { download: Download }) => {
     mergeDownloads({ [download.id]: download });

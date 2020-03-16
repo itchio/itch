@@ -35,10 +35,14 @@ export function useLaunches(filter?: LaunchFilter): OngoingLaunches {
   };
 
   const socket = useSocket();
-  useAsync(async () => {
-    const { launches } = await socket.query(queries.getOngoingLaunches);
-    mergeLaunches(launches);
-  }, [socket, filterState]);
+  useAsync(
+    async () => {
+      const { launches } = await socket.query(queries.getOngoingLaunches);
+      mergeLaunches(launches);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [socket, filterState]
+  );
 
   useListen(
     socket,

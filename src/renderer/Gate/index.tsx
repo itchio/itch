@@ -1,6 +1,6 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { ConfirmModal } from "renderer/basics/Modal";
 import { useSocket } from "renderer/contexts";
@@ -49,6 +49,35 @@ export const Gate = (props: {}) => {
     null
   );
 
+  let fetchProfiles = useCallback(
+    (purpose: "first-time" | "refresh") => {
+      (async () => {
+        try {
+          const { profiles } = await socket.call(messages.ProfileList, {});
+          setProfiles(profiles);
+          if (purpose == "first-time") {
+            setLoading(false);
+            if (profiles.length > 0) {
+              setState({ type: "list" });
+            }
+          } else if (purpose === "refresh") {
+            if (profiles.length == 0) {
+              setState({
+                type: "form",
+                stage: {
+                  type: "need-username",
+                },
+              });
+            }
+          }
+        } catch (e) {
+          alert("Something went very wrong: " + e.stack);
+        }
+      })();
+    },
+    [socket]
+  );
+
   const [forgetProfile] = useAsyncCb(
     async (profile: Profile) => {
       try {
@@ -65,39 +94,13 @@ export const Gate = (props: {}) => {
       await socket.call(messages.ProfileForget, { profileId: profile.id });
       fetchProfiles("refresh");
     },
-    [socket]
+    [fetchProfiles, socket]
   );
-
-  let fetchProfiles = (purpose: "first-time" | "refresh") => {
-    (async () => {
-      try {
-        const { profiles } = await socket.call(messages.ProfileList, {});
-        setProfiles(profiles);
-        if (purpose == "first-time") {
-          setLoading(false);
-          if (profiles.length > 0) {
-            setState({ type: "list" });
-          }
-        } else if (purpose === "refresh") {
-          if (profiles.length == 0) {
-            setState({
-              type: "form",
-              stage: {
-                type: "need-username",
-              },
-            });
-          }
-        }
-      } catch (e) {
-        alert("Something went very wrong: " + e.stack);
-      }
-    })();
-  };
 
   useEffect(() => {
     // initial fetch
     fetchProfiles("first-time");
-  }, []);
+  }, [fetchProfiles]);
 
   if (loading) {
     return <div>Loading...</div>;

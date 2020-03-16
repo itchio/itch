@@ -71,7 +71,7 @@ export const LaunchButton = (props: HighLevelProps) => {
     async (gameId: number) => {
       await socket.query(queries.launchGame, { gameId });
     },
-    [socket, gameId]
+    [socket]
   );
 
   const [forceClose] = useAsyncCb(
@@ -93,7 +93,7 @@ export const LaunchButton = (props: HighLevelProps) => {
         launchId: currentLaunchId,
       });
     },
-    [socket, gameId, currentLaunchId]
+    [socket, currentLaunchId]
   );
 
   return (

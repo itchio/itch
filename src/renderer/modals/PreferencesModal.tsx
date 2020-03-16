@@ -102,10 +102,13 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
   useAsync(async () => {
     let { versionString } = await socket.call(messages.VersionGet, {});
     setButlerVersion(versionString);
-  }, []);
+  }, [socket]);
 
   const [loc, setLoc] = useState<InstallLocationSummary | undefined>(undefined);
   useAsync(async () => {
+    // for linter, woo.
+    tick == tick;
+
     let { installLocations } = await socket.call(
       messages.InstallLocationsList,
       {}
@@ -116,19 +119,22 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
         il => il.id == preferences?.defaultInstallLocation
       )
     );
-  }, [preferences, tick]);
+  }, [preferences, socket, tick]);
 
-  const [onLang] = useAsyncCb(async (lang: string) => {
-    await socket.query(queries.switchLanguage, {
-      lang,
-    });
-  }, []);
+  const [onLang] = useAsyncCb(
+    async (lang: string) => {
+      await socket.query(queries.switchLanguage, {
+        lang,
+      });
+    },
+    [socket]
+  );
 
   const [updatePreferences] = useAsyncCb(
     async (preferences: Partial<PreferencesState>) => {
       await socket.query(queries.updatePreferences, { preferences });
     },
-    []
+    [socket]
   );
 
   let intl = useIntl();

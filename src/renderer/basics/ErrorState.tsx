@@ -61,7 +61,7 @@ export const ErrorState = (props: ErrorStateProps) => {
     setTimeout(() => {
       // use `props` directly to avoid hiding after we
       // already got an error back
-      setShown(!!props.error);
+      setShown(!!propError);
     }, 125);
   }, [error, propError]);
 

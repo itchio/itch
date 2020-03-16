@@ -39,7 +39,7 @@ export function useClickOutside(onClick: OnClick): ClickOutsideRefer {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("click-outside", handleClickOutside);
     };
-  }, []);
+  }, [onClick, refs.refs]);
 
   return refs.makeSet;
 }
@@ -62,5 +62,5 @@ function useRefs(): UseRefsReturn {
       refs,
       makeSet,
     };
-  }, []);
+  }, [refs]);
 }

@@ -50,6 +50,7 @@ interface ListProps {
 
 export const List = (props: ListProps) => {
   const socket = useSocket();
+  const { setState } = props;
 
   const [login, loginLoading] = useAsyncCb(
     async (profile: Profile) => {
@@ -61,7 +62,7 @@ export const List = (props: ListProps) => {
       } catch (e) {
         await delay(500);
 
-        props.setState({
+        setState({
           type: "form",
           stage: {
             type: "need-password",
@@ -72,7 +73,7 @@ export const List = (props: ListProps) => {
         });
       }
     },
-    [socket]
+    [socket, setState]
   );
 
   return (

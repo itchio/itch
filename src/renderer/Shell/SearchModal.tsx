@@ -157,6 +157,7 @@ type State = "initial" | "results" | "no-results";
 export const SearchModal = (props: { onClose: () => void }) => {
   const socket = useSocket();
   const profile = useProfile();
+  const profileId = profile.id;
   const { onClose } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -170,13 +171,14 @@ export const SearchModal = (props: { onClose: () => void }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const currentRefCurrent = currentRef.current;
   useEffect(() => {
-    currentRef.current?.scrollIntoView({
+    currentRefCurrent?.scrollIntoView({
       behavior: "auto",
       block: "nearest",
       inline: "nearest",
     });
-  }, [currentRef.current]);
+  }, [currentRefCurrent]);
 
   useListen(
     socket,
@@ -206,7 +208,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
 
       setLoading(true);
       const { games } = await socket.call(messages.SearchGames, {
-        profileId: profile!.id,
+        profileId,
         query: debouncedSearchTerm,
       });
       if (cancelled) {
@@ -228,24 +230,25 @@ export const SearchModal = (props: { onClose: () => void }) => {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, profileId, socket]);
 
   const onChange = useCallback(
     (ev: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(ev.currentTarget.value);
     },
-    [socket, profile]
+    [setSearchTerm]
   );
 
   const openGame = useCallback(
     (game: Game) => {
-      props.onClose();
+      onClose();
       let url = `itch://games/${game.id}`;
       socket.send(packets.navigate, { url });
     },
-    [socket]
+    [onClose, socket]
   );
 
+  let numResults = _.size(results);
   const onKeyDown = useCallback(
     (ev: React.KeyboardEvent<HTMLInputElement>) => {
       if (ev.key === "Escape") {
@@ -255,7 +258,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
       } else if (ev.key === "ArrowDown") {
         ev.preventDefault();
         setCurrent(current => {
-          if (current === null || current >= _.size(results) - 1) {
+          if (current === null || current >= numResults - 1) {
             return current;
           } else {
             return current + 1;
@@ -282,7 +285,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         return;
       }
     },
-    [onClose, _.size(results), current]
+    [onClose, numResults, current, results, openGame]
   );
 
   console.log("current", current);
@@ -292,7 +295,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
     let url = new URL("https://itch.io/search");
     url.searchParams.set("q", debouncedSearchTerm);
     socket.send(packets.navigate, { url: url.toString() });
-  }, [debouncedSearchTerm, onClose]);
+  }, [debouncedSearchTerm, onClose, socket]);
 
   const intl = useIntl();
 
