@@ -56,7 +56,7 @@ export interface Props<T> {
   options: readonly Option<T>[];
   name?: string;
   className?: string;
-  width?: number;
+  width?: number | string;
 }
 
 export const DropdownItem = styled.div`

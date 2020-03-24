@@ -44,7 +44,7 @@ export const modals = wireModals({
     },
     {}
   >({
-    dimensions: { width: 600, height: 400 },
+    dimensions: { width: 720, height: 400 },
   }),
 });
 

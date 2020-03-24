@@ -13,6 +13,7 @@ import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallButton } from "renderer/Shell/InstallButton";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";
+import { IconButton } from "renderer/basics/IconButton";
 
 interface Props {
   game?: Game;
@@ -89,8 +90,14 @@ const GameListDetailInternal = (props: InternalProps) => {
               )}
             </a>
             <div className="controls">
-              <InstallButton wide gameId={game.id} />
-              {lastCave ? <LaunchButton wide gameId={game.id} /> : null}
+              {lastCave ? (
+                <>
+                  <IconButton icon="cog" />
+                  <LaunchButton wide gameId={game.id} />
+                </>
+              ) : (
+                <InstallButton wide gameId={game.id} />
+              )}
             </div>
           </div>
         </div>
