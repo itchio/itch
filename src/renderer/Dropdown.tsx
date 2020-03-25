@@ -8,7 +8,6 @@ import React, {
   useEffect,
 } from "react";
 import { Button } from "renderer/basics/Button";
-import { Icon } from "renderer/basics/Icon";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { buttonBorderRadius } from "renderer/theme";
@@ -69,6 +68,7 @@ export const DropdownItem = styled.div`
   }
 
   > .icon {
+    min-width: 1em;
     flex-shrink: 0;
 
     &.hidden {
@@ -172,7 +172,7 @@ export const Dropdown = function<T>(props: Props<T>) {
         >
           {props.options.map(({ value, label }) => {
             return (
-              <Button
+              <DropdownButton
                 key={`${value}`}
                 className={classNames("dropdown-option", {
                   highlighted: currentValue == value,
@@ -185,12 +185,14 @@ export const Dropdown = function<T>(props: Props<T>) {
                 ref={open && currentValue === value ? currentRef : null}
                 label={
                   <DropdownItem>
-                    <span className="label">{label}</span>
+                    <span
+                      className={classNames("label", {
+                        active: props.value === value,
+                      })}
+                    >
+                      {label}
+                    </span>
                     <div className="filler" />
-                    <Icon
-                      className={classNames({ hidden: props.value !== value })}
-                      icon={"checkmark"}
-                    />
                   </DropdownItem>
                 }
               />

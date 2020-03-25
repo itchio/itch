@@ -19,9 +19,9 @@ export const theme: DefaultTheme = {
 
     activeBg: "#7b3232",
 
-    text1: "#fafafa",
-    text2: "#b8b8b8",
-    text3: "#818181",
+    text1: "#fcfcfc",
+    text2: "#e2e2e2",
+    text3: "#a1a1a1",
 
     errorBg: "#f2ee77",
     errorText: "#323232",

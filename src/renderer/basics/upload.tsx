@@ -2,12 +2,14 @@ import { Build, Upload, UploadType } from "common/butlerd/messages";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import styled from "styled-components";
-import { mixins } from "renderer/theme";
+import { mixins, fontSizes } from "renderer/theme";
+import { fileSize } from "common/format/filesize";
 
 const UploadTitleDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  overflow: hidden;
 
   .spacer {
     width: 1em;
@@ -23,11 +25,19 @@ interface Props {
   before?: React.ReactNode;
   after?: React.ReactNode;
   showIcon?: boolean;
+  showSize?: boolean;
   upload: Upload;
 }
 
+const UploadSize = styled.div`
+  margin-left: 1em;
+  color: ${p => p.theme.colors.text2};
+
+  font-size: ${fontSizes.small};
+`;
+
 export const UploadTitle = (props: Props) => {
-  const { upload, before, after, showIcon = true } = props;
+  const { upload, before, after, showIcon = true, showSize } = props;
 
   return (
     <UploadTitleDiv>
@@ -39,6 +49,9 @@ export const UploadTitle = (props: Props) => {
         </>
       ) : null}
       <div className="title">{formatUploadTitle(upload)}</div>
+      {showSize && !!upload.size ? (
+        <UploadSize>{fileSize(upload.size)}</UploadSize>
+      ) : null}
       {after}
     </UploadTitleDiv>
   );

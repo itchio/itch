@@ -17,17 +17,16 @@ const HardModalDiv = styled.div`
 `;
 
 const HardModalTitleDiv = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-
   display: flex;
   flex-direction: row;
+  align-items: center;
   flex-basis: 2em;
 
   h3 {
     -webkit-app-region: drag;
-    padding: 15px;
     font-size: ${fontSizes.normal};
     flex-grow: 1;
+    text-align: center;
   }
 `;
 

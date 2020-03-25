@@ -1,6 +1,5 @@
 import { messages } from "common/butlerd";
 import { Upload } from "common/butlerd/messages";
-import { fileSize } from "common/format/filesize";
 import { modals } from "common/modals";
 import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,26 +10,19 @@ import { MenuContents } from "renderer/basics/Menu";
 import { UploadTitle } from "renderer/basics/upload";
 import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
-import { fontSizes } from "renderer/theme";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 
 interface Props {
   gameId: number;
+  onClose: () => void;
 }
 
 const MainUpload = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-`;
-
-const UploadSize = styled.div`
-  margin-left: 1em;
-  color: ${p => p.theme.colors.text2};
-
-  font-size: ${fontSizes.small};
 `;
 
 const InstallMenuContents = styled(MenuContents)`
@@ -50,15 +42,12 @@ const EllipsisContainer = styled.div`
 `;
 
 export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
-  const { gameId } = props;
+  const { gameId, onClose } = props;
   const socket = useSocket();
   const [uploads, setUploads] = useState<Upload[] | undefined>();
 
-  console.log(`In InstallMenu`);
-
   useAsync(async () => {
     try {
-      console.log(`Fetching uploads for game ${gameId}`);
       const { uploads } = await socket.call(messages.FetchGameUploads, {
         gameId,
         compatible: true,
@@ -74,6 +63,8 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
   const upload = _.first(uploads);
 
   const [quickInstall] = useAsyncCb(async () => {
+    onClose();
+
     const { game } = await socket.call(messages.FetchGame, {
       gameId,
     });
@@ -84,16 +75,18 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
       fastQueue: true,
       queueDownload: true,
     });
-  }, [socket, gameId, upload]);
+  }, [socket, gameId, upload, onClose]);
 
   const uploadId = upload?.id;
 
   const [showInstallDialog] = useAsyncCb(async () => {
+    onClose();
+
     await socket.showModal(modals.installQueue, {
       gameId,
       uploadId,
     });
-  }, [socket, gameId, uploadId]);
+  }, [socket, gameId, uploadId, onClose]);
 
   const pokeRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -118,10 +111,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
           onClick={quickInstall}
           label={
             <MainUpload>
-              <UploadTitle upload={upload} />
-              {!!upload.size && (
-                <UploadSize>{fileSize(upload.size)}</UploadSize>
-              )}
+              <UploadTitle upload={upload} showSize />
             </MainUpload>
           }
         />

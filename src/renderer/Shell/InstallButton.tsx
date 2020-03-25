@@ -17,6 +17,7 @@ interface HighLevelProps {
 
 type LowLevelProps = HighLevelProps & {
   coref: ClickOutsideRefer;
+  onClose: () => void;
   menuOpen: boolean;
   downloadProgress?: DownloadProgress;
   beingInstalled: boolean;
@@ -29,6 +30,7 @@ export const InstallButtonBase = (props: LowLevelProps) => {
     coref,
     wide,
     menuOpen,
+    onClose,
     openDownloads,
     gameId,
     downloadProgress,
@@ -53,7 +55,13 @@ export const InstallButtonBase = (props: LowLevelProps) => {
           interactive
           placement="bottom-end"
           appendTo={document.body}
-          content={<InstallMenu ref={coref("menu")} gameId={gameId} />}
+          content={
+            <InstallMenu
+              ref={coref("menu")}
+              gameId={gameId}
+              onClose={onClose}
+            />
+          }
         >
           {content}
         </MenuTippy>
@@ -95,6 +103,10 @@ export const InstallButton = (props: HighLevelProps) => {
     setMenuOpen(true);
   }, []);
 
+  const onClose = useCallback(() => {
+    setMenuOpen(false);
+  }, []);
+
   const coref = useClickOutside(() => {
     setMenuOpen(false);
   });
@@ -108,6 +120,7 @@ export const InstallButton = (props: HighLevelProps) => {
       {...props}
       coref={coref}
       install={install}
+      onClose={onClose}
       menuOpen={menuOpen}
       beingInstalled={!!download}
       downloadProgress={download?.progress}

@@ -11,7 +11,7 @@ import styled from "styled-components";
 import { Button } from "renderer/basics/Button";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { Dropdown } from "renderer/Dropdown";
-import { formatUploadTitle } from "renderer/basics/upload";
+import { UploadTitle } from "renderer/basics/upload";
 import { FormattedMessage } from "react-intl";
 import { mixins, fontSizes } from "renderer/theme";
 import * as _ from "lodash";
@@ -34,6 +34,7 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
           });
           setGame(game);
         })(),
+        // TODO: fetch both incompatibles and compatibles, show compatibles first.
         (async () => {
           const { uploads } = await socket.call(messages.FetchGameUploads, {
             gameId,
@@ -46,7 +47,7 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
       console.warn(e.stack);
       setError(e);
     }
-  }, []);
+  }, [gameId, socket]);
 
   if (error) {
     return <HardModal content={<ErrorState error={error} />} />;
@@ -54,11 +55,11 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
 
   if (game && uploads) {
     return (
-      <HardModal
-        title={game.title}
-        content={
-          <Body game={game} uploads={uploads} initialUploadId={uploadId} />
-        }
+      <Body
+        game={game}
+        uploads={uploads}
+        initialUploadId={uploadId}
+        onClose={() => props.onResult({})}
       />
     );
   }
@@ -70,6 +71,7 @@ interface Props {
   game: Game;
   uploads: Upload[];
   initialUploadId: number | undefined;
+  onClose: () => void;
 }
 
 const BodyDiv = styled.div`
@@ -101,7 +103,7 @@ const BodyDiv = styled.div`
   }
 `;
 
-const OptionDiv = styled.div`
+const OptionGroup = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -117,8 +119,27 @@ const OptionDiv = styled.div`
   }
 `;
 
+const StatRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 1em 0;
+
+  .name {
+    color: ${p => p.theme.colors.text1};
+  }
+
+  .value {
+    padding-left: 1em;
+    color: ${p => p.theme.colors.text2};
+    font-size: ${p => fontSizes.small};
+  }
+`;
+
 const Body = (props: Props) => {
-  const { uploads, initialUploadId } = props;
+  const { game, uploads, initialUploadId } = props;
+  const socket = useSocket();
 
   let getInitialUploadId = () => {
     if (_.find(uploads, u => u.id == initialUploadId)) {
@@ -128,11 +149,13 @@ const Body = (props: Props) => {
     }
   };
   const [uploadId, setUploadId] = useState(getInitialUploadId());
+  const upload = _.find(uploads, u => u.id == uploadId);
 
   const [locs, setLocs] = useState<InstallLocationSummary[]>([]);
-
   const [locId, setLocId] = useState<string | undefined>();
-  const socket = useSocket();
+  const loc = _.find(locs, l => l.id == locId);
+  const availableSize = loc ? loc.sizeInfo.freeSize : 0;
+
   useAsync(async () => {
     const { installLocations } = await socket.call(
       messages.InstallLocationsList,
@@ -142,51 +165,87 @@ const Body = (props: Props) => {
     setLocId(installLocations[0].id);
   }, [socket]);
 
+  const [neededSize, setNeededSize] = useState(0);
+  useAsync(async () => {
+    // TODO: fetch ScannedArchive
+    setNeededSize(0);
+  }, []);
+
+  // TODO: add option to add install location
+
   return (
-    <BodyDiv>
-      <div className="dropdowns">
-        <div className="dropdown-row">
-          <div className="dropdown-label">
-            <FormattedMessage id="plan_install.select_upload" />
+    <HardModal
+      title={game.title}
+      content={
+        <BodyDiv>
+          <div className="dropdowns">
+            <div className="dropdown-row">
+              <div className="dropdown-label">
+                <FormattedMessage id="plan_install.select_upload" />
+              </div>
+              <Dropdown
+                options={uploads.map(upload => ({
+                  ...upload,
+                  label: (
+                    <OptionGroup>
+                      <UploadTitle upload={upload} showSize />
+                    </OptionGroup>
+                  ),
+                  value: upload.id,
+                }))}
+                value={uploadId}
+                width="100%"
+                onChange={value => setUploadId(value)}
+              />
+            </div>
+            <div className="dropdown-row">
+              <div className="dropdown-label">
+                <FormattedMessage id="plan_install.select_install_location" />
+              </div>
+              <Dropdown
+                options={locs.map(loc => ({
+                  ...loc,
+                  label: (
+                    <OptionGroup>
+                      <div className="name">{loc.path}</div>
+                      <div className="size">
+                        {fileSize(loc.sizeInfo.freeSize)}
+                      </div>
+                    </OptionGroup>
+                  ),
+                  value: loc.id,
+                }))}
+                value={locId}
+                width="100%"
+                onChange={value => setLocId(value)}
+              />
+            </div>
+            <StatRow>
+              <div className="name">Disk space required</div>
+              <div className="value">
+                {!!neededSize ? fileSize(neededSize) : "?"}
+              </div>
+            </StatRow>
+            <StatRow>
+              <div className="name">Disk space available</div>
+              <div className="value">{fileSize(availableSize)}</div>
+            </StatRow>
           </div>
-          <Dropdown
-            options={uploads.map(upload => ({
-              ...upload,
-              label: formatUploadTitle(upload),
-              value: upload.id,
-            }))}
-            value={uploadId}
-            width="100%"
-            onChange={value => setUploadId(value)}
+        </BodyDiv>
+      }
+      buttons={
+        <>
+          <Button
+            label={<FormattedMessage id="prompt.action.cancel" />}
+            onClick={props.onClose}
+            secondary
           />
-        </div>
-        <div className="dropdown-row">
-          <div className="dropdown-label">
-            <FormattedMessage id="plan_install.select_install_location" />
-          </div>
-          <Dropdown
-            options={locs.map(loc => ({
-              ...loc,
-              label: (
-                <OptionDiv>
-                  <div className="name">{loc.path}</div>
-                  <div className="size">{fileSize(loc.sizeInfo.freeSize)}</div>
-                </OptionDiv>
-              ),
-              value: loc.id,
-            }))}
-            value={locId}
-            width="100%"
-            onChange={value => setLocId(value)}
+          <Button
+            label={<FormattedMessage id="prompt.action.install" />}
+            icon="install"
           />
-        </div>
-      </div>
-      <div className="filler" />
-      <div className="buttons">
-        <Button label="Cancel" />
-        <div className="filler" />
-        <Button label="Install" icon="install" />
-      </div>
-    </BodyDiv>
+        </>
+      }
+    />
   );
 };
