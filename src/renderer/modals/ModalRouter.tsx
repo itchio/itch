@@ -8,20 +8,35 @@ import { PickManifestActionModal } from "renderer/modals/PickManifestActionModal
 import { InstallModal } from "renderer/modals/InstallModal";
 import { ForceCloseModal } from "renderer/modals/ForceCloseModal";
 import { InstallQueueModal } from "renderer/modals/InstallQueueModal";
+import { ConfirmUninstallModal } from "renderer/modals/ConfirmUninstallModal";
 
 export interface ModalProps<Params, Result> {
   params: Params;
   onResult: (result: Result) => void;
 }
 
-type ModalWidget<P, R> = (props: ModalProps<P, R>) => JSX.Element | null;
+type ModalWidget<Props, Result> = (
+  props: ModalProps<Props, Result>
+) => JSX.Element | null;
 
-export function modalWidget<P, R>(
-  mc: ModalCreator<P, R>,
-  render: ModalWidget<P, R>
-): ModalWidget<P, R> {
+export function modalWidget<Props, Result>(
+  _mc: ModalCreator<Props, Result>,
+  render: ModalWidget<Props, Result>
+): ModalWidget<Props, Result> {
   return render;
 }
+
+let modalComponents: {
+  [k in keyof typeof modals]: ModalWidget<any, any>;
+} = {
+  installQueue: InstallQueueModal,
+  install: InstallModal,
+  forceClose: ForceCloseModal,
+  confirmUninstall: ConfirmUninstallModal,
+  pickCave: PickCaveModal,
+  pickManifestAction: PickManifestActionModal,
+  preferences: PreferencesModal,
+};
 
 export const ModalRouter = () => {
   let socket = useSocket();
@@ -38,9 +53,9 @@ export const ModalRouter = () => {
     params,
     onResult: (result: any) => {
       (async () => {
-        // not sure why this is needed tbh, we already check for
-        // id's nonnullness above.
         try {
+          // wait for the `modalResult` roundtrip before closing the window
+          // to avoid race conditions main-process side
           if (id !== null) {
             await socket.query(queries.modalResult, { id, result });
           }
@@ -51,20 +66,6 @@ export const ModalRouter = () => {
     },
   };
 
-  switch (kind) {
-    case modals.pickCave.__kind:
-      return <PickCaveModal {...props} />;
-    case modals.pickManifestAction.__kind:
-      return <PickManifestActionModal {...props} />;
-    case modals.preferences.__kind:
-      return <PreferencesModal {...props} />;
-    case modals.install.__kind:
-      return <InstallModal {...props} />;
-    case modals.forceClose.__kind:
-      return <ForceCloseModal {...props} />;
-    case modals.installQueue.__kind:
-      return <InstallQueueModal {...props} />;
-    default:
-      return <div></div>;
-  }
+  let Component = modalComponents[kind as keyof typeof modals];
+  return <Component {...props} />;
 };

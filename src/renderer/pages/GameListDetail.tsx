@@ -4,7 +4,7 @@ import { fileSize } from "common/format/filesize";
 import { gameCover } from "common/game-cover";
 import { OngoingLaunches } from "common/launches";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { LaunchButton } from "renderer/basics/LaunchButton";
 import { Spinner } from "renderer/basics/LoadingCircle";
@@ -14,6 +14,12 @@ import { InstallButton } from "renderer/Shell/InstallButton";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";
 import { IconButton } from "renderer/basics/IconButton";
+import { MenuTippy, MenuContents } from "renderer/basics/Menu";
+import { Button } from "renderer/basics/Button";
+import { useAsyncCb } from "renderer/use-async-cb";
+import { useSocket } from "renderer/contexts";
+import { modals } from "common/modals";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 
 interface Props {
   game?: Game;
@@ -35,16 +41,26 @@ export const GameListDetail = (props: Props) => {
 
 const GameListDetailInternal = (props: InternalProps) => {
   const { game, downloads } = props;
-  const caves = useCaves({ gameId: game.id });
+  const gameId = game.id;
+  const caves = useCaves({ gameId });
   const lastCave = _.last(_.sortBy(caves, c => c.stats.lastTouchedAt));
 
-  const keys = useDownloadKeys({ gameId: game.id });
+  const keys = useDownloadKeys({ gameId });
   const lastKey = _.last(_.sortBy(keys, k => k.createdAt));
 
   const lastDownload = _.find(
     downloads,
     d => !d.finishedAt && d.game?.id == game?.id
   );
+
+  const socket = useSocket();
+
+  const [uninstallMenuOpen, setUninstallMenuOpen] = useState(false);
+  useClickOutside(() => setUninstallMenuOpen(false));
+  const [confirmUninstall] = useAsyncCb(async () => {
+    await socket.showModal(modals.confirmUninstall, { gameId });
+    setUninstallMenuOpen(false);
+  }, [gameId, socket]);
 
   return (
     <>
@@ -92,7 +108,26 @@ const GameListDetailInternal = (props: InternalProps) => {
             <div className="controls">
               {lastCave ? (
                 <>
-                  <IconButton icon="cog" />
+                  <MenuTippy
+                    visible={uninstallMenuOpen}
+                    content={
+                      <MenuContents>
+                        <Button
+                          icon="uninstall"
+                          label={<FormattedMessage id="grid.item.uninstall" />}
+                          onClick={confirmUninstall}
+                        />
+                      </MenuContents>
+                    }
+                    interactive
+                    boundary="viewport"
+                    placement="bottom"
+                  >
+                    <IconButton
+                      icon="cog"
+                      onClick={() => setUninstallMenuOpen(true)}
+                    />
+                  </MenuTippy>
                   <LaunchButton wide gameId={game.id} />
                 </>
               ) : (

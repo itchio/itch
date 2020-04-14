@@ -168,8 +168,8 @@ const Body = (props: Props) => {
   const [neededSize, setNeededSize] = useState(0);
   useAsync(async () => {
     // TODO: fetch ScannedArchive
-    setNeededSize(0);
-  }, []);
+    setNeededSize(upload ? upload.size * 1.3 : 0);
+  }, [upload]);
 
   // TODO: add option to add install location
 

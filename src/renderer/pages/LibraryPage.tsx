@@ -25,6 +25,10 @@ import { GameGrid } from "renderer/pages/GameGrid";
 import { GameList } from "renderer/pages/GameList";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
+import { usePreferences } from "renderer/use-preferences";
+import { TabLayout } from "common/preferences";
+import { useAsyncCb } from "renderer/use-async-cb";
+import { queries } from "common/queries";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -316,7 +320,17 @@ const Viewport = React.forwardRef(
     const [loading, setLoading] = useState(true);
     const [records, setRecords] = useState<GameRecord[]>([]);
 
-    const [layout, setLayout] = useState<"grid" | "list">("grid");
+    const preferences = usePreferences();
+    const layout = preferences?.layout ?? "grid";
+    const [setLayout] = useAsyncCb(
+      async (layout: TabLayout) => {
+        await socket.query(queries.updatePreferences, {
+          preferences: { layout },
+        });
+      },
+      [socket]
+    );
+
     const [sortBy, setSortBy] = useState<SortBy>("default");
     const [filterBy, setFilterBy] = useState<string[]>([]);
     const [reverse, setReverse] = useState(false);
@@ -464,7 +478,7 @@ const Viewport = React.forwardRef(
                 { value: "grid", label: "Grid" },
                 { value: "list", label: "List" },
               ] as {
-                value: "grid" | "list";
+                value: TabLayout;
                 label: LocalizedString;
               }[]
             }

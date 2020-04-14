@@ -1,4 +1,4 @@
-export type TabLayout = "grid" | "table";
+export type TabLayout = "grid" | "table" | "list";
 
 export interface PreferencesState {
   /** where to install games by default */
