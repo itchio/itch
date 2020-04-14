@@ -36,6 +36,7 @@ export async function showModal<Params, Result>(
     height: customOpts.dimensions?.height ?? 420,
     backgroundColor: shellBgDefault,
     useContentSize: true,
+    resizable: false,
     frame: false,
     show: false,
     webPreferences: {

@@ -1,7 +1,7 @@
 import { messages } from "common/butlerd";
 import { Upload, Game, InstallLocationSummary } from "common/butlerd/messages";
 import { modals } from "common/modals";
-import React, { useState, Ref } from "react";
+import React, { useState } from "react";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { useSocket } from "renderer/contexts";
 import { HardModal } from "renderer/modals/HardModal";
@@ -17,6 +17,7 @@ import { mixins, fontSizes } from "renderer/theme";
 import * as _ from "lodash";
 import { fileSize } from "common/format/filesize";
 import { delay } from "common/delay";
+import { Center } from "renderer/basics/Center";
 
 export const InstallQueueModal = modalWidget(modals.installQueue, props => {
   const { gameId, uploadId } = props.params;
@@ -59,7 +60,6 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
   if (game && uploads) {
     return (
       <Body
-        sizeRef={props.sizeRef}
         game={game}
         uploads={uploads}
         initialUploadId={uploadId}
@@ -68,14 +68,21 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
     );
   }
 
-  return <HardModal ref={props.sizeRef} content={<Ellipsis />} />;
+  return (
+    <HardModal
+      content={
+        <Center>
+          <Ellipsis />
+        </Center>
+      }
+    />
+  );
 });
 
 interface Props {
   game: Game;
   uploads: Upload[];
   initialUploadId: number | undefined;
-  sizeRef: Ref<any>;
   onClose: () => void;
 }
 
@@ -183,7 +190,6 @@ const Body = (props: Props) => {
 
   return (
     <HardModal
-      ref={props.sizeRef}
       title={game.title}
       content={
         <BodyDiv>

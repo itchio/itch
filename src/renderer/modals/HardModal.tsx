@@ -1,15 +1,17 @@
-import React, { Ref, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import { fontSizes } from "renderer/theme";
 import { IconButton } from "renderer/basics/IconButton";
 import { useResizeObserver } from "renderer/use-resize-observer";
+import { useSocket } from "renderer/contexts";
+import { queries } from "common/queries";
+import { ModalPayload } from "common/modals";
 
 const HardModalDiv = styled.div`
   border: 1px solid ${p => p.theme.colors.shellBorder};
   min-width: 450px;
   min-height: 150px;
 
-  background: #fa5c5c;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -30,9 +32,13 @@ const HardModalTitleDiv = styled.div`
   }
 `;
 
+const contentPaddingTop = 40;
+const contentPaddingBottom = 15;
+
 const HardModalContent = styled.div`
   padding: 15px;
-  padding-top: 40px;
+  padding-top: ${contentPaddingTop}px;
+  padding-bottom: ${contentPaddingBottom}px;
   overflow-y: auto;
   flex-grow: 1;
 
@@ -70,14 +76,35 @@ export const HardModal = (props: Props) => {
   const titleHeight = useRef(0);
   const contentHeight = useRef(0);
   const buttonsHeight = useRef(0);
+  const socket = useSocket();
 
   const measure = useCallback(() => {
-    console.log("should measure: ", {
-      titleHeight: titleHeight.current,
-      contentHeight: contentHeight.current,
-      buttonsHeight: buttonsHeight.current,
-    });
-  }, []);
+    let totalHeight =
+        titleHeight.current +
+        contentHeight.current +
+        buttonsHeight.current +
+        contentPaddingTop +
+        contentPaddingBottom +
+        2 /* ahhh, the mysterious plus two. your guess is as good as mine */;
+
+    let payloadString = new URLSearchParams(window.location.search).get(
+      "payload"
+    );
+    if (!payloadString) {
+      return;
+    }
+    let { id } = JSON.parse(payloadString) as ModalPayload;
+    let width = window.outerWidth;
+    let height = totalHeight;
+
+    const maxHeight = Math.max(400, screen.availHeight * 0.6);
+    if (height > maxHeight) {
+      height = maxHeight;
+    }
+
+    window.resizeTo(width, height);
+    socket.query(queries.modalDidLayout, { id, width, height });
+  }, [socket]);
 
   const titleRef = useResizeObserver({
     onResize: useCallback(
@@ -91,7 +118,7 @@ export const HardModal = (props: Props) => {
   const contentRef = useResizeObserver({
     onResize: useCallback(
       (_width, height) => {
-        titleHeight.current = height;
+        contentHeight.current = height;
         measure();
       },
       [measure]
