@@ -22,7 +22,7 @@ import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { uploadIcons, UploadTitle } from "renderer/basics/upload";
-import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
+import { ClickOutsideRefer } from "renderer/basics/use-click-outside";
 import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
 import { useListen } from "renderer/Socket";

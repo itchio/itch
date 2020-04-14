@@ -1,16 +1,16 @@
-import React from "react";
+import React, { Ref, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { fontSizes } from "renderer/theme";
 import { IconButton } from "renderer/basics/IconButton";
+import { useResizeObserver } from "renderer/use-resize-observer";
 
 const HardModalDiv = styled.div`
   border: 1px solid ${p => p.theme.colors.shellBorder};
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  min-width: 450px;
+  min-height: 150px;
 
+  background: #fa5c5c;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -32,6 +32,7 @@ const HardModalTitleDiv = styled.div`
 
 const HardModalContent = styled.div`
   padding: 15px;
+  padding-top: 40px;
   overflow-y: auto;
   flex-grow: 1;
 
@@ -66,14 +67,56 @@ interface Props {
 }
 
 export const HardModal = (props: Props) => {
+  const titleHeight = useRef(0);
+  const contentHeight = useRef(0);
+  const buttonsHeight = useRef(0);
+
+  const measure = useCallback(() => {
+    console.log("should measure: ", {
+      titleHeight: titleHeight.current,
+      contentHeight: contentHeight.current,
+      buttonsHeight: buttonsHeight.current,
+    });
+  }, []);
+
+  const titleRef = useResizeObserver({
+    onResize: useCallback(
+      (_width, height) => {
+        titleHeight.current = height;
+        measure();
+      },
+      [measure]
+    ),
+  });
+  const contentRef = useResizeObserver({
+    onResize: useCallback(
+      (_width, height) => {
+        titleHeight.current = height;
+        measure();
+      },
+      [measure]
+    ),
+  });
+  const buttonsRef = useResizeObserver({
+    onResize: useCallback(
+      (_width, height) => {
+        buttonsHeight.current = height;
+        measure();
+      },
+      [measure]
+    ),
+  });
+
   return (
     <HardModalDiv className={props.className}>
-      <HardModalTitleDiv>
+      <HardModalTitleDiv ref={titleRef}>
         <h3>{props.title}</h3>
         <IconButton icon="cross" onClick={() => window.close()} />
       </HardModalTitleDiv>
-      <HardModalContent>{props.content}</HardModalContent>
-      <HardModalButtons>{props.buttons}</HardModalButtons>
+      <HardModalContent>
+        <div ref={contentRef}>{props.content}</div>
+      </HardModalContent>
+      <HardModalButtons ref={buttonsRef}>{props.buttons}</HardModalButtons>
     </HardModalDiv>
   );
 };

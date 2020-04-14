@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { Button } from "renderer/basics/Button";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 import { buttonBorderRadius } from "renderer/theme";
 import styled from "styled-components";
 

@@ -9,9 +9,29 @@ import { InstallModal } from "renderer/modals/InstallModal";
 import { ForceCloseModal } from "renderer/modals/ForceCloseModal";
 import { InstallQueueModal } from "renderer/modals/InstallQueueModal";
 import { ConfirmUninstallModal } from "renderer/modals/ConfirmUninstallModal";
+import styled from "styled-components";
+
+const OuterDiv = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+`;
+
+const InnerDiv = styled.div`
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+`;
 
 export interface ModalProps<Params, Result> {
   params: Params;
+  // sizeRef: Ref<any>;
   onResult: (result: Result) => void;
 }
 
@@ -39,18 +59,50 @@ let modalComponents: {
 };
 
 export const ModalRouter = () => {
-  let socket = useSocket();
+  const socket = useSocket();
+  // const timeout = useRef<NodeJS.Timeout | undefined>();
 
   let payloadString = new URLSearchParams(window.location.search).get(
     "payload"
   );
+  let { id, kind, params } = JSON.parse(payloadString || "{}") as ModalPayload;
+
+  // let initialHeight = window.outerHeight;
+  // const ref = useResizeObserver({
+  //   onResize: useCallback(
+  //     (_width, height) => {
+  //       if (timeout.current) {
+  //         clearTimeout(timeout.current);
+  //       }
+  //       timeout.current = setTimeout(() => {
+  //         let paddingHeight = window.outerHeight - window.innerHeight;
+  //         height += paddingHeight;
+  //         if (height > initialHeight) {
+  //           height = initialHeight;
+  //         }
+
+  //         let width = window.outerWidth;
+  //         if (width != window.outerWidth || height != window.outerHeight) {
+  //           window.resizeTo(width, height);
+  //         }
+  //         socket
+  //           .query(queries.modalDidLayout, { id, width, height })
+  //           .catch(e => {
+  //             console.warn(`could not send modalDidLayout`, e.stack);
+  //           });
+  //       }, 150);
+  //     },
+  //     [id, initialHeight, socket]
+  //   ),
+  // });
+
   if (!payloadString) {
     return <div>Missing modal payload</div>;
   }
-  let { id, kind, params } = JSON.parse(payloadString) as ModalPayload;
 
   let props: ModalProps<any, any> = {
     params,
+    // sizeRef: ref,
     onResult: (result: any) => {
       (async () => {
         try {
@@ -67,5 +119,11 @@ export const ModalRouter = () => {
   };
 
   let Component = modalComponents[kind as keyof typeof modals];
-  return <Component {...props} />;
+  return (
+    <OuterDiv>
+      <InnerDiv>
+        <Component {...props} />
+      </InnerDiv>
+    </OuterDiv>
+  );
 };

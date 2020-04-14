@@ -10,7 +10,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { Modal } from "renderer/basics/Modal";
-import { useDebounce } from "renderer/basics/useDebounce";
+import { useDebounce } from "renderer/basics/use-debounce";
 import { useProfile, useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
@@ -287,8 +287,6 @@ export const SearchModal = (props: { onClose: () => void }) => {
     },
     [onClose, numResults, current, results, openGame]
   );
-
-  console.log("current", current);
 
   const onViewAll = useCallback(() => {
     onClose();

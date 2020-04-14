@@ -1,7 +1,7 @@
 import { messages } from "common/butlerd";
 import { Upload, Game, InstallLocationSummary } from "common/butlerd/messages";
 import { modals } from "common/modals";
-import React, { useState } from "react";
+import React, { useState, Ref } from "react";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { useSocket } from "renderer/contexts";
 import { HardModal } from "renderer/modals/HardModal";
@@ -16,6 +16,7 @@ import { FormattedMessage } from "react-intl";
 import { mixins, fontSizes } from "renderer/theme";
 import * as _ from "lodash";
 import { fileSize } from "common/format/filesize";
+import { delay } from "common/delay";
 
 export const InstallQueueModal = modalWidget(modals.installQueue, props => {
   const { gameId, uploadId } = props.params;
@@ -32,6 +33,8 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
           const { game } = await socket.call(messages.FetchGame, {
             gameId,
           });
+          // testing reflows
+          await delay(1000);
           setGame(game);
         })(),
         // TODO: fetch both incompatibles and compatibles, show compatibles first.
@@ -56,6 +59,7 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
   if (game && uploads) {
     return (
       <Body
+        sizeRef={props.sizeRef}
         game={game}
         uploads={uploads}
         initialUploadId={uploadId}
@@ -64,24 +68,26 @@ export const InstallQueueModal = modalWidget(modals.installQueue, props => {
     );
   }
 
-  return <HardModal content={<Ellipsis />} />;
+  return <HardModal ref={props.sizeRef} content={<Ellipsis />} />;
 });
 
 interface Props {
   game: Game;
   uploads: Upload[];
   initialUploadId: number | undefined;
+  sizeRef: Ref<any>;
   onClose: () => void;
 }
 
 const BodyDiv = styled.div`
   width: 100%;
-  height: 100%;
+  flex-shrink: 0;
 
   display: flex;
   flex-direction: column;
 
   .dropdown-row {
+    flex-shrink: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -133,7 +139,7 @@ const StatRow = styled.div`
   .value {
     padding-left: 1em;
     color: ${p => p.theme.colors.text2};
-    font-size: ${p => fontSizes.small};
+    font-size: ${fontSizes.small};
   }
 `;
 
@@ -144,8 +150,10 @@ const Body = (props: Props) => {
   let getInitialUploadId = () => {
     if (_.find(uploads, u => u.id == initialUploadId)) {
       return initialUploadId;
-    } else {
+    } else if (uploads[0]) {
       return uploads[0].id;
+    } else {
+      return -1;
     }
   };
   const [uploadId, setUploadId] = useState(getInitialUploadId());
@@ -175,62 +183,69 @@ const Body = (props: Props) => {
 
   return (
     <HardModal
+      ref={props.sizeRef}
       title={game.title}
       content={
         <BodyDiv>
-          <div className="dropdowns">
-            <div className="dropdown-row">
-              <div className="dropdown-label">
-                <FormattedMessage id="plan_install.select_upload" />
+          {_.isEmpty(uploads) ? (
+            <p>There are no uploads available for install</p>
+          ) : (
+            <>
+              <div className="dropdowns">
+                <div className="dropdown-row">
+                  <div className="dropdown-label">
+                    <FormattedMessage id="plan_install.select_upload" />
+                  </div>
+                  <Dropdown
+                    options={uploads.map(upload => ({
+                      ...upload,
+                      label: (
+                        <OptionGroup>
+                          <UploadTitle upload={upload} showSize />
+                        </OptionGroup>
+                      ),
+                      value: upload.id,
+                    }))}
+                    value={uploadId}
+                    width="100%"
+                    onChange={value => setUploadId(value)}
+                  />
+                </div>
+                <div className="dropdown-row">
+                  <div className="dropdown-label">
+                    <FormattedMessage id="plan_install.select_install_location" />
+                  </div>
+                  <Dropdown
+                    options={locs.map(loc => ({
+                      ...loc,
+                      label: (
+                        <OptionGroup>
+                          <div className="name">{loc.path}</div>
+                          <div className="size">
+                            {fileSize(loc.sizeInfo.freeSize)}
+                          </div>
+                        </OptionGroup>
+                      ),
+                      value: loc.id,
+                    }))}
+                    value={locId}
+                    width="100%"
+                    onChange={value => setLocId(value)}
+                  />
+                </div>
+                <StatRow>
+                  <div className="name">Disk space required</div>
+                  <div className="value">
+                    {!!neededSize ? fileSize(neededSize) : "?"}
+                  </div>
+                </StatRow>
+                <StatRow>
+                  <div className="name">Disk space available</div>
+                  <div className="value">{fileSize(availableSize)}</div>
+                </StatRow>
               </div>
-              <Dropdown
-                options={uploads.map(upload => ({
-                  ...upload,
-                  label: (
-                    <OptionGroup>
-                      <UploadTitle upload={upload} showSize />
-                    </OptionGroup>
-                  ),
-                  value: upload.id,
-                }))}
-                value={uploadId}
-                width="100%"
-                onChange={value => setUploadId(value)}
-              />
-            </div>
-            <div className="dropdown-row">
-              <div className="dropdown-label">
-                <FormattedMessage id="plan_install.select_install_location" />
-              </div>
-              <Dropdown
-                options={locs.map(loc => ({
-                  ...loc,
-                  label: (
-                    <OptionGroup>
-                      <div className="name">{loc.path}</div>
-                      <div className="size">
-                        {fileSize(loc.sizeInfo.freeSize)}
-                      </div>
-                    </OptionGroup>
-                  ),
-                  value: loc.id,
-                }))}
-                value={locId}
-                width="100%"
-                onChange={value => setLocId(value)}
-              />
-            </div>
-            <StatRow>
-              <div className="name">Disk space required</div>
-              <div className="value">
-                {!!neededSize ? fileSize(neededSize) : "?"}
-              </div>
-            </StatRow>
-            <StatRow>
-              <div className="name">Disk space available</div>
-              <div className="value">{fileSize(availableSize)}</div>
-            </StatRow>
-          </div>
+            </>
+          )}
         </BodyDiv>
       }
       buttons={

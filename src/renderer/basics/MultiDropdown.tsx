@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { useState } from "react";
 import { LocalizedString } from "common/types";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 import { DropdownButton, DropdownItem } from "renderer/Dropdown";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";

@@ -10,7 +10,7 @@ import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";

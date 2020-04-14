@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { ExtendedWebContents } from "common/extended-web-contents";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 
 const Filler = styled.div`
   flex-grow: 1;

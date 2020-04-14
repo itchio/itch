@@ -124,7 +124,6 @@
     "mocha": "^6.1.4",
     "neon-cli": "^0.4.0",
     "prettier": "^1.19.1",
-    "react-container-dimensions": "^1.4.1",
     "react-hot-loader": "^4.12.18",
     "recursive-copy": "^2.0.10",
     "source-map-loader": "^0.2.4",

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { LaunchButton } from "renderer/basics/LaunchButton";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 import { useSocket } from "renderer/contexts";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { useCaves } from "renderer/use-caves";

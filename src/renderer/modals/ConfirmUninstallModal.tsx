@@ -69,6 +69,7 @@ export const ConfirmUninstallModal = modalWidget(
 
     return (
       <HardModal
+        // ref={props.sizeRef}
         title={data.game.title}
         content={
           <FormattedMessage

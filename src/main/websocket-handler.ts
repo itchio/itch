@@ -253,6 +253,12 @@ export class WebsocketHandler {
       return {};
     });
 
+    onQuery(queries.modalDidLayout, async req => {
+      logger.info(`Modal ${req.id} did layout: ${req.width}x${req.height}`);
+      ms.modals[req.id]?.browserWindow?.show();
+      return {};
+    });
+
     onQuery(queries.exit, async req => {
       // TODO: check for running games
       app.exit(0);

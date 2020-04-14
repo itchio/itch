@@ -19,7 +19,7 @@ import { Button } from "renderer/basics/Button";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useSocket } from "renderer/contexts";
 import { modals } from "common/modals";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 
 interface Props {
   game?: Game;

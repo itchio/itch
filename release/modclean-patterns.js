@@ -170,7 +170,6 @@ module.exports = {
   // see `release/list-bad-dists.js` to generate that automatically
   fullPatterns: [
     "async/dist",
-    "element-resize-detector/dist",
     "handlebars/dist",
     "math-expression-evaluator/dist",
     "polished/dist",

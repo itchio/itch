@@ -4,7 +4,7 @@ import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import React, { useMemo, useState } from "react";
-import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useClickOutside } from "renderer/basics/use-click-outside";
 import { useSocket } from "renderer/contexts";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";

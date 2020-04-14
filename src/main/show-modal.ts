@@ -58,9 +58,9 @@ export async function showModal<Params, Result>(
   let urlParams = new URLSearchParams();
   urlParams.set("payload", JSON.stringify(payload));
   modal.loadURL(`itch://modal?${urlParams}`);
-  modal.once("ready-to-show", () => {
-    modal.show();
-  });
+  // modal.once("ready-to-show", () => {
+  //   modal.show();
+  // });
 
   try {
     return await new Promise((resolve, reject) => {

@@ -162,6 +162,7 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
 
   return (
     <HardPrefModal
+      // ref={props.sizeRef}
       title={<FormattedMessage id="sidebar.preferences" />}
       content={
         <>

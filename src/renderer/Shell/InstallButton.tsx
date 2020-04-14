@@ -6,7 +6,7 @@ import { MenuTippy } from "renderer/basics/Menu";
 import {
   ClickOutsideRefer,
   useClickOutside,
-} from "renderer/basics/useClickOutside";
+} from "renderer/basics/use-click-outside";
 import { InstallMenu } from "renderer/Shell/InstallMenu";
 import { useDownloads } from "renderer/use-downloads";
 

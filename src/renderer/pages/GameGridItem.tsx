@@ -9,7 +9,7 @@ import { Icon } from "renderer/basics/Icon";
 import { IconButton } from "renderer/basics/IconButton";
 import { LaunchButtonBase } from "renderer/basics/LaunchButton";
 import { MenuTippy } from "renderer/basics/Menu";
-import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
+import { ClickOutsideRefer } from "renderer/basics/use-click-outside";
 import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { Button } from "renderer/basics/Button";
