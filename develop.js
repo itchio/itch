@@ -9,11 +9,11 @@ const log = weblog({ name: "develop" });
 async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
 
-  process.on("unhandledRejection", e => {
+  process.on("unhandledRejection", (e) => {
     log.error(`Unhandled rejection `, e.stack || e);
     process.exit(1);
   });
-  process.on("uncaughtException", e => {
+  process.on("uncaughtException", (e) => {
     log.error(`Uncaught exception `, e.stack || e);
     process.exit(1);
   });
@@ -54,7 +54,11 @@ async function main() {
   });
 
   log.info(`Compiling...`);
-  const [stats] = await Promise.all([mainPromise, ensureButler(), ensureValet()]);
+  const [stats] = await Promise.all([
+    mainPromise,
+    ensureButler(),
+    ensureValet(),
+  ]);
   {
     const info = stats.toJson();
     if (stats.hasErrors()) {
@@ -96,7 +100,7 @@ async function main() {
       resolve();
     });
 
-    proc.on("error", e => reject(e));
+    proc.on("error", (e) => reject(e));
   });
 }
 
@@ -110,13 +114,17 @@ async function ensureButler() {
   }
 
   await run("go", ["build"], { cwd: "./install-deps" });
-  await run("install-deps", ["--manifest", "../package.json", "--dir", "..", "--development"], {
-    cwd: "./install-deps",
-  });
+  await run(
+    "install-deps",
+    ["--manifest", "../package.json", "--dir", "..", "--development"],
+    {
+      cwd: "./install-deps",
+    }
+  );
 }
 
 async function ensureValet() {
-    await run("npm", ["run", "build-valet"]);
+  await run("npm", ["run", "build-valet"]);
 }
 
 async function run(command, args, options) {
@@ -130,6 +138,8 @@ async function run(command, args, options) {
       stdio: "inherit",
     };
   }
+  options.shell = true;
+
   log.info(`$ ${command} :: ${args.join(" :: ")}`);
   let p = childProcess.spawn(command, args, options);
   await new Promise((resolve, reject) => {
