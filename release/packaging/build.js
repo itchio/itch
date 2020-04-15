@@ -1,6 +1,8 @@
 const $ = require("../common");
+const { validateContext } = require("./context");
 
-module.exports.build = async function build() {
+module.exports.build = async function build(cx) {
+  validateContext(cx);
   $.say(`Building ${$.appName()} ${$.buildVersion()}`);
 
   $.say("Wiping prefix/");
@@ -30,6 +32,22 @@ module.exports.build = async function build() {
 
   $.say("Installing npm packages in prefix")
   await $.cd("prefix", async () => {
-    $(await $.sh("npm ci --production"));
+    // $(await $.sh("npm ci --production"));
+    $.say("Trying electron-build-env...")
+    let build = require("electron-build-env");
+    let opts = {
+      arch: cx.archInfo.electronArch,
+    };
+    $.say(`electron-build-env opts: ${JSON.stringify(opts, null, 2)}`);
+    await new Promise((resolve, reject) => {
+      build(["npm", "ci", "--production"], opts, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      })
+    });
+    $.say("Should be okay")
   });
 }

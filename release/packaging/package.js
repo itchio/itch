@@ -29,6 +29,16 @@ module.exports.package = async function package(cx) {
     ...getElectronOptions(cx),
     afterCopy: [
       async (buildPath, electronVersion, platform, arch, callback) => {
+        // console.log(`buildPath = `, buildPath);
+        // let entries = require("fs").readdirSync(buildPath);
+        // console.log(`entries = `, entries);
+
+        // await $.cd(buildPath, async function() {
+        //   let temps = "electron-build-env neon-cli";
+        //   $(await $.sh(`npm i -D ${temps}`));
+        //   $(await $.sh(`npm run build-valet`));
+        //   $(await $.sh(`npm rm ${temps}`));
+        // });
         await cleanModules(cx, buildPath);
         callback();
       },
