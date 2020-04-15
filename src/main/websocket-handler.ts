@@ -250,21 +250,27 @@ export class WebsocketHandler {
     onQuery(queries.modalResult, async req => {
       logger.info(`Got modal result for ${req.id}: ${dump(req.result)}`);
       ms.modals[req.id]?.onResult(req.result);
-      return {};
     });
 
     onQuery(queries.modalDidLayout, async req => {
       logger.info(`Modal ${req.id} did layout: ${req.width}x${req.height}`);
       ms.modals[req.id]?.browserWindow?.show();
-      return {};
     });
 
-    onQuery(queries.exit, async req => {
+    onQuery(queries.testValet, async _req => {
+      try {
+        require("valet");
+      } catch (e) {
+        console.warn(`Could not require valet: `, e.stack);
+      }
+    });
+
+    onQuery(queries.exit, async _req => {
       // TODO: check for running games
       app.exit(0);
     });
 
-    onPacket(packets.navigate, (cx, req) => {
+    onPacket(packets.navigate, (_cx, req) => {
       broadcastPacket(ms, packets.navigate, req);
     });
 

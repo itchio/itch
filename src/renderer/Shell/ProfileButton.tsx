@@ -76,6 +76,13 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
   return (
     <MenuContents>
       <Button
+        label={"Test valet"}
+        icon="globe2"
+        onClick={() => {
+          socket.query(queries.testValet, {}).catch(e => console.warn(e.stack));
+        }}
+      />
+      <Button
         label={<FormattedMessage id="sidebar.preferences" />}
         icon="cog"
         onClick={() => {

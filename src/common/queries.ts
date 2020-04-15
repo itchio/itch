@@ -54,8 +54,10 @@ export const queries = wireQueries({
 
   // this is a query (and not a packet) because we need to make sure the main
   // process has received the modal result *before* the modal closes
-  modalResult: query<{ id: string; result: any }, {}>(),
-  modalDidLayout: query<{ id: string; width: number; height: number }, {}>(),
+  modalResult: query<{ id: string; result: any }, void>(),
+  modalDidLayout: query<{ id: string; width: number; height: number }, void>(),
+
+  testValet: query<{}, void>(),
 });
 
 export interface QueryRequest<Params> {

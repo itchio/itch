@@ -108,13 +108,17 @@ function getCommonConfig(type, env) {
       path: path.resolve(`./dist/${mode}/${type}/assets`),
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".node"],
       modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
     externals: ["child_process", "net", "ws", "electron-devtools-installer"],
     module: {
       rules: [
+        {
+          test: /\.node$/,
+          loader: "node-loader"
+        },
         {
           test: /\.(png|svg|woff|woff2)$/,
           use: [{ loader: "file-loader" }],
