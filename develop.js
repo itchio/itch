@@ -54,7 +54,7 @@ async function main() {
   });
 
   log.info(`Compiling...`);
-  const [stats] = await Promise.all([mainPromise], ensureButler());
+  const [stats] = await Promise.all([mainPromise, ensureButler(), ensureValet()]);
   {
     const info = stats.toJson();
     if (stats.hasErrors()) {
@@ -109,18 +109,33 @@ async function ensureButler() {
     return;
   }
 
-  await run("go build", { cwd: "./install-deps" });
-  await run("install-deps --manifest ../package.json --dir .. --development", {
+  await run("go", ["build"], { cwd: "./install-deps" });
+  await run("install-deps", ["--manifest", "../package.json", "--dir", "..", "--development"], {
     cwd: "./install-deps",
   });
 }
 
-async function run(command, options) {
-  log.info(`$ ${command}`);
+async function ensureValet() {
+    await run("npm", ["run", "build-valet"]);
+}
+
+async function run(command, args, options) {
+  if (!options) {
+    options = {};
+  }
+
+  if (!options.stdio) {
+    options = {
+      ...options,
+      stdio: "inherit",
+    };
+  }
+  log.info(`$ ${command} :: ${args.join(" :: ")}`);
+  let p = childProcess.spawn(command, args, options);
   await new Promise((resolve, reject) => {
-    childProcess.exec(command, options, (err, stdout, stderr) => {
-      if (err) {
-        reject(err);
+    p.on("close", (code) => {
+      if (code != 0) {
+        reject(new Error(`${command} exited with code ${code}`));
       } else {
         resolve();
       }
