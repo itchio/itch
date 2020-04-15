@@ -29,3 +29,26 @@ Redux was used wayyy back in the original versions of the app.
 
 We use a convoluted system to have side-effects. I'd like to
 minimize app state duplication and RPC traffic instead.
+
+## webpack / module bundling / `node_modules`
+
+The only required `node_modules` are `ws` and `valet`, with deps:
+
+```
+buffer-from  source-map  source-map-support  valet  ws
+```
+
+However, `ws` dependency should be removed.
+
+Everything else is bundled by webpack.
+
+## Modclean  
+
+modclean can be entirely deprecated - instead removing everything except `valet`.
+
+As for `valet`, the whole `target` directory can be wiped, and `native/index.node` can be 
+stripped. Remains to be seen whether stripping breaks anything with a Go library statically
+linked.
+
+
+
