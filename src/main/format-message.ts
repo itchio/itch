@@ -7,7 +7,7 @@ export function formatMessage(
   ms: MainState,
   template: {
     id: string;
-    values?: Record<string, string | number | boolean | null | undefined>;
+    values?: Record<string, string>;
   }
 ): string {
   const locales = [ms.localeState?.current?.lang ?? "en-US"];
@@ -16,5 +16,6 @@ export function formatMessage(
     ms.localeState?.englishStrings[template.id] ||
     template.id;
   const formatter = new IntlMessageFormat(message, locales);
-  return formatter.format(template.values);
+  // TODO: figure out this function signature..
+  return formatter.format(template.values) as string;
 }

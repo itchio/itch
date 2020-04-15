@@ -14,10 +14,11 @@ import { formatMessage } from "main/format-message";
 
 const logger = mainLogger.childWithName("tray");
 
-const kitchTrayImage = require("static/images/tray/kitch.png");
-const itchTrayImage = require("static/images/tray/itch.png");
+import kitchTrayImage from "static/images/tray/kitch.png";
+import itchTrayImage from "static/images/tray/itch.png";
 
 function trayIcon(): string {
+  console.log(`kitchTrayImage = ${JSON.stringify(kitchTrayImage, null, 2)}`);
   return join(__dirname, app.name === "kitch" ? kitchTrayImage : itchTrayImage);
 }
 
@@ -37,12 +38,12 @@ export function toggleVisibility(ms: MainState) {
 
 export function initTray(ms: MainState) {
   let tray = new Tray(trayIcon());
-  tray.on("click", ev => {
+  tray.on("click", (ev) => {
     logger.info(`Tray clicked`);
     ev.preventDefault();
     toggleVisibility(ms);
   });
-  tray.on("right-click", ev => {
+  tray.on("right-click", (ev) => {
     logger.info(`Tray right-clicked`);
     tray.popUpContextMenu();
   });
@@ -51,7 +52,7 @@ export function initTray(ms: MainState) {
 }
 
 export function triggerTrayMenuUpdate(ms: MainState) {
-  updateTrayMenu(ms).catch(e => {
+  updateTrayMenu(ms).catch((e) => {
     logger.warn(`While updating tray menu: ${e.stack}`);
   });
 }
@@ -65,7 +66,7 @@ async function updateTrayMenu(ms: MainState) {
     {
       label: formatMessage(ms, { id: "menu.file.preferences" }),
       click: () =>
-        showModal(ms, modals.preferences, {}).catch(e =>
+        showModal(ms, modals.preferences, {}).catch((e) =>
           console.warn(`while showing preferences: ${e.stack}`)
         ),
     },
@@ -109,14 +110,15 @@ async function updateTrayMenu(ms: MainState) {
     });
 
     if (items) {
-      items = _.uniqBy(items, cave => cave.game?.id);
+      items = _.uniqBy(items, (cave) => cave.game?.id);
       template = [
-        ...items.map(cave => ({
+        ...items.map((cave) => ({
           label: cave.game.title,
           click: () => {
-            launchGame(ms, { gameId: cave.game.id, caveId: cave.id }).catch(e =>
-              logger.warn(`While launching game: ${e.stack}`)
-            );
+            launchGame(ms, {
+              gameId: cave.game.id,
+              caveId: cave.id,
+            }).catch((e) => logger.warn(`While launching game: ${e.stack}`));
           },
         })),
         {
