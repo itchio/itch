@@ -137,7 +137,7 @@
     "webpack": "^4.35.2",
     "webpack-build-notifier": "^1.0.3",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.7.2",
+    "webpack-dev-server": "^3.10.3",
     "webpack-log": "^2.0.0",
     "webpack-merge": "^4.2.1"
   },
