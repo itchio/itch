@@ -14,5 +14,6 @@
     "glob": "^7.1.1",
     "humanize-plus": "^1.8.2",
     "munyx": "^3.4.1"
-  }
+  },
+  "dependencies": {}
 }

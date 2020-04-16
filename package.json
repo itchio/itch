@@ -94,11 +94,10 @@
   },
   "scripts": {
     "start": "node develop.js",
-    "postinstall": "npm run build-valet",
     "build-valet": "electron-build-env neon build --release valet",
     "compile": "webpack-cli --config webpack.config.prod.js",
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
-    "integration-tests": "node release/ci-integration-tests.js",
+    "integration-tests": "node release/ci-test.js",
     "i18n": "node release/ci-i18n-check.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",

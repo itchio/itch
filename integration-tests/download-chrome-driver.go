@@ -36,7 +36,7 @@ func downloadChromeDriver(r *runner) error {
 
 	currentVersion, err := getChromeDriverVersion()
 	if err == nil {
-		if currentVersion == chromeDriverVersionString {
+		if strings.HasPrefix(currentVersion, chromeDriverVersionString) {
 			r.logf("Good version found, keeping it: %s", currentVersion)
 			return nil
 		}
@@ -119,8 +119,8 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-const electronVersion = "7.1.9"
-const chromeDriverVersionString = "ChromeDriver 78.0.3904.130 (3da3ae89fabe8ebe6525e57da3cab29f91c04293-refs/heads/master@{#709924})"
+const electronVersion = "8.2.2"
+const chromeDriverVersionString = "ChromeDriver 80.0.3987.163"
 
 func chromeDriverURL(r *runner) string {
 	suffix := ""

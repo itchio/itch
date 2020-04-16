@@ -62,20 +62,6 @@ module.exports.package = async function package(cx) {
 
   await installDeps(cx);
 
-  if (cx.os === "linux") {
-    // see https://github.com/itchio/itch/issues/2121
-    $.say(`Adding libgconf library...`);
-    const debArch = arch === "386" ? "i386" : "amd64";
-    const baseURL = `https://dl.itch.ovh/libgconf-2-4-bin`;
-    const fileName = `libgconf-2.so.4`;
-    const fileURL = `${baseURL}/${debArch}/${fileName}`;
-    const dest = `${cx.packageDir}/${cx.binarySubdir}/${fileName}`;
-    $.say(`Downloading (${fileURL})`);
-    $.say(`  to (${dest})`);
-    $(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
-    $(await $.sh(`chmod +x ${dest}`));
-  }
-
   await sign(cx, cx.packageDir);
 };
 

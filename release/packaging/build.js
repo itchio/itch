@@ -32,15 +32,17 @@ module.exports.build = async function build(cx) {
 
   $.say("Installing npm packages in prefix")
   await $.cd("prefix", async () => {
-    // $(await $.sh("npm ci --production"));
-    $.say("Trying electron-build-env...")
+    $.say("Installing npm packages...");
+    $(await $.sh("npm ci --production"));
+
+    $.say("Building valet through electron-build-env...");
     let build = require("electron-build-env");
     let opts = {
       arch: cx.archInfo.electronArch,
     };
-    $.say(`electron-build-env opts: ${JSON.stringify(opts, null, 2)}`);
+    $.say(`electron-build-env options: ${JSON.stringify(opts, null, 2)}`);
     await new Promise((resolve, reject) => {
-      build(["npm", "ci", "--production"], opts, function (err) {
+      build(["../node_modules/.bin/neon", "build", "--release", "valet"], opts, function (err) {
         if (err) {
           reject(err);
         } else {
@@ -48,6 +50,5 @@ module.exports.build = async function build(cx) {
         }
       })
     });
-    $.say("Should be okay")
   });
 }
