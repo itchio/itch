@@ -27,28 +27,23 @@ module.exports.build = async function build(cx) {
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`prefix/package.json`, pkgContents);
 
-  $.say("Copying package-lock.json to prefix/");
-  $(await $.sh("cp package-lock.json prefix/"));
+  $.say("Building valet")
+  $(await $.sh(`npx electron-build-env --arch ${cx.archInfo.electronArch} -- neon build --release valet`));
 
-  $.say("Installing npm packages in prefix")
-  await $.cd("prefix", async () => {
-    $.say("Installing npm packages...");
-    $(await $.sh("npm ci --production"));
+  $.say("Copying valet to prefix");
+  $(await $.sh("mkdir -p prefix/node_modules"));
+  $(await $.sh("cp -rf node_modules/valet prefix/node_modules/"));
+  $.say("Trimming down valet install");
+  $(await $.sh("rm -rf prefix/node_modules/valet/{libbutler,native/target}"));
 
-    $.say("Building valet through electron-build-env...");
-    let build = require("electron-build-env");
-    let opts = {
-      arch: cx.archInfo.electronArch,
-    };
-    $.say(`electron-build-env options: ${JSON.stringify(opts, null, 2)}`);
-    await new Promise((resolve, reject) => {
-      build(["../node_modules/.bin/neon", "build", "--release", "valet"], opts, function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    });
+  $.say("Installing required externals")
+  const externals = [
+    // TODO: remove 'ws' once moved to IPC transport
+    "ws",
+    // TODO: is it really a good idea to ship that in production?
+    "source-map-support",
+  ];
+  await $.cd("prefix", async function() {
+    $(await $.sh(`npm install --no-save ${externals.join(" ")}`));
   });
 }

@@ -23,26 +23,10 @@ module.exports.package = async function package(cx) {
     name: appName,
     electronVersion: cx.electronVersion,
     appVersion,
-    asar: true,
+    asar: false,
     overwrite: true,
     out: outDir,
     ...getElectronOptions(cx),
-    afterCopy: [
-      async (buildPath, electronVersion, platform, arch, callback) => {
-        // console.log(`buildPath = `, buildPath);
-        // let entries = require("fs").readdirSync(buildPath);
-        // console.log(`entries = `, entries);
-
-        // await $.cd(buildPath, async function() {
-        //   let temps = "electron-build-env neon-cli";
-        //   $(await $.sh(`npm i -D ${temps}`));
-        //   $(await $.sh(`npm run build-valet`));
-        //   $(await $.sh(`npm rm ${temps}`));
-        // });
-        await cleanModules(cx, buildPath);
-        callback();
-      },
-    ],
   };
 
   const appPaths = await $.measure(
@@ -132,19 +116,6 @@ function darwinOptions(cx) {
     }
   }
   return options;
-}
-
-async function cleanModules(cx, buildPath) {
-  validateContext(cx);
-
-  $.say("Cleaning modules...");
-  await $.cd(buildPath, async function() {
-    $(await $.sh("pwd"));
-    $(await $.sh("ls -lhA"));
-    await $.sh(
-      `${toUnixPath(ospath.join(cx.projectDir, "release", "modclean.js"))} .`
-    );
-  });
 }
 
 async function installDeps(cx) {
