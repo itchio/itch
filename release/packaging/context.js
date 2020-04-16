@@ -36,6 +36,17 @@ module.exports.parseContext = async function parseContext() {
     );
   }
 
+  // ok let's just add either mingw64 or mingw32 to the path if we're on 32-bit or 64-bit windows
+  if (os === "windows") {
+      if (arch === "386") {
+          $.say("Adding mingw32 to PATH");
+          process.env.PATH = `/mingw32/bin:${process.env.PATH}`;
+      } else if (arch === "amd64") {
+          $.say("Adding mingw64 to PATH");
+          process.env.PATH = `/mingw64/bin:${process.env.PATH}`;
+      }
+  }
+
   const shouldSign = !!process.env.CI || !!process.env.FORCE_CODESIGN;
   const projectDir = process.cwd();
 
