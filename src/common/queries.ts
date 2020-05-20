@@ -57,7 +57,7 @@ export const queries = wireQueries({
   modalResult: query<{ id: string; result: any }, void>(),
   modalDidLayout: query<{ id: string; width: number; height: number }, void>(),
 
-  testValet: query<{}, void>(),
+  testValet: query<{}, string>(),
 });
 
 export interface QueryRequest<Params> {

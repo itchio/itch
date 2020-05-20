@@ -79,7 +79,10 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
         label={"Test valet"}
         icon="globe2"
         onClick={() => {
-          socket.query(queries.testValet, {}).catch(e => console.warn(e.stack));
+          socket
+            .query(queries.testValet, {})
+            .then((s) => alert(s))
+            .catch((e) => console.warn(e.stack));
         }}
       />
       <Button

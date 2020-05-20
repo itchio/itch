@@ -112,7 +112,7 @@ function getCommonConfig(type, env) {
       modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
-    externals: ["valet", "child_process", "net", "ws", "electron-devtools-installer"],
+    externals: ["@itchio/valet", "child_process", "net", "ws", "electron-devtools-installer"],
     module: {
       rules: [
         {

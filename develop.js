@@ -57,7 +57,6 @@ async function main() {
   const [stats] = await Promise.all([
     mainPromise,
     ensureButler(),
-    ensureValet(),
   ]);
   {
     const info = stats.toJson();
@@ -121,10 +120,6 @@ async function ensureButler() {
       cwd: "./install-deps",
     }
   );
-}
-
-async function ensureValet() {
-  await run("npm", ["run", "build-valet"]);
 }
 
 async function run(command, args, options) {

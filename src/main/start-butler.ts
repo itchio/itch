@@ -11,6 +11,8 @@ import { Logger } from "common/logger";
 import { app } from "electron";
 import { envSettings } from "main/constants/env-settings";
 
+import valet from "@itchio/valet";
+
 let logger = mainLogger.childWithName("butler");
 
 export interface ButlerState {
@@ -58,13 +60,23 @@ export async function startButler(ms: MainState) {
       "--destiny-pid",
       `${process.pid}`,
     ],
-    log: msg => logger.debug(msg),
+    log: (msg) => logger.debug(msg),
   });
   let endpoint = await instance.getEndpoint();
 
   const client = new Client(endpoint);
   const res = await client.call(messages.VersionGet, {});
   logger.info(`butler version: ${res.versionString}`);
+
+  valet.initialize({
+    dbPath: butlerDbPath(),
+    address: urls.itchio,
+    userAgent: butlerUserAgent(),
+  });
+  {
+    let { major, minor, patch } = valet.version;
+    logger.info(`valet version: ${major}.${minor}.${patch}`);
+  }
 
   ms.butler = {
     instance,

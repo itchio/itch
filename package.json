@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
+    "@itchio/valet": "^0.6.0",
     "@tippy.js/react": "^3.1.1",
     "@types/styled-components": "^5.1.0",
     "@types/ws": "^7.2.4",
@@ -41,7 +42,6 @@
     "source-map-support": "^0.5.16",
     "styled-components": "^5.1.0",
     "term-color": "^1.0.1",
-    "valet": "git+https://github.com/itchio/valet.git",
     "which": "^2.0.2",
     "ws": "^7.2.3"
   },
@@ -77,7 +77,6 @@
     "eslint-plugin-react-hooks": "^3.0.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
-    "neon-cli": "^0.4.0",
     "prettier": "^2.0.4",
     "react-hot-loader": "^4.12.20",
     "source-map-loader": "^0.2.4",
@@ -94,7 +93,6 @@
   },
   "scripts": {
     "start": "node develop.js",
-    "build-valet": "electron-build-env neon build --release valet",
     "compile": "webpack-cli --config webpack.config.prod.js",
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
     "integration-tests": "node release/ci-test.js",

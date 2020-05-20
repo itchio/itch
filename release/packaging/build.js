@@ -22,19 +22,22 @@ module.exports.build = async function build(cx) {
   for (const field of ["name", "productName", "desktopName"]) {
     pkg[field] = $.appName();
   }
-  delete pkg.scripts.postinstall;
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`prefix/package.json`, pkgContents);
 
-  $.say("Building valet")
-  $(await $.sh(`npx electron-build-env --arch ${cx.archInfo.electronArch} -- neon build --release valet`));
+  $.say("Downloading valet binaries")
+  let valetArch = cx.archInfo.electronArch === "ia32" ? "i686" : "x86_64";
+  let otherValetArch = valetArch == "i686" ? "x86_64" : "i686";
+  await $.cd("node_modules/@itchio/valet", async function () {
+    $(await $.sh(`npm run postinstall -- --verbose --arch ${valetArch}`));
+  });
 
   $.say("Copying valet to prefix");
-  $(await $.sh("mkdir -p prefix/node_modules"));
-  $(await $.sh("cp -rf node_modules/valet prefix/node_modules/"));
+  $(await $.sh("mkdir -p prefix/node_modules/@itchio"));
+  $(await $.sh("cp -rf node_modules/@itchio/valet prefix/node_modules/@itchio"));
   $.say("Trimming down valet install");
-  $(await $.sh("rm -rf prefix/node_modules/valet/{libbutler,native/target}"));
+  $(await $.sh(`rm -rf prefix/node_modules/@itchio/valet/artifacts/${otherValetArch}-*`));
 
   $.say("Installing required externals")
   const externals = [

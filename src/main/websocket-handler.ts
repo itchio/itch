@@ -25,6 +25,8 @@ import WebSocket from "ws";
 import { showModal } from "main/show-modal";
 import { triggerTrayMenuUpdate } from "main/tray";
 
+import valet from "@itchio/valet";
+
 const logger = mainLogger.childWithName("websocket-handler");
 
 export function broadcastPacket<T>(
@@ -150,30 +152,33 @@ export class WebsocketHandler {
 
     onQuery(queries.getDownloadsForGame, async ({ gameId }) => {
       return {
-        downloads: filterObject(ms.downloads ?? {}, d => d.game?.id === gameId),
+        downloads: filterObject(
+          ms.downloads ?? {},
+          (d) => d.game?.id === gameId
+        ),
       };
     });
 
     onQuery(queries.getProfile, async () => {
       return { profile: ms.profile };
     });
-    onQuery(queries.setProfile, async params => {
+    onQuery(queries.setProfile, async (params) => {
       await setProfile(ms, params);
     });
 
     onQuery(queries.getWebviewState, async () => {
       return { state: ms.webview };
     });
-    onQuery(queries.setWebviewState, async params => {
+    onQuery(queries.setWebviewState, async (params) => {
       ms.webview = params.state;
     });
 
-    onQuery(queries.getCurrentLocale, async params => {
+    onQuery(queries.getCurrentLocale, async (params) => {
       return {
         currentLocale: ms.localeState!.current,
       };
     });
-    onQuery(queries.switchLanguage, async params => {
+    onQuery(queries.switchLanguage, async (params) => {
       const { lang } = params;
       await loadLocale(ms, lang);
       broadcastPacket(ms, packets.currentLocaleChanged, {
@@ -243,29 +248,34 @@ export class WebsocketHandler {
       ms.browserWindow.webContents.openDevTools({ mode: "detach" });
     });
 
-    onQuery(queries.showModal, async req => {
+    onQuery(queries.showModal, async (req) => {
       return await showModal(ms, req.mc, req.params);
     });
 
-    onQuery(queries.modalResult, async req => {
+    onQuery(queries.modalResult, async (req) => {
       logger.info(`Got modal result for ${req.id}: ${dump(req.result)}`);
       ms.modals[req.id]?.onResult(req.result);
     });
 
-    onQuery(queries.modalDidLayout, async req => {
+    onQuery(queries.modalDidLayout, async (req) => {
       logger.info(`Modal ${req.id} did layout: ${req.width}x${req.height}`);
       ms.modals[req.id]?.browserWindow?.show();
     });
 
-    onQuery(queries.testValet, async _req => {
-      try {
-        require("valet");
-      } catch (e) {
-        console.warn(`Could not require valet: `, e.stack);
-      }
+    onQuery(queries.testValet, async (_req) => {
+      let conn = valet.newConn();
+      conn.send(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "Version.Get",
+          params: {},
+        })
+      );
+      return await conn.recv();
     });
 
-    onQuery(queries.exit, async _req => {
+    onQuery(queries.exit, async (_req) => {
       // TODO: check for running games
       app.exit(0);
     });
@@ -287,14 +297,14 @@ export class WebsocketHandler {
       }
 
       handler(req.params)
-        .then(result => {
+        .then((result) => {
           cx.reply(packets.queryResult, {
             state: "success",
             id: req.id,
             result,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           logger.warn(`Failed query: ${dump(req)}\n\nStack = ${error.stack}`);
           cx.reply(packets.queryResult, {
             state: "error",
@@ -374,14 +384,14 @@ export class WebsocketHandler {
         call = ongoing.conv.call(rc, req.params);
       } else {
         let client = new Client(ms.butler.endpoint);
-        call = client.call(rc, req.params, conv => {
+        call = client.call(rc, req.params, (conv) => {
           ongoing = { conv, inbound: {}, idSeed: 1 };
           this.ongoingConversations[payload.conv] = ongoing;
           if (payload.handled) {
             if (payload.handled.notifications) {
               for (const method of payload.handled.notifications) {
                 let nc = { __method: method } as NotificationCreator<any>;
-                conv.onNotification(nc, notif => {
+                conv.onNotification(nc, (notif) => {
                   cx.reply(packets.butlerNotification, {
                     conv: payload.conv,
                     notif,
@@ -393,7 +403,7 @@ export class WebsocketHandler {
             if (payload.handled.requests) {
               for (const method of payload.handled.requests) {
                 let rc = { __method: method } as RequestCreator<any, any>;
-                conv.onRequest(rc, async params => {
+                conv.onRequest(rc, async (params) => {
                   let id = ongoing.idSeed;
                   ongoing.idSeed++;
 
@@ -418,7 +428,7 @@ export class WebsocketHandler {
       }
 
       call
-        .then(originalResult => {
+        .then((originalResult) => {
           let result: RpcResult<any> = {
             jsonrpc: "2.0",
             id: req.id,

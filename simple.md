@@ -32,10 +32,10 @@ minimize app state duplication and RPC traffic instead.
 
 ## webpack / module bundling / `node_modules`
 
-The only required `node_modules` are `ws` and `valet`, with deps:
+The only required `node_modules` are `ws` and `@itchio/valet`, with deps:
 
 ```
-buffer-from  source-map  source-map-support  valet  ws
+buffer-from  source-map  source-map-support  @itchio/valet  ws
 ```
 
 However, `ws` dependency should be removed.
@@ -44,9 +44,9 @@ Everything else is bundled by webpack.
 
 ## Modclean  
 
-modclean can be entirely deprecated - instead removing everything except `valet`.
+modclean can be entirely deprecated - instead removing everything except `@itchio/valet`.
 
-As for `valet`, the whole `target` directory can be wiped, and `native/index.node` can be 
+As for `@itchio/valet`, the whole `target` directory can be wiped, and `native/index.node` can be 
 stripped. Remains to be seen whether stripping breaks anything with a Go library statically
 linked.
 
