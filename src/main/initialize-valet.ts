@@ -9,11 +9,7 @@ import valet, { Client, Conversation, messages } from "@itchio/valet";
 
 let logger = mainLogger.childWithName("butler");
 
-export async function startButler(ms: MainState) {
-  const client = new Client();
-  const res = await client.call(messages.VersionGet, {});
-  logger.info(`butler version: ${res.versionString}`);
-
+export async function initializeValet() {
   valet.initialize({
     dbPath: butlerDbPath(),
     address: urls.itchio,
@@ -23,6 +19,10 @@ export async function startButler(ms: MainState) {
     let { major, minor, patch } = valet.version;
     logger.info(`valet version: ${major}.${minor}.${patch}`);
   }
+
+  const client = new Client();
+  const res = await client.call(messages.VersionGet, {});
+  logger.info(`butler version string: ${res.versionString}`);
 }
 
 export function hookLogging(convo: Conversation, logger: Logger) {

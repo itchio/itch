@@ -112,7 +112,8 @@ function getCommonConfig(type, env) {
       modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
-    externals: ["@itchio/valet", "child_process", "net", "ws", "electron-devtools-installer"],
+      externals: { "@itchio/valet": "commonjs @itchio/valet", "child_process":
+          "child_process", "net": "net", "ws": "ws"},
     module: {
       rules: [
         {
@@ -165,7 +166,7 @@ function getCommonConfig(type, env) {
     optimization: {
       // N.B: minifiers break production code all the dang time, resist the urge
       // to enable them.
-      minimize: isProduction,
+      minimize: false,
     },
     plugins,
   };

@@ -19,7 +19,7 @@ import { loadPreferences, wasOpenedAsHidden } from "main/preferences";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
 import { showModal } from "main/show-modal";
-import { startButler } from "main/initialize-valet";
+import { initializeValet } from "main/initialize-valet";
 import { initTray } from "main/tray";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
@@ -89,16 +89,6 @@ async function main() {
     logger.info(`full env settings:\n${dump(envSettings)}`);
   }
 
-  if (env.development) {
-    const {
-      default: installExtension,
-      REACT_DEVELOPER_TOOLS,
-    } = require("electron-devtools-installer");
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name: string) => logger.info(`Added Extension:  ${name}`))
-      .catch((err: Error) => console.log("An error occurred: ", err));
-  }
-
   registerSchemesAsPrivileged();
 
   app.on("web-contents-created", (ev, wc) => {
@@ -134,22 +124,17 @@ async function main() {
     }
   });
 
-  // 🎃🎃🎃
-  // see https://github.com/electron/electron/issues/20127
   app.allowRendererProcessReuse = true;
 
-  await startButler(ms);
+  await initializeValet();
+  logger.debug(`Valet initialized`);
 
-  let promises: Promise<void>[] = [];
-  promises.push(
-    new Promise((resolve, reject) => {
-      app.on("ready", () => resolve());
-    })
-  );
-  promises.push(loadPreferences(ms));
-  promises.push(startWebSocketServer(ms));
-  await Promise.all(promises);
-  logger.debug(`butler & websocket started`);
+  await loadPreferences(ms);
+  logger.debug(`Preferences loaded`);
+  await startWebSocketServer(ms);
+  logger.debug(`WebSocket server started`);
+  await app.whenReady();
+  logger.debug(`App ready`);
 
   await attemptAutoLogin(ms);
 
