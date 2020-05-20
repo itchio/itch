@@ -6,7 +6,7 @@ const webpack = require("webpack");
 const [mainConfig, rendererConfig] = require("./webpack.config.dev.js");
 const childProcess = require("child_process");
 const path = require("path");
-const { existsSync } = require("original-fs");
+const { existsSync } = require("fs");
 
 const weblog = require("webpack-log");
 const log = weblog({ name: "develop" });
