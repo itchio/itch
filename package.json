@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
-    "@itchio/valet": "^0.9.1",
+    "@itchio/valet": "^0.11.2",
     "@tippy.js/react": "^3.1.1",
     "@types/styled-components": "^5.1.0",
     "@types/ws": "^7.2.4",

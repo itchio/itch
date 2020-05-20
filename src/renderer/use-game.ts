@@ -1,6 +1,7 @@
 import { useSocket } from "renderer/contexts";
 import { useEffect, useState } from "react";
-import { messages, Game } from "@itchio/valet";
+import { Game } from "@itchio/valet/messages";
+import { messages } from "common/butlerd";
 
 export function useGame(gameId?: number): Game | undefined {
   const socket = useSocket();

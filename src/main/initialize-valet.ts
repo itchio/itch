@@ -1,7 +1,6 @@
 import urls from "main/constants/urls";
 import { butlerUserAgent } from "main/constants/useragent";
 import { butlerDbPath } from "common/util/paths";
-import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { Logger } from "common/logger";
 
