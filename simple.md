@@ -20,8 +20,9 @@ Broth (itch's dependency system) should die.
 It's not antivirus-friendly, and there's more likelihood that
 the app will break itself rather than fix itself!
 
-butler & itch-setup should be bundled with the app, so that
-no additional download is required.
+butler should be provided as a library, using `@itchio/valet`.
+
+Also, itch-setup should be bundled with the app.
 
 ## Redux
 

@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Cave } from "common/butlerd/messages";
+import { Cave } from "@itchio/valet";
 import { packets } from "common/packets";
 import _ from "lodash";
 import { useState, useCallback } from "react";
@@ -27,7 +27,7 @@ export function useCaves(filter?: CaveFilter): Caves {
       const { items } = await socket.call(messages.FetchCaves, {
         filters: filter,
       });
-      setCaves(_.keyBy(items, c => c.id));
+      setCaves(_.keyBy(items, (c) => c.id));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterState, fetchNumber]
@@ -36,7 +36,7 @@ export function useCaves(filter?: CaveFilter): Caves {
   const pokeGame = useCallback(
     (gameId?: number) => {
       if (filter?.gameId ? gameId == filter?.gameId : true) {
-        setFetchNumber(x => x + 1);
+        setFetchNumber((x) => x + 1);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,13 +46,13 @@ export function useCaves(filter?: CaveFilter): Caves {
   useListen(
     socket,
     packets.gameInstalled,
-    params => pokeGame(params.cave.game?.id),
+    (params) => pokeGame(params.cave.game?.id),
     [filterState]
   );
   useListen(
     socket,
     packets.gameUninstalled,
-    params => pokeGame(params.gameId),
+    (params) => pokeGame(params.gameId),
     [filterState]
   );
 

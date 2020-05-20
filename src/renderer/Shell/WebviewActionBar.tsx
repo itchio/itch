@@ -9,9 +9,9 @@ import { useSocket } from "renderer/contexts";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { useCaves } from "renderer/use-caves";
 import styled from "styled-components";
-import { Game } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
+import { Game } from "@itchio/valet";
 
 const Container = styled.div`
   display: flex;
@@ -21,7 +21,7 @@ const Container = styled.div`
   margin-right: 35px;
 
   min-height: 80px;
-  border-top: 1px solid ${props => props.theme.colors.shellBorder};
+  border-top: 1px solid ${(props) => props.theme.colors.shellBorder};
 `;
 
 const Cover = styled.img`
@@ -117,7 +117,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
               className="install-button"
               ref={coref("install-icon")}
               icon="install"
-              onClick={ev => {
+              onClick={(ev) => {
                 setInstalling(!installing);
               }}
             />

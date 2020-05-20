@@ -1,10 +1,12 @@
-import { Notification, Request, RpcResult } from "butlerd";
 import {
+  Notification,
+  Request,
+  RpcResult,
   Cave,
   Download,
   NetworkStatus,
   Profile,
-} from "common/butlerd/messages";
+} from "@itchio/valet";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";

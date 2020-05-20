@@ -1,14 +1,3 @@
-import {
-  Client,
-  Conversation,
-  IDGenerator,
-  NotificationCreator,
-  Request,
-  RequestCreator,
-  RequestError,
-  RpcError,
-  RpcResult,
-} from "butlerd";
 import { messages } from "common/butlerd";
 import { filterObject } from "common/filter-object";
 import { Packet, PacketCreator, packets } from "common/packets";
@@ -26,7 +15,17 @@ import WebSocket from "ws";
 import { showModal } from "main/show-modal";
 import { triggerTrayMenuUpdate } from "main/tray";
 
-import valet from "@itchio/valet";
+import valet, {
+  Client,
+  Conversation,
+  IDGenerator,
+  NotificationCreator,
+  Request,
+  RequestCreator,
+  RequestError,
+  RpcError,
+  RpcResult,
+} from "@itchio/valet";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -205,10 +204,7 @@ export class WebsocketHandler {
     });
 
     onQuery(queries.exploreCave, async ({ caveId }) => {
-      if (!ms.butler) {
-        throw new Error("butler is offline");
-      }
-      let client = new Client(ms.butler.endpoint);
+      let client = new Client();
       let { cave } = await client.call(messages.FetchCave, { caveId });
       if (!cave) {
         logger.warn(`Cave ${caveId} not found`);
@@ -218,11 +214,7 @@ export class WebsocketHandler {
     });
 
     onQuery(queries.uninstallGame, async ({ cave }) => {
-      if (!ms.butler) {
-        throw new Error("butler is offline");
-      }
-
-      let client = new Client(ms.butler.endpoint);
+      let client = new Client();
       await client.call(messages.UninstallPerform, {
         caveId: cave.id,
       });
@@ -346,22 +338,6 @@ export class WebsocketHandler {
     });
 
     onPacket(packets.butlerRequest, (cx, payload) => {
-      if (!ms.butler) {
-        let result: RpcResult<any> = {
-          jsonrpc: "2.0",
-          id: payload.req.id,
-          error: {
-            code: -32603,
-            message: "butler is offline",
-          },
-        };
-        cx.reply(packets.butlerResult, {
-          conv: payload.conv,
-          res: result,
-        });
-        return;
-      }
-
       const req = payload.req;
       const rc = Object.assign(
         (params: any) => (gen: IDGenerator) => ({
@@ -377,7 +353,7 @@ export class WebsocketHandler {
       if (ongoing) {
         call = ongoing.conv.call(rc, req.params);
       } else {
-        let client = new Client(ms.butler.endpoint);
+        let client = new Client();
         call = client.call(rc, req.params, (conv) => {
           ongoing = { conv, inbound: {}, idSeed: 1 };
           this.ongoingConversations[payload.conv] = ongoing;

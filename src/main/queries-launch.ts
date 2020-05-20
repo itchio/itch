@@ -1,5 +1,3 @@
-import { Client } from "butlerd";
-import { messages } from "common/butlerd";
 import {
   OngoingLaunch,
   OngoingLaunchBase,
@@ -18,19 +16,19 @@ import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { performHTMLLaunch } from "main/perform-html-launch";
 import { showModal } from "main/show-modal";
-import { hookLogging } from "main/start-butler";
+import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket, OnQuery } from "main/websocket-handler";
-import { Cave } from "common/butlerd/messages";
+import { Cave, Client, messages } from "@itchio/valet";
 import { triggerTrayMenuUpdate } from "main/tray";
 
 const logger = mainLogger.childWithName("queries-launch");
 
 export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
-  onQuery(queries.getOngoingLaunches, async params => {
+  onQuery(queries.getOngoingLaunches, async (params) => {
     return { launches: ms.ongoingLaunches };
   });
-  onQuery(queries.launchGame, async params => launchGame(ms, params));
-  onQuery(queries.cancelLaunch, async params => {
+  onQuery(queries.launchGame, async (params) => launchGame(ms, params));
+  onQuery(queries.cancelLaunch, async (params) => {
     const { launchId, reason } = params;
     ms.launchControllers[launchId]?.cancel(reason);
   });
@@ -61,9 +59,6 @@ async function launchGameInner(
 ) {
   const { gameId, caveId } = params;
 
-  if (!ms.butler) {
-    throw new Error(`butler is offline`);
-  }
   if (!ms.preferences) {
     throw new Error(`preferences not loaded yet`);
   }
@@ -71,7 +66,7 @@ async function launchGameInner(
     throw new Error(`no browser window yet`);
   }
 
-  let client = new Client(ms.butler.endpoint);
+  let client = new Client();
   let items: Cave[] = [];
 
   type OnAbort = () => void;
@@ -138,7 +133,7 @@ async function launchGameInner(
         prereqsDir: prereqsPath(),
         sandbox: ms.preferences.isolateApps,
       },
-      convo => {
+      (convo) => {
         ms.launchControllers[launchId] = {
           cancel: (reason: string) => {
             logger.warn(`Cancelling launch, reason: ${reason}`);
@@ -151,13 +146,13 @@ async function launchGameInner(
           logger.info(`Handling prereqs...`);
           logger.info(`Prereqs tasks: ${dump(tasks)}`);
         });
-        convo.onNotification(messages.PrereqsTaskState, () => { });
-        convo.onRequest(messages.PrereqsFailed, async params => {
+        convo.onNotification(messages.PrereqsTaskState, () => {});
+        convo.onRequest(messages.PrereqsFailed, async (params) => {
           logger.info(`Prereqs failed: ${dump(params)}`);
           // TODO: allow continuing
           return { continue: false };
         });
-        convo.onRequest(messages.PickManifestAction, async params => {
+        convo.onRequest(messages.PickManifestAction, async (params) => {
           const { actions } = params;
           const res = await showModal(ms, modals.pickManifestAction, {
             actions,
@@ -169,22 +164,22 @@ async function launchGameInner(
           }
           return { index: res.index };
         });
-        convo.onRequest(messages.HTMLLaunch, async params => {
+        convo.onRequest(messages.HTMLLaunch, async (params) => {
           await performHTMLLaunch({
             game: cave.game,
             logger,
             params,
-            onAbort: h => {
+            onAbort: (h) => {
               onAbort.push(h);
             },
           });
           return {};
         });
-        convo.onRequest(messages.URLLaunch, async params => {
+        convo.onRequest(messages.URLLaunch, async (params) => {
           shell.openExternal(params.url);
           return {};
         });
-        convo.onRequest(messages.ShellLaunch, async params => {
+        convo.onRequest(messages.ShellLaunch, async (params) => {
           await shell.openPath(params.itemPath);
           return {};
         });

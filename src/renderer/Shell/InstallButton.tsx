@@ -1,4 +1,4 @@
-import { DownloadProgress } from "common/butlerd/messages";
+import { DownloadProgress } from "@itchio/valet";
 import _ from "lodash";
 import React, { useCallback, useState } from "react";
 import { Button } from "renderer/basics/Button";
@@ -95,7 +95,9 @@ export const InstallButton = (props: HighLevelProps) => {
   const { gameId } = props;
 
   const downloads = useDownloads({ gameId });
-  const download = _.first(_.filter(_.values(downloads), dl => !dl.finishedAt));
+  const download = _.first(
+    _.filter(_.values(downloads), (dl) => !dl.finishedAt)
+  );
 
   const [menuOpen, setMenuOpen] = useState(false);
 

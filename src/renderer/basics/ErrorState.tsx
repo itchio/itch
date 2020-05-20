@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import styled from "styled-components";
 import { mixins } from "renderer/theme";
-import { asRequestError } from "butlerd/lib/support";
+import { asRequestError } from "@itchio/valet";
 
 const Container = styled.div`
   ${mixins.singleLine};
@@ -13,8 +13,8 @@ const Container = styled.div`
 
   align-self: stretch;
   border-radius: 2px;
-  background-color: ${p => p.theme.colors.errorBg};
-  color: ${p => p.theme.colors.errorText};
+  background-color: ${(p) => p.theme.colors.errorBg};
+  color: ${(p) => p.theme.colors.errorText};
 
   padding-left: 1.4em;
   padding-right: 1.4em;

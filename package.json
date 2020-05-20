@@ -25,11 +25,10 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
-    "@itchio/valet": "^0.8.0",
+    "@itchio/valet": "^0.9.1",
     "@tippy.js/react": "^3.1.1",
     "@types/styled-components": "^5.1.0",
     "@types/ws": "^7.2.4",
-    "butlerd": "^14.1.0",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^3.0.0",
     "intl-messageformat": "^8.3.11",
@@ -42,7 +41,6 @@
     "source-map-support": "^0.5.19",
     "styled-components": "^5.1.0",
     "term-color": "^1.0.1",
-    "which": "^2.0.2",
     "ws": "^7.3.0"
   },
   "devDependencies": {
@@ -55,6 +53,8 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@types/classnames": "^2.2.10",
+    "@types/debug": "^4.1.5",
+    "@types/electron-packager": "^14.0.0",
     "@types/lodash": "^4.14.152",
     "@types/logrotate-stream": "^0.2.29",
     "@types/mime-types": "^2.1.0",
@@ -100,9 +100,5 @@
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",
     "react-lint": "react-lint ./src/renderer/index.tsx"
-  },
-  "butler": {
-    "development": "77c9dd05016a9c6b4deb16fc9b0554a1afcbb1ee",
-    "production": ""
   }
 }

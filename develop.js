@@ -1,7 +1,12 @@
+//@ts-check
+"use strict";
+
 const WebpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
 const [mainConfig, rendererConfig] = require("./webpack.config.dev.js");
 const childProcess = require("child_process");
+const path = require("path");
+const { existsSync } = require("original-fs");
 
 const weblog = require("webpack-log");
 const log = weblog({ name: "develop" });
@@ -9,8 +14,17 @@ const log = weblog({ name: "develop" });
 async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
 
+  if (process.env.LOCAL_VALET === "1") {
+    log.info(`Attempting to use local version of valet`);
+    let bindingsBase = path.resolve("../valet/artifacts");
+    if (!existsSync(bindingsBase)) {
+      throw new Error(`Local valet build not found at ${bindingsBase}`);
+    }
+    process.env.VALET_BINDINGS_BASE = bindingsBase;
+  }
+
   process.on("unhandledRejection", (e) => {
-    log.error(`Unhandled rejection `, e.stack || e);
+    log.error(`Unhandled rejection `, e);
     process.exit(1);
   });
   process.on("uncaughtException", (e) => {
@@ -37,6 +51,8 @@ async function main() {
   WebpackDevServer.addDevServerEntrypoints(rendererConfig, devServerOptions);
 
   const rendererCompiler = webpack(rendererConfig);
+  // webpack-dev-server doesn't like our `webpack.Compiler` apparently?
+  // @ts-ignore
   const server = new WebpackDevServer(rendererCompiler, devServerOptions);
   const serverPromise = new Promise((resolve, reject) => {
     let port = 9000;
@@ -54,10 +70,7 @@ async function main() {
   });
 
   log.info(`Compiling...`);
-  const [stats] = await Promise.all([
-    mainPromise,
-    ensureButler(),
-  ]);
+  const stats = await mainPromise;
   {
     const info = stats.toJson();
     if (stats.hasErrors()) {
@@ -69,6 +82,9 @@ async function main() {
     }
   }
 
+  // in a node context, this gives the path to electron
+  /** @type {string} */
+  // @ts-ignore
   const electronBinaryPath = require("electron");
   const port = await serverPromise;
 
@@ -101,25 +117,6 @@ async function main() {
 
     proc.on("error", (e) => reject(e));
   });
-}
-
-// TODO: re-use logic for `release/` scripts, for
-// integration tests, etc.
-// Maybe have it as a small Go utility?
-async function ensureButler() {
-  if (process.env.LOCAL_BUTLER === "1") {
-    log.info(`Using local butler, so, not downloading...`);
-    return;
-  }
-
-  await run("go", ["build"], { cwd: "./install-deps" });
-  await run(
-    "install-deps",
-    ["--manifest", "../package.json", "--dir", "..", "--development"],
-    {
-      cwd: "./install-deps",
-    }
-  );
 }
 
 async function run(command, args, options) {

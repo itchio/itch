@@ -1,4 +1,4 @@
-import { Profile } from "common/butlerd/messages";
+import { Profile } from "@itchio/valet";
 import urls from "main/constants/urls";
 import * as url from "url";
 import { mainLogger } from "main/logger";
@@ -7,7 +7,7 @@ import { partitionForUser } from "common/util/partitions";
 const logger = mainLogger.childWithName("cookie");
 
 const YEAR_IN_SECONDS =
-    365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
+  365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60; /* seconds */
 
 export async function setCookie(
   profile: Profile,

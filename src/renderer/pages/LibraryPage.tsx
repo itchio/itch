@@ -5,7 +5,7 @@ import {
   FetchGameRecordsParams,
   GameRecord,
   GameRecordsSource,
-} from "common/butlerd/messages";
+} from "@itchio/valet";
 import { LocalizedString } from "common/types";
 import _ from "lodash";
 import React, {
@@ -71,7 +71,7 @@ const LibraryLayout = styled.div`
       padding: 1em 0.4em;
 
       font-size: ${fontSizes.normal};
-      color: ${p => p.theme.colors.text3};
+      color: ${(p) => p.theme.colors.text3};
 
       .title {
         ${mixins.singleLine};
@@ -82,7 +82,7 @@ const LibraryLayout = styled.div`
         margin-left: 1em;
         font-size: ${fontSizes.small};
         background: rgba(0, 0, 0, 0.4);
-        color: ${p => p.theme.colors.text2};
+        color: ${(p) => p.theme.colors.text2};
         padding: 4px;
         border-radius: 2px;
       }
@@ -101,11 +101,11 @@ const LibraryLayout = styled.div`
       }
 
       &:hover {
-        color: ${p => p.theme.colors.text2};
+        color: ${(p) => p.theme.colors.text2};
       }
 
       &.active {
-        color: ${p => p.theme.colors.text1};
+        color: ${(p) => p.theme.colors.text1};
       }
     }
   }
@@ -345,7 +345,7 @@ const Viewport = React.forwardRef(
     useEffect(() => {
       if (
         !_.includes(
-          _.map(sorts[source.source], s => s.value),
+          _.map(sorts[source.source], (s) => s.value),
           sortBy
         )
       ) {
@@ -380,8 +380,8 @@ const Viewport = React.forwardRef(
           let res = await socket.call(
             messages.FetchGameRecords,
             params,
-            convo => {
-              convo.onNotification(messages.Log, params => {
+            (convo) => {
+              convo.onNotification(messages.Log, (params) => {
                 console.log(params.message);
               });
             }
@@ -420,7 +420,7 @@ const Viewport = React.forwardRef(
       socket,
     ]);
 
-    let currentSort = _.find(sorts[source.source], s => s.value === sortBy);
+    let currentSort = _.find(sorts[source.source], (s) => s.value === sortBy);
 
     return (
       <>
@@ -432,7 +432,7 @@ const Viewport = React.forwardRef(
           <MultiDropdown
             prefix={<PrefixIcon icon="filter" />}
             empty={"No filters"}
-            onChange={filterBy => setFilterBy(filterBy)}
+            onChange={(filterBy) => setFilterBy(filterBy)}
             options={[
               { value: "installed", label: "Installed" },
               { value: "owned", label: "Owned" },
@@ -446,7 +446,7 @@ const Viewport = React.forwardRef(
             prefix={<PrefixIcon icon="arrange2" />}
             value={sortBy}
             options={sorts[source.source]}
-            onChange={s => {
+            onChange={(s) => {
               setSortBy(s);
               setReverse(false);
             }}
@@ -454,7 +454,7 @@ const Viewport = React.forwardRef(
           <Dropdown
             name="sort-direction"
             groupPosition="end"
-            onChange={val => setReverse(val === "true")}
+            onChange={(val) => setReverse(val === "true")}
             options={[
               { value: "false", label: currentSort?.directions[0] ?? "Normal" },
               {
@@ -463,16 +463,15 @@ const Viewport = React.forwardRef(
               },
             ]}
             value={reverse ? "true" : "false"}
-            renderValue={option =>
-              _.find(sorts[source.source], s => s.value === sortBy)?.directions[
-                option.value === "true" ? 1 : 0
-              ]
+            renderValue={(option) =>
+              _.find(sorts[source.source], (s) => s.value === sortBy)
+                ?.directions[option.value === "true" ? 1 : 0]
             }
           />
           <Spacer />
           <Dropdown
             name="layout"
-            onChange={layout => setLayout(layout)}
+            onChange={(layout) => setLayout(layout)}
             options={
               [
                 { value: "grid", label: "Grid" },
@@ -483,7 +482,7 @@ const Viewport = React.forwardRef(
               }[]
             }
             value={layout}
-            renderValue={option => <Icon icon={option.value} />}
+            renderValue={(option) => <Icon icon={option.value} />}
           />
         </ViewHeader>
         <ViewBody ref={ref}>
@@ -527,7 +526,7 @@ const ViewHeader = styled.div`
   flex-direction: row;
   align-items: center;
 
-  background: ${p => p.theme.colors.shellBg};
+  background: ${(p) => p.theme.colors.shellBg};
   z-index: 2;
 
   .filler {
@@ -578,7 +577,7 @@ const CollectionList = (props: {
 
   return (
     <>
-      {collections.map(c => {
+      {collections.map((c) => {
         return (
           <div
             key={c.id}

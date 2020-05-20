@@ -16,6 +16,7 @@
     "jsx": "react",
 
     "noImplicitReturns": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,

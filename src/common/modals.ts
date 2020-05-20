@@ -1,4 +1,4 @@
-import { Action, Cave, Game } from "common/butlerd/messages";
+import { Action, Cave, Game } from "@itchio/valet";
 import { BrowserWindow } from "electron";
 
 interface Dimensions {

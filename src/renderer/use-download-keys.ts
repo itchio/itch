@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { DownloadKey } from "common/butlerd/messages";
+import { DownloadKey } from "@itchio/valet";
 import _ from "lodash";
 import { useState } from "react";
 import { useProfile, useSocket } from "renderer/contexts";
@@ -21,7 +21,7 @@ export function useDownloadKeys(filters?: { gameId?: number }): DownloadKeys {
         profileId: profile.id,
         filters,
       });
-      setKeys(_.keyBy(items, k => k.id));
+      setKeys(_.keyBy(items, (k) => k.id));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(filters)]

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { messages } from "common/butlerd";
-import { Profile } from "common/butlerd/messages";
+import { Profile } from "@itchio/valet";
 import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React from "react";

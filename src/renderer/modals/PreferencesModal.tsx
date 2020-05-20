@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { InstallLocationSummary } from "common/butlerd/messages";
+import { InstallLocationSummary } from "@itchio/valet";
 import { fileSize } from "common/format/filesize";
 import { modals } from "common/modals";
 import packageInfo from "common/package-info";
@@ -38,7 +38,7 @@ const HardPrefModal = styled(HardModal)`
     }
 
     .secondary {
-      color: ${p => p.theme.colors.text2};
+      color: ${(p) => p.theme.colors.text2};
       font-size: ${fontSizes.small};
     }
   }
@@ -86,14 +86,14 @@ const PreferencesTitle = styled.div`
   margin-bottom: 1em;
 `;
 
-export const PreferencesModal = modalWidget(modals.preferences, props => {
+export const PreferencesModal = modalWidget(modals.preferences, (props) => {
   const socket = useSocket();
   const preferences = usePreferences();
 
   const [tick, setTick] = useState(0);
   useEffect(() => {
     let interval = setInterval(() => {
-      setTick(t => t + 1);
+      setTick((t) => t + 1);
     }, 1000);
     return () => clearInterval(interval);
   });
@@ -116,7 +116,7 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
     setLoc(
       _.find(
         installLocations,
-        il => il.id == preferences?.defaultInstallLocation
+        (il) => il.id == preferences?.defaultInstallLocation
       )
     );
   }, [preferences, socket, tick]);
@@ -171,14 +171,14 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
           </PreferencesTitle>
           <div className="pref-section">
             <Dropdown
-              renderValue={option => (
+              renderValue={(option) => (
                 <>
                   <SpacedIcon icon="earth" /> {option.label}
                 </>
               )}
               className="lang-dropdown"
               width={320}
-              onChange={lang => onLang(lang)}
+              onChange={(lang) => onLang(lang)}
               options={[
                 {
                   label: (

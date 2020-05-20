@@ -1,9 +1,9 @@
-import { RequestCreator } from "butlerd/lib/support";
 import React, { useEffect, useState } from "react";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { useSocket } from "renderer/contexts";
 import styled from "styled-components";
+import { RequestCreator } from "@itchio/valet";
 
 export type ButlerdState<U> =
   | ButlerdLoadingState
@@ -36,13 +36,13 @@ export function useButlerd<T, U>(
       setState({ state: "loading" });
       socket
         .call(rc, params)
-        .then(result => {
+        .then((result) => {
           setState({
             state: "success",
             result,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           setState({
             state: "error",
             error,

@@ -7,7 +7,7 @@ import { modalWidget } from "renderer/modals/ModalRouter";
 import { Button } from "renderer/basics/Button";
 import { useAsync } from "renderer/use-async";
 import { messages } from "common/butlerd";
-import { Game, Cave } from "common/butlerd/messages";
+import { Game, Cave } from "@itchio/valet";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { queries } from "common/queries";
 
@@ -18,7 +18,7 @@ interface Data {
 
 export const ConfirmUninstallModal = modalWidget(
   modals.confirmUninstall,
-  props => {
+  (props) => {
     const { onResult } = props;
     const { gameId } = props.params;
 

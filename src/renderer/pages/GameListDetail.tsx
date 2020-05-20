@@ -1,4 +1,4 @@
-import { Game } from "common/butlerd/messages";
+import { Game } from "@itchio/valet";
 import { DownloadsState } from "common/downloads";
 import { fileSize } from "common/format/filesize";
 import { gameCover } from "common/game-cover";
@@ -43,14 +43,14 @@ const GameListDetailInternal = (props: InternalProps) => {
   const { game, downloads } = props;
   const gameId = game.id;
   const caves = useCaves({ gameId });
-  const lastCave = _.last(_.sortBy(caves, c => c.stats.lastTouchedAt));
+  const lastCave = _.last(_.sortBy(caves, (c) => c.stats.lastTouchedAt));
 
   const keys = useDownloadKeys({ gameId });
-  const lastKey = _.last(_.sortBy(keys, k => k.createdAt));
+  const lastKey = _.last(_.sortBy(keys, (k) => k.createdAt));
 
   const lastDownload = _.find(
     downloads,
-    d => !d.finishedAt && d.game?.id == game?.id
+    (d) => !d.finishedAt && d.game?.id == game?.id
   );
 
   const socket = useSocket();

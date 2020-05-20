@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { messages } from "common/butlerd";
-import { Game } from "common/butlerd/messages";
+import { Game } from "@itchio/valet";
 import { searchExamples } from "common/constants/search-examples";
 import { gameCover } from "common/game-cover";
 import { packets } from "common/packets";
@@ -43,13 +43,13 @@ const SearchInputContainer = styled.div`
   flex-grow: 1;
 
   border: none;
-  border-bottom: 2px solid ${p => p.theme.colors.inputBorder};
+  border-bottom: 2px solid ${(p) => p.theme.colors.inputBorder};
   &:focus {
-    border-color: ${p => p.theme.colors.inputBorderFocus};
+    border-color: ${(p) => p.theme.colors.inputBorderFocus};
   }
 
-  background: ${p => p.theme.colors.inputBg};
-  color: ${p => p.theme.colors.text1};
+  background: ${(p) => p.theme.colors.inputBg};
+  color: ${(p) => p.theme.colors.text1};
   padding: 15px 15px;
 
   position: relative;
@@ -127,7 +127,7 @@ const SearchResult = styled.div`
     .short-text {
       font-weight: normal;
       font-size: ${fontSizes.normal};
-      color: ${p => p.theme.colors.text2};
+      color: ${(p) => p.theme.colors.text2};
       ${mixins.singleLine};
     }
   }
@@ -225,7 +225,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         setState("results");
         setCurrent(0);
       }
-    })().catch(e => console.warn(e.stack));
+    })().catch((e) => console.warn(e.stack));
 
     return () => {
       cancelled = true;
@@ -257,7 +257,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         return;
       } else if (ev.key === "ArrowDown") {
         ev.preventDefault();
-        setCurrent(current => {
+        setCurrent((current) => {
           if (current === null || current >= numResults - 1) {
             return current;
           } else {
@@ -267,7 +267,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         return;
       } else if (ev.key === "ArrowUp") {
         ev.preventDefault();
-        setCurrent(current => {
+        setCurrent((current) => {
           if (current === null || current <= 0) {
             return current;
           } else {

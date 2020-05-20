@@ -1,4 +1,3 @@
-import { Profile } from "common/butlerd/messages";
 import { DownloadsState } from "common/downloads";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";
@@ -20,11 +19,12 @@ import { loadPreferences, wasOpenedAsHidden } from "main/preferences";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
 import { showModal } from "main/show-modal";
-import { ButlerState, startButler } from "main/start-butler";
+import { startButler } from "main/initialize-valet";
 import { initTray } from "main/tray";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
+import { Profile } from "@itchio/valet/js/messages";
 
 let logger = mainLogger.childWithName("main");
 
@@ -41,7 +41,6 @@ export interface LaunchController {
 
 export interface MainState {
   startedAt: number;
-  butler?: ButlerState;
   websocket?: WebSocketState;
   profile?: Profile;
   webview: WebviewState;
@@ -124,7 +123,7 @@ async function main() {
             gameId,
             uploadId,
             buildId,
-          }).catch(e => console.warn(e.stack));
+          }).catch((e) => console.warn(e.stack));
           return;
         }
       });
@@ -139,6 +138,8 @@ async function main() {
   // see https://github.com/electron/electron/issues/20127
   app.allowRendererProcessReuse = true;
 
+  await startButler(ms);
+
   let promises: Promise<void>[] = [];
   promises.push(
     new Promise((resolve, reject) => {
@@ -146,14 +147,13 @@ async function main() {
     })
   );
   promises.push(loadPreferences(ms));
-  promises.push(startButler(ms));
   promises.push(startWebSocketServer(ms));
   await Promise.all(promises);
   logger.debug(`butler & websocket started`);
 
   await attemptAutoLogin(ms);
 
-  onReady().catch(e => {
+  onReady().catch((e) => {
     dialog.showErrorBox("Fatal error", e.stack);
     app.exit(2);
   });
@@ -224,7 +224,7 @@ async function onReady() {
     shell.openExternal(url);
   });
 
-  win.on("close", ev => {
+  win.on("close", (ev) => {
     if (ms.preferences?.closeToTray) {
       if (win.isVisible()) {
         logger.info(`Closing to tray...`);
@@ -243,7 +243,7 @@ async function onReady() {
   }
 }
 
-main().catch(e => {
+main().catch((e) => {
   dialog.showErrorBox(`${app.name} failed to start`, e.stack);
   app.exit(1);
 });

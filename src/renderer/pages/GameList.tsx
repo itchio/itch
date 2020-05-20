@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { GameRecord } from "common/butlerd/messages";
+import { GameRecord } from "@itchio/valet";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GameListDetail } from "renderer/pages/GameListDetail";
 import { fontSizes, mixins } from "renderer/theme";
@@ -133,7 +133,7 @@ const GameListDiv = styled.div`
         }
 
         &.secondary {
-          color: ${p => p.theme.colors.text2};
+          color: ${(p) => p.theme.colors.text2};
         }
       }
 
@@ -141,7 +141,7 @@ const GameListDiv = styled.div`
         display: flex;
         flex-direction: row;
         align-items: center;
-        color: ${p => p.theme.colors.text2};
+        color: ${(p) => p.theme.colors.text2};
 
         .progress-bar {
           margin-left: 10px;
@@ -280,7 +280,7 @@ export const GameList = (props: Props) => {
       switch (ev.key) {
         case "ArrowDown":
           ev.preventDefault();
-          setCurrentIndex(i => {
+          setCurrentIndex((i) => {
             let index = (i + 1) % recordsLength;
             focusIndex(index);
             return index;
@@ -288,7 +288,7 @@ export const GameList = (props: Props) => {
           break;
         case "ArrowUp":
           ev.preventDefault();
-          setCurrentIndex(i => {
+          setCurrentIndex((i) => {
             let index = i == 0 ? recordsLength - 1 : i - 1;
             focusIndex(index);
             return index;

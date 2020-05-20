@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Download } from "common/butlerd/messages";
+import { Download } from "@itchio/valet";
 import { DownloadWithProgress } from "common/downloads";
 import { gameCover } from "common/game-cover";
 import { queries } from "common/queries";
@@ -102,7 +102,7 @@ export const DownloadsContents = React.forwardRef(
   (props: { onClose: () => void }, ref: React.Ref<HTMLDivElement>) => {
     const socket = useSocket();
     const downloads = useDownloads();
-    const sortedDownloads = _.sortBy(downloads, d => d.position);
+    const sortedDownloads = _.sortBy(downloads, (d) => d.position);
 
     const [clearAll, clearAllLoading] = useAsyncCb(async () => {
       await socket.call(messages.DownloadsClearFinished, {});
@@ -114,7 +114,7 @@ export const DownloadsContents = React.forwardRef(
           <div className="empty-state">No downloads</div>
         ) : (
           <>
-            {sortedDownloads.map(d => {
+            {sortedDownloads.map((d) => {
               return (
                 <DownloadItem key={d.id} download={d} onClose={props.onClose} />
               );

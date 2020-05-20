@@ -1,4 +1,4 @@
-import { Download, DownloadProgress } from "common/butlerd/messages";
+import { Download, DownloadProgress } from "@itchio/valet";
 
 export interface DownloadsState {
   [key: string]: DownloadWithProgress;

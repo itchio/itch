@@ -7,10 +7,6 @@ export const envSettings = {
 
   dumpEnvSettings: process.env.DUMP_ENV_SETTINGS === "1",
 
-  // Use copy of butler in $PATH - use when developing
-  // new butlerd functionality concurrently wih itch
-  localButler: process.env.LOCAL_BUTLER === "1",
-
   // Dump all main<->renderer WebSocket traffic - *very* verbose.
   verboseWebSocket: process.env.ITCH_VERBOSE_WS === "1",
 

@@ -1,4 +1,4 @@
-import { Build, Upload, UploadType } from "common/butlerd/messages";
+import { Build, Upload, UploadType } from "@itchio/valet";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import styled from "styled-components";
@@ -31,7 +31,7 @@ interface Props {
 
 const UploadSize = styled.div`
   margin-left: 1em;
-  color: ${p => p.theme.colors.text2};
+  color: ${(p) => p.theme.colors.text2};
 
   font-size: ${fontSizes.small};
 `;

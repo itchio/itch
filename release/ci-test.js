@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+//@ts-check
+"use strict";
 
 const { test } = require("./packaging/test");
 const { parseContext } = require("./packaging/context");

@@ -1,12 +1,12 @@
-#!/usr/bin/env node
+//@ts-check
+"use strict";
 
-const { package } = require("./packaging/package");
+const { doPackage } = require("./packaging/do-package");
 const { parseContext } = require("./packaging/context");
 
 async function main() {
   const cx = await parseContext();
-  await package(cx);
+  await doPackage(cx);
 }
 
 main();
-

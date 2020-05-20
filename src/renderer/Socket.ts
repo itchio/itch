@@ -1,16 +1,16 @@
+import { ButlerHandled, Packet, PacketCreator, packets } from "common/packets";
+import { QueryCreator, QueryRequest, queries } from "common/queries";
+import { uuid } from "common/util/uuid";
+import { useEffect } from "react";
 import {
+  Code,
   NotificationCreator,
   RequestCreator,
   RequestError,
   RpcResult,
   Request,
   Notification,
-} from "butlerd/lib/support";
-import { ButlerHandled, Packet, PacketCreator, packets } from "common/packets";
-import { QueryCreator, QueryRequest, queries } from "common/queries";
-import { uuid } from "common/util/uuid";
-import { useEffect } from "react";
-import { Code } from "common/butlerd/messages";
+} from "@itchio/valet";
 import { ModalCreator } from "common/modals";
 import { delay } from "common/delay";
 
@@ -296,25 +296,25 @@ export class Socket {
     (window as any).__socket = this;
     this.address = address;
     this.ws = ws;
-    this.wsPromise = new Promise(resolve => resolve(ws));
+    this.wsPromise = new Promise((resolve) => resolve(ws));
     this.initSocket();
   }
 
   private initSocket() {
-    this.ws.onmessage = msg => {
+    this.ws.onmessage = (msg) => {
       this.process(msg.data as string);
     };
     this.ws.onclose = () => {
       console.log(`Socket connection lost, reconnecting...`);
-      this.wsPromise = new Promise(resolve => {
+      this.wsPromise = new Promise((resolve) => {
         connect(this.address)
-          .then(ws => {
+          .then((ws) => {
             console.log(`Reconnected!`);
             this.ws = ws;
             this.initSocket();
             resolve(ws);
           })
-          .catch(e => {
+          .catch((e) => {
             alert(
               `The itch app encountered a problem in its internal communication system.\n\n${e.stack}`
             );
@@ -358,8 +358,9 @@ export class Socket {
         if (response.state === "error") {
           outbound.reject(
             new Error(
-              `butler-side error: ${response.error.stack ??
-                response.error.message}`
+              `butler-side error: ${
+                response.error.stack ?? response.error.message
+              }`
             )
           );
         } else {
@@ -397,7 +398,7 @@ export class Socket {
           }
         }
       }
-    })().catch(e => console.warn(e.stack));
+    })().catch((e) => console.warn(e.stack));
   }
 
   listen<T>(packet: PacketCreator<T>, listener: Listener<T>): Cancel {
@@ -413,7 +414,7 @@ export class Socket {
     }
     this.listeners[type].push(listener);
     let cancel = () => {
-      this.listeners[type] = this.listeners[type].filter(x => x !== listener);
+      this.listeners[type] = this.listeners[type].filter((x) => x !== listener);
     };
     return cancel;
   }

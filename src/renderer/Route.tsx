@@ -1,4 +1,4 @@
-import { Profile } from "common/butlerd/messages";
+import { Profile } from "@itchio/valet";
 import { packets } from "common/packets";
 import React, { useEffect, useState } from "react";
 import { useSocket, OptionalProfileContext } from "renderer/contexts";
@@ -12,7 +12,7 @@ const App = React.lazy(() => import("renderer/Shell"));
 const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
 
 const RouteContentsDiv = styled.div`
-  background: ${p => p.theme.colors.shellBg};
+  background: ${(p) => p.theme.colors.shellBg};
 
   position: absolute;
   top: 0;
@@ -70,11 +70,11 @@ export const Route = () => {
     (async () => {
       const { profile } = await socket.query(queries.getProfile);
       setProfile(profile);
-    })().catch(e => console.warn(e));
+    })().catch((e) => console.warn(e));
   }, [socket]);
 
   let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
-    s => s.length > 0
+    (s) => s.length > 0
   );
 
   if (profile || elements[0] === "app") {

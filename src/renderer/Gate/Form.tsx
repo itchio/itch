@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { messages } from "common/butlerd";
-import { ProfileRequestTOTPResult } from "common/butlerd/messages";
+import { ProfileRequestTOTPResult } from "@itchio/valet";
 import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React, { useRef, useState } from "react";
@@ -123,12 +123,12 @@ const RevealButton = styled(IconButton)`
   font-size: 20px;
 
   .icon {
-    color: ${p => p.theme.colors.text3} !important;
+    color: ${(p) => p.theme.colors.text3} !important;
   }
 
   &.passwordShown {
     .icon {
-      color: ${p => p.theme.colors.text2} !important;
+      color: ${(p) => p.theme.colors.text2} !important;
     }
   }
 `;
@@ -218,13 +218,13 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
           id="login-username"
           ref={usernameRef}
           autoFocus
-          onKeyPress={ev => {
+          onKeyPress={(ev) => {
             setUsername(ev.currentTarget.value);
             if (ev.key === "Enter") {
               onNext();
             }
           }}
-          onChange={ev => setUsername(ev.currentTarget.value)}
+          onChange={(ev) => setUsername(ev.currentTarget.value)}
         />
         <Button
           id="login-next"
@@ -289,8 +289,8 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           username: stage.username,
           password: passwordRef.current.value,
         },
-        convo => {
-          convo.onRequest(messages.ProfileRequestTOTP, async params => {
+        (convo) => {
+          convo.onRequest(messages.ProfileRequestTOTP, async (params) => {
             console.log(`Doing TOTP...`);
             try {
               return await new Promise((resolve, reject) => {
@@ -304,7 +304,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
             }
           });
 
-          convo.onRequest(messages.ProfileRequestCaptcha, async params => {
+          convo.onRequest(messages.ProfileRequestCaptcha, async (params) => {
             console.log(`Doing Captcha...`);
             return { recaptchaResponse: "wrong" };
           });
@@ -353,13 +353,13 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
             disabled={onLoginLoading}
             ref={passwordRef}
             autoFocus
-            onKeyPress={ev => {
+            onKeyPress={(ev) => {
               setPassword(ev.currentTarget.value);
               if (ev.key === "Enter") {
                 onLogin();
               }
             }}
-            onChange={ev => setPassword(ev.currentTarget.value)}
+            onChange={(ev) => setPassword(ev.currentTarget.value)}
           />
           <RevealButton
             onMouseDown={togglePasswordVisibility}
@@ -411,7 +411,7 @@ const TOTPModal = (props: { state: TOTPState }) => {
         <LargeTextInput
           ref={inputRef}
           autoFocus
-          onKeyPress={ev => {
+          onKeyPress={(ev) => {
             if (ev.key === "Enter") {
               login();
             }

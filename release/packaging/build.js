@@ -1,52 +1,66 @@
-const $ = require("../common");
-const { validateContext } = require("./context");
+//@ts-check
+"use strict";
 
-module.exports.build = async function build(cx) {
-  validateContext(cx);
-  $.say(`Building ${$.appName()} ${$.buildVersion()}`);
+const {
+  say,
+  sh,
+  getAppName,
+  getBuildVersion,
+  readFile,
+  writeFile,
+  cd,
+} = require("../common");
 
-  $.say("Wiping prefix/");
-  $(await $.sh("rm -rf prefix"));
-  $(await $.sh("mkdir -p prefix"));
+/**
+ * @param {import("./context").Context} cx
+ */
+async function build(cx) {
+  say(`Building ${getAppName()} ${getBuildVersion()}`);
 
-  $.say("Compiling sources");
-  $(await $.sh("npm run compile"));
+  say("Wiping prefix/");
+  sh("rm -rf prefix");
+  sh("mkdir -p prefix");
 
-  $.say("Copying dist files to prefix/");
-  $(await $.sh("cp electron-index.js prefix/"));
-  $(await $.sh("mkdir -p prefix/dist"));
-  $(await $.sh("cp -rf dist/production prefix/dist/"));
+  say("Compiling sources");
+  sh("npm run compile");
 
-  $.say("Generating custom package.json");
-  const pkg = JSON.parse(await $.readFile("package.json"));
+  say("Copying dist files to prefix/");
+  sh("cp electron-index.js prefix/");
+  sh("mkdir -p prefix/dist");
+  sh("cp -rf dist/production prefix/dist/");
+
+  say("Generating custom package.json");
+  const pkg = JSON.parse(await readFile("package.json"));
   for (const field of ["name", "productName", "desktopName"]) {
-    pkg[field] = $.appName();
+    pkg[field] = getAppName();
   }
-  pkg.version = $.buildVersion();
+  pkg.version = getBuildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
-  await $.writeFile(`prefix/package.json`, pkgContents);
+  await writeFile(`prefix/package.json`, pkgContents);
 
-  $.say("Downloading valet binaries")
+  say("Downloading valet binaries");
   let valetArch = cx.archInfo.electronArch === "ia32" ? "i686" : "x86_64";
   let otherValetArch = valetArch == "i686" ? "x86_64" : "i686";
-  await $.cd("node_modules/@itchio/valet", async function () {
-    $(await $.sh(`npm run postinstall -- --verbose --arch ${valetArch}`));
+  await cd("node_modules/@itchio/valet", async function () {
+    sh(`npm run postinstall -- --verbose --arch ${valetArch}`);
   });
 
-  $.say("Copying valet to prefix");
-  $(await $.sh("mkdir -p prefix/node_modules/@itchio"));
-  $(await $.sh("cp -rf node_modules/@itchio/valet prefix/node_modules/@itchio"));
-  $.say("Trimming down valet install");
-  $(await $.sh(`rm -rf prefix/node_modules/@itchio/valet/artifacts/${otherValetArch}-*`));
+  say("Copying valet to prefix");
+  sh("mkdir -p prefix/node_modules/@itchio");
+  sh("cp -rf node_modules/@itchio/valet prefix/node_modules/@itchio");
+  say("Trimming down valet install");
+  sh(`rm -rf prefix/node_modules/@itchio/valet/artifacts/${otherValetArch}-*`);
 
-  $.say("Installing required externals")
+  say("Installing required externals");
   const externals = [
     // TODO: remove 'ws' once moved to IPC transport
     "ws",
     // TODO: is it really a good idea to ship that in production?
     "source-map-support",
   ];
-  await $.cd("prefix", async function() {
-    $(await $.sh(`npm install --no-save ${externals.join(" ")}`));
+  await cd("prefix", async function () {
+    sh(`npm install --no-save ${externals.join(" ")}`);
   });
 }
+
+module.exports = { build };

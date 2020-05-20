@@ -1,54 +1,68 @@
-const $ = require("../common");
+//@ts-check
+"use strict";
+
+const {
+  measure,
+  say,
+  sh,
+  getAppName,
+  getBuildVersion,
+  appBundleId,
+} = require("../common");
 const ospath = require("path");
 const fs = require("fs");
-const { validateContext, toUnixPath } = require("./context");
+const { toUnixPath } = require("./context");
 const electronPackager = require("electron-packager");
 
-module.exports.package = async function package(cx) {
-  validateContext(cx);
-
+/** @param {import("./context").Context} cx */
+async function doPackage(cx) {
   const { os, arch } = cx;
-  $.say(`Packaging ${cx.appName} for ${os}-${arch}`);
+  say(`Packaging ${cx.appName} for ${os}-${arch}`);
 
-  const appName = $.appName();
-  const appVersion = $.buildVersion();
+  const appName = getAppName();
+  const appVersion = getBuildVersion();
   const outDir = ospath.join("build", `v${appVersion}`);
 
   if (!fs.existsSync("prefix")) {
     throw new Error("Missing prefix/ folder, bailing out");
   }
 
+  /**
+   * @type {import("electron-packager").Options}
+   */
   let electronOptions = {
     dir: "prefix",
     name: appName,
     electronVersion: cx.electronVersion,
     appVersion,
+    buildVersion: appVersion,
+    appCopyright: "MIT license, (c) itch corp.",
     asar: false,
     overwrite: true,
     out: outDir,
     ...getElectronOptions(cx),
   };
 
-  const appPaths = await $.measure(
+  const appPaths = await measure(
     "electron package",
     async () => await electronPackager(electronOptions)
   );
   let buildPath = toUnixPath(appPaths[0]);
 
-  $.say(`Built app is in ${buildPath}`);
+  say(`Built app is in ${buildPath}`);
 
-  $.say(`Moving to ${cx.packageDir}`);
-  $(await $.sh(`rm -rf packages`));
-  $(await $.sh(`mkdir -p packages`));
+  say(`Moving to ${cx.packageDir}`);
+  sh(`rm -rf packages`);
+  sh(`mkdir -p packages`);
+  sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`);
 
-  // XXX: this used to be 'ditto' on macOS, not sure why
-  $(await $.sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`));
+  await sign(cx);
+}
 
-  await installDeps(cx);
-
-  await sign(cx, cx.packageDir);
-};
-
+/**
+ * @param {import("./context").Context} cx
+ * @returns {Partial<import("electron-packager").Options>}
+ */
 function getElectronOptions(cx) {
   if (cx.os === "windows") {
     return {
@@ -71,17 +85,21 @@ function getElectronOptions(cx) {
   throw new Error(`Cannot build electron options for ${cx.os}-${cx.arch}`);
 }
 
+/**
+ * @param {import("./context").Context} cx
+ * @returns {Partial<import("electron-packager").Options>}
+ */
 function windowsOptions(cx) {
+  /**
+   * @type {Partial<import("electron-packager").Options>}
+   */
   const options = {
     platform: "win32",
     icon: ospath.join(cx.iconsPath, "itch.ico"),
     win32metadata: {
       CompanyName: "itch corp.",
-      LegalCopyright: "MIT license, (c) itch corp.",
       FileDescription: "the itch.io desktop app",
-      OriginalFileName: `${cx.appName}.exe`,
-      FileVersion: cx.appVersion,
-      AppVersion: cx.appVersion,
+      OriginalFilename: `${cx.appName}.exe`,
       ProductName: cx.appName,
       InternalName: `${cx.appName}.exe`,
     },
@@ -89,12 +107,19 @@ function windowsOptions(cx) {
   return options;
 }
 
+/**
+ * @param {import("./context").Context} cx
+ * @returns {Partial<import("electron-packager").Options>}
+ */
 function darwinOptions(cx) {
+  /**
+   * @type {Partial<import("electron-packager").Options>}
+   */
   const options = {
     platform: "darwin",
     arch: "x64",
     icon: ospath.join(cx.iconsPath, "itch.icns"),
-    appBundleId: $.appBundleId(),
+    appBundleId: appBundleId(),
     appCategoryType: "public.app-category.games",
     protocols: [
       {
@@ -118,54 +143,29 @@ function darwinOptions(cx) {
   return options;
 }
 
-async function installDeps(cx) {
-  validateContext(cx);
-
-  const binaryDir = ospath.join(cx.packageDir, cx.binarySubdir);
-  $.say(`Will install dependencies into (${binaryDir})`);
-  if (!fs.existsSync(binaryDir)) {
-    throw new Error(`binaryDir should exist: ${binaryDir}`);
-  }
-
-  $.say(`Building install-deps tool`);
-  await $.cd(ospath.join(cx.projectDir, "install-deps"), async () => {
-    $(await $.sh("go build"));
-  });
-
-  let ext = cx.os === "windows" ? ".exe" : "";
-  let installDepsPath = toUnixPath(
-    ospath.join(cx.projectDir, "install-deps", `install-deps${ext}`)
-  );
-  $.say(`Built at (${installDepsPath})`);
-  if (!fs.existsSync(installDepsPath)) {
-    throw new Error(`installDepsPath should exist: ${installDepsPath}`);
-  }
-
-  // TODO: change to --production once stable butler versions start being tagged again
-  let args = `--manifest package.json --dir "${binaryDir}" --development`;
-  $(await $.sh(`${installDepsPath} ${args}`));
-}
-
+/**
+ * @param {import("./context").Context} cx
+ */
 async function sign(cx) {
-  validateContext(cx);
-
   const packageDir = cx.packageDir;
-  $.say(`packageDir is (${packageDir})`);
+  say(`packageDir is (${packageDir})`);
 
   if (!cx.shouldSign) {
-    $.say("Code signing disabled, skipping");
+    say("Code signing disabled, skipping");
     return;
   }
 
   if (cx.os === "windows") {
-    $.say("Signing Windows executable...");
+    say("Signing Windows executable...");
     const windows = require("./windows");
     await windows.sign(cx, packageDir);
   } else if (cx.os === "darwin") {
-    $.say("Signing macOS app bundle...");
+    say("Signing macOS app bundle...");
     const darwin = require("./darwin");
     await darwin.sign(cx, packageDir);
   } else {
-    $.say("Not signing Linux executables, that's not a thing");
+    say("Not signing Linux executables, that's not a thing");
   }
 }
+
+module.exports = { doPackage };

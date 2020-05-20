@@ -1,7 +1,6 @@
 import { useSocket } from "renderer/contexts";
 import { useEffect, useState } from "react";
-import { Game } from "common/butlerd/messages";
-import { messages } from "common/butlerd";
+import { messages, Game } from "@itchio/valet";
 
 export function useGame(gameId?: number): Game | undefined {
   const socket = useSocket();
@@ -42,7 +41,7 @@ export function useGame(gameId?: number): Game | undefined {
         setGame(undefined);
         throw e;
       }
-    })().catch(e => console.warn(e));
+    })().catch((e) => console.warn(e));
     return () => {
       cancelled = true;
     };

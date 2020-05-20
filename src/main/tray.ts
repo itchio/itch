@@ -2,8 +2,6 @@ import { MainState } from "main";
 import { Tray, app, Menu } from "electron";
 import { join } from "path";
 import { mainLogger } from "main/logger";
-import { messages } from "common/butlerd";
-import { Client } from "butlerd";
 import { broadcastPacket } from "main/websocket-handler";
 import { packets } from "common/packets";
 import _ from "lodash";
@@ -16,6 +14,7 @@ const logger = mainLogger.childWithName("tray");
 
 import kitchTrayImage from "static/images/tray/kitch.png";
 import itchTrayImage from "static/images/tray/itch.png";
+import { Client, messages } from "@itchio/valet";
 
 function trayIcon(): string {
   console.log(`kitchTrayImage = ${JSON.stringify(kitchTrayImage, null, 2)}`);
@@ -102,31 +101,29 @@ async function updateTrayMenu(ms: MainState) {
     ...template,
   ];
 
-  if (ms.butler) {
-    const client = new Client(ms.butler.endpoint);
-    let { items } = await client.call(messages.FetchCaves, {
-      sortBy: "lastTouched",
-      limit: 10,
-    });
+  const client = new Client();
+  let { items } = await client.call(messages.FetchCaves, {
+    sortBy: "lastTouched",
+    limit: 10,
+  });
 
-    if (items) {
-      items = _.uniqBy(items, (cave) => cave.game?.id);
-      template = [
-        ...items.map((cave) => ({
-          label: cave.game.title,
-          click: () => {
-            launchGame(ms, {
-              gameId: cave.game.id,
-              caveId: cave.id,
-            }).catch((e) => logger.warn(`While launching game: ${e.stack}`));
-          },
-        })),
-        {
-          type: "separator",
+  if (items) {
+    items = _.uniqBy(items, (cave) => cave.game?.id);
+    template = [
+      ...items.map((cave) => ({
+        label: cave.game.title,
+        click: () => {
+          launchGame(ms, {
+            gameId: cave.game.id,
+            caveId: cave.id,
+          }).catch((e) => logger.warn(`While launching game: ${e.stack}`));
         },
-        ...template,
-      ];
-    }
+      })),
+      {
+        type: "separator",
+      },
+      ...template,
+    ];
   }
 
   ms.tray.setContextMenu(Menu.buildFromTemplate(template));

@@ -1,4 +1,4 @@
-import { Download } from "common/butlerd/messages";
+import { Download } from "@itchio/valet";
 import { DownloadsState } from "common/downloads";
 import { filterObject } from "common/filter-object";
 import { packets } from "common/packets";
@@ -27,9 +27,9 @@ export function useDownloads(filter?: DownloadFilter): DownloadsState {
   const [downloads, setDownloads] = useState<DownloadsState>({});
   const mergeDownloads = useCallback(
     (fresh: DownloadsState) => {
-      setDownloads(old => ({
+      setDownloads((old) => ({
         ...old,
-        ...filterObject(fresh, dl => applyFilter(dl, filter)),
+        ...filterObject(fresh, (dl) => applyFilter(dl, filter)),
       }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,7 +55,7 @@ export function useDownloads(filter?: DownloadFilter): DownloadsState {
     socket,
     packets.downloadCleared,
     ({ download }) => {
-      setDownloads(old => _.omit(old, download.id));
+      setDownloads((old) => _.omit(old, download.id));
     },
     [filterState]
   );

@@ -1,5 +1,3 @@
-import { Client } from "butlerd";
-import { messages } from "common/butlerd";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import { partitionForUser } from "common/util/partitions";
@@ -9,25 +7,22 @@ import { setCookie } from "main/cookie";
 import { startDrivingDownloads } from "main/drive-downloads";
 import { registerItchProtocol } from "main/itch-protocol";
 import { mainLogger } from "main/logger";
-import { hookLogging } from "main/start-butler";
+import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket } from "main/websocket-handler";
 import { MemoryLogger } from "common/logger";
+import { Client, messages } from "@itchio/valet";
 
 const logger = mainLogger.childWithName("profile");
 
 export async function attemptAutoLogin(ms: MainState) {
-  if (!ms.butler) {
-    throw new Error("attempted auto login before butler was ready");
-  }
-
-  const client = new Client(ms.butler.endpoint);
+  const client = new Client();
 
   let { profiles } = await client.call(messages.ProfileList, {});
   if (profiles) {
     logger.debug(`${profiles.length} remembered profiles`);
 
     // most recent first
-    profiles = sortBy(profiles, p => -+new Date(p.lastConnected));
+    profiles = sortBy(profiles, (p) => -+new Date(p.lastConnected));
 
     let autoProfile = profiles[0];
     if (autoProfile && autoProfile.user) {
@@ -42,7 +37,7 @@ export async function attemptAutoLogin(ms: MainState) {
           {
             profileId: profiles[0].id,
           },
-          convo => hookLogging(convo, memlogger)
+          (convo) => hookLogging(convo, memlogger)
         );
         await setProfile(ms, { profile });
       } catch (e) {

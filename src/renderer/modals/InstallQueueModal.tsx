@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Upload, Game, InstallLocationSummary } from "common/butlerd/messages";
+import { Upload, Game, InstallLocationSummary } from "@itchio/valet";
 import { modals } from "common/modals";
 import React, { useState } from "react";
 import { Ellipsis } from "renderer/basics/Ellipsis";
@@ -19,7 +19,7 @@ import { fileSize } from "common/format/filesize";
 import { delay } from "common/delay";
 import { Center } from "renderer/basics/Center";
 
-export const InstallQueueModal = modalWidget(modals.installQueue, props => {
+export const InstallQueueModal = modalWidget(modals.installQueue, (props) => {
   const { gameId, uploadId } = props.params;
 
   const socket = useSocket();
@@ -122,13 +122,13 @@ const OptionGroup = styled.div`
   align-items: center;
 
   .name {
-    color: ${p => p.theme.colors.text1};
+    color: ${(p) => p.theme.colors.text1};
   }
 
   .size {
     padding-left: 1em;
-    color: ${p => p.theme.colors.text2};
-    font-size: ${p => fontSizes.small};
+    color: ${(p) => p.theme.colors.text2};
+    font-size: ${(p) => fontSizes.small};
   }
 `;
 
@@ -140,12 +140,12 @@ const StatRow = styled.div`
   padding: 1em 0;
 
   .name {
-    color: ${p => p.theme.colors.text1};
+    color: ${(p) => p.theme.colors.text1};
   }
 
   .value {
     padding-left: 1em;
-    color: ${p => p.theme.colors.text2};
+    color: ${(p) => p.theme.colors.text2};
     font-size: ${fontSizes.small};
   }
 `;
@@ -155,7 +155,7 @@ const Body = (props: Props) => {
   const socket = useSocket();
 
   let getInitialUploadId = () => {
-    if (_.find(uploads, u => u.id == initialUploadId)) {
+    if (_.find(uploads, (u) => u.id == initialUploadId)) {
       return initialUploadId;
     } else if (uploads[0]) {
       return uploads[0].id;
@@ -164,11 +164,11 @@ const Body = (props: Props) => {
     }
   };
   const [uploadId, setUploadId] = useState(getInitialUploadId());
-  const upload = _.find(uploads, u => u.id == uploadId);
+  const upload = _.find(uploads, (u) => u.id == uploadId);
 
   const [locs, setLocs] = useState<InstallLocationSummary[]>([]);
   const [locId, setLocId] = useState<string | undefined>();
-  const loc = _.find(locs, l => l.id == locId);
+  const loc = _.find(locs, (l) => l.id == locId);
   const availableSize = loc ? loc.sizeInfo.freeSize : 0;
 
   useAsync(async () => {
@@ -203,7 +203,7 @@ const Body = (props: Props) => {
                     <FormattedMessage id="plan_install.select_upload" />
                   </div>
                   <Dropdown
-                    options={uploads.map(upload => ({
+                    options={uploads.map((upload) => ({
                       ...upload,
                       label: (
                         <OptionGroup>
@@ -214,7 +214,7 @@ const Body = (props: Props) => {
                     }))}
                     value={uploadId}
                     width="100%"
-                    onChange={value => setUploadId(value)}
+                    onChange={(value) => setUploadId(value)}
                   />
                 </div>
                 <div className="dropdown-row">
@@ -222,7 +222,7 @@ const Body = (props: Props) => {
                     <FormattedMessage id="plan_install.select_install_location" />
                   </div>
                   <Dropdown
-                    options={locs.map(loc => ({
+                    options={locs.map((loc) => ({
                       ...loc,
                       label: (
                         <OptionGroup>
@@ -236,7 +236,7 @@ const Body = (props: Props) => {
                     }))}
                     value={locId}
                     width="100%"
-                    onChange={value => setLocId(value)}
+                    onChange={(value) => setLocId(value)}
                   />
                 </div>
                 <StatRow>

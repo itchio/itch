@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Game, Upload } from "common/butlerd/messages";
+import { Game, Upload } from "@itchio/valet";
 import { modals } from "common/modals";
 import _ from "lodash";
 import React, { useState } from "react";
@@ -34,7 +34,7 @@ interface Data {
   upload?: Upload;
 }
 
-export const InstallModal = modalWidget(modals.install, props => {
+export const InstallModal = modalWidget(modals.install, (props) => {
   const socket = useSocket();
   const { gameId, uploadId } = props.params;
 
@@ -60,8 +60,8 @@ export const InstallModal = modalWidget(modals.install, props => {
           fastQueue: true,
           installLocationId: locsRes.installLocations[0].id,
         },
-        convo => {
-          convo.onNotification(messages.Log, params => {
+        (convo) => {
+          convo.onNotification(messages.Log, (params) => {
             console.log(`${params.level} ${params.message}`);
           });
         }
@@ -84,7 +84,7 @@ export const InstallModal = modalWidget(modals.install, props => {
     });
     const data: Data = {
       game,
-      upload: _.find(uploads, u => u.id === uploadId),
+      upload: _.find(uploads, (u) => u.id === uploadId),
     };
     setData(data);
   }, [gameId, socket, uploadId]);

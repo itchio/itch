@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Game, GameRecord } from "common/butlerd/messages";
+import { Game, GameRecord } from "@itchio/valet";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
@@ -59,7 +59,7 @@ const GameGridContainer = styled.div`
         align-items: flex-end;
         justify-content: flex-start;
 
-        color: ${p => p.theme.colors.text2};
+        color: ${(p) => p.theme.colors.text2};
         font-size: ${fontSizes.small};
 
         & > .progress-bar {
@@ -107,7 +107,7 @@ interface Props {
   setRecords: React.Dispatch<React.SetStateAction<GameRecord[]>>;
 }
 
-export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
+export const GameGrid = React.forwardRef(function (props: Props, ref: any) {
   const socket = useSocket();
 
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
@@ -121,16 +121,19 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   });
 
   const [launch] = useAsyncCb(
-    async function(gameId: number) {
+    async function (gameId: number) {
       await socket.query(queries.launchGame, { gameId });
     },
     [socket]
   );
 
   const [forceClose] = useAsyncCb(
-    async function(gameId: number) {
+    async function (gameId: number) {
       const res = await socket.query(queries.getOngoingLaunches);
-      const currentLaunchId = _.findKey(res.launches, l => l.gameId === gameId);
+      const currentLaunchId = _.findKey(
+        res.launches,
+        (l) => l.gameId === gameId
+      );
       if (!currentLaunchId) {
         return;
       }
@@ -152,7 +155,7 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   );
 
   const [install] = useAsyncCb(
-    async function(gameId: number) {
+    async function (gameId: number) {
       const { game } = await socket.call(messages.FetchGame, { gameId });
       setGameBeingInstalled(game);
     },
@@ -160,7 +163,7 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   );
 
   const [purchase] = useAsyncCb(
-    async function(gameId: number) {
+    async function (gameId: number) {
       try {
         const { game } = await socket.call(messages.FetchGame, {
           gameId,
@@ -176,7 +179,7 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   );
 
   const downloads = useDownloads();
-  const launchesByGameId = _.keyBy(useLaunches(), l => l.gameId);
+  const launchesByGameId = _.keyBy(useLaunches(), (l) => l.gameId);
 
   useListen(
     socket,
@@ -204,7 +207,7 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
             installedAt: undefined,
           });
         }
-      })().catch(e => console.warn(e));
+      })().catch((e) => console.warn(e));
     },
     []
   );
@@ -212,8 +215,8 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   return (
     <>
       <GameGridContainer ref={ref}>
-        {props.records.map(game => {
-          const dl = _.find(downloads, d => d.game?.id == game.id);
+        {props.records.map((game) => {
+          const dl = _.find(downloads, (d) => d.game?.id == game.id);
           // N.B: we have to be extremely careful what we pass here.
           // GameGridItem is a memo'd component, so if we don't want to
           // re-render the whole grid, we need to not change props for all
@@ -247,8 +250,8 @@ const updateRecord = (
   props: Props,
   fresh: Partial<GameRecord> & { id: number }
 ) => {
-  props.setRecords(records => {
-    let recIndex = _.findIndex(records, x => x.id === fresh.id);
+  props.setRecords((records) => {
+    let recIndex = _.findIndex(records, (x) => x.id === fresh.id);
     if (recIndex !== -1) {
       let newRecords = [...records];
       newRecords[recIndex] = { ...newRecords[recIndex], ...fresh };

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Game, Upload } from "common/butlerd/messages";
+import { Game, Upload } from "@itchio/valet";
 import React from "react";
 import { fontSizes } from "renderer/theme";
 import { gameCover } from "common/game-cover";
@@ -39,7 +39,7 @@ const Title = styled.div`
 
 const ShortText = styled.div`
   font-size: ${fontSizes.normal};
-  color: ${p => p.theme.colors.text2};
+  color: ${(p) => p.theme.colors.text2};
 `;
 
 export const SimpleGameRow = (props: { game: Game; upload?: Upload }) => {

@@ -5,7 +5,7 @@ import {
   Game,
   Upload,
   UploadType,
-} from "common/butlerd/messages";
+} from "@itchio/valet";
 import { DownloadWithProgress } from "common/downloads";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
@@ -36,17 +36,17 @@ const InstallMenuContents = styled(MenuContents)`
 
   .no-uploads {
     font-size: ${fontSizes.normal};
-    background: ${p => p.theme.colors.errorBg};
-    color: ${p => p.theme.colors.errorText};
+    background: ${(p) => p.theme.colors.errorBg};
+    color: ${(p) => p.theme.colors.errorText};
 
     padding: 1em;
   }
 
   .header {
-    box-shadow: 0 0 40px ${p => p.theme.colors.shellBg};
+    box-shadow: 0 0 40px ${(p) => p.theme.colors.shellBg};
 
-    background: ${p => p.theme.colors.popoverHeaderBg};
-    color: ${p => p.theme.colors.text2};
+    background: ${(p) => p.theme.colors.popoverHeaderBg};
+    color: ${(p) => p.theme.colors.text2};
 
     display: flex;
     flex-direction: row;
@@ -81,7 +81,7 @@ const InstallMenuContents = styled(MenuContents)`
     .category {
       font-size: ${fontSizes.small};
       font-weight: bold;
-      color: ${p => p.theme.colors.text2};
+      color: ${(p) => p.theme.colors.text2};
 
       padding: 0.4em;
       padding-left: 0.8em;
@@ -108,7 +108,7 @@ const UploadInfoDiv = styled.div`
     }
 
     &.warning {
-      color: ${p => p.theme.colors.errorBg};
+      color: ${(p) => p.theme.colors.errorBg};
     }
   }
 `;
@@ -156,11 +156,11 @@ export const InstallPopoverContents = React.forwardRef(
 
     const [downloads, setDownloads] = useState<DownloadsByUpload>({});
     const mergeDownloads = (fresh: DownloadsByUpload) => {
-      setDownloads(downloads => ({ ...downloads, ...fresh }));
+      setDownloads((downloads) => ({ ...downloads, ...fresh }));
     };
     const [caves, setCaves] = useState<CavesByUpload>({});
     const mergeCaves = (fresh: CavesByUpload) => {
-      setCaves(caves => ({ ...caves, ...fresh }));
+      setCaves((caves) => ({ ...caves, ...fresh }));
     };
     const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
@@ -172,14 +172,14 @@ export const InstallPopoverContents = React.forwardRef(
         const { downloads } = await socket.query(queries.getDownloadsForGame, {
           gameId,
         });
-        setDownloads(_.keyBy(downloads, x => x.upload.id));
+        setDownloads(_.keyBy(downloads, (x) => x.upload.id));
 
         const { items } = await socket.call(messages.FetchCaves, {
           filters: {
             gameId,
           },
         });
-        setCaves(_.keyBy(items, x => x.upload.id));
+        setCaves(_.keyBy(items, (x) => x.upload.id));
 
         const fetchParams: FetchGameUploadsParams = {
           gameId,
@@ -207,13 +207,13 @@ export const InstallPopoverContents = React.forwardRef(
 
           const compatible = resCompat.uploads;
 
-          const compatMap = _.keyBy(compatible, u => u.id);
-          const others = _.filter(resAll.uploads, u => !compatMap[u.id]);
+          const compatMap = _.keyBy(compatible, (u) => u.id);
+          const others = _.filter(resAll.uploads, (u) => !compatMap[u.id]);
 
-          const allMap = _.keyBy(resAll.uploads, u => u.id);
+          const allMap = _.keyBy(resAll.uploads, (u) => u.id);
           const local = _.filter(
-            _.map(caves, c => c.upload),
-            u => !allMap[u.id]
+            _.map(caves, (c) => c.upload),
+            (u) => !allMap[u.id]
           );
 
           setUploads({
@@ -266,7 +266,7 @@ export const InstallPopoverContents = React.forwardRef(
       socket,
       packets.gameUninstalled,
       () => {
-        setFetchNumber(n => n + 1);
+        setFetchNumber((n) => n + 1);
       },
       []
     );
@@ -279,7 +279,7 @@ export const InstallPopoverContents = React.forwardRef(
     const [install] = useAsyncCb(
       async (upload: Upload) => {
         try {
-          setQueued(queued => ({ ...queued, [upload.id]: true }));
+          setQueued((queued) => ({ ...queued, [upload.id]: true }));
           const locsRes = await socket.call(messages.InstallLocationsList, {});
 
           await socket.call(messages.InstallQueue, {
@@ -291,7 +291,7 @@ export const InstallPopoverContents = React.forwardRef(
           });
           props.onClose();
         } catch (e) {
-          setQueued(queued => _.omit(queued, upload.id));
+          setQueued((queued) => _.omit(queued, upload.id));
         }
       },
       [props, socket]
@@ -300,7 +300,7 @@ export const InstallPopoverContents = React.forwardRef(
     const [uninstall] = useAsyncCb(
       async (upload: Upload) => {
         try {
-          setQueued(queued => ({ ...queued, [upload.id]: true }));
+          setQueued((queued) => ({ ...queued, [upload.id]: true }));
           const { items } = await socket.call(messages.FetchCaves, {
             filters: {
               gameId,
@@ -308,17 +308,17 @@ export const InstallPopoverContents = React.forwardRef(
           });
           const existingCave = _.find<Cave>(
             items,
-            x => x.upload.id === upload.id
+            (x) => x.upload.id === upload.id
           );
           if (existingCave) {
-            setQueued(queued => _.omit(queued, upload.id));
+            setQueued((queued) => _.omit(queued, upload.id));
 
             // in this case, uninstall, but confirm first
             await socket.query(queries.uninstallGame, { cave: existingCave });
             onClose();
           }
         } catch (e) {
-          setQueued(queued => _.omit(queued, upload.id));
+          setQueued((queued) => _.omit(queued, upload.id));
         }
       },
       [socket, gameId, onClose]
@@ -403,7 +403,7 @@ export const InstallPopoverContents = React.forwardRef(
                     <>
                       <Button
                         className="category"
-                        onClick={ev => {
+                        onClick={(ev) => {
                           setShowOthers(false);
                         }}
                         icon="minus"
@@ -426,7 +426,7 @@ export const InstallPopoverContents = React.forwardRef(
                   ) : (
                     <Button
                       className="category"
-                      onClick={ev => {
+                      onClick={(ev) => {
                         setShowOthers(true);
                       }}
                       icon="plus"
@@ -479,7 +479,7 @@ const UploadGroup = (props: {
 
   return (
     <>
-      {items.map(u => {
+      {items.map((u) => {
         let dl: DownloadWithProgress | undefined =
           props.downloadsByUpload[u.id];
         const isQueued = props.queued[u.id];

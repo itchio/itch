@@ -1,11 +1,11 @@
-import { Client } from "butlerd";
-import { isCancelled, messages } from "common/butlerd";
+import { isCancelled } from "common/butlerd";
 import { packets } from "common/packets";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
-import { hookLogging } from "main/start-butler";
+import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket } from "main/websocket-handler";
 import { triggerTrayMenuUpdate } from "main/tray";
+import { Client, messages } from "@itchio/valet";
 
 const logger = mainLogger.childWithName("drive-downloads");
 
@@ -20,13 +20,13 @@ export function startDrivingDownloads(ms: MainState) {
 async function driveDownloads(ms: MainState) {
   try {
     ms.downloads = {};
-    const client = new Client(ms.butler!.endpoint);
+    const client = new Client();
     const initialState = await client.call(messages.DownloadsList, {});
     for (const download of initialState.downloads) {
       ms.downloads[download.id] = download;
     }
 
-    await client.call(messages.DownloadsDrive, {}, convo => {
+    await client.call(messages.DownloadsDrive, {}, (convo) => {
       hookLogging(convo, logger);
 
       convo.onNotification(messages.DownloadsDriveStarted, ({ download }) => {
@@ -77,7 +77,7 @@ async function driveDownloads(ms: MainState) {
             caveId: download.caveId,
           });
           broadcastPacket(ms, packets.gameInstalled, { cave });
-        })().catch(e => {
+        })().catch((e) => {
           console.warn("While fetching cave after download finished", e.stack);
         });
       });

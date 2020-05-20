@@ -1,4 +1,4 @@
-import { Profile } from "common/butlerd/messages";
+import { Profile } from "@itchio/valet";
 import { useContext, createContext } from "react";
 import { Socket } from "renderer/Socket";
 
