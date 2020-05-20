@@ -21,6 +21,7 @@ import { loadLocale, setPreferences } from "main/preferences";
 import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
+import { registerQueriesWebview } from "main/queries-webview";
 import WebSocket from "ws";
 import { showModal } from "main/show-modal";
 import { triggerTrayMenuUpdate } from "main/tray";
@@ -165,14 +166,6 @@ export class WebsocketHandler {
     onQuery(queries.setProfile, async (params) => {
       await setProfile(ms, params);
     });
-
-    onQuery(queries.getWebviewState, async () => {
-      return { state: ms.webview };
-    });
-    onQuery(queries.setWebviewState, async (params) => {
-      ms.webview = params.state;
-    });
-
     onQuery(queries.getCurrentLocale, async (params) => {
       return {
         currentLocale: ms.localeState!.current,
@@ -193,6 +186,7 @@ export class WebsocketHandler {
     });
 
     registerQueriesLaunch(ms, onQuery);
+    registerQueriesWebview(ms, onQuery);
 
     onQuery(queries.getPreferences, async () => {
       const { preferences } = ms;

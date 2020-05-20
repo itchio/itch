@@ -1,8 +1,6 @@
-import { ExtendedWebContents } from "common/extended-web-contents";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import { partitionForUser } from "common/util/partitions";
-import { WebviewState } from "common/webview-state";
 import { WebviewTag } from "electron";
 import React, { useEffect, useRef, useState } from "react";
 import { useProfile, useSocket } from "renderer/contexts";
@@ -18,7 +16,7 @@ const WebviewContainer = styled.div`
   width: 100%;
   height: 100%;
 
-  background: ${p => p.theme.colors.shellBg};
+  background: ${(p) => p.theme.colors.shellBg};
 
   display: flex;
   flex-direction: column;
@@ -45,9 +43,9 @@ export const Webview = (props: WebviewProps) => {
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
 
-  let [setWebviewHistory] = useAsyncCb(
-    async (state: WebviewState) => {
-      await socket.query(queries.setWebviewState, { state });
+  let [saveWebviewState] = useAsyncCb(
+    async (wcId: number) => {
+      await socket.query(queries.saveWebviewState, { wcId });
     },
     [socket]
   );
@@ -58,30 +56,24 @@ export const Webview = (props: WebviewProps) => {
       return;
     }
 
-    wv.addEventListener("will-navigate", ev => {
+    wv.addEventListener("will-navigate", (ev) => {
       setUrl(ev.url);
     });
 
     let didNavigate = (url: string) => {
-      const wc = wv.getWebContents() as ExtendedWebContents;
-      setWebviewHistory({
-        history: wc.history,
-        currentIndex: wc.currentIndex,
-      });
+      saveWebviewState(wv.getWebContentsId());
       setUrl(url);
-      setCanGoBack(wc.canGoBack());
-      setCanGoForward(wc.canGoForward());
+      setCanGoBack(wv.canGoBack());
+      setCanGoForward(wv.canGoForward());
     };
 
-    wv.addEventListener("did-navigate", ev => {
+    wv.addEventListener("did-navigate", (ev) => {
       if (/^about:blank/.test(ev.url)) {
         (async () => {
           try {
-            let { state } = await socket.query(queries.getWebviewState);
-            const { history, currentIndex } = state;
-            const wc = wv.getWebContents() as ExtendedWebContents;
-            wc.history = history;
-            wc.goToIndex(currentIndex);
+            await socket.query(queries.restoreWebviewState, {
+              wcId: wv.getWebContentsId(),
+            });
           } catch (e) {
             console.error(e);
             // alert(`Something went very wrong:\n\n${e.stack}`);
@@ -91,22 +83,22 @@ export const Webview = (props: WebviewProps) => {
         didNavigate(ev.url);
       }
     });
-    wv.addEventListener("did-navigate-in-page", ev => {
+    wv.addEventListener("did-navigate-in-page", (ev) => {
       didNavigate(ev.url);
     });
 
-    wv.addEventListener("load-commit", ev => {
+    wv.addEventListener("load-commit", (ev) => {
       if (ev.isMainFrame) {
         setUrl(ev.url);
       }
     });
-    wv.addEventListener("page-title-updated", ev => {
+    wv.addEventListener("page-title-updated", (ev) => {
       setTitle(ev.title);
     });
-    wv.addEventListener("did-start-loading", ev => {
+    wv.addEventListener("did-start-loading", () => {
       setLoading(true);
     });
-    wv.addEventListener("did-stop-loading", ev => {
+    wv.addEventListener("did-stop-loading", () => {
       setLoading(false);
 
       const matches = /^itch:\/\/(.*)$/.exec(wv.getURL());
@@ -117,12 +109,12 @@ export const Webview = (props: WebviewProps) => {
           `
           (document.querySelector("meta[name='itch:path']") || {content: ""}).content
         `
-        ).then(path => {
+        ).then((path) => {
           setPath(path);
         });
       }
     });
-  }, [setWebviewHistory, socket, viewRef]);
+  }, [saveWebviewState, socket, viewRef]);
 
   let viewRefCurrent = viewRef.current;
   const [domReady, setDomReady] = useState(false);

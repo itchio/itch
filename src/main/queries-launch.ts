@@ -151,7 +151,7 @@ async function launchGameInner(
           logger.info(`Handling prereqs...`);
           logger.info(`Prereqs tasks: ${dump(tasks)}`);
         });
-        convo.onNotification(messages.PrereqsTaskState, () => {});
+        convo.onNotification(messages.PrereqsTaskState, () => { });
         convo.onRequest(messages.PrereqsFailed, async params => {
           logger.info(`Prereqs failed: ${dump(params)}`);
           // TODO: allow continuing
@@ -185,7 +185,7 @@ async function launchGameInner(
           return {};
         });
         convo.onRequest(messages.ShellLaunch, async params => {
-          shell.openItem(params.itemPath);
+          await shell.openPath(params.itemPath);
           return {};
         });
         convo.onNotification(messages.PrereqsEnded, () => {

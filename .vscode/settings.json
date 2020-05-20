@@ -37,6 +37,5 @@
   },
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.reportStyleChecksAsWarnings": false,
-  "typescript.preferences.quoteStyle": "double",
-  "typescript.tsserver.experimental.enableProjectDiagnostics": true
+  "typescript.preferences.quoteStyle": "double"
 }

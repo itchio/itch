@@ -16,8 +16,15 @@ export const queries = wireQueries({
   isMaximized: query<void, { maximized: boolean }>(),
   close: query<void, void>(),
 
-  getWebviewState: query<void, { state: WebviewState }>(),
-  setWebviewState: query<{ state: WebviewState }, void>(),
+  restoreWebviewState: query<{ wcId: number }, void>(),
+  saveWebviewState: query<{ wcId: number }, void>(),
+  openWebviewDevTools: query<{ wcId: number }, void>(),
+  getWebviewState: query<{ wcId: number }, { state: WebviewState }>(),
+  webviewGoBack: query<{ wcId: number }, void>(),
+  webviewGoForward: query<{ wcId: number }, void>(),
+  webviewStop: query<{ wcId: number }, void>(),
+  webviewReload: query<{ wcId: number }, void>(),
+  webviewPopout: query<{ wcId: number }, void>(),
 
   exit: query<void, void>(),
 

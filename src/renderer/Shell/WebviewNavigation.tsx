@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import { IconButton } from "renderer/basics/IconButton";
 import { animations, fontSizes } from "renderer/theme";
 import styled from "styled-components";
-import { ExtendedWebContents } from "common/extended-web-contents";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";
 import { useClickOutside } from "renderer/basics/use-click-outside";
+import { useSocket } from "renderer/contexts";
+import { queries, QueryCreator } from "common/queries";
 
 const Filler = styled.div`
   flex-grow: 1;
@@ -34,8 +35,8 @@ const NavDiv = styled.div`
         to right,
         transparent 0%,
         transparent 30%,
-        ${p => p.theme.colors.accent} 30%,
-        ${p => p.theme.colors.accent} 70%,
+        ${(p) => p.theme.colors.accent} 30%,
+        ${(p) => p.theme.colors.accent} 70%,
         transparent 70%,
         transparent 100%
       );
@@ -61,49 +62,33 @@ const Title = styled.div`
 export const WebviewNavigation = (props: Props) => {
   const { title, url, loading } = props;
   const [showMenu, setShowMenu] = useState(false);
+  const socket = useSocket();
   const coref = useClickOutside(() => setShowMenu(false));
 
-  let withWebview = (f: (wv: WebviewTag, wc: ExtendedWebContents) => void) => {
+  let wcEvent = (q: QueryCreator<{ wcId: number }, void>) => {
     let wv = props.viewRef.current;
     if (wv) {
-      try {
-        const wc = wv.getWebContents() as ExtendedWebContents;
-        f(wv, wc);
-      } catch (e) {
-        console.warn(e);
-      }
+      socket.query(q, { wcId: wv.getWebContentsId() });
     }
   };
 
   return (
     <NavDiv className={loading ? "loading" : ""}>
       <IconButton
-        onClick={() =>
-          withWebview((wv, wc) => {
-            if (wc.currentIndex > 0) {
-              wv.goToIndex(wc.currentIndex - 1);
-            }
-          })
-        }
+        onClick={() => wcEvent(queries.webviewGoBack)}
         disabled={!props.canGoBack}
         icon="chevron-left"
       />
       <IconButton
-        onClick={() =>
-          withWebview((wv, wc) => {
-            if (wc.currentIndex < wc.history.length - 1) {
-              wc.goToIndex(wc.currentIndex + 1);
-            }
-          })
-        }
+        onClick={() => wcEvent(queries.webviewGoForward)}
         disabled={!props.canGoForward}
         icon="chevron-right"
       />
       {loading ? (
-        <IconButton onClick={() => withWebview(wv => wv.stop())} icon="cross" />
+        <IconButton onClick={() => wcEvent(queries.webviewStop)} icon="cross" />
       ) : (
         <IconButton
-          onClick={() => withWebview(wv => wv.reload())}
+          onClick={() => wcEvent(queries.webviewReload)}
           icon="repeat"
         />
       )}
@@ -119,21 +104,12 @@ export const WebviewNavigation = (props: Props) => {
             {
               <Button
                 disabled={/itch:/.test(url)}
-                onClick={() =>
-                  withWebview(wv => {
-                    window.open(wv.getURL());
-                  })
-                }
+                onClick={() => wcEvent(queries.webviewPopout)}
                 label="Open page in external browser"
               />
             }
             <Button
-              onClick={() =>
-                withWebview((wv, wc) => {
-                  wc.openDevTools({ mode: "detach" });
-                  wc.devToolsWebContents?.focus();
-                })
-              }
+              onClick={() => wcEvent(queries.openWebviewDevTools)}
               label="Open dev tools"
             />
           </MenuContents>
