@@ -5,10 +5,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -94,11 +94,15 @@ func doMain() error {
 	must(downloadChromeDriver(r))
 	r.logf("✓ ChromeDriver is set up!")
 
-	chromeDriverStartupChan := make(chan int64)
+	chromeDriverStartupChan := make(chan struct{})
+
+	chromeDriverPort, err := getFreePort()
+	must(err)
+	r.logf("Picked ChromeDriver port %d", chromeDriverPort)
 
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
 	chromeDriverCtx, chromeDriverCancel := context.WithCancel(context.Background())
-	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--log-path=%s", chromeDriverLogPath), "--verbose")
+	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath), "--verbose")
 	cdoutR, cdoutW, err := os.Pipe()
 	must(err)
 	r.chromeDriverCmd.Stdout = cdoutW
@@ -114,11 +118,8 @@ func doMain() error {
 		for s.Scan() {
 			line := s.Text()
 			r.chromelogf("%s", line)
-			if strings.Contains(line, "Starting ChromeDriver") {
-				tokens := strings.Split(line, " on port ")
-				port, err := strconv.ParseInt(tokens[1], 10, 64)
-				must(err)
-				chromeDriverStartupChan <- port
+			if strings.Contains(line, "ChromeDriver was started successfully") {
+				close(chromeDriverStartupChan)
 			}
 		}
 	}()
@@ -192,12 +193,10 @@ func doMain() error {
 	log.Printf("Got chrome options: %#v", chromeOpts)
 	chromeOpts.Apply(&capabilities)
 
-	var chromeDriverPort int64
-
 	r.logf("Waiting for chrome driver to be fully started")
 	select {
-	case chromeDriverPort = <-chromeDriverStartupChan:
-		r.logf("Chrome driver is actually listening on port %d", chromeDriverPort)
+	case <-chromeDriverStartupChan:
+		r.logf("Chrome driver is actually listening!")
 	case <-time.After(2 * time.Second):
 		r.logf("Timed out waiting for chrome driver to start listening...")
 		gocleanup.Exit(1)
@@ -318,4 +317,19 @@ func must(err error) {
 			gocleanup.Exit(1)
 		}
 	}
+}
+
+// getFreePort asks the kernel for a free open port that is ready to use.
+func getFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
 }
