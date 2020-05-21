@@ -1,11 +1,11 @@
 import { OnQuery } from "main/websocket-handler";
 import { MainState } from "main";
 import { ExtendedWebContents } from "common/extended-web-contents";
-import { WebContents, shell } from "electron";
+import { webContents, shell } from "electron";
 import { queries } from "common/queries";
 
 function getWc(wcId: number): ExtendedWebContents {
-  return WebContents.fromId(wcId) as ExtendedWebContents;
+  return webContents.fromId(wcId) as ExtendedWebContents;
 }
 
 export function registerQueriesWebview(ms: MainState, onQuery: OnQuery) {
