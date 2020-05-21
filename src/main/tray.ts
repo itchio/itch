@@ -2,7 +2,7 @@ import { MainState } from "main";
 import { Tray, app, Menu } from "electron";
 import { join } from "path";
 import { mainLogger } from "main/logger";
-import { broadcastPacket } from "main/websocket-handler";
+import { broadcastPacket } from "main/socket-handler";
 import { packets } from "common/packets";
 import _ from "lodash";
 import { launchGame } from "main/queries-launch";
@@ -19,7 +19,12 @@ import { messages } from "common/butlerd";
 
 function trayIcon(): string {
   console.log(`kitchTrayImage = ${JSON.stringify(kitchTrayImage, null, 2)}`);
-  return join(__dirname, app.name === "kitch" ? kitchTrayImage : itchTrayImage);
+  let res = join(
+    __dirname,
+    app.name === "kitch" ? kitchTrayImage : itchTrayImage
+  );
+  console.log(`res = ${res}`);
+  return res;
 }
 
 export function toggleVisibility(ms: MainState) {

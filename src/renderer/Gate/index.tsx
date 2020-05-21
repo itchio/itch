@@ -3,12 +3,12 @@ import { Profile } from "@itchio/valet/messages";
 import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { ConfirmModal } from "renderer/basics/Modal";
-import { useSocket } from "renderer/contexts";
 import { Deferred } from "renderer/deferred";
 import { Form, FormStage } from "renderer/Gate/Form";
 import { List } from "renderer/Gate/List";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 const GateContainer = styled.div`
   display: flex;
@@ -36,7 +36,6 @@ export interface GateForm {
 type ForgetConfirm = Deferred<void, void> & { profile: Profile };
 
 export const Gate = (props: {}) => {
-  const socket = useSocket();
   const [loading, setLoading] = useState(true);
   const [state, setState] = useState<GateState>({
     type: "form",
@@ -49,34 +48,31 @@ export const Gate = (props: {}) => {
     null
   );
 
-  let fetchProfiles = useCallback(
-    (purpose: "first-time" | "refresh") => {
-      (async () => {
-        try {
-          const { profiles } = await socket.call(messages.ProfileList, {});
-          setProfiles(profiles);
-          if (purpose == "first-time") {
-            setLoading(false);
-            if (profiles.length > 0) {
-              setState({ type: "list" });
-            }
-          } else if (purpose === "refresh") {
-            if (profiles.length == 0) {
-              setState({
-                type: "form",
-                stage: {
-                  type: "need-username",
-                },
-              });
-            }
+  let fetchProfiles = useCallback((purpose: "first-time" | "refresh") => {
+    (async () => {
+      try {
+        const { profiles } = await socket.call(messages.ProfileList, {});
+        setProfiles(profiles);
+        if (purpose == "first-time") {
+          setLoading(false);
+          if (profiles.length > 0) {
+            setState({ type: "list" });
           }
-        } catch (e) {
-          alert("Something went very wrong: " + e.stack);
+        } else if (purpose === "refresh") {
+          if (profiles.length == 0) {
+            setState({
+              type: "form",
+              stage: {
+                type: "need-username",
+              },
+            });
+          }
         }
-      })();
-    },
-    [socket]
-  );
+      } catch (e) {
+        alert("Something went very wrong: " + e.stack);
+      }
+    })();
+  }, []);
 
   const [forgetProfile] = useAsyncCb(
     async (profile: Profile) => {
@@ -94,7 +90,7 @@ export const Gate = (props: {}) => {
       await socket.call(messages.ProfileForget, { profileId: profile.id });
       fetchProfiles("refresh");
     },
-    [fetchProfiles, socket]
+    [fetchProfiles]
   );
 
   useEffect(() => {

@@ -3,9 +3,9 @@ import { Cave } from "@itchio/valet/messages";
 import { packets } from "common/packets";
 import _ from "lodash";
 import { useState, useCallback } from "react";
-import { useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { useAsync } from "renderer/use-async";
+import { socket } from "renderer";
 
 export interface Caves {
   [key: string]: Cave;
@@ -21,7 +21,6 @@ export function useCaves(filter?: CaveFilter): Caves {
   const [caves, setCaves] = useState<Caves>({});
   const [fetchNumber, setFetchNumber] = useState(0);
 
-  const socket = useSocket();
   useAsync(
     async () => {
       const { items } = await socket.call(messages.FetchCaves, {

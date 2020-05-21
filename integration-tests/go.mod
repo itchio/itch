@@ -1,6 +1,6 @@
 module github.com/itchio/itch/integration-tests
 
-go 1.12
+go 1.13
 
 require (
 	github.com/fasterthanlime/go-selenium v0.2.0

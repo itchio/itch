@@ -3,12 +3,12 @@ import styled from "styled-components";
 import { fontSizes } from "renderer/theme";
 import { IconButton } from "renderer/basics/IconButton";
 import { useResizeObserver } from "renderer/use-resize-observer";
-import { useSocket } from "renderer/contexts";
 import { queries } from "common/queries";
 import { ModalPayload } from "common/modals";
+import { socket } from "renderer";
 
 const HardModalDiv = styled.div`
-  border: 1px solid ${p => p.theme.colors.shellBorder};
+  border: 1px solid ${(p) => p.theme.colors.shellBorder};
   min-width: 450px;
   min-height: 150px;
 
@@ -76,16 +76,15 @@ export const HardModal = (props: Props) => {
   const titleHeight = useRef(0);
   const contentHeight = useRef(0);
   const buttonsHeight = useRef(0);
-  const socket = useSocket();
 
   const measure = useCallback(() => {
     let totalHeight =
-        titleHeight.current +
-        contentHeight.current +
-        buttonsHeight.current +
-        contentPaddingTop +
-        contentPaddingBottom +
-        2 /* ahhh, the mysterious plus two. your guess is as good as mine */;
+      titleHeight.current +
+      contentHeight.current +
+      buttonsHeight.current +
+      contentPaddingTop +
+      contentPaddingBottom +
+      2; /* ahhh, the mysterious plus two. your guess is as good as mine */
 
     let payloadString = new URLSearchParams(window.location.search).get(
       "payload"
@@ -104,7 +103,7 @@ export const HardModal = (props: Props) => {
 
     window.resizeTo(width, height);
     socket.query(queries.modalDidLayout, { id, width, height });
-  }, [socket]);
+  }, []);
 
   const titleRef = useResizeObserver({
     onResize: useCallback(

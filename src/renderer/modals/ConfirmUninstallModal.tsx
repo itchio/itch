@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { modals } from "common/modals";
-import { useSocket } from "renderer/contexts";
 import { FormattedMessage } from "react-intl";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
@@ -10,6 +9,7 @@ import { messages } from "common/butlerd";
 import { Game, Cave } from "@itchio/valet/messages";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { queries } from "common/queries";
+import { socket } from "renderer";
 
 interface Data {
   game: Game;
@@ -22,7 +22,6 @@ export const ConfirmUninstallModal = modalWidget(
     const { onResult } = props;
     const { gameId } = props.params;
 
-    const socket = useSocket();
     const [data, setData] = useState<Data | undefined>();
     useAsync(async () => {
       try {
@@ -43,7 +42,7 @@ export const ConfirmUninstallModal = modalWidget(
         console.warn(`Could not fetch game or caves: `, e.stack);
         onResult({});
       }
-    }, [gameId, onResult, socket]);
+    }, [gameId, onResult]);
 
     // TODO: use isExecuting/error/success instead
     const [uninstall] = useAsyncCb(async () => {
@@ -61,7 +60,7 @@ export const ConfirmUninstallModal = modalWidget(
       } catch (e) {
         console.warn(`Could not queue uninstalls: `, e.stack);
       }
-    }, [data, onResult, socket]);
+    }, [data, onResult]);
 
     if (!data) {
       return <></>;

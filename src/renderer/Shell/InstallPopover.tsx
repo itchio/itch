@@ -23,12 +23,12 @@ import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { uploadIcons, UploadTitle } from "renderer/basics/upload";
 import { ClickOutsideRefer } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
 import { useListen } from "renderer/Socket";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -149,7 +149,6 @@ const EllipsisContainer = styled.div`
 
 export const InstallPopoverContents = React.forwardRef(
   (props: Props, ref: any) => {
-    const socket = useSocket();
     const [fetchNumber, setFetchNumber] = useState(0);
     const [loading, setLoading] = useState(true);
     const [queued, setQueued] = useState<Queued>({});
@@ -227,7 +226,7 @@ export const InstallPopoverContents = React.forwardRef(
           alert(e.stack);
         }
       })();
-    }, [fetchNumber, gameId, socket]);
+    }, [fetchNumber, gameId]);
 
     useListen(
       socket,
@@ -294,7 +293,7 @@ export const InstallPopoverContents = React.forwardRef(
           setQueued((queued) => _.omit(queued, upload.id));
         }
       },
-      [props, socket]
+      [props]
     );
 
     const [uninstall] = useAsyncCb(
@@ -321,7 +320,7 @@ export const InstallPopoverContents = React.forwardRef(
           setQueued((queued) => _.omit(queued, upload.id));
         }
       },
-      [socket, gameId, onClose]
+      [gameId, onClose]
     );
 
     const [launch] = useAsyncCb(
@@ -333,7 +332,7 @@ export const InstallPopoverContents = React.forwardRef(
           caveId,
         });
       },
-      [onClose, socket, gameId]
+      [onClose, gameId]
     );
 
     const [explore] = useAsyncCb(
@@ -341,7 +340,7 @@ export const InstallPopoverContents = React.forwardRef(
         onClose();
         await socket.query(queries.exploreCave, { caveId });
       },
-      [onClose, socket]
+      [onClose]
     );
 
     const [showOthers, setShowOthers] = useState(false);

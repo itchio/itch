@@ -1,3 +1,4 @@
+import { socket } from "renderer";
 import { Game } from "@itchio/valet/messages";
 import { DownloadsState } from "common/downloads";
 import { fileSize } from "common/format/filesize";
@@ -17,7 +18,6 @@ import { IconButton } from "renderer/basics/IconButton";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";
 import { useAsyncCb } from "renderer/use-async-cb";
-import { useSocket } from "renderer/contexts";
 import { modals } from "common/modals";
 import { useClickOutside } from "renderer/basics/use-click-outside";
 
@@ -53,14 +53,12 @@ const GameListDetailInternal = (props: InternalProps) => {
     (d) => !d.finishedAt && d.game?.id == game?.id
   );
 
-  const socket = useSocket();
-
   const [uninstallMenuOpen, setUninstallMenuOpen] = useState(false);
   useClickOutside(() => setUninstallMenuOpen(false));
   const [confirmUninstall] = useAsyncCb(async () => {
     await socket.showModal(modals.confirmUninstall, { gameId });
     setUninstallMenuOpen(false);
-  }, [gameId, socket]);
+  }, [gameId]);
 
   return (
     <>

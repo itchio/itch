@@ -116,7 +116,6 @@ function getCommonConfig(type, env) {
       "@itchio/valet": "commonjs @itchio/valet",
       child_process: "child_process",
       net: "net",
-      ws: "ws",
     },
     module: {
       rules: [

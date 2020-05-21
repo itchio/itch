@@ -1,4 +1,4 @@
-import { OnQuery } from "main/websocket-handler";
+import { OnQuery } from "main/socket-handler";
 import { MainState } from "main";
 import { ExtendedWebContents } from "common/extended-web-contents";
 import { webContents, shell } from "electron";

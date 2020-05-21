@@ -2,8 +2,9 @@ import { messages } from "common/butlerd";
 import { DownloadKey } from "@itchio/valet/messages";
 import _ from "lodash";
 import { useState } from "react";
-import { useProfile, useSocket } from "renderer/contexts";
+import { useProfile } from "renderer/contexts";
 import { useAsync } from "renderer/use-async";
+import { socket } from "renderer";
 
 export type DownloadKeys = {
   [key: number]: DownloadKey;
@@ -14,7 +15,6 @@ export function useDownloadKeys(filters?: { gameId?: number }): DownloadKeys {
 
   const [keys, setKeys] = useState<DownloadKeys>({});
 
-  const socket = useSocket();
   useAsync(
     async () => {
       const { items } = await socket.call(messages.FetchDownloadKeys, {

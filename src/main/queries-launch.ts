@@ -17,7 +17,7 @@ import { mainLogger } from "main/logger";
 import { performHTMLLaunch } from "main/perform-html-launch";
 import { showModal } from "main/show-modal";
 import { hookLogging } from "main/initialize-valet";
-import { broadcastPacket, OnQuery } from "main/websocket-handler";
+import { broadcastPacket, OnQuery } from "main/socket-handler";
 import { Client } from "@itchio/valet";
 import { messages } from "common/butlerd";
 import { triggerTrayMenuUpdate } from "main/tray";

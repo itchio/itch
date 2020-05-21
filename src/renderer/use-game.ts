@@ -1,10 +1,9 @@
-import { useSocket } from "renderer/contexts";
 import { useEffect, useState } from "react";
 import { Game } from "@itchio/valet/messages";
 import { messages } from "common/butlerd";
+import { socket } from "renderer";
 
 export function useGame(gameId?: number): Game | undefined {
-  const socket = useSocket();
   const [game, setGame] = useState<Game | undefined>(undefined);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export function useGame(gameId?: number): Game | undefined {
     return () => {
       cancelled = true;
     };
-  }, [gameId, socket]);
+  }, [gameId]);
 
   return game;
 }

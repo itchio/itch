@@ -5,9 +5,9 @@ import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import { useState, useCallback } from "react";
-import { useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { useAsync } from "renderer/use-async";
+import { socket } from "renderer";
 
 export interface DownloadFilter {
   gameId?: number;
@@ -36,7 +36,6 @@ export function useDownloads(filter?: DownloadFilter): DownloadsState {
     [filterState]
   );
 
-  const socket = useSocket();
   useAsync(
     async () => {
       const { downloads } = await socket.query(queries.getDownloads);

@@ -93,6 +93,12 @@ func downloadChromeDriver(r *runner) error {
 			name := filepath.Join(driverCache, f.Name)
 			mode := f.FileInfo().Mode()
 			flags := os.O_WRONLY | os.O_CREATE | os.O_TRUNC
+
+			err = os.MkdirAll(filepath.Dir(name), 0o755)
+			if err != nil {
+				return errors.WithMessage(err, "creating chromedriver entry file's parent")
+			}
+
 			w, err := os.OpenFile(name, flags, mode)
 			if err != nil {
 				return errors.WithMessage(err, "creating chromedriver entry file")
@@ -119,8 +125,8 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-const electronVersion = "8.2.2"
-const chromeDriverVersionString = "ChromeDriver 80.0.3987.163"
+const electronVersion = "9.0.0"
+const chromeDriverVersionString = "ChromeDriver 83.0.4103.64"
 
 func chromeDriverURL(r *runner) string {
 	suffix := ""

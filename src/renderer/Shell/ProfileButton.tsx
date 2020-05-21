@@ -6,9 +6,9 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { MenuContents, MenuTippy, Separator } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -63,15 +63,13 @@ export const ProfileButton = (props: Props) => {
 };
 
 const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
-  const socket = useSocket();
-
   const [logout, logoutLoading] = useAsyncCb(async () => {
     await socket.query(queries.setProfile, {});
-  }, [socket]);
+  }, []);
 
   const [exit] = useAsyncCb(async () => {
     await socket.query(queries.exit);
-  }, [socket]);
+  }, []);
 
   return (
     <MenuContents>

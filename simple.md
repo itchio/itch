@@ -33,13 +33,7 @@ minimize app state duplication and RPC traffic instead.
 
 ## webpack / module bundling / `node_modules`
 
-The only required `node_modules` are `ws` and `@itchio/valet`, with deps:
-
-```
-buffer-from  source-map  source-map-support  @itchio/valet  ws
-```
-
-However, `ws` dependency should be removed.
+The only required `node_modules` is `@itchio/valet`.
 
 Everything else is bundled by webpack.
 

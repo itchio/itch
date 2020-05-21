@@ -11,10 +11,11 @@ import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { Modal } from "renderer/basics/Modal";
 import { useDebounce } from "renderer/basics/use-debounce";
-import { useProfile, useSocket } from "renderer/contexts";
+import { useProfile } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 const SearchModalContainer = styled(Modal)`
   width: 60vw;
@@ -155,7 +156,6 @@ const Filler = styled.div`
 type State = "initial" | "results" | "no-results";
 
 export const SearchModal = (props: { onClose: () => void }) => {
-  const socket = useSocket();
   const profile = useProfile();
   const profileId = profile.id;
   const { onClose } = props;
@@ -178,7 +178,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
       block: "nearest",
       inline: "nearest",
     });
-  }, [currentRefCurrent]);
+  }, [currentRefCurrent, currentRefCurrent?.scrollIntoView]);
 
   useListen(
     socket,
@@ -230,7 +230,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearchTerm, profileId, socket]);
+  }, [debouncedSearchTerm, profileId]);
 
   const onChange = useCallback(
     (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -245,7 +245,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
       let url = `itch://games/${game.id}`;
       socket.send(packets.navigate, { url });
     },
-    [onClose, socket]
+    [onClose]
   );
 
   let numResults = _.size(results);
@@ -293,7 +293,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
     let url = new URL("https://itch.io/search");
     url.searchParams.set("q", debouncedSearchTerm);
     socket.send(packets.navigate, { url: url.toString() });
-  }, [debouncedSearchTerm, onClose, socket]);
+  }, [debouncedSearchTerm, onClose]);
 
   const intl = useIntl();
 

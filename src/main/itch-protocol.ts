@@ -1,13 +1,19 @@
 import env from "common/env";
 import { getRendererDistPath } from "common/util/resources";
-import { protocol, session } from "electron";
+import { protocol, session, app } from "electron";
 import * as fs from "fs";
+import * as originalFs from "original-fs";
 import * as http from "http";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import mime from "mime-types";
 import * as filepath from "path";
 import { Readable } from "stream";
+
+// Preload scripts need an absolute path in Electron, so we need
+// to do a little dance with webpack to make everybody happy
+// @ts-ignore
+import preloadContents from "raw-loader!./preload.js";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
@@ -77,6 +83,13 @@ export async function registerItchProtocol(ms: MainState, partition: string) {
   let handler = getItchProtocolHandler(ms);
   let ses = session.fromPartition(partition);
   ses.protocol.registerStreamProtocol("itch", handler);
+
+  // FIXME: this overrides the path, it's not great.. also, maybe we could just
+  // figure out the absolute path from webpack?
+  let preloadPath = filepath.resolve(app.getPath("temp"), "itch-preload.js");
+  originalFs.writeFileSync(preloadPath, preloadContents);
+  ses.setPreloads([preloadPath]);
+
   partitionsRegistered[partition] = true;
 }
 
@@ -93,50 +106,6 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
   }
   logger.debug(`Building protocol handler`);
 
-  async function handleAPIRequest(
-    req: Electron.Request,
-    elements: string[]
-  ): Promise<Object> {
-    let forbiddenCause: string | null = null;
-    // FIXME: switch over to IPC instead
-    // let originKey = Object.keys(req.headers).find(
-    //   (x) => x.toLowerCase() == "origin"
-    // );
-    // if (originKey) {
-    //   let origin = req.headers[originKey]!;
-    //   if (!origin.startsWith("itch:")) {
-    //     forbiddenCause = `Forbidden origin ${origin}`;
-    //   }
-    // } else {
-    //   forbiddenCause = `Missing origin`;
-    // }
-
-    if (forbiddenCause) {
-      throw new HTTPError(
-        403,
-        {
-          "content-type": "text/plain",
-          "access-control-allow-origin": "*",
-        },
-        forbiddenCause
-      );
-    }
-
-    if (elements.length === 1 && elements[0] === "websocket-address") {
-      let ws = ms.websocket;
-      if (!ws) {
-        throw new Error(`WebSocket not initialized yet! (this is a bug)`);
-      }
-
-      return {
-        address: ws.address,
-        secret: ws.secret,
-      };
-    }
-
-    throw new HTTPError(404, {}, "API route not found");
-  }
-
   async function handleRequest(
     req: Electron.Request
   ): Promise<Electron.StreamProtocolResponse> {
@@ -152,36 +121,6 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
     elements = elements.slice(1);
 
     switch (firstEl) {
-      case "api": {
-        try {
-          let payload = await handleAPIRequest(req, elements);
-          return {
-            statusCode: 200,
-            headers: {
-              "content-type": "application/json",
-              "access-control-allow-origin": "*",
-            },
-            data: asReadable(JSON.stringify(payload)),
-          };
-        } catch (e) {
-          if (e instanceof HTTPError) {
-            return {
-              statusCode: e.statusCode,
-              headers: e.headers,
-              data: asReadable(e.data),
-            };
-          } else {
-            return {
-              statusCode: 500,
-              headers: {
-                "content-type": "text/plain",
-                "access-control-allow-origin": "*",
-              },
-              data: asReadable(`Internal error: ${e.stack}`),
-            };
-          }
-        }
-      }
       default: {
         if (elements.length == 0 || elements[0] != "assets") {
           elements = ["assets", "index.html"];

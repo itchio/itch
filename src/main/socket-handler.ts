@@ -3,7 +3,7 @@ import { filterObject } from "common/filter-object";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator, ErrorObject } from "common/queries";
 import dump from "common/util/dump";
-import { shell, app } from "electron";
+import { shell, app, webContents } from "electron";
 import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { loadLocale, setPreferences } from "main/preferences";
@@ -11,7 +11,6 @@ import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import { registerQueriesWebview } from "main/queries-webview";
-import WebSocket from "ws";
 import { showModal } from "main/show-modal";
 import { triggerTrayMenuUpdate } from "main/tray";
 
@@ -27,7 +26,7 @@ import {
   RpcResult,
 } from "@itchio/valet/support";
 
-const logger = mainLogger.childWithName("websocket-handler");
+const logger = mainLogger.childWithName("socket-handler");
 
 export function broadcastPacket<T>(
   ms: MainState,
@@ -35,28 +34,28 @@ export function broadcastPacket<T>(
   payload: T
 ) {
   const msg = pc(payload);
-  if (envSettings.verboseWebSocket) {
+  if (envSettings.verboseSocket) {
     logger.debug(`*- ${dump(msg)}`);
   }
   const text = JSON.stringify(msg);
 
-  let ws = ms.websocket;
+  let ws = ms.socket;
   if (ws) {
-    for (const cx of ws.sockets) {
+    for (const cx of Object.values(ws.sockets)) {
       cx.sendText(text);
     }
   } else {
-    mainLogger.warn(`Can't broadcast yet, websocket isn't up`);
+    mainLogger.warn(`Can't broadcast yet, socket isn't up`);
   }
 }
 
-export class WebsocketContext {
-  constructor(public socket: WebSocket, public uid: string) {}
+export class SocketContext {
+  constructor(public wcId: number) {}
 
   reply<T>(pc: PacketCreator<T>, payload: T, silent?: boolean) {
     let msg = pc(payload);
-    if (!silent && envSettings.verboseWebSocket) {
-      logger.debug(`<- ${this.uid} ${dump(msg)}`);
+    if (!silent && envSettings.verboseSocket) {
+      logger.debug(`<- ${this.wcId} ${dump(msg)}`);
     }
     this.sendObject(msg);
   }
@@ -66,11 +65,14 @@ export class WebsocketContext {
   }
 
   sendText(text: string) {
-    this.socket.send(text);
+    let wc = webContents.fromId(this.wcId);
+    if (wc) {
+      wc.send("from-main", text);
+    }
   }
 }
 
-export type PacketHandler<T> = (cx: WebsocketContext, payload: T) => void;
+export type PacketHandler<T> = (cx: SocketContext, payload: T) => void;
 export type QueryHandler<Params, Result> = (params: Params) => Promise<Result>;
 
 export type OnPacket = <T>(pc: PacketCreator<T>, f: PacketHandler<T>) => void;
@@ -90,7 +92,7 @@ type OngoingConversation = {
   inbound: { [id: number]: Inbound };
 };
 
-export class WebsocketHandler {
+export class SocketHandler {
   packetHandlers: {
     [type: string]: PacketHandler<any>;
   } = {};
@@ -428,10 +430,10 @@ export class WebsocketHandler {
     });
   }
 
-  handle(cx: WebsocketContext, message: string) {
+  handle(cx: SocketContext, message: string) {
     let msg = JSON.parse(message) as Packet<any>;
-    if (envSettings.verboseWebSocket) {
-      logger.debug(`-> ${cx.uid} ${dump(msg)}`);
+    if (envSettings.verboseSocket) {
+      logger.debug(`-> ${cx.wcId} ${dump(msg)}`);
     }
 
     let ph = this.packetHandlers[msg.type];

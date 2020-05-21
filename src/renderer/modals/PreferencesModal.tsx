@@ -1,3 +1,4 @@
+import { socket } from "renderer";
 import { messages } from "common/butlerd";
 import { InstallLocationSummary } from "@itchio/valet/messages";
 import { fileSize } from "common/format/filesize";
@@ -10,7 +11,6 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
-import { useSocket } from "renderer/contexts";
 import { Dropdown } from "renderer/Dropdown";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
@@ -87,7 +87,6 @@ const PreferencesTitle = styled.div`
 `;
 
 export const PreferencesModal = modalWidget(modals.preferences, (props) => {
-  const socket = useSocket();
   const preferences = usePreferences();
 
   const [tick, setTick] = useState(0);
@@ -102,7 +101,7 @@ export const PreferencesModal = modalWidget(modals.preferences, (props) => {
   useAsync(async () => {
     let { versionString } = await socket.call(messages.VersionGet, {});
     setButlerVersion(versionString);
-  }, [socket]);
+  }, []);
 
   const [loc, setLoc] = useState<InstallLocationSummary | undefined>(undefined);
   useAsync(async () => {
@@ -119,22 +118,19 @@ export const PreferencesModal = modalWidget(modals.preferences, (props) => {
         (il) => il.id == preferences?.defaultInstallLocation
       )
     );
-  }, [preferences, socket, tick]);
+  }, [preferences?.defaultInstallLocation, tick]);
 
-  const [onLang] = useAsyncCb(
-    async (lang: string) => {
-      await socket.query(queries.switchLanguage, {
-        lang,
-      });
-    },
-    [socket]
-  );
+  const [onLang] = useAsyncCb(async (lang: string) => {
+    await socket.query(queries.switchLanguage, {
+      lang,
+    });
+  }, []);
 
   const [updatePreferences] = useAsyncCb(
     async (preferences: Partial<PreferencesState>) => {
       await socket.query(queries.updatePreferences, { preferences });
     },
-    [socket]
+    []
   );
 
   let intl = useIntl();

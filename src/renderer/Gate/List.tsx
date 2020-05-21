@@ -7,13 +7,13 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { TimeAgo } from "renderer/basics/TimeAgo";
-import { useSocket } from "renderer/contexts";
 import { GateState } from "renderer/Gate";
 import { animations, fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import appWhite from "static/images/logos/app-white.svg";
 import { Profile } from "@itchio/valet/messages";
+import { socket } from "renderer";
 
 const ListLogo = styled.img`
   width: 180px;
@@ -50,7 +50,6 @@ interface ListProps {
 }
 
 export const List = (props: ListProps) => {
-  const socket = useSocket();
   const { setState } = props;
 
   const [login, loginLoading] = useAsyncCb(
@@ -74,7 +73,7 @@ export const List = (props: ListProps) => {
         });
       }
     },
-    [socket, setState]
+    [setState]
   );
 
   return (

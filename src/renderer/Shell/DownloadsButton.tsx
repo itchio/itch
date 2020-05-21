@@ -1,3 +1,4 @@
+import { socket } from "renderer";
 import { messages } from "common/butlerd";
 import { Download } from "@itchio/valet/messages";
 import { DownloadWithProgress } from "common/downloads";
@@ -11,7 +12,6 @@ import { IconButton } from "renderer/basics/IconButton";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useDownloads } from "renderer/use-downloads";
@@ -100,13 +100,12 @@ const DownloadContentsDiv = styled.div`
 
 export const DownloadsContents = React.forwardRef(
   (props: { onClose: () => void }, ref: React.Ref<HTMLDivElement>) => {
-    const socket = useSocket();
     const downloads = useDownloads();
     const sortedDownloads = _.sortBy(downloads, (d) => d.position);
 
     const [clearAll, clearAllLoading] = useAsyncCb(async () => {
       await socket.call(messages.DownloadsClearFinished, {});
-    }, [socket]);
+    }, []);
 
     return (
       <DownloadContentsDiv ref={ref}>
@@ -139,15 +138,11 @@ const DownloadItem = (props: {
   download: DownloadWithProgress;
   onClose: () => void;
 }) => {
-  const socket = useSocket();
   const d = props.download;
 
-  const [play, playLoading] = useAsyncCb(
-    async (gameId: number) => {
-      await socket.query(queries.launchGame, { gameId });
-    },
-    [socket]
-  );
+  const [play, playLoading] = useAsyncCb(async (gameId: number) => {
+    await socket.query(queries.launchGame, { gameId });
+  }, []);
 
   let coverUrl = gameCover(d.game);
   return (
@@ -186,17 +181,16 @@ const DownloadItem = (props: {
 const DownloadsMenu = (props: { download: Download }) => {
   const d = props.download;
 
-  const socket = useSocket();
   const [uninstall, uninstallLoading] = useAsyncCb(async () => {
     await socket.call(messages.UninstallPerform, {
       caveId: d.caveId,
     });
-  }, [socket, d]);
+  }, [d]);
   const [discard, discardLoading] = useAsyncCb(async () => {
     await socket.call(messages.DownloadsDiscard, {
       downloadId: d.id,
     });
-  }, [socket, d]);
+  }, [d]);
 
   return (
     <MenuContents>

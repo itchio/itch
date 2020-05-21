@@ -2,21 +2,18 @@ import React, { useState } from "react";
 import { Topbar } from "renderer/Shell/Topbar";
 import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
-import {
-  useSocket,
-  useOptionalProfile,
-  ProfileContext,
-} from "renderer/contexts";
+import { useOptionalProfile, ProfileContext } from "renderer/contexts";
 import styled from "styled-components";
 import LibraryPage from "renderer/pages/LibraryPage";
 import { Icon } from "renderer/basics/Icon";
 import { useListen } from "renderer/Socket";
 import { packets } from "common/packets";
 import classNames from "classnames";
+import { socket } from "renderer";
 
 const ShellDiv = styled.div`
-  border: 1px solid ${p => p.theme.colors.shellBorder};
-  background: ${p => p.theme.colors.shellBg};
+  border: 1px solid ${(p) => p.theme.colors.shellBorder};
+  background: ${(p) => p.theme.colors.shellBg};
 
   display: flex;
   flex-direction: column;
@@ -53,14 +50,14 @@ const WebviewContainer = styled.div`
       transition: all 0.2s;
 
       transform: scale(0.8);
-      color: ${p => p.theme.colors.text2};
+      color: ${(p) => p.theme.colors.text2};
 
       width: 10vw;
       text-align: center;
 
       &:hover {
         transform: scale(1);
-        color: ${p => p.theme.colors.text1};
+        color: ${(p) => p.theme.colors.text1};
       }
     }
   }
@@ -72,7 +69,7 @@ const WebviewContainer = styled.div`
   bottom: 0px;
   z-index: 3;
 
-  border: 1px solid ${p => p.theme.colors.shellBg};
+  border: 1px solid ${(p) => p.theme.colors.shellBg};
   box-shadow: 0 0 30px black;
 
   &,
@@ -100,7 +97,6 @@ const WebviewContainer = styled.div`
 `;
 
 export const Shell = () => {
-  const socket = useSocket();
   const profile = useOptionalProfile();
   const [webviewOpen, setWebviewOpen] = useState(false);
   const [firstUrl, setFirstUrl] = useState("");

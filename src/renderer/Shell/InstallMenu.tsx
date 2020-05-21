@@ -8,11 +8,11 @@ import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { MenuContents } from "renderer/basics/Menu";
 import { UploadTitle } from "renderer/basics/upload";
-import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 interface Props {
   gameId: number;
@@ -43,7 +43,6 @@ const EllipsisContainer = styled.div`
 
 export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
   const { gameId, onClose } = props;
-  const socket = useSocket();
   const [uploads, setUploads] = useState<Upload[] | undefined>();
 
   useAsync(async () => {
@@ -58,7 +57,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
       console.warn(e.stack);
       setUploads([]);
     }
-  }, [gameId, socket]);
+  }, [gameId]);
 
   const upload = _.first(uploads);
 
@@ -75,7 +74,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
       fastQueue: true,
       queueDownload: true,
     });
-  }, [socket, gameId, upload, onClose]);
+  }, [gameId, upload, onClose]);
 
   const uploadId = upload?.id;
 
@@ -86,7 +85,7 @@ export const InstallMenu = React.forwardRef((props: Props, ref: any) => {
       gameId,
       uploadId,
     });
-  }, [socket, gameId, uploadId, onClose]);
+  }, [gameId, uploadId, onClose]);
 
   const pokeRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

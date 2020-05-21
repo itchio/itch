@@ -5,7 +5,6 @@ import { queries } from "common/queries";
 import _ from "lodash";
 import React, { useMemo, useState } from "react";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
 import { animations, fontSizes, mixins } from "renderer/theme";
@@ -14,6 +13,7 @@ import { useDownloads } from "renderer/use-downloads";
 import { useLaunches } from "renderer/use-launches";
 import styled from "styled-components";
 import { modals } from "common/modals";
+import { socket } from "renderer";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -108,8 +108,6 @@ interface Props {
 }
 
 export const GameGrid = React.forwardRef(function (props: Props, ref: any) {
-  const socket = useSocket();
-
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
   >();
@@ -120,63 +118,48 @@ export const GameGrid = React.forwardRef(function (props: Props, ref: any) {
     setGameBeingInstalled(undefined);
   });
 
-  const [launch] = useAsyncCb(
-    async function (gameId: number) {
-      await socket.query(queries.launchGame, { gameId });
-    },
-    [socket]
-  );
+  const [launch] = useAsyncCb(async function (gameId: number) {
+    await socket.query(queries.launchGame, { gameId });
+  }, []);
 
-  const [forceClose] = useAsyncCb(
-    async function (gameId: number) {
-      const res = await socket.query(queries.getOngoingLaunches);
-      const currentLaunchId = _.findKey(
-        res.launches,
-        (l) => l.gameId === gameId
+  const [forceClose] = useAsyncCb(async function (gameId: number) {
+    const res = await socket.query(queries.getOngoingLaunches);
+    const currentLaunchId = _.findKey(res.launches, (l) => l.gameId === gameId);
+    if (!currentLaunchId) {
+      return;
+    }
+
+    const { game } = await socket.call(messages.FetchGame, { gameId });
+    if (!game) {
+      console.warn(
+        `Could not force close because game ${gameId} can't be fetched`
       );
-      if (!currentLaunchId) {
-        return;
-      }
+      return;
+    }
 
-      const { game } = await socket.call(messages.FetchGame, { gameId });
-      if (!game) {
-        console.warn(
-          `Could not force close because game ${gameId} can't be fetched`
-        );
-        return;
-      }
+    await socket.showModal(modals.forceClose, {
+      game,
+      launchId: currentLaunchId,
+    });
+  }, []);
 
-      await socket.showModal(modals.forceClose, {
-        game,
-        launchId: currentLaunchId,
+  const [install] = useAsyncCb(async function (gameId: number) {
+    const { game } = await socket.call(messages.FetchGame, { gameId });
+    setGameBeingInstalled(game);
+  }, []);
+
+  const [purchase] = useAsyncCb(async function (gameId: number) {
+    try {
+      const { game } = await socket.call(messages.FetchGame, {
+        gameId,
       });
-    },
-    [socket]
-  );
-
-  const [install] = useAsyncCb(
-    async function (gameId: number) {
-      const { game } = await socket.call(messages.FetchGame, { gameId });
-      setGameBeingInstalled(game);
-    },
-    [socket]
-  );
-
-  const [purchase] = useAsyncCb(
-    async function (gameId: number) {
-      try {
-        const { game } = await socket.call(messages.FetchGame, {
-          gameId,
-        });
-        if (game) {
-          location.href = `${game.url}/purchase`;
-        }
-      } catch (e) {
-        console.warn(e);
+      if (game) {
+        location.href = `${game.url}/purchase`;
       }
-    },
-    [socket]
-  );
+    } catch (e) {
+      console.warn(e);
+    }
+  }, []);
 
   const downloads = useDownloads();
   const launchesByGameId = _.keyBy(useLaunches(), (l) => l.gameId);

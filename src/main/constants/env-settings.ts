@@ -7,8 +7,8 @@ export const envSettings = {
 
   dumpEnvSettings: process.env.DUMP_ENV_SETTINGS === "1",
 
-  // Dump all main<->renderer WebSocket traffic - *very* verbose.
-  verboseWebSocket: process.env.ITCH_VERBOSE_WS === "1",
+  // Dump all main<->renderer Socket traffic - *very* verbose.
+  verboseSocket: process.env.ITCH_VERBOSE_SOCKET === "1",
 
   // Open devtools on startup (for shell BrowserWindow)
   devtools: process.env.DEVTOOLS === "1",

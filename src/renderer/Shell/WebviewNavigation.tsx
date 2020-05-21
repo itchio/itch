@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { queries, QueryCreator } from "common/queries";
+import { socket } from "renderer";
 
 const Filler = styled.div`
   flex-grow: 1;
@@ -62,7 +62,6 @@ const Title = styled.div`
 export const WebviewNavigation = (props: Props) => {
   const { title, url, loading } = props;
   const [showMenu, setShowMenu] = useState(false);
-  const socket = useSocket();
   const coref = useClickOutside(() => setShowMenu(false));
 
   let wcEvent = (q: QueryCreator<{ wcId: number }, void>) => {

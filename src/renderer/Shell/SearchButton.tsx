@@ -1,14 +1,13 @@
 import { packets } from "common/packets";
 import React, { useCallback, useState } from "react";
 import { IconButton } from "renderer/basics/IconButton";
-import { useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { SearchModal } from "renderer/Shell/SearchModal";
+import { socket } from "renderer";
 
 interface Props {}
 
 export const SearchButton = (props: Props) => {
-  const socket = useSocket();
   const [open, setOpen] = useState(false);
 
   useListen(
@@ -21,7 +20,7 @@ export const SearchButton = (props: Props) => {
   );
 
   const toggleOpen = useCallback(() => {
-    setOpen(o => !o);
+    setOpen((o) => !o);
   }, [setOpen]);
 
   const onClose = useCallback(() => {

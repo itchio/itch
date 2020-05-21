@@ -4,9 +4,9 @@ import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import { useState } from "react";
-import { useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import { useAsync } from "renderer/use-async";
+import { socket } from "renderer";
 
 export interface LaunchFilter {
   gameId?: number;
@@ -28,13 +28,12 @@ export function useLaunches(filter?: LaunchFilter): OngoingLaunches {
 
   const [launches, setLaunches] = useState<OngoingLaunches>({});
   const mergeLaunches = (fresh: OngoingLaunches) => {
-    setLaunches(old => ({
+    setLaunches((old) => ({
       ...old,
-      ...filterObject(fresh, l => applyFilter(l, filter)),
+      ...filterObject(fresh, (l) => applyFilter(l, filter)),
     }));
   };
 
-  const socket = useSocket();
   useAsync(
     async () => {
       const { launches } = await socket.query(queries.getOngoingLaunches);
@@ -56,7 +55,7 @@ export function useLaunches(filter?: LaunchFilter): OngoingLaunches {
     socket,
     packets.launchEnded,
     ({ launchId }) => {
-      setLaunches(old => (old[launchId] ? _.omit(old, launchId) : old));
+      setLaunches((old) => (old[launchId] ? _.omit(old, launchId) : old));
     },
     [filterState]
   );

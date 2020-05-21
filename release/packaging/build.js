@@ -53,8 +53,6 @@ async function build(cx) {
 
   say("Installing required externals");
   const externals = [
-    // TODO: remove 'ws' once moved to IPC transport
-    "ws",
     // TODO: is it really a good idea to ship that in production?
     "source-map-support",
   ];

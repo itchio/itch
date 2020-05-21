@@ -10,12 +10,12 @@ import { ErrorState } from "renderer/basics/ErrorState";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { LargeTextInput } from "renderer/basics/TextInput";
-import { useSocket } from "renderer/contexts";
 import { Deferred } from "renderer/deferred";
 import { GateState } from "renderer/Gate";
 import { animations, fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 export type FormStage = NeedUsername | NeedPassword | NeedTOTP | NeedCaptcha;
 
@@ -166,7 +166,6 @@ export const Form = (props: FormProps<FormStage>) => {
 };
 
 const FormNeedUsername = (props: FormProps<NeedUsername>) => {
-  const socket = useSocket();
   const usernameRef = useRef<HTMLInputElement>(null);
   const [username, setUsername] = useState("");
 
@@ -174,7 +173,7 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
     await socket.query(queries.openExternalURL, {
       url: "https://itch.io/register",
     });
-  }, [socket]);
+  }, []);
 
   let onNext = () => {
     if (usernameRef.current) {
@@ -241,7 +240,6 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
 type TOTPState = Deferred<ProfileRequestTOTPResult, void>;
 
 const FormNeedPassword = (props: FormProps<NeedPassword>) => {
-  const socket = useSocket();
   const passwordRef = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [passwordShown, setPasswordShown] = useState(false);
@@ -255,7 +253,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
     await socket.query(queries.openExternalURL, {
       url: "https://itch.io/user/forgot-password",
     });
-  }, [socket]);
+  }, []);
 
   const { setState, stage: propsStage } = props;
 
@@ -319,7 +317,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       await delay(500);
       throw e;
     }
-  }, [socket, propsStage, setState]);
+  }, [propsStage, setState]);
 
   const error = onLoginError || props.stage.error;
 

@@ -28,7 +28,6 @@
     "@itchio/valet": "^0.11.2",
     "@tippy.js/react": "^3.1.1",
     "@types/styled-components": "^5.1.0",
-    "@types/ws": "^7.2.4",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^3.0.0",
     "intl-messageformat": "^8.3.11",
@@ -40,8 +39,7 @@
     "react-intl": "^4.5.5",
     "source-map-support": "^0.5.19",
     "styled-components": "^5.1.0",
-    "term-color": "^1.0.1",
-    "ws": "^7.3.0"
+    "term-color": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -77,6 +75,7 @@
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
     "prettier": "^2.0.5",
+    "raw-loader": "^4.0.1",
     "react-hot-loader": "^4.12.21",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.2.1",

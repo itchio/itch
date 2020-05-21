@@ -1,12 +1,13 @@
 import { Profile } from "@itchio/valet/messages";
 import { packets } from "common/packets";
 import React, { useEffect, useState } from "react";
-import { useSocket, OptionalProfileContext } from "renderer/contexts";
+import { OptionalProfileContext } from "renderer/contexts";
 import { ModalRouter } from "renderer/modals/ModalRouter";
 import { useListen } from "renderer/Socket";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
 import { queries } from "../common/queries";
+import { socket } from "renderer";
 
 const App = React.lazy(() => import("renderer/Shell"));
 const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
@@ -56,7 +57,6 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
-  const socket = useSocket();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
 
   useListen(
@@ -71,7 +71,7 @@ export const Route = () => {
       const { profile } = await socket.query(queries.getProfile);
       setProfile(profile);
     })().catch((e) => console.warn(e));
-  }, [socket]);
+  }, []);
 
   let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
     (s) => s.length > 0

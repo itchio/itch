@@ -5,13 +5,13 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { LaunchButton } from "renderer/basics/LaunchButton";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { useSocket } from "renderer/contexts";
 import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { useCaves } from "renderer/use-caves";
 import styled from "styled-components";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
 import { Game } from "@itchio/valet/messages";
+import { socket } from "renderer";
 
 const Container = styled.div`
   display: flex;
@@ -53,7 +53,6 @@ interface Props {
 }
 
 const WebviewGameActionBar = (props: { gameId: number }) => {
-  const socket = useSocket();
   const { gameId } = props;
   const [installing, setInstalling] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
@@ -72,7 +71,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         console.warn(e);
       }
     })();
-  }, [gameId, socket]);
+  }, [gameId]);
 
   const coref = useClickOutside(() => {
     setInstalling(false);

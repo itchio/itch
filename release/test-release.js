@@ -6,8 +6,6 @@ const { sh, say, chalk } = require("./common");
 async function main() {
   say("Wiping build/");
   sh("rm -rf build/");
-  say("Setting fake build tag...");
-  process.env.CI_BUILD_TAG = "v9999.0.0";
   let os = "linux";
   if (process.platform === "win32") {
     os = "windows";

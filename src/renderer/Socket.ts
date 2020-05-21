@@ -11,7 +11,6 @@ import {
   Notification,
 } from "@itchio/valet/support";
 import { ModalCreator } from "common/modals";
-import { delay } from "common/delay";
 import { Code } from "@itchio/valet/messages";
 
 type Listener<Payload> = (payload: Payload) => void;
@@ -55,7 +54,7 @@ type RequestHandler<Params, Result> = (params: Params) => Promise<Result>;
 type NotificationHandler<Params> = (params: Params) => void;
 
 /**
- * Handles conversations with butler, over websocket
+ * Handles conversations with butler, over IPC
  */
 export class Conversation {
   private cancelled = false;
@@ -239,46 +238,7 @@ export class Conversation {
   }
 }
 
-const CONNECT_TIMEOUT = 3000;
-
-async function connectOnce(address: string): Promise<WebSocket> {
-  let ws = new WebSocket(address);
-  return await new Promise((resolve, reject) => {
-    ws.onopen = () => resolve(ws);
-    ws.onerror = (ev: Event) =>
-      reject(new Error(`WebSocket error (no error code available)`));
-    setTimeout(
-      () => reject(new Error("WebSocket connection timeout")),
-      CONNECT_TIMEOUT
-    );
-  });
-}
-
-async function connect(address: string): Promise<WebSocket> {
-  const maxTries = 500;
-  const sleepDuration = 1000;
-  for (let numTry = 1; ; numTry++) {
-    try {
-      return await connectOnce(address);
-    } catch (e) {
-      console.warn(`WebSocket connection attempt ${numTry} failed: `);
-      console.warn(e.stack);
-    }
-    if (numTry >= maxTries) {
-      console.warn(`Giving up on WebSocket connection`);
-      break;
-    }
-
-    console.warn(`Sleeping ${sleepDuration}ms and retrying`);
-    await delay(sleepDuration);
-  }
-  throw new Error(`Could not reconnect to WebSocket`);
-}
-
 export class Socket {
-  private address: string;
-  private ws: WebSocket;
-  private wsPromise: Promise<WebSocket>;
   private listeners: {
     [type: string]: Listener<any>[];
   } = {};
@@ -288,39 +248,15 @@ export class Socket {
   } = {};
   private outboundQueries: { [key: number]: Outbound<any> } = {};
 
-  static async connect(address: string): Promise<Socket> {
-    return new Socket(address, await connect(address));
-  }
-
-  constructor(address: string, ws: WebSocket) {
-    (window as any).__socket = this;
-    this.address = address;
-    this.ws = ws;
-    this.wsPromise = new Promise((resolve) => resolve(ws));
+  constructor() {
     this.initSocket();
   }
 
   private initSocket() {
-    this.ws.onmessage = (msg) => {
-      this.process(msg.data as string);
-    };
-    this.ws.onclose = () => {
-      console.log(`Socket connection lost, reconnecting...`);
-      this.wsPromise = new Promise((resolve) => {
-        connect(this.address)
-          .then((ws) => {
-            console.log(`Reconnected!`);
-            this.ws = ws;
-            this.initSocket();
-            resolve(ws);
-          })
-          .catch((e) => {
-            alert(
-              `The itch app encountered a problem in its internal communication system.\n\n${e.stack}`
-            );
-          });
-      });
-    };
+    window.addEventListener("from-main", (ev) => {
+      let cev = (ev as any) as CustomEvent<string>;
+      this.process(cev.detail);
+    });
   }
 
   private process(msg: string) {
@@ -382,23 +318,10 @@ export class Socket {
       throw new Error(`null payload for ${pc.__type} - that's illegal`);
     }
     let msg = pc(payload);
-
-    (async () => {
-      const maxTries = 5;
-      for (let numTry = 1; ; numTry++) {
-        try {
-          const ws = await this.wsPromise;
-          ws.send(JSON.stringify(msg));
-          return;
-        } catch (e) {
-          if (numTry >= maxTries) {
-            throw new Error(
-              `Could not send WebSocket message after ${maxTries} tries:\n${e.stack}`
-            );
-          }
-        }
-      }
-    })().catch((e) => console.warn(e.stack));
+    let extendedWindow = window as typeof window & {
+      sendToMain: (payload: string) => void;
+    };
+    extendedWindow.sendToMain(JSON.stringify(msg));
   }
 
   listen<T>(packet: PacketCreator<T>, listener: Listener<T>): Cancel {

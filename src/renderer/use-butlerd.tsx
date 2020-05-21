@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import { useSocket } from "renderer/contexts";
 import styled from "styled-components";
 import { RequestCreator } from "@itchio/valet/support";
+import { socket } from "renderer";
 
 export type ButlerdState<U> =
   | ButlerdLoadingState
@@ -29,7 +29,6 @@ export function useButlerd<T, U>(
   params: T
 ): ButlerdState<U> {
   const [state, setState] = useState<ButlerdState<U>>({ state: "loading" });
-  const socket = useSocket();
 
   useEffect(
     () => {

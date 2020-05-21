@@ -21,8 +21,8 @@ import { setupShortcuts } from "main/setup-shortcuts";
 import { showModal } from "main/show-modal";
 import { initializeValet } from "main/initialize-valet";
 import { initTray } from "main/tray";
-import { broadcastPacket } from "main/websocket-handler";
-import { startWebSocketServer, WebSocketState } from "main/websocket-server";
+import { broadcastPacket } from "main/socket-handler";
+import { startSocketServer, SocketState } from "main/socket-server";
 import { shellBgDefault } from "renderer/theme";
 import { Profile } from "@itchio/valet/messages";
 
@@ -41,7 +41,7 @@ export interface LaunchController {
 
 export interface MainState {
   startedAt: number;
-  websocket?: WebSocketState;
+  socket?: SocketState;
   profile?: Profile;
   webview: WebviewState;
   preferences?: PreferencesState;
@@ -131,8 +131,8 @@ async function main() {
 
   await loadPreferences(ms);
   logger.debug(`Preferences loaded`);
-  await startWebSocketServer(ms);
-  logger.debug(`WebSocket server started`);
+  await startSocketServer(ms);
+  logger.debug(`Socket server started`);
   await app.whenReady();
   logger.debug(`App ready`);
 

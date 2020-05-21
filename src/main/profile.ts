@@ -8,7 +8,7 @@ import { startDrivingDownloads } from "main/drive-downloads";
 import { registerItchProtocol } from "main/itch-protocol";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/initialize-valet";
-import { broadcastPacket } from "main/websocket-handler";
+import { broadcastPacket } from "main/socket-handler";
 import { MemoryLogger } from "common/logger";
 import { Client } from "@itchio/valet";
 import { messages } from "common/butlerd";

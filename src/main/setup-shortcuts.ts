@@ -7,7 +7,7 @@ import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { mainLogger } from "main/logger";
 import { showModal } from "main/show-modal";
-import { broadcastPacket } from "main/websocket-handler";
+import { broadcastPacket } from "main/socket-handler";
 
 const logger = mainLogger.childWithName("shortcuts");
 
@@ -52,36 +52,39 @@ type Shortcuts = Shortcut[];
 const mainWindowShortcuts: Shortcuts = [
   [
     ["CmdOrCtrl+Shift+C"],
-    async ms => openOrFocusDevTools(ms.browserWindow?.webContents),
+    async (ms) => openOrFocusDevTools(ms.browserWindow?.webContents),
   ],
   [
     ["CmdOrCtrl+Alt+Shift+C", "CmdOrCtrl+Shift+I"],
-    async ms => openOrFocusDevTools(getWebviewWebContents(ms)),
+    async (ms) => openOrFocusDevTools(getWebviewWebContents(ms)),
   ],
-  [["CmdOrCtrl+Q"], async ms => ms.browserWindow?.close()],
+  [["CmdOrCtrl+Q"], async (ms) => ms.browserWindow?.close()],
   [
     ["Shift+F5"],
-    async ms => ms.browserWindow?.webContents?.reloadIgnoringCache(),
+    async (ms) => ms.browserWindow?.webContents?.reloadIgnoringCache(),
   ],
-  [["F5", "CmdOrCtrl+R"], async ms => getWebviewWebContents(ms)?.reload()],
+  [["F5", "CmdOrCtrl+R"], async (ms) => getWebviewWebContents(ms)?.reload()],
   [
     ["CmdOrCtrl+F5", "CmdOrCtrl+Shift+R"],
-    async ms => getWebviewWebContents(ms)?.reloadIgnoringCache(),
+    async (ms) => getWebviewWebContents(ms)?.reloadIgnoringCache(),
   ],
-  [["Alt+ArrowLeft"], async ms => webContentsGoBack(getWebviewWebContents(ms))],
+  [
+    ["Alt+ArrowLeft"],
+    async (ms) => webContentsGoBack(getWebviewWebContents(ms)),
+  ],
   [
     ["Alt+ArrowRight"],
-    async ms => webContentsGoForward(getWebviewWebContents(ms)),
+    async (ms) => webContentsGoForward(getWebviewWebContents(ms)),
   ],
   [
     ["CmdOrCtrl+,"],
-    async ms => {
+    async (ms) => {
       await showModal(ms, modals.preferences, {});
     },
   ],
   [
     ["CmdOrCtrl+F"],
-    async ms => {
+    async (ms) => {
       await broadcastPacket(ms, packets.openSearch, {});
     },
   ],
@@ -148,7 +151,7 @@ export function setupCustomShortcuts(
           if (inputMatches(spec, inputString)) {
             ev.preventDefault();
             logger.info(`Triggering shortcut ${shortcut[0]}`);
-            action(ms).catch(e => {
+            action(ms).catch((e) => {
               logger.warn(`Error in shortcut ${shortcut[0]}: ${e.stack}`);
             });
             return;

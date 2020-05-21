@@ -6,20 +6,19 @@ import React from "react";
 import { Button } from "renderer/basics/Button";
 import { SimpleGameRow } from "renderer/basics/SimpleGameRow";
 import { useAsyncCb } from "renderer/use-async-cb";
-import { useSocket } from "renderer/contexts";
 import { queries } from "common/queries";
+import { socket } from "renderer";
 
-export const ForceCloseModal = modalWidget(modals.forceClose, props => {
+export const ForceCloseModal = modalWidget(modals.forceClose, (props) => {
   const { game, launchId } = props.params;
 
-  const socket = useSocket();
   const [forceClose] = useAsyncCb(async () => {
     window.close();
     await socket.query(queries.cancelLaunch, {
       launchId,
       reason: "User clicked force close button in modal",
     });
-  }, [launchId, socket]);
+  }, [launchId]);
 
   return (
     <HardModal

@@ -1,6 +1,6 @@
+import { socket } from "renderer";
 import { ModalCreator, modals, ModalPayload } from "common/modals";
 import React from "react";
-import { useSocket } from "renderer/contexts";
 import { PickCaveModal } from "renderer/modals/PickCaveModal";
 import { queries } from "common/queries";
 import { PreferencesModal } from "renderer/modals/PreferencesModal";
@@ -59,7 +59,6 @@ let modalComponents: {
 };
 
 export const ModalRouter = () => {
-  const socket = useSocket();
   // const timeout = useRef<NodeJS.Timeout | undefined>();
 
   let payloadString = new URLSearchParams(window.location.search).get(
@@ -114,7 +113,7 @@ export const ModalRouter = () => {
         } finally {
           window.close();
         }
-      })().catch(e => console.warn(e));
+      })().catch((e) => console.warn(e));
     },
   };
 

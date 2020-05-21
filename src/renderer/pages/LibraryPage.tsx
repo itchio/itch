@@ -1,3 +1,4 @@
+import { socket } from "renderer";
 import classNames from "classnames";
 import { messages } from "common/butlerd";
 import {
@@ -19,7 +20,7 @@ import { FormattedMessage } from "react-intl";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { Icon } from "renderer/basics/Icon";
 import { MultiDropdown } from "renderer/basics/MultiDropdown";
-import { useProfile, useSocket } from "renderer/contexts";
+import { useProfile } from "renderer/contexts";
 import { Dropdown } from "renderer/Dropdown";
 import { GameGrid } from "renderer/pages/GameGrid";
 import { GameList } from "renderer/pages/GameList";
@@ -316,20 +317,16 @@ const Viewport = React.forwardRef(
     const { source, scrollToTop } = props;
 
     const profile = useProfile();
-    const socket = useSocket();
     const [loading, setLoading] = useState(true);
     const [records, setRecords] = useState<GameRecord[]>([]);
 
     const preferences = usePreferences();
     const layout = preferences?.layout ?? "grid";
-    const [setLayout] = useAsyncCb(
-      async (layout: TabLayout) => {
-        await socket.query(queries.updatePreferences, {
-          preferences: { layout },
-        });
-      },
-      [socket]
-    );
+    const [setLayout] = useAsyncCb(async (layout: TabLayout) => {
+      await socket.query(queries.updatePreferences, {
+        preferences: { layout },
+      });
+    }, []);
 
     const [sortBy, setSortBy] = useState<SortBy>("default");
     const [filterBy, setFilterBy] = useState<string[]>([]);
@@ -417,7 +414,6 @@ const Viewport = React.forwardRef(
       reverse,
       profile,
       scrollToTop,
-      socket,
     ]);
 
     let currentSort = _.find(sorts[source.source], (s) => s.value === sortBy);
@@ -559,7 +555,6 @@ const CollectionList = (props: {
   const iprops = makeItemProps(props.source, props.setSource);
 
   const profile = useProfile();
-  const socket = useSocket();
   const [collections, setCollections] = useState<Collection[]>([]);
 
   useEffect(() => {
@@ -573,7 +568,7 @@ const CollectionList = (props: {
       );
       setCollections(items);
     })();
-  }, [socket, profile]);
+  }, [profile]);
 
   return (
     <>

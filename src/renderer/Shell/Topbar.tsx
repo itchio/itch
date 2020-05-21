@@ -5,7 +5,7 @@ import React, { useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
-import { useSocket, useOptionalProfile } from "renderer/contexts";
+import { useOptionalProfile } from "renderer/contexts";
 import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 import { ProfileButton } from "renderer/Shell/ProfileButton";
 import { SearchButton } from "renderer/Shell/SearchButton";
@@ -13,6 +13,7 @@ import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useAsync } from "renderer/use-async";
 import styled from "styled-components";
+import { socket } from "renderer";
 
 const TopbarDiv = styled.div`
   display: flex;
@@ -41,30 +42,29 @@ const DraggableFiller = styled.div`
 type PopoverName = "preferences" | "downloads" | null;
 
 export const Topbar = () => {
-  const socket = useSocket();
   const [maximized, setMaximized] = useState(false);
   const [popover, setPopover] = useState<PopoverName>(null);
 
   let [close] = useAsyncCb(async () => {
     await socket.query(queries.close);
-  }, [socket]);
+  }, []);
 
   let [preferences] = useAsyncCb(async () => {
     await socket.showModal(modals.preferences, {});
-  }, [socket]);
+  }, []);
 
   let [minimize] = useAsyncCb(async () => {
     await socket.query(queries.minimize);
-  }, [socket]);
+  }, []);
 
   let [toggleMaximized] = useAsyncCb(async () => {
     await socket.query(queries.toggleMaximized);
-  }, [socket]);
+  }, []);
 
   useAsync(async () => {
     const { maximized } = await socket.query(queries.isMaximized);
     setMaximized(maximized);
-  }, [socket]);
+  }, []);
 
   useListen(
     socket,
@@ -78,8 +78,10 @@ export const Topbar = () => {
   const profile = useOptionalProfile();
 
   let onOpenPreferences = useCallback(() => {
-    socket.showModal(modals.preferences, {}).catch(e => console.warn(e.stack));
-  }, [socket]);
+    socket
+      .showModal(modals.preferences, {})
+      .catch((e) => console.warn(e.stack));
+  }, []);
 
   return (
     <TopbarDiv className="topbar">
@@ -105,13 +107,9 @@ export const Topbar = () => {
 };
 
 const Popover = (props: { name: PopoverName; onClose: () => void }) => {
-  const socket = useSocket();
-  const [switchLanguage] = useAsyncCb(
-    async lang => {
-      socket.query(queries.switchLanguage, { lang });
-    },
-    [socket]
-  );
+  const [switchLanguage] = useAsyncCb(async (lang) => {
+    socket.query(queries.switchLanguage, { lang });
+  }, []);
 
   const { name, onClose } = props;
   switch (name) {

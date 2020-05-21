@@ -3,7 +3,6 @@ import { Upload, Game, InstallLocationSummary } from "@itchio/valet/messages";
 import { modals } from "common/modals";
 import React, { useState } from "react";
 import { Ellipsis } from "renderer/basics/Ellipsis";
-import { useSocket } from "renderer/contexts";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
 import { useAsync } from "renderer/use-async";
@@ -18,11 +17,11 @@ import * as _ from "lodash";
 import { fileSize } from "common/format/filesize";
 import { delay } from "common/delay";
 import { Center } from "renderer/basics/Center";
+import { socket } from "renderer";
 
 export const InstallQueueModal = modalWidget(modals.installQueue, (props) => {
   const { gameId, uploadId } = props.params;
 
-  const socket = useSocket();
   const [error, setError] = useState<Error | undefined>();
   const [uploads, setUploads] = useState<Upload[]>();
   const [game, setGame] = useState<Game>();
@@ -51,7 +50,7 @@ export const InstallQueueModal = modalWidget(modals.installQueue, (props) => {
       console.warn(e.stack);
       setError(e);
     }
-  }, [gameId, socket]);
+  }, [gameId]);
 
   if (error) {
     return <HardModal content={<ErrorState error={error} />} />;
@@ -152,7 +151,6 @@ const StatRow = styled.div`
 
 const Body = (props: Props) => {
   const { game, uploads, initialUploadId } = props;
-  const socket = useSocket();
 
   let getInitialUploadId = () => {
     if (_.find(uploads, (u) => u.id == initialUploadId)) {
@@ -178,7 +176,7 @@ const Body = (props: Props) => {
     );
     setLocs(installLocations);
     setLocId(installLocations[0].id);
-  }, [socket]);
+  }, []);
 
   const [neededSize, setNeededSize] = useState(0);
   useAsync(async () => {

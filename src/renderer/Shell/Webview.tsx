@@ -3,11 +3,12 @@ import { queries } from "common/queries";
 import { partitionForUser } from "common/util/partitions";
 import { WebviewTag } from "electron";
 import React, { useEffect, useRef, useState } from "react";
-import { useProfile, useSocket } from "renderer/contexts";
+import { useProfile } from "renderer/contexts";
 import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { socket } from "renderer";
 const WebviewActionBar = React.lazy(() =>
   import("renderer/Shell/WebviewActionBar")
 );
@@ -33,7 +34,6 @@ export interface WebviewProps {
 }
 
 export const Webview = (props: WebviewProps) => {
-  const socket = useSocket();
   const profile = useProfile();
   const viewRef = useRef<WebviewTag>(null);
   const [canGoBack, setCanGoBack] = useState(false);
@@ -43,12 +43,9 @@ export const Webview = (props: WebviewProps) => {
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
 
-  let [saveWebviewState] = useAsyncCb(
-    async (wcId: number) => {
-      await socket.query(queries.saveWebviewState, { wcId });
-    },
-    [socket]
-  );
+  let [saveWebviewState] = useAsyncCb(async (wcId: number) => {
+    await socket.query(queries.saveWebviewState, { wcId });
+  }, []);
 
   useEffect(() => {
     const wv = viewRef.current;
@@ -114,7 +111,7 @@ export const Webview = (props: WebviewProps) => {
         });
       }
     });
-  }, [saveWebviewState, socket, viewRef]);
+  }, [saveWebviewState, viewRef]);
 
   let viewRefCurrent = viewRef.current;
   const [domReady, setDomReady] = useState(false);
@@ -122,14 +119,14 @@ export const Webview = (props: WebviewProps) => {
     viewRefCurrent?.addEventListener("dom-ready", () => {
       setDomReady(true);
     });
-  }, [setDomReady, viewRefCurrent]);
+  }, [setDomReady, viewRefCurrent, viewRefCurrent?.addEventListener]);
 
   useListen(
     socket,
     packets.navigate,
     ({ url: href }) => {
       if (!domReady) {
-        console.warn(`Webview not ready yet, ignoring: ${href}`);
+        console.warn(`Webview not ready yet, ignoring navigation to: ${href}`);
         return;
       }
 

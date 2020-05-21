@@ -6,9 +6,9 @@ import _ from "lodash";
 import React, { useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
-import { useSocket } from "renderer/contexts";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useLaunches } from "renderer/use-launches";
+import { socket } from "renderer";
 
 interface HighLevelProps {
   gameId: number;
@@ -62,17 +62,13 @@ export const LaunchButtonBase = (props: LowLevelProps) => {
 export const LaunchButton = (props: HighLevelProps) => {
   const { gameId } = props;
 
-  const socket = useSocket();
   const launches = useLaunches({ gameId });
 
   const currentLaunchId = _.first(_.keys(launches));
 
-  const [launch] = useAsyncCb(
-    async (gameId: number) => {
-      await socket.query(queries.launchGame, { gameId });
-    },
-    [socket]
-  );
+  const [launch] = useAsyncCb(async (gameId: number) => {
+    await socket.query(queries.launchGame, { gameId });
+  }, []);
 
   const [forceClose] = useAsyncCb(
     async (gameId: number) => {
@@ -93,7 +89,7 @@ export const LaunchButton = (props: HighLevelProps) => {
         launchId: currentLaunchId,
       });
     },
-    [socket, currentLaunchId]
+    [currentLaunchId]
   );
 
   return (

@@ -10,7 +10,7 @@ import {
 import { LocaleStrings } from "common/locales";
 import { mainLogger } from "main/logger";
 import { PreferencesState } from "common/preferences";
-import { broadcastPacket } from "main/websocket-handler";
+import { broadcastPacket } from "main/socket-handler";
 import { packets } from "common/packets";
 import { app } from "electron";
 import { join } from "path";
@@ -25,12 +25,12 @@ let logger = mainLogger.childWithName("load-preferences");
 function normalizeLang(ms: MainState, lang: string): string {
   let list = ms.localesConfig ? ms.localesConfig.locales : [];
 
-  if (list.find(x => x.value == lang)) {
+  if (list.find((x) => x.value == lang)) {
     return lang;
   }
 
   lang = lang.slice(0, 2);
-  if (list.find(x => x.value == lang)) {
+  if (list.find((x) => x.value == lang)) {
     return lang;
   }
 
@@ -217,7 +217,7 @@ async function setOpenAtLoginLinux(prefs: PreferencesState) {
 
   const desktopContents = await readFile(appPath, "utf8");
   const lines = desktopContents.split("\n");
-  const execIndex = _.findIndex(lines, l => l.startsWith("Exec="));
+  const execIndex = _.findIndex(lines, (l) => l.startsWith("Exec="));
   if (execIndex === -1) {
     throw new Error(`.desktop file does not contain "Exec=" line`);
   }

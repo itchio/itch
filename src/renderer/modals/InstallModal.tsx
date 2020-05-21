@@ -7,7 +7,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
 import { ErrorState } from "renderer/basics/ErrorState";
-import { useSocket } from "renderer/contexts";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
 import { fontSizes } from "renderer/theme";
@@ -15,6 +14,7 @@ import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { SimpleGameRow } from "renderer/basics/SimpleGameRow";
+import { socket } from "renderer";
 
 const ErrorDiv = styled.div`
   font-size: ${fontSizes.large};
@@ -35,7 +35,6 @@ interface Data {
 }
 
 export const InstallModal = modalWidget(modals.install, (props) => {
-  const socket = useSocket();
   const { gameId, uploadId } = props.params;
 
   const [data, setData] = useState<Data | undefined>();
@@ -71,7 +70,7 @@ export const InstallModal = modalWidget(modals.install, (props) => {
       console.warn(e.stack);
       setInstallError(e);
     }
-  }, [socket, data]);
+  }, [data]);
 
   useAsync(async () => {
     const { game } = await socket.call(messages.FetchGame, {
@@ -87,7 +86,7 @@ export const InstallModal = modalWidget(modals.install, (props) => {
       upload: _.find(uploads, (u) => u.id === uploadId),
     };
     setData(data);
-  }, [gameId, socket, uploadId]);
+  }, [gameId, uploadId]);
 
   const intl = useIntl();
 
