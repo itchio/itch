@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,8 +21,7 @@ import (
 
 const stampFormat = "15:04:05.999"
 
-const testAccountName = "itch-test-account"
-
+// Test account name is: itch-test-account
 var testAccountAPIKeyEnvVar = "ITCH_TEST_ACCOUNT_API_KEY"
 var testAccountAPIKey = os.Getenv(testAccountAPIKeyEnvVar)
 
@@ -62,21 +61,6 @@ func main() {
 
 var r *runner
 
-type logWatch struct {
-	re *regexp.Regexp
-	c  chan bool
-}
-
-func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
-	select {
-	case <-lw.c:
-		r.logf("Saw pattern (%s)", lw.re.String())
-		return nil
-	case <-time.After(timeout):
-		return errors.Errorf("Timed out after %s waiting for pattern (%s)", timeout, lw.re.String())
-	}
-}
-
 func doMain() error {
 	defer gocleanup.Cleanup()
 
@@ -110,12 +94,11 @@ func doMain() error {
 	must(downloadChromeDriver(r))
 	r.logf("✓ ChromeDriver is set up!")
 
-	chromeDriverStartupChan := make(chan bool)
+	chromeDriverStartupChan := make(chan int64)
 
-	chromeDriverPort := 9515
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
 	chromeDriverCtx, chromeDriverCancel := context.WithCancel(context.Background())
-	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath), "--verbose")
+	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--log-path=%s", chromeDriverLogPath), "--verbose")
 	cdoutR, cdoutW, err := os.Pipe()
 	must(err)
 	r.chromeDriverCmd.Stdout = cdoutW
@@ -129,9 +112,13 @@ func doMain() error {
 	go func() {
 		s := bufio.NewScanner(cdoutR)
 		for s.Scan() {
-			r.chromelogf("%s", s.Text())
-			if strings.Contains(s.Text(), "Only local connections are allowed") {
-				close(chromeDriverStartupChan)
+			line := s.Text()
+			r.chromelogf("%s", line)
+			if strings.Contains(line, "Starting ChromeDriver") {
+				tokens := strings.Split(line, " on port ")
+				port, err := strconv.ParseInt(tokens[1], 10, 64)
+				must(err)
+				chromeDriverStartupChan <- port
 			}
 		}
 	}()
@@ -205,21 +192,23 @@ func doMain() error {
 	log.Printf("Got chrome options: %#v", chromeOpts)
 	chromeOpts.Apply(&capabilities)
 
+	var chromeDriverPort int64
+
+	r.logf("Waiting for chrome driver to be fully started")
+	select {
+	case chromeDriverPort = <-chromeDriverStartupChan:
+		r.logf("Chrome driver is actually listening on port %d", chromeDriverPort)
+	case <-time.After(2 * time.Second):
+		r.logf("Timed out waiting for chrome driver to start listening...")
+		gocleanup.Exit(1)
+	}
+
 	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	r.driver = driver
-
-	r.logf("Waiting for chrome driver to be fully started")
-	select {
-	case <-chromeDriverStartupChan:
-		r.logf("Chrome driver is actually listening!")
-	case <-time.After(2 * time.Second):
-		r.logf("Timed out waiting for chrome driver to start listening...")
-		gocleanup.Exit(1)
-	}
 
 	tryCreateSession := func() error {
 		beforeCreateTime := time.Now()

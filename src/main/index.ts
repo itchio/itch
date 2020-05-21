@@ -78,6 +78,21 @@ const ms: MainState = {
 };
 
 async function main() {
+  if (process.env.ITCH_INTEGRATION_TESTS !== "1") {
+    let isSingleInstance = app.requestSingleInstanceLock();
+    if (!isSingleInstance) {
+      logger.info(`We're not the main instance, exiting`);
+      app.exit(0);
+    }
+
+    app.on("second-instance", (ev, commandLine, workingDirectory) => {
+      logger.info(`Second instance was created, focusing ours`);
+      // FIXME: do not ignore command line
+      logger.warn(`Ignoring command line: ${commandLine}`);
+      ms.browserWindow?.focus();
+    });
+  }
+
   {
     let appInfo = `${env.appName}@${app.getVersion()}`;
     let electronInfo = `electron@${process.versions.electron}`;
