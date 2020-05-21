@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { messages } from "common/butlerd";
-import { Game } from "@itchio/valet";
+import { Game } from "@itchio/valet/messages";
 import { searchExamples } from "common/constants/search-examples";
 import { gameCover } from "common/game-cover";
 import { packets } from "common/packets";

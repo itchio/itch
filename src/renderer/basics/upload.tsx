@@ -1,4 +1,4 @@
-import { Build, Upload, UploadType } from "@itchio/valet";
+import { Build, Upload, UploadType } from "@itchio/valet/messages";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import styled from "styled-components";

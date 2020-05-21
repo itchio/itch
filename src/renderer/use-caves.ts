@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Cave } from "@itchio/valet";
+import { Cave } from "@itchio/valet/messages";
 import { packets } from "common/packets";
 import _ from "lodash";
 import { useState, useCallback } from "react";

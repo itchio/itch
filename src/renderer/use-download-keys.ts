@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { DownloadKey } from "@itchio/valet";
+import { DownloadKey } from "@itchio/valet/messages";
 import _ from "lodash";
 import { useState } from "react";
 import { useProfile, useSocket } from "renderer/contexts";

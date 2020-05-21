@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { GameRecord } from "@itchio/valet";
+import { GameRecord } from "@itchio/valet/messages";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GameListDetail } from "renderer/pages/GameListDetail";
 import { fontSizes, mixins } from "renderer/theme";

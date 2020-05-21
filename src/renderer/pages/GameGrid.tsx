@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Game, GameRecord } from "@itchio/valet";
+import { Game, GameRecord } from "@itchio/valet/messages";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";

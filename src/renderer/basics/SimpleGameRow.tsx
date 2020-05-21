@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Game, Upload } from "@itchio/valet";
+import { Game, Upload } from "@itchio/valet/messages";
 import React from "react";
 import { fontSizes } from "renderer/theme";
 import { gameCover } from "common/game-cover";

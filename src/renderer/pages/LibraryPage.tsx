@@ -5,7 +5,7 @@ import {
   FetchGameRecordsParams,
   GameRecord,
   GameRecordsSource,
-} from "@itchio/valet";
+} from "@itchio/valet/messages";
 import { LocalizedString } from "common/types";
 import _ from "lodash";
 import React, {

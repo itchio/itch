@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { messages } from "common/butlerd";
-import { Profile } from "@itchio/valet";
 import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React from "react";
@@ -14,6 +13,7 @@ import { animations, fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import appWhite from "static/images/logos/app-white.svg";
+import { Profile } from "@itchio/valet/messages";
 
 const ListLogo = styled.img`
   width: 180px;

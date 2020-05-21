@@ -10,7 +10,8 @@ import { mainLogger } from "main/logger";
 import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket } from "main/websocket-handler";
 import { MemoryLogger } from "common/logger";
-import { Client, messages } from "@itchio/valet";
+import { Client } from "@itchio/valet";
+import { messages } from "common/butlerd";
 
 const logger = mainLogger.childWithName("profile");
 

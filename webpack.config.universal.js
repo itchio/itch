@@ -7,7 +7,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
 const merge = require("webpack-merge");
 
-module.exports = env => {
+module.exports = (env) => {
   const isProduction = env.mode === "production";
 
   return [
@@ -46,7 +46,7 @@ module.exports = env => {
       resolve: {
         mainFields: ["browser", "module", "main"],
         alias: {
-          ...(isProduction ? {} : {"react-dom": "@hot-loader/react-dom"}),
+          ...(isProduction ? {} : { "react-dom": "@hot-loader/react-dom" }),
         },
       },
       output: {
@@ -112,8 +112,12 @@ function getCommonConfig(type, env) {
       modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
-      externals: { "@itchio/valet": "commonjs @itchio/valet", "child_process":
-          "child_process", "net": "net", "ws": "ws"},
+    externals: {
+      "@itchio/valet": "commonjs @itchio/valet",
+      child_process: "child_process",
+      net: "net",
+      ws: "ws",
+    },
     module: {
       rules: [
         {
@@ -133,7 +137,7 @@ function getCommonConfig(type, env) {
                 "@babel/env",
                 {
                   targets: {
-                    electron: "7.1.2",
+                    electron: "9.0.0",
                   },
                 },
               ],
@@ -164,9 +168,8 @@ function getCommonConfig(type, env) {
       ],
     },
     optimization: {
-      // N.B: minifiers break production code all the dang time, resist the urge
-      // to enable them.
-      minimize: false,
+      // N.B: minifiers are fragile beasts, disabling them for release is always an option.
+      minimize: isProduction,
     },
     plugins,
   };

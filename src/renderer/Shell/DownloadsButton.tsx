@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Download } from "@itchio/valet";
+import { Download } from "@itchio/valet/messages";
 import { DownloadWithProgress } from "common/downloads";
 import { gameCover } from "common/game-cover";
 import { queries } from "common/queries";

@@ -15,9 +15,9 @@ import WebSocket from "ws";
 import { showModal } from "main/show-modal";
 import { triggerTrayMenuUpdate } from "main/tray";
 
-import valet, {
-  Client,
-  Conversation,
+import valet, { Client } from "@itchio/valet";
+import { Conversation } from "@itchio/valet/conversation";
+import {
   IDGenerator,
   NotificationCreator,
   Request,
@@ -25,7 +25,7 @@ import valet, {
   RequestError,
   RpcError,
   RpcResult,
-} from "@itchio/valet";
+} from "@itchio/valet/support";
 
 const logger = mainLogger.childWithName("websocket-handler");
 

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Profile } from "@itchio/valet";
+import { Profile } from "@itchio/valet/messages";
 import { queries } from "common/queries";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";

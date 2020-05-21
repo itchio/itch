@@ -28,24 +28,30 @@ export const App = hot(() => {
   let [currentLocale, setCurrentLocale] = useState<CurrentLocale | undefined>();
 
   useEffect(() => {
-    establishSocketConnection()
-      .then(socket => {
-        socket.listen(packets.currentLocaleChanged, params => {
-          console.log(`Locale changed!`);
-          setCurrentLocale(params.currentLocale);
-        });
+    (async () => {
+      let socket;
 
-        socket
-          .query(queries.getCurrentLocale)
-          .then(({ currentLocale }) => setCurrentLocale(currentLocale))
-          .catch(e => {
-            alert(`While fetching current locale:\n\n${e.stack}`);
-          });
-        setSocket(socket);
-      })
-      .catch(e => {
+      try {
+        socket = await establishSocketConnection();
+      } catch (e) {
         alert(`While establishing websocket connection:\n\n${e.stack}`);
+        return;
+      }
+
+      socket.listen(packets.currentLocaleChanged, (params) => {
+        console.log(`Locale changed!`);
+        setCurrentLocale(params.currentLocale);
       });
+
+      try {
+        let { currentLocale } = await socket.query(queries.getCurrentLocale);
+        setCurrentLocale(currentLocale);
+        setSocket(socket);
+      } catch (e) {
+        alert(`While fetching current locale:\n\n${e.stack}`);
+        return;
+      }
+    })();
   }, []);
 
   if (!(socket && currentLocale)) {
@@ -81,6 +87,9 @@ async function establishSocketConnection(): Promise<Socket> {
   let address = sessionStorage.getItem(SESSION_WS_KEY);
   if (!address) {
     let res = await fetch("itch://api/websocket-address");
+    if (res.status !== 200) {
+      throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+    }
     let payload = await res.json();
     address = payload.address as string;
     sessionStorage.setItem(SESSION_WS_KEY, address);

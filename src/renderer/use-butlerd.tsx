@@ -3,7 +3,7 @@ import { ErrorState } from "renderer/basics/ErrorState";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { useSocket } from "renderer/contexts";
 import styled from "styled-components";
-import { RequestCreator } from "@itchio/valet";
+import { RequestCreator } from "@itchio/valet/support";
 
 export type ButlerdState<U> =
   | ButlerdLoadingState

@@ -98,17 +98,18 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
     elements: string[]
   ): Promise<Object> {
     let forbiddenCause: string | null = null;
-    let originKey = Object.keys(req.headers).find(
-      x => x.toLowerCase() == "origin"
-    );
-    if (originKey) {
-      let origin = req.headers[originKey]!;
-      if (!origin.startsWith("itch:")) {
-        forbiddenCause = `Forbidden origin ${origin}`;
-      }
-    } else {
-      forbiddenCause = `Missing origin`;
-    }
+    // FIXME: switch over to IPC instead
+    // let originKey = Object.keys(req.headers).find(
+    //   (x) => x.toLowerCase() == "origin"
+    // );
+    // if (originKey) {
+    //   let origin = req.headers[originKey]!;
+    //   if (!origin.startsWith("itch:")) {
+    //     forbiddenCause = `Forbidden origin ${origin}`;
+    //   }
+    // } else {
+    //   forbiddenCause = `Missing origin`;
+    // }
 
     if (forbiddenCause) {
       throw new HTTPError(
@@ -143,7 +144,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
     let url = new URL(req.url);
 
     let route = [url.hostname, url.pathname.replace(/^\//, "")]
-      .filter(s => s.length > 0)
+      .filter((s) => s.length > 0)
       .join("/");
     let elements = route.split("/");
 
@@ -192,7 +193,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
           const upstream = `http://localhost:${port}/${elements.join("/")}`;
           let res = await new Promise<http.IncomingMessage>(
             (resolve, reject) => {
-              http.get(upstream, res => {
+              http.get(upstream, (res) => {
                 resolve(res);
               });
             }
@@ -269,7 +270,7 @@ export function asyncToSyncProtocolHandler(
   return (req, cb) => {
     aph(req)
       .then(cb)
-      .catch(e => {
+      .catch((e) => {
         if (e instanceof HTTPError) {
           cb({
             statusCode: e.statusCode,

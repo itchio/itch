@@ -1,11 +1,11 @@
-import { isCancelled } from "common/butlerd";
+import { isCancelled, messages } from "common/butlerd";
 import { packets } from "common/packets";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket } from "main/websocket-handler";
 import { triggerTrayMenuUpdate } from "main/tray";
-import { Client, messages } from "@itchio/valet";
+import { Client } from "@itchio/valet";
 
 const logger = mainLogger.childWithName("drive-downloads");
 

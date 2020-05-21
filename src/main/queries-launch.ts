@@ -18,8 +18,10 @@ import { performHTMLLaunch } from "main/perform-html-launch";
 import { showModal } from "main/show-modal";
 import { hookLogging } from "main/initialize-valet";
 import { broadcastPacket, OnQuery } from "main/websocket-handler";
-import { Cave, Client, messages } from "@itchio/valet";
+import { Client } from "@itchio/valet";
+import { messages } from "common/butlerd";
 import { triggerTrayMenuUpdate } from "main/tray";
+import { Cave } from "@itchio/valet/messages";
 
 const logger = mainLogger.childWithName("queries-launch");
 

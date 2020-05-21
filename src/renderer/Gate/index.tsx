@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Profile } from "@itchio/valet";
+import { Profile } from "@itchio/valet/messages";
 import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { ConfirmModal } from "renderer/basics/Modal";

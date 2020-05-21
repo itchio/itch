@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Upload, Game, InstallLocationSummary } from "@itchio/valet";
+import { Upload, Game, InstallLocationSummary } from "@itchio/valet/messages";
 import { modals } from "common/modals";
 import React, { useState } from "react";
 import { Ellipsis } from "renderer/basics/Ellipsis";

@@ -1,4 +1,4 @@
-import { DownloadProgress } from "@itchio/valet";
+import { DownloadProgress } from "@itchio/valet/messages";
 import _ from "lodash";
 import React, { useCallback, useState } from "react";
 import { Button } from "renderer/basics/Button";

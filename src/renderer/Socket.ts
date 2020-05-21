@@ -3,16 +3,16 @@ import { QueryCreator, QueryRequest, queries } from "common/queries";
 import { uuid } from "common/util/uuid";
 import { useEffect } from "react";
 import {
-  Code,
   NotificationCreator,
   RequestCreator,
   RequestError,
   RpcResult,
   Request,
   Notification,
-} from "@itchio/valet";
+} from "@itchio/valet/support";
 import { ModalCreator } from "common/modals";
 import { delay } from "common/delay";
+import { Code } from "@itchio/valet/messages";
 
 type Listener<Payload> = (payload: Payload) => void;
 export type Cancel = () => void;

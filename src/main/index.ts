@@ -24,7 +24,7 @@ import { initTray } from "main/tray";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
-import { Profile } from "@itchio/valet/js/messages";
+import { Profile } from "@itchio/valet/messages";
 
 let logger = mainLogger.childWithName("main");
 

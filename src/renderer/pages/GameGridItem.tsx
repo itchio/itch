@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Game, GameRecord } from "@itchio/valet";
+import { Game, GameRecord } from "@itchio/valet/messages";
 import { DownloadWithProgress } from "common/downloads";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";

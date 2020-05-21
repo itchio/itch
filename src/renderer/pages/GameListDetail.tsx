@@ -1,4 +1,4 @@
-import { Game } from "@itchio/valet";
+import { Game } from "@itchio/valet/messages";
 import { DownloadsState } from "common/downloads";
 import { fileSize } from "common/format/filesize";
 import { gameCover } from "common/game-cover";

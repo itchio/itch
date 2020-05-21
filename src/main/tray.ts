@@ -14,7 +14,8 @@ const logger = mainLogger.childWithName("tray");
 
 import kitchTrayImage from "static/images/tray/kitch.png";
 import itchTrayImage from "static/images/tray/itch.png";
-import { Client, messages } from "@itchio/valet";
+import { Client } from "@itchio/valet";
+import { messages } from "common/butlerd";
 
 function trayIcon(): string {
   console.log(`kitchTrayImage = ${JSON.stringify(kitchTrayImage, null, 2)}`);

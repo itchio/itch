@@ -1,4 +1,4 @@
-import { Cave, Profile } from "@itchio/valet";
+import { Cave, Profile } from "@itchio/valet/messages";
 import { DownloadsState } from "common/downloads";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale } from "common/locales";

@@ -11,7 +11,7 @@ import { useCaves } from "renderer/use-caves";
 import styled from "styled-components";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
-import { Game } from "@itchio/valet";
+import { Game } from "@itchio/valet/messages";
 
 const Container = styled.div`
   display: flex;

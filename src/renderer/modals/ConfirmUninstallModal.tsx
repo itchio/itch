@@ -7,7 +7,7 @@ import { modalWidget } from "renderer/modals/ModalRouter";
 import { Button } from "renderer/basics/Button";
 import { useAsync } from "renderer/use-async";
 import { messages } from "common/butlerd";
-import { Game, Cave } from "@itchio/valet";
+import { Game, Cave } from "@itchio/valet/messages";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { queries } from "common/queries";
 

@@ -5,7 +5,7 @@ import {
   Game,
   Upload,
   UploadType,
-} from "@itchio/valet";
+} from "@itchio/valet/messages";
 import { DownloadWithProgress } from "common/downloads";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";

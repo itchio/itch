@@ -1,4 +1,8 @@
-import { Game, HTMLLaunchParams, HTMLLaunchResult } from "@itchio/valet";
+import {
+  Game,
+  HTMLLaunchParams,
+  HTMLLaunchResult,
+} from "@itchio/valet/messages";
 import { Logger } from "common/logger";
 import { app, BrowserWindow, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";

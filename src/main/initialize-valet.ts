@@ -4,7 +4,9 @@ import { butlerDbPath } from "common/util/paths";
 import { mainLogger } from "main/logger";
 import { Logger } from "common/logger";
 
-import valet, { Client, Conversation, messages } from "@itchio/valet";
+import valet, { Client } from "@itchio/valet";
+import { messages } from "common/butlerd";
+import { Conversation } from "@itchio/valet/conversation";
 
 let logger = mainLogger.childWithName("butler");
 

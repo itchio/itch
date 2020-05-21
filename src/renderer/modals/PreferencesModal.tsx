@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { InstallLocationSummary } from "@itchio/valet";
+import { InstallLocationSummary } from "@itchio/valet/messages";
 import { fileSize } from "common/format/filesize";
 import { modals } from "common/modals";
 import packageInfo from "common/package-info";

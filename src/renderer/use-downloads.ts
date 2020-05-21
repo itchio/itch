@@ -1,4 +1,4 @@
-import { Download } from "@itchio/valet";
+import { Download } from "@itchio/valet/messages";
 import { DownloadsState } from "common/downloads";
 import { filterObject } from "common/filter-object";
 import { packets } from "common/packets";

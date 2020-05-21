@@ -1,4 +1,4 @@
-import { Profile } from "@itchio/valet";
+import { Profile } from "@itchio/valet/messages";
 import { packets } from "common/packets";
 import React, { useEffect, useState } from "react";
 import { useSocket, OptionalProfileContext } from "renderer/contexts";

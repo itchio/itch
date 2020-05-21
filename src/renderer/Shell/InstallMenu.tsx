@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Upload } from "@itchio/valet";
+import { Upload } from "@itchio/valet/messages";
 import { modals } from "common/modals";
 import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";

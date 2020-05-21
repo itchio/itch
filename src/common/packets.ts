@@ -1,12 +1,5 @@
-import {
-  Notification,
-  Request,
-  RpcResult,
-  Cave,
-  Download,
-  NetworkStatus,
-  Profile,
-} from "@itchio/valet";
+import { Cave, Download, NetworkStatus, Profile } from "@itchio/valet/messages";
+import { Notification, Request, RpcResult } from "@itchio/valet/support";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";

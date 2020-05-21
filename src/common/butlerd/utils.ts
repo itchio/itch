@@ -2,10 +2,9 @@ import {
   asRequestError,
   getErrorStack,
   InternalCode,
-  Cave,
-  CaveSummary,
-  Code,
-} from "@itchio/valet";
+} from "@itchio/valet/support";
+
+import { Cave, CaveSummary, Code } from "@itchio/valet/messages";
 import { DATE_FORMAT, formatDate } from "common/format/datetime";
 import { levels, LogEntry } from "common/logger";
 

@@ -1,4 +1,4 @@
-import { Profile } from "@itchio/valet";
+import { Profile } from "@itchio/valet/messages";
 import urls from "main/constants/urls";
 import * as url from "url";
 import { mainLogger } from "main/logger";
