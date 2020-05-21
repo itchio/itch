@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 
-const { say, sh, measure, appBundleId } = require("../common");
+const { hasTag, say, sh, measure, appBundleId } = require("../common");
 const fs = require("fs");
 const ospath = require("path");
 
@@ -51,6 +51,8 @@ async function sign(cx, packageDir) {
 
   if (process.env.SKIP_NOTARIZE) {
     say(`$SKIP_NOTARIZE is set, skipping notarization...`);
+  } else if (!hasTag()) {
+    say(`Doesn't have tag set, skipping notarization...`);
   } else {
     say("Notarizing...");
     await measure("electron-notarize", async () => {
