@@ -2,6 +2,13 @@
 "use strict";
 
 (function () {
+  if (window.location.protocol != "itch:") {
+    console.log(
+      `Not setting up IPC bridge for protocol ${window.location.protocol}`
+    );
+    return;
+  }
+
   let ipcRenderer = require("electron").ipcRenderer;
 
   /** @type {typeof window & {sendToMain?: (payload: string) => void}} */
