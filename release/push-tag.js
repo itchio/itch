@@ -1,12 +1,13 @@
 //@ts-check
 "use strict";
 
-const { sh, say, prompt, confirm, readFile, writeFile } = require("./common");
+const { $, prompt, confirm } = require("@itchio/bob");
+const { readFileSync, writeFileSync } = require("fs");
 const { resolve } = require("path");
 
 async function pushTag() {
   const pkgPath = resolve(__dirname, "..", "package.json");
-  const pkg = JSON.parse(readFile(pkgPath));
+  const pkg = JSON.parse(readFileSync(pkgPath, { encoding: "utf-8" }));
   const pkgVersion = pkg.version;
 
   let force = false;
@@ -14,7 +15,7 @@ async function pushTag() {
   for (const arg of process.argv.slice(2)) {
     switch (arg) {
       case "--force":
-        say("(Running in forced mode)");
+        console.log("(Running in forced mode)");
         force = true;
         break;
       default:
@@ -40,10 +41,10 @@ async function pushTag() {
       await confirm(`Bump package.json? [${pkgVersion} => ${nextVersion}]`);
     }
     pkg.version = nextVersion;
-    writeFile(pkgPath, JSON.stringify(pkg, null, 2));
-    say("Bumped package.json");
-    sh("git add package.json");
-    sh(`git commit -m ':arrow_up: ${nextVersion}'`);
+    writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), { encoding: "utf-8" });
+    console.log("Bumped package.json");
+    $("git add package.json");
+    $(`git commit -m ':arrow_up: ${nextVersion}'`);
   }
 
   const tag = `v${nextVersion}`;
@@ -51,28 +52,28 @@ async function pushTag() {
   const addCmd = `git tag ${isCanary ? "" : "-s"} -a ${tag} -m ${tag}`;
 
   try {
-    sh(addCmd);
-    say("Tag added...");
+    $(addCmd);
+    console.log("Tag added...");
   } catch (e) {
     if (!force) {
       await confirm("Tag already exists locally. Replace?");
     }
-    sh(`git tag -d ${tag}`);
-    sh(addCmd);
+    $(`git tag -d ${tag}`);
+    $(addCmd);
   }
 
   const pushCmd = `git push origin ${tag}`;
   try {
-    sh(pushCmd);
-    say("Tag pushed...");
+    $(pushCmd);
+    console.log("Tag pushed...");
   } catch (e) {
     if (!force) {
       confirm("Tag already exists on remote. Force-push?");
     }
-    sh(`${pushCmd} --force`);
+    $(`${pushCmd} --force`);
   }
 
-  sh("git push");
+  $("git push");
 }
 
 pushTag();

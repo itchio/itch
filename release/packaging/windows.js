@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 
-const { sh, say } = require("../common");
+const { $ } = require("@itchio/bob");
 const fs = require("fs");
 const ospath = require("path");
 const { toUnixPath } = require("./context");
@@ -18,7 +18,7 @@ async function sign(cx, packageDir) {
   const exePath = toUnixPath(
     ospath.join(packageDir, cx.binarySubdir, cx.binaryName)
   );
-  say(`Exe path (${exePath})`);
+  console.log(`Exe path (${exePath})`);
   if (!fs.existsSync(exePath)) {
     throw new Error(`windows.sign: exePath should exist: (${exePath})`);
   }
@@ -28,7 +28,7 @@ async function sign(cx, packageDir) {
     '//v //s MY //n "itch corp." //fd sha256 //tr http://timestamp.comodoca.com/?td=sha256 //td sha256';
   let signtoolPath = "vendor/signtool.exe";
 
-  sh(`${signtoolPath} sign ${signParams} "${exePath}"`);
+  $(`${signtoolPath} sign ${signParams} "${exePath}"`);
 }
 
 module.exports = { sign };

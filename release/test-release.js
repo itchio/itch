@@ -1,11 +1,11 @@
 //@ts-check
 "use strict";
 
-const { sh, say, chalk } = require("./common");
+const { $, chalk } = require("@itchio/bob");
 
 async function main() {
-  say("Wiping build/");
-  sh("rm -rf build/");
+  console.log("Wiping build/");
+  $("rm -rf build/");
   let os = "linux";
   if (process.platform === "win32") {
     os = "windows";
@@ -13,12 +13,12 @@ async function main() {
     os = "darwin";
   }
   let arch = "amd64";
-  say(`OS ${chalk.yellow(os)} Arch ${chalk.yellow(arch)})`);
-  say("Building...");
-  sh(`node release/ci-build.js --os ${os} --arch ${arch}`);
-  sh(`node release/ci-package.js --os ${os} --arch ${arch}`);
+  console.log(`OS ${chalk.yellow(os)} arch ${chalk.yellow(arch)}`);
+  console.log("Building...");
+  $(`node release/build.js --os ${os} --arch ${arch}`);
+  $(`node release/package.js --os ${os} --arch ${arch}`);
 
-  say("All done!");
+  console.log("All done!");
 }
 
 main().catch((e) => {

@@ -50,6 +50,7 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
+    "@itchio/bob": "^2.0.0",
     "@types/classnames": "^2.2.10",
     "@types/debug": "^4.1.5",
     "@types/electron-packager": "^14.0.0",
@@ -93,10 +94,8 @@
     "start": "node develop.js",
     "compile": "webpack-cli --config webpack.config.prod.js",
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
-    "integration-tests": "node release/ci-test.js",
-    "i18n": "node release/ci-i18n-check.js",
+    "integration-tests": "node release/test.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
-    "ts-watch": "tsc --noEmit --skipLibCheck --watch",
-    "react-lint": "react-lint ./src/renderer/index.tsx"
+    "ts-watch": "tsc --noEmit --skipLibCheck --watch"
   }
 }

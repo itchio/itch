@@ -1,10 +1,9 @@
 //@ts-check
 "use strict";
 
+const { $ } = require("@itchio/bob");
 const {
   measure,
-  say,
-  sh,
   getAppName,
   getBuildVersion,
   appBundleId,
@@ -17,7 +16,7 @@ const electronPackager = require("electron-packager");
 /** @param {import("./context").Context} cx */
 async function doPackage(cx) {
   const { os, arch } = cx;
-  say(`Packaging ${cx.appName} for ${os}-${arch}`);
+  console.log(`Packaging ${cx.appName} for ${os}-${arch}`);
 
   const appName = getAppName();
   const appVersion = getBuildVersion();
@@ -49,12 +48,12 @@ async function doPackage(cx) {
   );
   let buildPath = toUnixPath(appPaths[0]);
 
-  say(`Built app is in ${buildPath}`);
+  console.log(`Built app is in ${buildPath}`);
 
-  say(`Moving to ${cx.packageDir}`);
-  sh(`rm -rf packages`);
-  sh(`mkdir -p packages`);
-  sh(`mv "${buildPath}" "${toUnixPath(cx.packageDir)}"`);
+  console.log(`Moving to ${cx.artifactDir}`);
+  $(`rm -rf artifacts`);
+  $(`mkdir -p artifacts`);
+  $(`mv "${buildPath}" "${toUnixPath(cx.artifactDir)}"`);
 
   await sign(cx);
 }
@@ -147,24 +146,24 @@ function darwinOptions(cx) {
  * @param {import("./context").Context} cx
  */
 async function sign(cx) {
-  const packageDir = cx.packageDir;
-  say(`packageDir is (${packageDir})`);
+  const artifactDir = cx.artifactDir;
+  console.log(`Artifact dir is (${artifactDir})`);
 
   if (!cx.shouldSign) {
-    say("Code signing disabled, skipping");
+    console.log("Code signing disabled, skipping");
     return;
   }
 
   if (cx.os === "windows") {
-    say("Signing Windows executable...");
+    console.log("Signing Windows executable...");
     const windows = require("./windows");
-    await windows.sign(cx, packageDir);
+    await windows.sign(cx, artifactDir);
   } else if (cx.os === "darwin") {
-    say("Signing macOS app bundle...");
+    console.log("Signing macOS app bundle...");
     const darwin = require("./darwin");
-    await darwin.sign(cx, packageDir);
+    await darwin.sign(cx, artifactDir);
   } else {
-    say("Not signing Linux executables, that's not a thing");
+    console.log("We don't sign Linux executables.");
   }
 }
 

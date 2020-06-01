@@ -43,6 +43,7 @@ npm-debug.log
 /portable-stage
 /linux-extras
 /packages
+/artifacts
 /*.app
 /*.dmg
 

@@ -1,14 +1,8 @@
 //@ts-check
 "use strict";
 
-const {
-  OSES,
-  ARCHES,
-  say,
-  readFile,
-  getAppName,
-  getBuildVersion,
-} = require("../common");
+const { readFileSync } = require("fs");
+const { OSES, ARCHES, getAppName, getBuildVersion } = require("../common");
 const ospath = require("path");
 
 /**
@@ -21,7 +15,7 @@ const ospath = require("path");
  *  archInfo: {electronArch: "ia32" | "x64"},
  *  shouldSign: boolean,
  *  projectDir: string,
- *  packageDir: string,
+ *  artifactDir: string,
  *  binarySubdir: string,
  *  binaryName: string,
  *  iconsPath: string,
@@ -72,10 +66,10 @@ async function parseContext() {
   // ok let's just add either mingw64 or mingw32 to the path if we're on 32-bit or 64-bit windows
   if (os === "windows") {
     if (arch === "386") {
-      say("Adding mingw32 to PATH");
+      console.log("Adding mingw32 to PATH");
       process.env.PATH = `/mingw32/bin:${process.env.PATH}`;
     } else if (arch === "amd64") {
-      say("Adding mingw64 to PATH");
+      console.log("Adding mingw64 to PATH");
       process.env.PATH = `/mingw64/bin:${process.env.PATH}`;
     }
   }
@@ -83,7 +77,7 @@ async function parseContext() {
   const shouldSign = !!process.env.CI || !!process.env.FORCE_CODESIGN;
   const projectDir = process.cwd();
 
-  const packageDir = ospath.join(projectDir, "packages", `${os}-${arch}`);
+  const artifactDir = ospath.join(projectDir, "artifacts", `${os}-${arch}`);
 
   let ext = os === "windows" ? ".exe" : "";
   let appName = getAppName();
@@ -93,19 +87,19 @@ async function parseContext() {
 
   const iconsPath = ospath.join("release", "images", `${appName}-icons`);
   const electronVersion = JSON.parse(
-    await readFile("package.json")
+    readFileSync("package.json", { encoding: "utf-8" })
   ).devDependencies.electron.replace(/^\^/, "");
 
-  say(`============= Context info =============`);
-  say(`App name (${appName})`);
-  say(`OS (${os}), Arch (${arch})`);
-  say(`Electron version (${electronVersion})`);
-  say(`Code signing enabled: (${shouldSign})`);
-  say(`Project dir (${projectDir})`);
-  say(`Package dir (${packageDir})`);
-  say(`Binary subPath (${binarySubdir})`);
-  say(`Binary name (${binaryName})`);
-  say(`========================================`);
+  console.log(`============= Context info =============`);
+  console.log(`App name (${appName})`);
+  console.log(`OS (${os}), Arch (${arch})`);
+  console.log(`Electron version (${electronVersion})`);
+  console.log(`Code signing enabled: (${shouldSign})`);
+  console.log(`Project dir (${projectDir})`);
+  console.log(`Artifact dir (${artifactDir})`);
+  console.log(`Binary subPath (${binarySubdir})`);
+  console.log(`Binary name (${binaryName})`);
+  console.log(`========================================`);
 
   return {
     appName,
@@ -115,7 +109,7 @@ async function parseContext() {
     archInfo,
     shouldSign,
     projectDir,
-    packageDir,
+    artifactDir: artifactDir,
     binarySubdir,
     binaryName,
     iconsPath,

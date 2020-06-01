@@ -10,11 +10,11 @@ package-linux-amd64:
     - linux
   script:
     - npm ci
-    - node release/ci-package-all.js --os linux --arch amd64
+    - node release/package-all.js --os linux --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
 # macOS .zip
 package-darwin-amd64:
@@ -23,11 +23,11 @@ package-darwin-amd64:
     - darwin
   script:
     - npm ci
-    - node release/ci-package-all.js --os darwin --arch amd64
+    - node release/package-all.js --os darwin --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
 # windows 32-bit build
 package-windows-386:
@@ -36,11 +36,11 @@ package-windows-386:
     - windows
   script:
     - npm ci
-    - node release/ci-package-all.js --os windows --arch 386
+    - node release/package-all.js --os windows --arch 386
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
 # windows 64-bit build
 package-windows-amd64:
@@ -49,11 +49,11 @@ package-windows-amd64:
     - windows
   script:
     - npm ci
-    - node release/ci-package-all.js --os windows --arch amd64
+    - node release/package-all.js --os windows --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
 deploy-itchio:
   stage: deploy
@@ -63,7 +63,7 @@ deploy-itchio:
   only:
     - tags
   script:
-    - node release/ci-deploy.js
+    - node release/deploy.js
   dependencies:
     - package-linux-amd64
     - package-darwin-amd64
