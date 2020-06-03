@@ -1,6 +1,5 @@
 import { MainState } from "main";
 import { Tray, app, Menu } from "electron";
-import { join } from "path";
 import { mainLogger } from "main/logger";
 import { broadcastPacket } from "main/socket-handler";
 import { packets } from "common/packets";
@@ -12,18 +11,14 @@ import { formatMessage } from "main/format-message";
 
 const logger = mainLogger.childWithName("tray");
 
-import kitchTrayImage from "static/images/tray/kitch.png";
-import itchTrayImage from "static/images/tray/itch.png";
+const kitchTrayImage = require.resolve("static/images/tray/kitch.png");
+const itchTrayImage = require.resolve("static/images/tray/itch.png");
 import { Client } from "@itchio/valet";
 import { messages } from "common/butlerd";
 
 function trayIcon(): string {
-  console.log(`kitchTrayImage = ${JSON.stringify(kitchTrayImage, null, 2)}`);
-  let res = join(
-    __dirname,
-    app.name === "kitch" ? kitchTrayImage : itchTrayImage
-  );
-  console.log(`res = ${res}`);
+  let res = app.name === "kitch" ? kitchTrayImage : itchTrayImage;
+  console.log(`Tray icon path: ${res}`);
   return res;
 }
 

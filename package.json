@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.10.1",
-    "@babel/core": "^7.9.6",
+    "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
@@ -65,7 +65,10 @@
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "babel-loader": "^8.1.0",
+    "babel-plugin-inline-json-import": "^0.3.2",
+    "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-styled-components": "^1.10.7",
+    "chalk": "^4.0.0",
     "css-loader": "^3.5.3",
     "electron": "^9.0.0",
     "electron-build-env": "^0.2.0",
@@ -97,6 +100,7 @@
     "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
     "integration-tests": "node release/test.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
-    "ts-watch": "tsc --noEmit --skipLibCheck --watch"
+    "ts-watch": "tsc --noEmit --skipLibCheck --watch",
+    "babel": "babel --verbose --extensions .ts,.tsx,.js --copy-files src --out-dir lib"
   }
 }

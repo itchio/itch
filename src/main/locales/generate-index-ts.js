@@ -1,3 +1,5 @@
+//@ts-check
+"use strict";
 
 const fs = require("fs");
 
@@ -5,10 +7,10 @@ const EXT_RE = /\.json$/;
 const t1 = Date.now();
 
 let contents = `
-export const list = import("../../static/locales.json").then(x => x.default);
+export const list = require("static/locales.json");
 
 type LocaleStrings = { [id: string]: string };
-type AllLocaleStrings = { [lang: string]: Promise<LocaleStrings> };
+type AllLocaleStrings = { [lang: string]: LocaleStrings };
 
 export const strings: AllLocaleStrings = {
 `;
@@ -16,7 +18,7 @@ export const strings: AllLocaleStrings = {
 for (const file of fs.readdirSync("../../static/locales")) {
   if (EXT_RE.test(file)) {
     const name = file.replace(EXT_RE, "");
-    let line = `  "${name}": import("../../static/locales/${file}").then(x => x.default as LocaleStrings),\n`;
+    let line = `  "${name}": require("static/locales/${file}") as LocaleStrings,\n`;
     contents += line;
   }
 }
@@ -24,6 +26,6 @@ for (const file of fs.readdirSync("../../static/locales")) {
 contents += `};
 `;
 
-fs.writeFileSync("./index.ts", contents, {encoding: "utf-8"});
+fs.writeFileSync("./index.ts", contents, { encoding: "utf-8" });
 const t2 = Date.now();
-console.log(`Generated ./index.ts in ${(t2-t1).toFixed()}ms`);
+console.log(`Generated ./index.ts in ${(t2 - t1).toFixed()}ms`);

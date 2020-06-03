@@ -59,11 +59,9 @@ export async function loadPreferences(ms: MainState) {
       preventDisplaySleep: true,
     };
   }
-  let localesConfig: LocalesConfig = await locales.list;
+  let localesConfig: LocalesConfig = locales.list;
 
-  let englishStrings: LocaleStrings = processLocaleStrings(
-    await locales.strings.en
-  );
+  let englishStrings: LocaleStrings = processLocaleStrings(locales.strings.en);
   logger.debug(
     `Loaded ${Object.keys(englishStrings).length} strings for base locale (en)`
   );
@@ -79,7 +77,7 @@ export async function loadPreferences(ms: MainState) {
   };
 
   if (preferences.lang) {
-    await loadLocale(ms, preferences.lang);
+    loadLocale(ms, preferences.lang);
   }
 }
 
@@ -95,7 +93,7 @@ function processLocaleStrings(input: LocaleStrings): LocaleStrings {
   return output;
 }
 
-export async function loadLocale(ms: MainState, lang: string) {
+export function loadLocale(ms: MainState, lang: string) {
   if (!ms.localeState) {
     throw new Error(`loadLocale called before MainState.localeState is set`);
   }
@@ -112,7 +110,7 @@ export async function loadLocale(ms: MainState, lang: string) {
   }
 
   let strings: LocaleStrings = processLocaleStrings(
-    await (locales.strings[normalizedLang] || Promise.resolve({}))
+    locales.strings[normalizedLang] || Promise.resolve({})
   );
   logger.info(
     `Loaded ${

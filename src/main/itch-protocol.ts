@@ -13,7 +13,7 @@ import { Readable } from "stream";
 // Preload scripts need an absolute path in Electron, so we need
 // to do a little dance with webpack to make everybody happy
 // @ts-ignore
-import preloadContents from "raw-loader!./preload.js";
+// import preloadContents from "raw-loader!./preload.js";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
@@ -86,8 +86,10 @@ export async function registerItchProtocol(ms: MainState, partition: string) {
 
   // FIXME: this overrides the path, it's not great.. also, maybe we could just
   // figure out the absolute path from webpack?
-  let preloadPath = filepath.resolve(app.getPath("temp"), "itch-preload.js");
-  originalFs.writeFileSync(preloadPath, preloadContents);
+  // let preloadPath = filepath.resolve(app.getPath("temp"), "itch-preload.js");
+  // originalFs.writeFileSync(preloadPath, preloadContents);
+  let preloadPath = filepath.resolve(__dirname, "preload.js");
+  console.log(`preloadPath = `, preloadPath);
   ses.setPreloads([preloadPath]);
 
   partitionsRegistered[partition] = true;
