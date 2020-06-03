@@ -9,6 +9,7 @@ npm-debug.log
 /*.dmg
 /*.zip
 /*.app
+/lib
 /app
 /test
 /tests
