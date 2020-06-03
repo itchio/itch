@@ -2,7 +2,10 @@
 "use strict";
 
 let debug = require("debug")("gobbler");
+let workerDebug = require("debug")("gobbler:worker");
 
+const { Worker, SHARE_ENV } = require("worker_threads");
+const babel = require("@babel/core");
 const chalk = require("chalk");
 const os = require("os");
 const fs = require("fs");
@@ -71,6 +74,16 @@ const { measure } = require("./measure");
  * @param {string[]} args
  */
 async function main(args) {
+  let elapsed = await measure(async () => {
+    await doMain(args);
+  });
+  console.log(`Total run time: ${chalk.blue(elapsed)}`);
+}
+
+/**
+ * @param {string[]} args
+ */
+async function doMain(args) {
   /**
    * @type {Opts}
    */
@@ -91,13 +104,13 @@ async function main(args) {
   let builtAt = new Date();
 
   if (opts.clean) {
-    console.log(`Wiping ${opts.outDir}`);
+    console.log(`Wiping ${chalk.yellow(opts.outDir)}`);
     await rmdir(opts.outDir, { recursive: true });
     await mkdir(opts.outDir, { recursive: true });
   }
 
   let concurrency = os.cpus().length;
-  console.log(`Setting concurrency to ${chalk.yellow(concurrency)}`);
+  debug(`Setting concurrency to ${chalk.yellow(concurrency)}`);
 
   let dbPath = join(opts.outDir, "build-db.json");
 
@@ -108,14 +121,9 @@ async function main(args) {
   };
   try {
     oldBuildDB = JSON.parse(await readFile(dbPath, { encoding: "utf-8" }));
-    let numFiles = Object.keys(oldBuildDB).length;
-    console.log(`Found old info map with ${chalk.yellow(numFiles)} files`);
   } catch (e) {
     console.log(`No build db or incompatible format, rebuilding`);
   }
-
-  console.log("Gathering files...");
-  let pool = makePool({ jobs: concurrency });
 
   /** @type {GatherResult} */
   let gatherResult = {
@@ -125,40 +133,141 @@ async function main(args) {
     removed: [],
   };
 
-  let elapsed = await measure(async () => {
-    await gatherFiles(opts.inDir, ".", oldBuildDB.infoMap, gatherResult, pool);
-  });
-  await pool.promise();
+  {
+    debug("Gathering files...");
+    let gatherPool = makePool({ jobs: concurrency });
 
-  let numFiles = Object.keys(gatherResult.infoMap).length;
-  console.log(
-    `Found ${chalk.yellow(numFiles)} files in ${chalk.blue(elapsed)}`
-  );
+    let elapsed = await measure(async () => {
+      await gatherFiles(
+        opts.inDir,
+        ".",
+        oldBuildDB.infoMap,
+        gatherResult,
+        gatherPool
+      );
+    });
+    await gatherPool.promise();
 
-  let newSet = new Set();
-  for (let k of Object.keys(gatherResult.infoMap)) {
-    newSet.add(k);
-  }
-  for (let k of Object.keys(oldBuildDB)) {
-    if (!newSet.has(k)) {
-      gatherResult.removed.push();
+    let numFiles = Object.keys(gatherResult.infoMap).length;
+    console.log(
+      `Found ${chalk.yellow(numFiles)} files in ${chalk.blue(elapsed)}`
+    );
+
+    let newSet = new Set();
+    for (let k of Object.keys(gatherResult.infoMap)) {
+      newSet.add(k);
+    }
+    for (let k of Object.keys(oldBuildDB)) {
+      if (!newSet.has(k)) {
+        gatherResult.removed.push();
+      }
+    }
+
+    let changes = [];
+    if (gatherResult.added.length > 0) {
+      changes.push(`${chalk.green(`${gatherResult.added.length} added`)}`);
+    }
+    if (gatherResult.removed.length > 0) {
+      changes.push(`${chalk.red(`${gatherResult.removed.length} removed`)}`);
+    }
+    if (gatherResult.changed.length > 0) {
+      changes.push(`${chalk.yellow(`${gatherResult.changed.length} changed`)}`);
+    }
+    if (changes.length > 0) {
+      console.log(`Changes: ${changes.join(", ")}`);
+    } else {
+      console.log(`No changes.`);
     }
   }
 
-  let changes = [];
-  if (gatherResult.added.length > 0) {
-    changes.push(`${chalk.green(`${gatherResult.added.length} added`)}`);
+  /** @type {import("./worker").Job[]} */
+  let jobs = [];
+
+  {
+    /**
+     * @param {string} fileName
+     */
+    let compile = async (fileName) => {
+      if (/\.(ts|tsx|js)$/.test(fileName)) {
+        // continue!
+      } else {
+        // just copy
+        return;
+      }
+      jobs.push({
+        input: join(opts.inDir, fileName),
+        output: join(opts.outDir, fileName),
+      });
+    };
+
+    for (let added of gatherResult.added) {
+      compile(added);
+    }
+    for (let changed of gatherResult.changed) {
+      compile(changed);
+    }
   }
-  if (gatherResult.removed.length > 0) {
-    changes.push(`${chalk.red(`${gatherResult.removed.length} removed`)}`);
-  }
-  if (gatherResult.changed.length > 0) {
-    changes.push(`${chalk.yellow(`${gatherResult.changed.length} changed`)}`);
-  }
-  if (changes.length > 0) {
-    console.log(`Changes: ${changes.join(", ")}`);
-  } else {
-    console.log(`No changes.`);
+
+  let buildAll = async () => {
+    let numWorkers = Math.min(jobs.length, concurrency);
+
+    console.log(`Using ${chalk.yellow(numWorkers)} workers`);
+    let workers = [];
+    for (let i = 0; i < numWorkers; i++) {
+      let w = new Worker(join(__dirname, "worker.js"), {
+        // @ts-ignore
+        env: SHARE_ENV,
+      });
+      workers.push(w);
+    }
+
+    let promises = [];
+
+    /**
+     * @param {import("worker_threads").Worker} worker
+     */
+    let popJob = (worker) => {
+      let job = jobs.pop();
+      if (!job) {
+        return;
+      } else {
+        /** @type {import("./worker").WorkerIncomingMessage} */
+        let msg = { job };
+        worker.postMessage(msg);
+
+        return new Promise((resolve, reject) => {
+          /** @param {import("./worker").WorkerOutgoingMessage} msg */
+          let onMsg = (msg) => {
+            if (msg.kind === "done") {
+              worker.removeListener("message", onMsg);
+              resolve(popJob(worker));
+            } else if (msg.kind === "debug" && msg.debugArgs) {
+              workerDebug.apply(workerDebug, msg.debugArgs);
+            } else {
+              throw new Error("Unknown worker message");
+            }
+          };
+          worker.addListener("message", onMsg);
+        });
+      }
+    };
+
+    for (let w of workers) {
+      promises.push(popJob(w));
+    }
+    await Promise.all(promises);
+
+    for (let worker of workers) {
+      worker.terminate();
+    }
+  };
+
+  let numJobs = jobs.length;
+  if (numJobs > 0) {
+    let elapsed = await measure(async () => {
+      await buildAll();
+    });
+    console.log(`${chalk.yellow(numJobs)} jobs done in ${chalk.blue(elapsed)}`);
   }
 
   /** @type {BuildDB} */
@@ -209,8 +318,6 @@ async function gatherFiles(baseDir, dirName, oldInfoMap, gatherResult, pool) {
  * @param {GatherResult} gatherResult
  */
 async function gatherFileInfo(baseDir, fileName, oldInfoMap, gatherResult) {
-  debug("baseDir %o, fileName %o", baseDir, fileName);
-
   let filePath = join(baseDir, fileName);
   const stats = await stat(filePath);
 
@@ -239,7 +346,7 @@ async function gatherFileInfo(baseDir, fileName, oldInfoMap, gatherResult) {
       oldInfo.size === info.size &&
       oldInfo.mtime == info.mtime
     ) {
-      debug("Unchanged: %o", fileName);
+      // unchanged
     } else {
       gatherResult.changed.push(fileName);
     }

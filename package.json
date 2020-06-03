@@ -52,6 +52,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@itchio/bob": "^2.0.0",
+    "@types/babel__core": "^7.1.8",
     "@types/classnames": "^2.2.10",
     "@types/debug": "^4.1.5",
     "@types/electron-packager": "^14.0.0",

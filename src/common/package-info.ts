@@ -1,2 +1,2 @@
-import * as packageInfo from "../../package.json";
+import packageInfo from "../../package.json";
 export default packageInfo;
