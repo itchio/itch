@@ -23,7 +23,7 @@ export async function showModal<Params, Result>(
 ): Promise<Result | undefined> {
   let customOpts = mc.__customOptions;
   let kind = mc.__kind;
-  let existing = _.find(ms.modals, m => m.mc.__kind == kind);
+  let existing = _.find(ms.modals, (m) => m.mc.__kind == kind);
   if (customOpts.singleton && existing) {
     logger.info(`Modal kind ${kind} is singleton, focusing existing one`);
     existing.browserWindow.show();
@@ -40,6 +40,7 @@ export async function showModal<Params, Result>(
     frame: false,
     show: false,
     webPreferences: {
+      nodeIntegration: true,
       session: session.fromPartition(partitionForApp()),
     },
   };
@@ -47,7 +48,10 @@ export async function showModal<Params, Result>(
   modal.setMenu(null);
 
   setupCustomShortcuts(ms, modal.webContents, [
-    [["CmdOrCtrl+Shift+C"], async ms => openOrFocusDevTools(modal.webContents)],
+    [
+      ["CmdOrCtrl+Shift+C"],
+      async (ms) => openOrFocusDevTools(modal.webContents),
+    ],
   ]);
 
   let payload: ModalPayload = {
@@ -59,16 +63,18 @@ export async function showModal<Params, Result>(
   let urlParams = new URLSearchParams();
   urlParams.set("payload", JSON.stringify(payload));
   modal.loadURL(`itch://modal?${urlParams}`);
-  // modal.once("ready-to-show", () => {
-  //   modal.show();
-  // });
+  modal.once("ready-to-show", () => {
+    modal.show();
+  });
 
+  let modalId = modal.id;
   try {
-    return await new Promise((resolve, reject) => {
-      modal.addListener("close", () => resolve(undefined));
-      ms.modals[modal.id] = { onResult: resolve, mc, browserWindow: modal };
+    return await new Promise((resolve, _reject) => {
+      modal.addListener("closed", () => resolve(undefined));
+      ms.modals[modalId] = { onResult: resolve, mc, browserWindow: modal };
     });
   } finally {
-    delete ms.modals[modal.id];
+    logger.info(`Modal closed: ${modalId}`);
+    delete ms.modals[modalId];
   }
 }

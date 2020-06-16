@@ -71,7 +71,7 @@
     "babel-plugin-styled-components": "^1.10.7",
     "chalk": "^4.0.0",
     "css-loader": "^3.5.3",
-    "electron": "^9.0.0",
+    "electron": "^9.0.4",
     "electron-build-env": "^0.2.0",
     "electron-notarize": "^0.3.0",
     "electron-osx-sign": "^0.4.16",

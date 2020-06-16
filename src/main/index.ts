@@ -1,3 +1,7 @@
+require("source-map-support").install({
+  hookRequire: true,
+});
+
 import { DownloadsState } from "common/downloads";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";

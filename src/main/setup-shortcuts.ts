@@ -58,7 +58,13 @@ const mainWindowShortcuts: Shortcuts = [
     ["CmdOrCtrl+Alt+Shift+C", "CmdOrCtrl+Shift+I"],
     async (ms) => openOrFocusDevTools(getWebviewWebContents(ms)),
   ],
-  [["CmdOrCtrl+Q"], async (ms) => ms.browserWindow?.close()],
+  [
+    ["CmdOrCtrl+Q"],
+    async (ms) => {
+      ms.browserWindow?.hide();
+      ms.browserWindow?.close();
+    },
+  ],
   [
     ["Shift+F5"],
     async (ms) => ms.browserWindow?.webContents?.reloadIgnoringCache(),

@@ -32,6 +32,10 @@ async function main() {
   log.info(`Compiling...`);
   await run("node", ["gobbler"]);
 
+  if (!process.env.ITCH_LOG_LEVEL) {
+    process.env.ITCH_LOG_LEVEL = "debug";
+  }
+
   // in a node context, this gives the path to electron
   /** @type {string} */
   // @ts-ignore

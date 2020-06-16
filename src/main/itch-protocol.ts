@@ -1,18 +1,13 @@
 import env from "common/env";
-import {
-  getRendererDistPath,
-  getDistPath,
-  getNodeModulesPath,
-} from "common/util/resources";
+import { getDistPath, getNodeModulesPath } from "common/util/resources";
 import { protocol, session } from "electron";
 import * as fs from "fs";
-import * as http from "http";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import mime from "mime-types";
 import * as filepath from "path";
 import { Readable } from "stream";
-import { getAppPath } from "common/helpers/app";
+import { makeIndexHTML } from "main/make-index-html";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
@@ -24,24 +19,6 @@ export class HTTPError extends Error {
   ) {
     super(`HTTP ${statusCode}`);
   }
-}
-
-function convertHeaders(
-  input: http.IncomingHttpHeaders
-): Record<string, string> {
-  let output: Record<string, string> = {};
-  for (const k of Object.keys(input)) {
-    const v = input[k];
-    switch (typeof v) {
-      case "string":
-        output[k] = v;
-        break;
-      case "object":
-        output[k] = v[0];
-        break;
-    }
-  }
-  return output;
 }
 
 export function registerSchemesAsPrivileged() {
@@ -79,12 +56,12 @@ export async function registerItchProtocol(ms: MainState, partition: string) {
 
   logger.debug(`Registering itch: for partition ${partition}`);
 
-  let handler = getItchProtocolHandler(ms);
+  let handler = getItchProtocolHandler();
   let ses = session.fromPartition(partition);
   ses.protocol.registerStreamProtocol("itch", handler);
 
   let preloadPath = filepath.resolve(__dirname, "preload.js");
-  console.log(`preloadPath = `, preloadPath);
+  logger.info(`Renderer preload path is ${preloadPath}`);
   ses.setPreloads([preloadPath]);
 
   partitionsRegistered[partition] = true;
@@ -96,7 +73,7 @@ type ProtocolHandler = (
 ) => void;
 let protocolHandler: undefined | ProtocolHandler;
 
-export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
+export function getItchProtocolHandler(): ProtocolHandler {
   if (protocolHandler) {
     logger.debug(`Using cached protocol handler`);
     return protocolHandler;
@@ -121,39 +98,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
 
     if (elements.length == 0) {
       // return index
-      content = `
-<!DOCTYPE HTML>
-<html>
-
-<head>
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  ${
-    process.env.NODE_ENV === "production"
-      ? `
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' itch://* ws://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' itch://* https://img.itch.zone https://weblate.itch.ovh">
-`
-      : ""
-  }
-  <title>itch</title>
-  <script>
-  (function() {
-    require("./lib/${env.name}/renderer");
-  })();
-  </script>
-  <style>
-    #app {
-      min-height: 100%;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app"></div>
-</body>
-
-</html>
-          `;
+      content = makeIndexHTML();
       contentType = "text/html; charset=UTF-8";
     } else {
       let fsPath;
@@ -162,6 +107,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
       } else {
         fsPath = filepath.join(getDistPath(), ...elements);
       }
+      logger.debug(`Request filesystem path: ${fsPath}`);
 
       contentType = mime.lookup(fsPath) || "application/octet-stream";
       content = await readFileAsBuffer(fsPath);
@@ -219,6 +165,7 @@ export function asyncToSyncProtocolHandler(
       .then(cb)
       .catch((e) => {
         if (e instanceof HTTPError) {
+          logger.debug(`Serving HTTP ${e.statusCode}: ${e.data}`);
           cb({
             statusCode: e.statusCode,
             headers: e.headers,
@@ -226,6 +173,7 @@ export function asyncToSyncProtocolHandler(
           });
           return;
         } else {
+          logger.debug(`Internal HTTP error ${e.statusCode}: ${e.stack}`);
           cb({
             statusCode: 500,
             headers: {

@@ -72,6 +72,7 @@ const { measure } = require("./measure");
  * @typedef Opts
  * @type {{
  *   clean?: boolean,
+ *   production: boolean,
  *   inDir: string,
  *   outDir: string,
  * }}
@@ -96,16 +97,24 @@ async function doMain(args) {
    */
   let opts = {
     inDir: "src",
-    outDir: "lib/development",
+    outDir: "unset",
+    production: false,
   };
 
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
     if (arg === "--clean") {
       opts.clean = true;
+    } else if (arg === "--production") {
+      opts.production = true;
     } else {
       throw new Error(`Unknown arg ${chalk.yellow(arg)}`);
     }
+  }
+
+  if (opts.outDir === "unset") {
+    let envName = opts.production ? "production" : "development";
+    opts.outDir = `lib/${envName}`;
   }
 
   let builtAt = new Date();
@@ -201,6 +210,9 @@ async function doMain(args) {
         jobs.push({
           input: join(opts.inDir, fileName),
           output: join(opts.outDir, outputFileName),
+          mapOutput: opts.production
+            ? undefined
+            : join(opts.outDir, outputFileName + ".map"),
         });
       } else {
         let input = join(opts.inDir, fileName);

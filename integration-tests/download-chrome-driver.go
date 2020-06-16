@@ -125,9 +125,6 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-const electronVersion = "9.0.0"
-const chromeDriverVersionString = "ChromeDriver 83.0.4103.64"
-
 func chromeDriverURL(r *runner) string {
 	suffix := ""
 	switch runtime.GOOS {

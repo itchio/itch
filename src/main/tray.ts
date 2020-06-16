@@ -73,7 +73,10 @@ async function updateTrayMenu(ms: MainState) {
     { type: "separator" },
     {
       label: formatMessage(ms, { id: "menu.file.quit" }),
-      click: () => ms.browserWindow?.close(),
+      click: () => {
+        ms.browserWindow?.hide();
+        ms.browserWindow?.close();
+      },
     },
   ];
 
