@@ -1,6 +1,7 @@
-import "!style-loader!css-loader!./fonts/icomoon/style.css";
-import "!style-loader!css-loader!./fonts/lato/latofonts-custom.css";
-import "tippy.js/dist/tippy.css";
+// FIXME: load by some other means
+// import "!style-loader!css-loader!./fonts/icomoon/style.css";
+// import "!style-loader!css-loader!./fonts/lato/latofonts-custom.css";
+// import "tippy.js/dist/tippy.css";
 
 import { packets } from "common/packets";
 import { queries } from "common/queries";

@@ -19,9 +19,7 @@ import { fontSizes } from "renderer/theme";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { usePreferences } from "renderer/use-preferences";
-// import locales from "static/locales.json";
-// FIXME: locales
-let locales = {};
+import locales from "static/locales.json";
 import styled from "styled-components";
 
 const HardPrefModal = styled(HardModal)`

@@ -1,19 +1,14 @@
 import env from "common/env";
 import { getRendererDistPath } from "common/util/resources";
-import { protocol, session, app } from "electron";
+import { protocol, session } from "electron";
 import * as fs from "fs";
-import * as originalFs from "original-fs";
 import * as http from "http";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import mime from "mime-types";
 import * as filepath from "path";
 import { Readable } from "stream";
-
-// Preload scripts need an absolute path in Electron, so we need
-// to do a little dance with webpack to make everybody happy
-// @ts-ignore
-// import preloadContents from "raw-loader!./preload.js";
+import { getAppPath } from "common/helpers/app";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
@@ -84,10 +79,6 @@ export async function registerItchProtocol(ms: MainState, partition: string) {
   let ses = session.fromPartition(partition);
   ses.protocol.registerStreamProtocol("itch", handler);
 
-  // FIXME: this overrides the path, it's not great.. also, maybe we could just
-  // figure out the absolute path from webpack?
-  // let preloadPath = filepath.resolve(app.getPath("temp"), "itch-preload.js");
-  // originalFs.writeFileSync(preloadPath, preloadContents);
   let preloadPath = filepath.resolve(__dirname, "preload.js");
   console.log(`preloadPath = `, preloadPath);
   ses.setPreloads([preloadPath]);
@@ -124,51 +115,66 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
 
     switch (firstEl) {
       default: {
-        if (elements.length == 0 || elements[0] != "assets") {
-          elements = ["assets", "index.html"];
-        }
+        let content, contentType;
 
-        if (env.development) {
-          // not listed in env-settings because it's an internal webpack thing
-          let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
-          const upstream = `http://localhost:${port}/${elements.join("/")}`;
-          let res = await new Promise<http.IncomingMessage>(
-            (resolve, reject) => {
-              http.get(upstream, (res) => {
-                resolve(res);
-              });
-            }
-          );
+        if (elements.length == 0) {
+          // return index
+          content = `
+<!DOCTYPE HTML>
+<html>
 
-          let headers = convertHeaders(res.headers);
-          headers["cache-control"] = "no-cache";
-          headers["access-control-allow-origin"] = "*";
-          return {
-            statusCode: res.statusCode,
-            headers,
-            data: res,
-          };
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  ${
+    process.env.NODE_ENV === "production"
+      ? `
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' itch://* ws://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' itch://* https://img.itch.zone https://weblate.itch.ovh">
+`
+      : ""
+  }
+  <title>itch</title>
+  <script>
+  (function() {
+    require("./lib/${env.name}/renderer");
+  })();
+  </script>
+  <style>
+    #app {
+      min-height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+
+</html>
+          `;
+          contentType = "text/html; charset=UTF-8";
         } else {
+          // return file
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
 
-          let contentType = mime.lookup(fsPath) || "application/octet-stream";
+          contentType = mime.lookup(fsPath) || "application/octet-stream";
           // N.B: electron 7.1.2 release notes says custom stream handlers
           // should work now, but it doesn't appear to be the case, so
           // `createReadStream` is out of the question for now. Ah well.
-          let content = await readFileAsBuffer(fsPath);
-
-          return {
-            statusCode: 200,
-            headers: {
-              server: env.appName,
-              "content-length": `${content.length}`,
-              "content-type": contentType,
-              "access-control-allow-origin": "*",
-              "cache-control": "public, max-age=31536000",
-            },
-            data: asReadable(content),
-          };
+          content = await readFileAsBuffer(fsPath);
         }
+
+        return {
+          statusCode: 200,
+          headers: {
+            server: env.appName,
+            "content-length": `${content.length}`,
+            "content-type": contentType,
+            "access-control-allow-origin": "*",
+            "cache-control": "public, max-age=31536000",
+          },
+          data: asReadable(content),
+        };
         break;
       }
     }

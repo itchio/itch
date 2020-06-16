@@ -2,8 +2,8 @@ import { join } from "path";
 import { getAppPath } from "common/helpers/app";
 import env from "common/env";
 
-let absoluteMainDistPath = join(getAppPath(), "dist", env.name, "main");
-let absoluteRendererDistPath = join(getAppPath(), "dist", env.name, "renderer");
+let absoluteMainDistPath = join(getAppPath(), "lib", env.name, "main");
+let absoluteRendererDistPath = join(getAppPath(), "lib", env.name, "renderer");
 
 /*
  * Resources are files shipped with the app, that are static

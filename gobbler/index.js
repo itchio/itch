@@ -5,13 +5,20 @@ let debug = require("debug")("gobbler");
 let workerDebug = require("debug")("gobbler:worker");
 
 const { Worker, SHARE_ENV } = require("worker_threads");
-const babel = require("@babel/core");
 const chalk = require("chalk");
 const os = require("os");
 const fs = require("fs");
 const { createReadStream } = fs;
-const { opendir, stat, writeFile, readFile, mkdir, rmdir } = fs.promises;
-const { join } = require("path");
+const {
+  opendir,
+  stat,
+  writeFile,
+  readFile,
+  mkdir,
+  rmdir,
+  copyFile,
+} = fs.promises;
+const { join, dirname } = require("path");
 const crypto = require("crypto");
 const { makePool } = require("./pool");
 const { measure } = require("./measure");
@@ -89,7 +96,7 @@ async function doMain(args) {
    */
   let opts = {
     inDir: "src",
-    outDir: "lib",
+    outDir: "lib/development",
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -106,8 +113,8 @@ async function doMain(args) {
   if (opts.clean) {
     console.log(`Wiping ${chalk.yellow(opts.outDir)}`);
     await rmdir(opts.outDir, { recursive: true });
-    await mkdir(opts.outDir, { recursive: true });
   }
+  await mkdir(opts.outDir, { recursive: true });
 
   let concurrency = os.cpus().length;
   debug(`Setting concurrency to ${chalk.yellow(concurrency)}`);
@@ -188,16 +195,20 @@ async function doMain(args) {
      * @param {string} fileName
      */
     let compile = async (fileName) => {
-      if (/\.(ts|tsx|js)$/.test(fileName)) {
-        // continue!
+      let extRe = /\.(ts|tsx|js)$/;
+      if (extRe.test(fileName)) {
+        let outputFileName = fileName.replace(extRe, ".js");
+        jobs.push({
+          input: join(opts.inDir, fileName),
+          output: join(opts.outDir, outputFileName),
+        });
       } else {
-        // just copy
+        let input = join(opts.inDir, fileName);
+        let output = join(opts.outDir, fileName);
+        await mkdir(dirname(output), { recursive: true });
+        await copyFile(input, output);
         return;
       }
-      jobs.push({
-        input: join(opts.inDir, fileName),
-        output: join(opts.outDir, fileName),
-      });
     };
 
     for (let added of gatherResult.added) {
@@ -243,6 +254,8 @@ async function doMain(args) {
               resolve(popJob(worker));
             } else if (msg.kind === "debug" && msg.debugArgs) {
               workerDebug.apply(workerDebug, msg.debugArgs);
+            } else if (msg.kind === "error" && msg.error) {
+              reject(new Error(`Worker error: ${msg.error}`));
             } else {
               throw new Error("Unknown worker message");
             }

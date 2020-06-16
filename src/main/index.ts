@@ -108,11 +108,6 @@ async function main() {
 
   app.on("web-contents-created", (ev, wc) => {
     if (wc.hostWebContents?.id == ms.browserWindow?.webContents?.id) {
-      // this means it's the webview webcontents.
-      // other webcontents are created, for devtools for example,
-      // but those have no host webcontents.
-      setupShortcuts(ms, wc);
-
       wc.on("will-navigate", (ev, urlText) => {
         let url = new URL(urlText);
         if (url.protocol === "itch:" && url.hostname === "install") {
@@ -188,6 +183,7 @@ async function onReady() {
     backgroundColor: shellBgDefault,
     show: false,
     webPreferences: {
+      nodeIntegration: true,
       session: rendererSession,
       webviewTag: true,
     },

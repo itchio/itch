@@ -136,10 +136,9 @@ export function setupCustomShortcuts(
 
   wc.on("before-input-event", (ev, input) => {
     try {
-      if (input.isAutoRepeat) {
+      if (input.isAutoRepeat || input.type != "keyUp") {
         return;
       }
-
       let inputString = inputToString(input);
       if (envSettings.logInputs) {
         logger.info(`Pressed: ${inputString}`);
