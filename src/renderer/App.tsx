@@ -6,7 +6,6 @@
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import React, { Suspense, useEffect, useState } from "react";
-import { hot } from "react-hot-loader/root";
 import { IntlProvider } from "react-intl";
 import { FullScreenSpinner } from "renderer/basics/LoadingCircle";
 import { Route } from "renderer/Route";
@@ -23,7 +22,7 @@ const ExtendedStyleSheetManager = (StyleSheetManager as any) as React.ComponentC
   };
 }>;
 
-export const App = hot(() => {
+export const App = () => {
   let [currentLocale, setCurrentLocale] = useState<CurrentLocale | undefined>();
 
   useEffect(() => {
@@ -66,6 +65,6 @@ export const App = hot(() => {
       </IntlProvider>
     </Suspense>
   );
-});
+};
 
 export default App;

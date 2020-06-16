@@ -11,7 +11,6 @@ import { GateState } from "renderer/Gate";
 import { animations, fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import appWhite from "static/images/logos/app-white.svg";
 import { Profile } from "@itchio/valet/messages";
 import { socket } from "renderer";
 
@@ -78,7 +77,7 @@ export const List = (props: ListProps) => {
 
   return (
     <ListContainer>
-      <ListLogo src={appWhite} />
+      <ListLogo src={"/static/images/logos/app-white.svg"} />
       {props.profiles.map((profile) => (
         <Item
           disabled={loginLoading}

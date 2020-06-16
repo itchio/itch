@@ -2,8 +2,10 @@ import { join } from "path";
 import { getAppPath } from "common/helpers/app";
 import env from "common/env";
 
-let absoluteMainDistPath = join(getAppPath(), "lib", env.name, "main");
-let absoluteRendererDistPath = join(getAppPath(), "lib", env.name, "renderer");
+let absoluteDistPath = join(getAppPath(), "lib", env.name);
+let absoluteMainDistPath = join(absoluteDistPath, "main");
+let absoluteRendererDistPath = join(absoluteDistPath, "renderer");
+let absoluteNodeModulesPath = join(getAppPath(), "node_modules");
 
 /*
  * Resources are files shipped with the app, that are static
@@ -22,4 +24,12 @@ export function getRendererFilePath(name: string): string {
 
 export function getRendererDistPath(): string {
   return absoluteRendererDistPath;
+}
+
+export function getDistPath(): string {
+  return absoluteDistPath;
+}
+
+export function getNodeModulesPath(): string {
+  return absoluteNodeModulesPath;
 }

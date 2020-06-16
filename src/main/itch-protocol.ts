@@ -1,5 +1,9 @@
 import env from "common/env";
-import { getRendererDistPath } from "common/util/resources";
+import {
+  getRendererDistPath,
+  getDistPath,
+  getNodeModulesPath,
+} from "common/util/resources";
 import { protocol, session } from "electron";
 import * as fs from "fs";
 import * as http from "http";
@@ -110,16 +114,14 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
       .join("/");
     let elements = route.split("/");
 
-    let firstEl = elements[0];
     elements = elements.slice(1);
+    let firstEl = elements[0];
 
-    switch (firstEl) {
-      default: {
-        let content, contentType;
+    let content, contentType;
 
-        if (elements.length == 0) {
-          // return index
-          content = `
+    if (elements.length == 0) {
+      // return index
+      content = `
 <!DOCTYPE HTML>
 <html>
 
@@ -152,32 +154,30 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
 
 </html>
           `;
-          contentType = "text/html; charset=UTF-8";
-        } else {
-          // return file
-          let fsPath = filepath.join(getRendererDistPath(), ...elements);
-
-          contentType = mime.lookup(fsPath) || "application/octet-stream";
-          // N.B: electron 7.1.2 release notes says custom stream handlers
-          // should work now, but it doesn't appear to be the case, so
-          // `createReadStream` is out of the question for now. Ah well.
-          content = await readFileAsBuffer(fsPath);
-        }
-
-        return {
-          statusCode: 200,
-          headers: {
-            server: env.appName,
-            "content-length": `${content.length}`,
-            "content-type": contentType,
-            "access-control-allow-origin": "*",
-            "cache-control": "public, max-age=31536000",
-          },
-          data: asReadable(content),
-        };
-        break;
+      contentType = "text/html; charset=UTF-8";
+    } else {
+      let fsPath;
+      if (firstEl === "node_modules") {
+        fsPath = filepath.join(getNodeModulesPath(), ...elements);
+      } else {
+        fsPath = filepath.join(getDistPath(), ...elements);
       }
+
+      contentType = mime.lookup(fsPath) || "application/octet-stream";
+      content = await readFileAsBuffer(fsPath);
     }
+
+    return {
+      statusCode: 200,
+      headers: {
+        server: env.appName,
+        "content-length": `${content.length}`,
+        "content-type": contentType,
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=31536000",
+      },
+      data: asReadable(content),
+    };
   }
 
   protocolHandler = asyncToSyncProtocolHandler(handleRequest);
