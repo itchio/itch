@@ -142,7 +142,7 @@ export function setupCustomShortcuts(
 
   wc.on("before-input-event", (ev, input) => {
     try {
-      if (input.isAutoRepeat || input.type != "keyUp") {
+      if (input.isAutoRepeat || input.type != "keyDown") {
         return;
       }
       let inputString = inputToString(input);

@@ -267,7 +267,7 @@ func doMain() error {
 func (r *runner) bundle() error {
 	r.logf("Bundling...")
 
-	cmd := exec.Command("npm", "run", "compile")
+	cmd := exec.Command("node", "gobbler")
 	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

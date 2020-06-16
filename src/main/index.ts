@@ -81,8 +81,16 @@ const ms: MainState = {
   modals: {},
 };
 
+function inIntegrationTests(): boolean {
+  return process.env.ITCH_INTEGRATION_TESTS === "1";
+}
+
+function isMultiInstanceEnabled(): boolean {
+  return process.env.ITCH_MULTI_INSTANCE === "1";
+}
+
 async function main() {
-  if (process.env.ITCH_INTEGRATION_TESTS !== "1") {
+  if (!inIntegrationTests() && !isMultiInstanceEnabled()) {
     let isSingleInstance = app.requestSingleInstanceLock();
     if (!isSingleInstance) {
       logger.info(`We're not the main instance, exiting`);
@@ -225,7 +233,7 @@ async function onReady() {
   });
 
   win.on("close", (ev) => {
-    if (ms.preferences?.closeToTray) {
+    if (ms.preferences?.closeToTray && !inIntegrationTests()) {
       if (win.isVisible()) {
         logger.info(`Closing to tray...`);
         ev.preventDefault();

@@ -1,4 +1,5 @@
 import env from "common/env";
+import { app } from "electron";
 
 export function makeIndexHTML(): string {
   return `
@@ -11,7 +12,7 @@ export function makeIndexHTML(): string {
     env.production
       ? `
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' itch://* ws://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' itch://* https://img.itch.zone https://weblate.itch.ovh">
+    content="default-src 'self' 'unsafe-inline' itch://* ws://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline' itch://*; img-src 'self' itch://* https://img.itch.zone https://weblate.itch.ovh">
 `
       : ""
   }
@@ -21,7 +22,8 @@ export function makeIndexHTML(): string {
   <link rel="stylesheet" href="/node_modules/tippy.js/dist/tippy.css">
   <script>
   (function() {
-    require("./lib/${env.name}/renderer");
+    require("module").globalPaths.push(${JSON.stringify(app.getAppPath())});
+    require("lib/${env.name}/renderer")
   })();
   </script>
   <style>

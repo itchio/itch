@@ -38,6 +38,7 @@ func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
 			"--disable-dev-shm-usage",
 			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489#c20
 			"--remote-debugging-port=9222",
+			"--color",
 		},
 	}
 

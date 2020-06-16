@@ -103,7 +103,7 @@ export function getItchProtocolHandler(): ProtocolHandler {
     } else {
       let fsPath;
       if (firstEl === "node_modules") {
-        fsPath = filepath.join(getNodeModulesPath(), ...elements);
+        fsPath = filepath.join(getNodeModulesPath(), ...elements.slice(1));
       } else {
         fsPath = filepath.join(getDistPath(), ...elements);
       }

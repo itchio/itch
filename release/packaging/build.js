@@ -35,14 +35,10 @@ async function build(cx) {
   console.log("Copying package-lock.json");
   $("cp package-lock.json prefix/");
 
+  process.env.VALET_TARGET_OS = cx.os;
+  process.env.VALET_TARGET_ARCH = cx.arch === "386" ? "i686" : "x86_64";
   await cd("prefix", async function () {
     $(`npm ci --production --no-audit`);
-  });
-
-  console.log("Downloading valet binaries");
-  let valetArch = cx.archInfo.electronArch === "ia32" ? "i686" : "x86_64";
-  await cd("prefix/node_modules/@itchio/valet", async function () {
-    $(`npm run postinstall -- --verbose --arch ${valetArch}`);
   });
 }
 

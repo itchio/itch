@@ -86,7 +86,7 @@ export async function performHTMLLaunch(
   };
 
   wc.on("before-input-event", (ev: Electron.Event, input: Electron.Input) => {
-    if (input.type === "keyUp") {
+    if (input.type === "keyDown") {
       switch (input.key) {
         case "F11":
           toggleFullscreen();
