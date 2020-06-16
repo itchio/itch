@@ -98,8 +98,7 @@
   },
   "scripts": {
     "start": "node develop.js",
-    "compile": "webpack-cli --config webpack.config.prod.js",
-    "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
+    "compile": "node gobbler --production",
     "integration-tests": "node release/test.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",

@@ -18,10 +18,10 @@ async function build(cx) {
   console.log("Compiling sources");
   $("npm run compile");
 
-  console.log("Copying dist files to prefix/");
+  console.log("Copying lib files to prefix/");
   $("cp electron-index.js prefix/");
-  $("mkdir -p prefix/dist");
-  $("cp -rf dist/production prefix/dist/");
+  $("mkdir -p prefix/lib");
+  $("cp -rf lib/production prefix/lib/");
 
   console.log("Generating custom package.json");
   const pkg = JSON.parse(readFileSync("package.json", { encoding: "utf-8" }));
@@ -32,26 +32,17 @@ async function build(cx) {
   const pkgContents = JSON.stringify(pkg, null, 2);
   writeFileSync(`prefix/package.json`, pkgContents, { encoding: "utf-8" });
 
-  console.log("Downloading valet binaries");
-  let valetArch = cx.archInfo.electronArch === "ia32" ? "i686" : "x86_64";
-  let otherValetArch = valetArch == "i686" ? "x86_64" : "i686";
-  await cd("node_modules/@itchio/valet", async function () {
-    $(`npm run postinstall -- --verbose --arch ${valetArch}`);
+  console.log("Copying package-lock.json");
+  $("cp package-lock.json prefix/");
+
+  await cd("prefix", async function () {
+    $(`npm ci --production --no-audit`);
   });
 
-  console.log("Copying valet to prefix");
-  $("mkdir -p prefix/node_modules/@itchio");
-  $("cp -rf node_modules/@itchio/valet prefix/node_modules/@itchio");
-  console.log("Trimming down valet install");
-  $(`rm -rf prefix/node_modules/@itchio/valet/artifacts/${otherValetArch}-*`);
-
-  console.log("Installing required externals");
-  const externals = [
-    // TODO: is it really a good idea to ship that in production?
-    "source-map-support",
-  ];
-  await cd("prefix", async function () {
-    $(`npm install --no-save ${externals.join(" ")}`);
+  console.log("Downloading valet binaries");
+  let valetArch = cx.archInfo.electronArch === "ia32" ? "i686" : "x86_64";
+  await cd("prefix/node_modules/@itchio/valet", async function () {
+    $(`npm run postinstall -- --verbose --arch ${valetArch}`);
   });
 }
 

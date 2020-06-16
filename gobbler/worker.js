@@ -33,7 +33,6 @@ const parentPort = worker.parentPort;
  * @type {{
  *   input: string,
  *   output: string,
- *   mapOutput?: string,
  * }}
  */
 
@@ -69,21 +68,11 @@ if (parentPort) {
           }
 
           let result = await babel.transformFileAsync(job.input, {
-            sourceMaps: !!job.mapOutput ? "inline" : null,
+            sourceMaps: "inline",
           });
           if (result && result.code) {
             await mkdir(dirname(job.output), { recursive: true });
             await writeFile(job.output, result.code, { encoding: "utf-8" });
-
-            if (result.map && job.mapOutput) {
-              await writeFile(
-                job.mapOutput,
-                JSON.stringify(result.map, null, 2),
-                {
-                  encoding: "utf-8",
-                }
-              );
-            }
           }
         });
         debug("%o done in %o", job.input, elapsed);

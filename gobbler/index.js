@@ -210,9 +210,6 @@ async function doMain(args) {
         jobs.push({
           input: join(opts.inDir, fileName),
           output: join(opts.outDir, outputFileName),
-          mapOutput: opts.production
-            ? undefined
-            : join(opts.outDir, outputFileName + ".map"),
         });
       } else {
         let input = join(opts.inDir, fileName);
