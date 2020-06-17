@@ -7,6 +7,8 @@ const { existsSync } = require("fs");
 
 const weblog = require("webpack-log");
 const log = weblog({ name: "develop" });
+const chokidar = require("chokidar");
+const http = require("http");
 
 async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
@@ -30,7 +32,7 @@ async function main() {
   });
 
   log.info(`Compiling...`);
-  await run("node", ["gobbler"]);
+  await compile();
 
   if (!process.env.ITCH_LOG_LEVEL) {
     process.env.ITCH_LOG_LEVEL = "debug";
@@ -42,6 +44,8 @@ async function main() {
   const electronBinaryPath = require("electron");
 
   log.info(`Starting app...`);
+  let refreshPort = 9021;
+  process.env.ITCH_REFRESH_PORT = `${refreshPort}`;
   await new Promise((resolve, reject) => {
     let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
     const proc = childProcess.spawn(
@@ -67,7 +71,55 @@ async function main() {
     });
 
     proc.on("error", (e) => reject(e));
+
+    let watcher = chokidar.watch("src");
+    watcher.once("ready", () => {
+      log.info(`Watching for file changes...`);
+      watcher.on("all", () => {
+        (async () => {
+          log.info(`Some sources changed!`);
+          await compile();
+          notifyChanges(refreshPort);
+        })().catch((e) => console.warn("While refreshing", e.stack));
+      });
+    });
   });
+}
+
+/**
+ * Notify app of new sources
+ * @param {number} port
+ */
+function notifyChanges(port) {
+  try {
+    http
+      .request({
+        host: `localhost`,
+        port,
+        path: `/`,
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+      .on("error", (e) => {
+        console.warn("While contacting refresh server: ", e.stack);
+      })
+      .end(
+        JSON.stringify({
+          message: "Hello from develop.js",
+        })
+      );
+  } catch (e) {
+    log.warn(`Could not notify of changes: `, e.stack);
+  }
+}
+
+/**
+ * Compile sources
+ */
+async function compile() {
+  await run("node", ["gobbler"]);
 }
 
 /**

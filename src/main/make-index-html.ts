@@ -2,6 +2,8 @@ import env from "common/env";
 import { app } from "electron";
 
 export function makeIndexHTML(): string {
+  let globalPath = `${app.getAppPath()}/lib/${env.name}`;
+
   return `
 <!DOCTYPE HTML>
 <html>
@@ -22,8 +24,15 @@ export function makeIndexHTML(): string {
   <link rel="stylesheet" href="/node_modules/tippy.js/dist/tippy.css">
   <script>
   (function() {
-    require("module").globalPaths.push(${JSON.stringify(app.getAppPath())});
-    require("lib/${env.name}/renderer")
+    require("module").globalPaths.push(${JSON.stringify(globalPath)});
+    ${
+      env.development
+        ? `
+    require("renderer/development/server").install();
+    `
+        : ""
+    }
+    require("renderer")
   })();
   </script>
   <style>

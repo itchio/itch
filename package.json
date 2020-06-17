@@ -70,6 +70,7 @@
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-styled-components": "^1.10.7",
     "chalk": "^4.0.0",
+    "chokidar": "^3.4.0",
     "css-loader": "^3.5.3",
     "electron": "^9.0.4",
     "electron-build-env": "^0.2.0",
