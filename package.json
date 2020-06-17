@@ -44,6 +44,7 @@
   "devDependencies": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
+    "@babel/generator": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
@@ -51,6 +52,7 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
+    "@babel/template": "^7.10.1",
     "@itchio/bob": "^2.1.0",
     "@types/babel__core": "^7.1.8",
     "@types/classnames": "^2.2.10",

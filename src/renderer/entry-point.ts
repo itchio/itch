@@ -12,3 +12,6 @@ if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
 }
 
 require(".");
+
+// appease --isolatedModules
+export default "IAMA entrypoint AMA";

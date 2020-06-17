@@ -40,6 +40,10 @@ async function doMain(args) {
     }
   }
 
+  if (opts.production) {
+    process.env.NODE_ENV = "production";
+  }
+
   if (opts.outDir === "unset") {
     let envName = opts.production ? "production" : "development";
     opts.outDir = `lib/${envName}`;
