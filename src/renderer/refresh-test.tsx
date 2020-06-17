@@ -1,1 +1,1 @@
-export default "By just re-using workers";
+export default "pretty good";

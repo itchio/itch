@@ -10,6 +10,9 @@ const log = weblog({ name: "develop" });
 const chokidar = require("chokidar");
 const http = require("http");
 
+const workerPool = require("./gobbler/worker_pool").makeWorkerPool();
+const gobbler = require("./gobbler/lib");
+
 async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
 
@@ -115,42 +118,12 @@ function notifyChanges(port) {
   }
 }
 
-/**
- * Compile sources
- */
+/** Compile sources */
 async function compile() {
-  await run("node", ["gobbler"]);
-}
-
-/**
- *
- * @param {string} command
- * @param {string[]} args
- * @param {import("child_process").SpawnOptions} [options]
- */
-async function run(command, args, options) {
-  if (!options) {
-    options = {};
-  }
-
-  if (!options.stdio) {
-    options = {
-      ...options,
-      stdio: "inherit",
-    };
-  }
-  options.shell = true;
-
-  log.info(`$ ${command} :: ${args.join(" :: ")}`);
-  let p = childProcess.spawn(command, args, options);
-  await new Promise((resolve, reject) => {
-    p.on("close", (code) => {
-      if (code != 0) {
-        reject(new Error(`${command} exited with code ${code}`));
-      } else {
-        resolve();
-      }
-    });
+  await gobbler.build(workerPool, {
+    inDir: "src",
+    outDir: "lib/development",
+    production: false,
   });
 }
 
