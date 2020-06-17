@@ -12,7 +12,7 @@ import { Modal } from "renderer/basics/Modal";
 import { LargeTextInput } from "renderer/basics/TextInput";
 import { Deferred } from "renderer/deferred";
 import { GateState } from "renderer/Gate";
-import { animations, fontSizes } from "renderer/theme";
+import { animations, fontSizes } from "common/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { socket } from "renderer";

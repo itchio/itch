@@ -14,6 +14,7 @@
     "@babel/proposal-object-rest-spread",
     "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-proposal-nullish-coalescing-operator",
+    "react-refresh/babel",
     ["inline-json-import", {}],
     ["module-resolver", {
       "root": ["./src"],

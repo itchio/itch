@@ -190,6 +190,7 @@ async function build(workerPool, opts) {
         jobs.push({
           input,
           output,
+          reactRefresh: !opts.production,
         });
       } else {
         let input = join(opts.inDir, fileName);

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import { Spinner } from "renderer/basics/LoadingCircle";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import styled from "styled-components";
 
 const StyledButton = styled.button`

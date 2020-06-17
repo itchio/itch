@@ -25,7 +25,7 @@ import { uploadIcons, UploadTitle } from "renderer/basics/upload";
 import { ClickOutsideRefer } from "renderer/basics/use-click-outside";
 import { pokeTippy } from "renderer/poke-tippy";
 import { useListen } from "renderer/Socket";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { socket } from "renderer";

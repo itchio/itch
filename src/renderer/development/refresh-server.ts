@@ -24,7 +24,12 @@ export function install() {
         for (const file of result.changedFiles) {
           console.log(`Refreshing ${file}`);
           delete require.cache[file];
+          require(file);
         }
+
+        const runtime = require("react-refresh/runtime");
+        let refreshResults = runtime.performReactRefresh();
+        console.debug("Refresh results", refreshResults);
 
         res.writeHead(200);
         res.end(`Reloaded ${result.changedFiles.length} files`);

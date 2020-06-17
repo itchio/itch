@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Game, Upload } from "@itchio/valet/messages";
 import React from "react";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { gameCover } from "common/game-cover";
 
 let coverWidth = 290;

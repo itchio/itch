@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { IconButton } from "renderer/basics/IconButton";
 import { useResizeObserver } from "renderer/use-resize-observer";
 import { queries } from "common/queries";

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { GameRecord } from "@itchio/valet/messages";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GameListDetail } from "renderer/pages/GameListDetail";
-import { fontSizes, mixins } from "renderer/theme";
+import { fontSizes, mixins } from "common/theme";
 import { useDownloads } from "renderer/use-downloads";
 import { useGame } from "renderer/use-game";
 import { useLaunches } from "renderer/use-launches";

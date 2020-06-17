@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import { Circle } from "renderer/basics/LoadingCircle/Circle";
-import { animations } from "renderer/theme";
+import { animations } from "common/theme";
 import styled from "styled-components";
 
 const CircleContainer = styled.span`

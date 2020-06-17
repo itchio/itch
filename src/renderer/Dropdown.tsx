@@ -10,7 +10,7 @@ import React, {
 import { Button } from "renderer/basics/Button";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { buttonBorderRadius } from "renderer/theme";
+import { buttonBorderRadius } from "common/theme";
 import styled from "styled-components";
 
 const DropdownContents = styled(MenuContents)`
@@ -87,14 +87,14 @@ export const DropdownItem = styled.div`
   }
 `;
 
-export const Dropdown = function<T>(props: Props<T>) {
+export const Dropdown = function <T>(props: Props<T>) {
   const [currentValue, setCurrentValue] = useState<T>(props.value);
   useEffect(() => {
     setCurrentValue(props.value);
   }, [props.value]);
 
   let shownOption =
-    _.find(props.options, o => o.value === currentValue) ?? props.options[0];
+    _.find(props.options, (o) => o.value === currentValue) ?? props.options[0];
 
   const [open, setOpen] = useState(false);
   const coref = useClickOutside(() => setOpen(false));
@@ -112,7 +112,7 @@ export const Dropdown = function<T>(props: Props<T>) {
     (ev: React.KeyboardEvent<HTMLDivElement>) => {
       let valueIndex = _.findIndex(
         props.options,
-        o => o.value === currentValue
+        (o) => o.value === currentValue
       );
 
       if (ev.key === "ArrowDown") {
@@ -212,7 +212,7 @@ export const Dropdown = function<T>(props: Props<T>) {
         data-name={props.name}
         secondary
         ref={coref("button")}
-        onClick={() => setOpen(open => !open)}
+        onClick={() => setOpen((open) => !open)}
         label={
           <DropdownItem>
             {props.prefix}

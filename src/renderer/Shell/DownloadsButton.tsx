@@ -12,7 +12,7 @@ import { IconButton } from "renderer/basics/IconButton";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/use-click-outside";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useDownloads } from "renderer/use-downloads";
 import styled from "styled-components";

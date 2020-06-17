@@ -27,7 +27,7 @@ import { initializeValet } from "main/initialize-valet";
 import { initTray } from "main/tray";
 import { broadcastPacket } from "main/socket-handler";
 import { startSocketServer, SocketState } from "main/socket-server";
-import { shellBgDefault } from "renderer/theme";
+import { shellBgDefault } from "common/theme";
 import { Profile } from "@itchio/valet/messages";
 
 let logger = mainLogger.childWithName("main");

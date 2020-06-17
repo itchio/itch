@@ -9,7 +9,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import { FullScreenSpinner } from "renderer/basics/LoadingCircle";
 import { Route } from "renderer/Route";
-import { theme } from "renderer/theme";
+import { theme } from "common/theme";
 import { ThemeProvider, StyleSheetManager } from "styled-components";
 import GlobalStyles from "renderer/global-styles";
 import { CurrentLocale } from "common/locales";

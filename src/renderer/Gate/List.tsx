@@ -8,7 +8,7 @@ import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { GateState } from "renderer/Gate";
-import { animations, fontSizes } from "renderer/theme";
+import { animations, fontSizes } from "common/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { Profile } from "@itchio/valet/messages";

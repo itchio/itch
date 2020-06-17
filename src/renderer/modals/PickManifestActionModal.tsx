@@ -4,7 +4,7 @@ import { HardModal } from "renderer/modals/HardModal";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { Button } from "renderer/basics/Button";
 
 const ActionItem = styled.div`
@@ -22,7 +22,7 @@ const ActionItem = styled.div`
     flex-direction: column;
 
     .secondary {
-      color: ${p => p.theme.colors.text2};
+      color: ${(p) => p.theme.colors.text2};
     }
 
     .title {
@@ -50,7 +50,7 @@ const ActionItem = styled.div`
 
 export const PickManifestActionModal = modalWidget(
   modals.pickManifestAction,
-  props => {
+  (props) => {
     const { onResult, params } = props;
     const { actions, game } = params;
     const { title } = game;

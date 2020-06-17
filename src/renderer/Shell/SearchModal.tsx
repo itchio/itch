@@ -13,7 +13,7 @@ import { Modal } from "renderer/basics/Modal";
 import { useDebounce } from "renderer/basics/use-debounce";
 import { useProfile } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
-import { fontSizes, mixins } from "renderer/theme";
+import { fontSizes, mixins } from "common/theme";
 import styled from "styled-components";
 import { socket } from "renderer";
 

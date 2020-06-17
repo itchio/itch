@@ -12,7 +12,7 @@ import { ErrorState } from "renderer/basics/ErrorState";
 import { Dropdown } from "renderer/Dropdown";
 import { UploadTitle } from "renderer/basics/upload";
 import { FormattedMessage } from "react-intl";
-import { mixins, fontSizes } from "renderer/theme";
+import { mixins, fontSizes } from "common/theme";
 import * as _ from "lodash";
 import { fileSize } from "common/format/filesize";
 import { delay } from "common/delay";

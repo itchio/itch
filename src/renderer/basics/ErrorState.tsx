@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import styled from "styled-components";
-import { mixins } from "renderer/theme";
+import { mixins } from "common/theme";
 import { asRequestError } from "@itchio/valet/support";
 
 const Container = styled.div`

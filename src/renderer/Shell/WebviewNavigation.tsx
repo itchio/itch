@@ -1,7 +1,7 @@
 import { WebviewTag } from "electron";
 import React, { useState } from "react";
 import { IconButton } from "renderer/basics/IconButton";
-import { animations, fontSizes } from "renderer/theme";
+import { animations, fontSizes } from "common/theme";
 import styled from "styled-components";
 import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 import { Button } from "renderer/basics/Button";

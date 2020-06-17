@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import { fontSizes, mixins, buttonBorderRadius } from "renderer/theme";
+import { fontSizes, mixins, buttonBorderRadius } from "common/theme";
 import styled from "styled-components";
 
 const Label = styled.div`
@@ -40,12 +40,12 @@ const Container = styled.button`
 
   cursor: pointer;
 
-  color: ${p => p.theme.colors.button1Text};
-  border: 1px solid ${p => p.theme.colors.button1Border};
-  background-color: ${p => p.theme.colors.button1Bg};
+  color: ${(p) => p.theme.colors.button1Text};
+  border: 1px solid ${(p) => p.theme.colors.button1Border};
+  background-color: ${(p) => p.theme.colors.button1Bg};
 
   &:hover {
-    background-color: ${p => p.theme.colors.button1BgHover};
+    background-color: ${(p) => p.theme.colors.button1BgHover};
   }
 
   &:focus {
@@ -53,20 +53,20 @@ const Container = styled.button`
   }
 
   &:active {
-    background-color: ${p => p.theme.colors.button1BgActive};
+    background-color: ${(p) => p.theme.colors.button1BgActive};
   }
 
   &.secondary {
-    color: ${p => p.theme.colors.button2Text};
-    border: 1px solid ${p => p.theme.colors.button2Border};
-    background-color: ${p => p.theme.colors.button2Bg};
+    color: ${(p) => p.theme.colors.button2Text};
+    border: 1px solid ${(p) => p.theme.colors.button2Border};
+    background-color: ${(p) => p.theme.colors.button2Bg};
 
     &:hover {
-      background-color: ${p => p.theme.colors.button2BgHover};
+      background-color: ${(p) => p.theme.colors.button2BgHover};
     }
 
     &:active {
-      background-color: ${p => p.theme.colors.button2BgActive};
+      background-color: ${(p) => p.theme.colors.button2BgActive};
     }
   }
 

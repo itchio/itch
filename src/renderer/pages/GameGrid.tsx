@@ -7,7 +7,7 @@ import React, { useMemo, useState } from "react";
 import { useClickOutside } from "renderer/basics/use-click-outside";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
-import { animations, fontSizes, mixins } from "renderer/theme";
+import { animations, fontSizes, mixins } from "common/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useDownloads } from "renderer/use-downloads";
 import { useLaunches } from "renderer/use-launches";

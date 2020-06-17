@@ -68,13 +68,6 @@ async function main() {
       }
     );
 
-    proc.on("close", () => {
-      log.info(`App closed`);
-      resolve();
-    });
-
-    proc.on("error", (e) => reject(e));
-
     let watcher = chokidar.watch("src");
     watcher.once("ready", () => {
       log.info(`Watching for file changes...`);
@@ -86,6 +79,17 @@ async function main() {
         })().catch((e) => console.warn("While refreshing", e.stack));
       });
     });
+
+    proc.on("close", () => {
+      log.info(`App closed`);
+      workerPool.terminate();
+      log.info(`Worker pool terminated`);
+      watcher.close();
+      log.info(`File watcher closed`);
+      resolve();
+    });
+
+    proc.on("error", (e) => reject(e));
   });
 }
 

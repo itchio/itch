@@ -15,7 +15,7 @@ import { Dropdown } from "renderer/Dropdown";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
 import { ProgressBar } from "renderer/pages/ProgressBar";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { usePreferences } from "renderer/use-preferences";

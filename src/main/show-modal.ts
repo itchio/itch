@@ -6,7 +6,7 @@ import {
 } from "electron";
 import { MainState } from "main";
 import { partitionForApp } from "common/util/partitions";
-import { shellBgDefault } from "renderer/theme";
+import { shellBgDefault } from "common/theme";
 import {
   setupCustomShortcuts,
   openOrFocusDevTools,

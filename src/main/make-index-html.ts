@@ -28,7 +28,7 @@ export function makeIndexHTML(): string {
     ${
       env.development
         ? `
-    require("renderer/development/server").install();
+    require("renderer/development/refresh-server").install();
     `
         : ""
     }

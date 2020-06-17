@@ -9,7 +9,7 @@ import { modalWidget } from "renderer/modals/ModalRouter";
 import styled from "styled-components";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { Icon } from "renderer/basics/Icon";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { fileSize } from "common/format/filesize";
 
 const CaveItem = styled.div`
@@ -48,9 +48,9 @@ const CaveItem = styled.div`
   }
 `;
 
-export const PickCaveModal = modalWidget(modals.pickCave, props => {
+export const PickCaveModal = modalWidget(modals.pickCave, (props) => {
   const { params, onResult } = props;
-  const items = _.sortBy(params.items, i => -new Date(i.stats.lastTouchedAt));
+  const items = _.sortBy(params.items, (i) => -new Date(i.stats.lastTouchedAt));
   const firstCave = _.first(params.items);
   const title = firstCave?.game?.title ?? "game";
 

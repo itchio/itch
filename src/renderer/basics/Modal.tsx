@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
-import { animations, fontSizes } from "renderer/theme";
+import { animations, fontSizes } from "common/theme";
 import styled from "styled-components";
 
 const ModalShroud = styled.div`
@@ -24,8 +24,8 @@ const ModalShroud = styled.div`
 `;
 
 export const ModalContents = styled.div`
-  background: ${p => p.theme.colors.shellBg};
-  border: 1px solid ${p => p.theme.colors.shellBorder};
+  background: ${(p) => p.theme.colors.shellBg};
+  border: 1px solid ${(p) => p.theme.colors.shellBorder};
 
   min-width: 400px;
 

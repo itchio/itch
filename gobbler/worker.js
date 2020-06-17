@@ -33,6 +33,7 @@ const parentPort = worker.parentPort;
  * @type {{
  *   input: string,
  *   output: string,
+ *   reactRefresh: boolean,
  * }}
  */
 
@@ -72,7 +73,30 @@ if (parentPort) {
           });
           if (result && result.code) {
             await mkdir(dirname(job.output), { recursive: true });
-            await writeFile(job.output, result.code, { encoding: "utf-8" });
+            let code = result.code;
+            if (job.reactRefresh && job.input.includes("renderer/")) {
+              code = `
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+var RefreshRuntime = require('react-refresh/runtime');
+
+window.$RefreshReg$ = (type, id) => {
+  // Note module.id is webpack-specific, this may vary in other bundlers
+  const fullId = module.id + ' ' + id;
+  console.debug("Registering module/type", fullId);
+  RefreshRuntime.register(type, fullId);
+}
+window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+
+try {
+  ${code}
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+              `;
+            }
+            await writeFile(job.output, code, { encoding: "utf-8" });
           }
         });
         debug("%o done in %o", job.input, elapsed);

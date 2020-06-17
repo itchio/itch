@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { OptionalProfileContext } from "renderer/contexts";
 import { ModalRouter } from "renderer/modals/ModalRouter";
 import { useListen } from "renderer/Socket";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import styled from "styled-components";
 import { queries } from "../common/queries";
 import { socket } from "renderer";

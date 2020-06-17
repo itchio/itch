@@ -9,7 +9,7 @@ import { Ellipsis } from "renderer/basics/Ellipsis";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
-import { fontSizes } from "renderer/theme";
+import { fontSizes } from "common/theme";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";

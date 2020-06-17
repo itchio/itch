@@ -24,7 +24,7 @@ import { useProfile } from "renderer/contexts";
 import { Dropdown } from "renderer/Dropdown";
 import { GameGrid } from "renderer/pages/GameGrid";
 import { GameList } from "renderer/pages/GameList";
-import { fontSizes, mixins } from "renderer/theme";
+import { fontSizes, mixins } from "common/theme";
 import styled from "styled-components";
 import { usePreferences } from "renderer/use-preferences";
 import { TabLayout } from "common/preferences";
