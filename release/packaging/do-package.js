@@ -26,6 +26,9 @@ async function doPackage(cx) {
     throw new Error("Missing prefix/ folder, bailing out");
   }
 
+  let tmpdir = ospath.resolve(`./tmp/electron-packager/${os}-${arch}`);
+  fs.mkdirSync(tmpdir, { recursive: true });
+
   /**
    * @type {import("electron-packager").Options}
    */
@@ -39,6 +42,7 @@ async function doPackage(cx) {
     asar: false,
     overwrite: true,
     out: outDir,
+    tmpdir,
     ...getElectronOptions(cx),
   };
 
