@@ -2,11 +2,13 @@
 "use strict";
 
 const babel = require("@babel/core");
+const template = require("@babel/template").default;
+const generate = require("@babel/generator").default;
 const { measure } = require("./measure");
 
 const worker = require("worker_threads");
 const { dirname } = require("path");
-const { writeFile, mkdir } = require("fs").promises;
+const { writeFile, mkdir, readFile } = require("fs").promises;
 
 /** @type {import("worker_threads").MessagePort} */
 // @ts-ignore
@@ -56,6 +58,25 @@ function debug() {
 }
 
 if (parentPort) {
+  let refreshTemplate = template.statements(`
+      var prevRefreshReg = window.$RefreshReg$;
+      var prevRefreshSig = window.$RefreshSig$;
+      var RefreshRuntime = require('react-refresh/runtime');
+
+      window.$RefreshReg$ = (type, id) => {
+        const fullId = module.id + ' ' + id;
+        RefreshRuntime.register(type, fullId);
+      }
+      window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+
+      try {
+        %%module%%
+      } finally {
+        window.$RefreshReg$ = prevRefreshReg;
+        window.$RefreshSig$ = prevRefreshSig;
+      }
+  `);
+
   parentPort.on("message", async (payload) => {
     /** @type {WorkerIncomingMessage} */
     let message = payload;
@@ -68,33 +89,33 @@ if (parentPort) {
             return;
           }
 
-          let result = await babel.transformFileAsync(job.input, {
-            sourceMaps: "inline",
+          let inputCode = await readFile(job.input, { encoding: "utf-8" });
+          let result = await babel.transformAsync(inputCode, {
+            filename: job.input,
+            ast: true,
+            code: false,
           });
-          if (result && result.code) {
-            await mkdir(dirname(job.output), { recursive: true });
-            let code = result.code;
+          if (result && result.ast) {
+            let ast = result.ast;
             if (job.reactRefresh && /.tsx$/.test(job.input)) {
-              code = `
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-var RefreshRuntime = require('react-refresh/runtime');
-
-window.$RefreshReg$ = (type, id) => {
-  // Note module.id is webpack-specific, this may vary in other bundlers
-  const fullId = module.id + ' ' + id;
-  RefreshRuntime.register(type, fullId);
-}
-window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
-
-try {
-  ${code}
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-              `;
+              ast.program.body = refreshTemplate({
+                module: ast.program.body,
+              });
             }
+
+            let astResult = generate(
+              ast,
+              { sourceMaps: true, sourceFileName: job.input },
+              inputCode
+            );
+            let code = astResult.code;
+
+            let sourceMapComment = require("convert-source-map")
+              .fromObject(astResult.map)
+              .toComment();
+            code = `${code}\n${sourceMapComment}`;
+
+            await mkdir(dirname(job.output), { recursive: true });
             await writeFile(job.output, code, { encoding: "utf-8" });
           }
         });
