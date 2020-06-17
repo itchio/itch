@@ -25,6 +25,7 @@ export function makeIndexHTML(): string {
   <script>
   (function() {
     require("module").globalPaths.push(${JSON.stringify(globalPath)});
+    require("renderer/entry-point");
     ${
       env.development
         ? `
@@ -32,7 +33,6 @@ export function makeIndexHTML(): string {
     `
         : ""
     }
-    require("renderer")
   })();
   </script>
   <style>

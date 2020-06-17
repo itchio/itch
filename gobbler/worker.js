@@ -74,7 +74,7 @@ if (parentPort) {
           if (result && result.code) {
             await mkdir(dirname(job.output), { recursive: true });
             let code = result.code;
-            if (job.reactRefresh && job.input.includes("renderer/")) {
+            if (job.reactRefresh && /.tsx$/.test(job.input)) {
               code = `
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -83,7 +83,6 @@ var RefreshRuntime = require('react-refresh/runtime');
 window.$RefreshReg$ = (type, id) => {
   // Note module.id is webpack-specific, this may vary in other bundlers
   const fullId = module.id + ' ' + id;
-  console.debug("Registering module/type", fullId);
   RefreshRuntime.register(type, fullId);
 }
 window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;

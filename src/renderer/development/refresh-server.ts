@@ -22,21 +22,17 @@ export function install() {
       if (payload.kind === "new-build") {
         let result: BuildResult = payload.result;
         for (const file of result.changedFiles) {
-          console.log(`Refreshing ${file}`);
+          console.debug(`Refreshing`, file);
           delete require.cache[file];
           require(file);
         }
 
         const runtime = require("react-refresh/runtime");
-        let refreshResults = runtime.performReactRefresh();
-        console.debug("Refresh results", refreshResults);
+        runtime.performReactRefresh();
 
         res.writeHead(200);
         res.end(`Reloaded ${result.changedFiles.length} files`);
       }
-
-      let m = require("renderer/refresh-test");
-      console.log(`m = `, m.default);
     })().catch((e) => console.warn(`Dev server error: `, e.stack));
   });
   server.listen(parseInt(port, 10));
