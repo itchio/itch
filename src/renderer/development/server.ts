@@ -1,5 +1,9 @@
 import { createServer } from "http";
 
+interface BuildResult {
+  changedFiles: string[];
+}
+
 export function install() {
   let port = process.env.ITCH_REFRESH_PORT;
   if (!port) {
@@ -7,22 +11,26 @@ export function install() {
     return;
   }
 
-  let reqPath = "renderer/refresh-test";
-
   const server = createServer((req, res) => {
     (async () => {
       let body = "";
       for await (const chunk of req) {
         body += chunk;
       }
-      console.log("Request body: ", body);
 
-      res.writeHead(200);
-      res.end("Hi there");
+      let payload = JSON.parse(body);
+      if (payload.kind === "new-build") {
+        let result: BuildResult = payload.result;
+        for (const file of result.changedFiles) {
+          console.log(`Refreshing ${file}`);
+          delete require.cache[file];
+        }
 
-      console.log(`Refreshing ${reqPath}`);
-      delete require.cache[require.resolve(reqPath)];
-      let m = require(reqPath);
+        res.writeHead(200);
+        res.end(`Reloaded ${result.changedFiles.length} files`);
+      }
+
+      let m = require("renderer/refresh-test");
       console.log(`m = `, m.default);
     })().catch((e) => console.warn(`Dev server error: `, e.stack));
   });

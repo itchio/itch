@@ -81,8 +81,8 @@ async function main() {
       watcher.on("all", () => {
         (async () => {
           log.info(`Some sources changed!`);
-          await compile();
-          notifyChanges(refreshPort);
+          const result = await compile();
+          notifyChanges(refreshPort, result);
         })().catch((e) => console.warn("While refreshing", e.stack));
       });
     });
@@ -92,8 +92,9 @@ async function main() {
 /**
  * Notify app of new sources
  * @param {number} port
+ * @param {import("./gobbler/lib").BuildResult} result
  */
-function notifyChanges(port) {
+function notifyChanges(port, result) {
   try {
     http
       .request({
@@ -110,7 +111,8 @@ function notifyChanges(port) {
       })
       .end(
         JSON.stringify({
-          message: "Hello from develop.js",
+          kind: "new-build",
+          result,
         })
       );
   } catch (e) {
@@ -118,11 +120,14 @@ function notifyChanges(port) {
   }
 }
 
-/** Compile sources */
+/**
+ * Compile sources
+ * @returns {Promise<import("./gobbler/lib").BuildResult>}
+ */
 async function compile() {
-  await gobbler.build(workerPool, {
-    inDir: "src",
-    outDir: "lib/development",
+  return await gobbler.build(workerPool, {
+    inDir: path.resolve("./src"),
+    outDir: path.resolve("./lib/development"),
     production: false,
   });
 }

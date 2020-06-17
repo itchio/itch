@@ -79,11 +79,21 @@ const { measure } = require("./measure");
  */
 
 /**
+ * @typedef BuildResult
+ * @type {{
+ *   changedFiles: string[],
+ * }}
+ */
+
+/**
  * @param {import("./worker_pool").WorkerPool} workerPool
  * @param {Opts} opts
- * @returns void
+ * @returns {Promise<BuildResult>}
  */
 async function build(workerPool, opts) {
+  /** @type {BuildResult} */
+  let buildResult = { changedFiles: [] };
+
   let builtAt = new Date();
 
   if (opts.clean) {
@@ -174,13 +184,17 @@ async function build(workerPool, opts) {
       let extRe = /\.(ts|tsx|js)$/;
       if (extRe.test(fileName)) {
         let outputFileName = fileName.replace(extRe, ".js");
+        let input = join(opts.inDir, fileName);
+        let output = join(opts.outDir, outputFileName);
+        buildResult.changedFiles.push(output);
         jobs.push({
-          input: join(opts.inDir, fileName),
-          output: join(opts.outDir, outputFileName),
+          input,
+          output,
         });
       } else {
         let input = join(opts.inDir, fileName);
         let output = join(opts.outDir, fileName);
+        buildResult.changedFiles.push(output);
         await mkdir(dirname(output), { recursive: true });
         await copyFile(input, output);
         return;
@@ -250,6 +264,8 @@ async function build(workerPool, opts) {
     infoMap: gatherResult.infoMap,
   };
   await writeFile(dbPath, JSON.stringify(buildDB));
+
+  return buildResult;
 }
 
 /**
