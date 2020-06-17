@@ -5,8 +5,6 @@ const childProcess = require("child_process");
 const path = require("path");
 const { existsSync } = require("fs");
 
-const weblog = require("webpack-log");
-const log = weblog({ name: "develop" });
 const chokidar = require("chokidar");
 const http = require("http");
 
@@ -17,7 +15,7 @@ async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
 
   if (process.env.LOCAL_VALET === "1") {
-    log.info(`Attempting to use local version of valet`);
+    console.log(`Attempting to use local version of valet`);
     let bindingsBase = path.resolve("../valet/artifacts");
     if (!existsSync(bindingsBase)) {
       throw new Error(`Local valet build not found at ${bindingsBase}`);
@@ -26,15 +24,15 @@ async function main() {
   }
 
   process.on("unhandledRejection", (e) => {
-    log.error(`Unhandled rejection `, e);
+    console.error(`Unhandled rejection `, e);
     process.exit(1);
   });
   process.on("uncaughtException", (e) => {
-    log.error(`Uncaught exception `, e.stack || e);
+    console.error(`Uncaught exception `, e.stack || e);
     process.exit(1);
   });
 
-  log.info(`Compiling...`);
+  console.log(`Compiling...`);
   await compile();
 
   if (!process.env.ITCH_LOG_LEVEL) {
@@ -46,7 +44,7 @@ async function main() {
   // @ts-ignore
   const electronBinaryPath = require("electron");
 
-  log.info(`Starting app...`);
+  console.log(`Starting app...`);
   let refreshPort = 9021;
   process.env.ITCH_REFRESH_PORT = `${refreshPort}`;
   await new Promise((resolve, reject) => {
@@ -70,10 +68,10 @@ async function main() {
 
     let watcher = chokidar.watch("src");
     watcher.once("ready", () => {
-      log.info(`Watching for file changes...`);
+      console.log(`Watching for file changes...`);
       watcher.on("all", () => {
         (async () => {
-          log.info(`Some sources changed!`);
+          console.log(`Some sources changed!`);
           const result = await compile();
           notifyChanges(refreshPort, result);
         })().catch((e) => console.warn("While refreshing", e.stack));
@@ -81,11 +79,11 @@ async function main() {
     });
 
     proc.on("close", () => {
-      log.info(`App closed`);
+      console.log(`App closed`);
       workerPool.terminate();
-      log.info(`Worker pool terminated`);
+      console.log(`Worker pool terminated`);
       watcher.close();
-      log.info(`File watcher closed`);
+      console.log(`File watcher closed`);
       resolve();
     });
 
@@ -120,7 +118,7 @@ function notifyChanges(port, result) {
         })
       );
   } catch (e) {
-    log.warn(`Could not notify of changes: `, e.stack);
+    console.warn(`Could not notify of changes: `, e.stack);
   }
 }
 

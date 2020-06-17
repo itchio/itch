@@ -5,45 +5,37 @@ Simplify itch's codebase greatly.
 
 ## Webpack
 
-Boo.
+Webpack is gone, good riddance. `gobbler/` is a simple codebase that:
 
-## Browser
-
-The browser part of the app will be removed completely.
-
-Users are encouraged to use their desktop browsers instead.
+  * acts as CLI tool (for production) or a library (for develop.js)
+  * detects changed files
+  * builds them with babel only, using numcpu workers
+  * knows to insert a react-refresh wrapper in development
+  * watches `src/` for changes in development, and sends a request
+  to itch so it reloads its own code and triggers a react-refresh
 
 ## Broth
 
-Broth (itch's dependency system) should die.
+Broth is dead. butler's codebase still exists, it's now compiled as 
+a native node addon (using the stable N-API ABI) with the help of
+Rust, see https://github.com/itchio/valet
 
-It's not antivirus-friendly, and there's more likelihood that
-the app will break itself rather than fix itself!
+This means:
 
-butler should be provided as a library, using `@itchio/valet`.
+  * no need to download butler on first run / check for updates on
+  subsequent runs
+  * no antivirus freaking out because we "drop executables" on disk
+  * no "connection timeout" even though it's a TCP connection
 
-Also, itch-setup should be bundled with the app.
+There are no TCP connections left, even local. It's all in-process.
+For main-renderer, there's Electron IPC, which has gotten better
+as of Electron 9.x - they use structured cloning now.
 
 ## Redux
 
-Redux was used wayyy back in the original versions of the app.
+Redux is no longer used. Instead, state is mostly kept in react hooks.
 
-We use a convoluted system to have side-effects. I'd like to
-minimize app state duplication and RPC traffic instead.
-
-## webpack / module bundling / `node_modules`
-
-The only required `node_modules` is `@itchio/valet`.
-
-Everything else is bundled by webpack.
-
-## Modclean  
-
-modclean can be entirely deprecated - instead removing everything except `@itchio/valet`.
-
-As for `@itchio/valet`, the whole `target` directory can be wiped, and `native/index.node` can be 
-stripped. Remains to be seen whether stripping breaks anything with a Go library statically
-linked.
-
+Stuff that really does need to persist is sent to the main process using
+a simple query system that uses Electron IPC under the hood.
 
 
