@@ -60,6 +60,7 @@ async function main() {
     if (process.env.ITCH_GDB === "1") {
       process.env.RUST_BACKTRACE = "full";
       process.env.RUST_LOG = "debug";
+      process.env.ELECTRON_ENABLE_LOGGING = "1";
       console.log(`Running in GDB...`);
       args = ["--args", exe, ...args];
       exe = "gdb";
