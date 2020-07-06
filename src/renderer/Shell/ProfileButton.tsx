@@ -9,6 +9,7 @@ import { useClickOutside } from "renderer/basics/use-click-outside";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { socket } from "renderer";
+import valet from "@itchio/valet";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -96,6 +97,19 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
         icon="swap_horiz"
         label={<FormattedMessage id="menu.account.change_user" />}
         onClick={logout}
+      />
+      <Separator />
+      <Button
+        label="Self-update check"
+        onClick={async () => {
+          try {
+            let res = await (valet as any).selfUpdateCheck();
+            console.log(`self-update res: `, res);
+          } catch (e) {
+            console.log(`self-update err as string: `, e);
+            console.log(`self-update err stack: `, e.stack);
+          }
+        }}
       />
       <Separator />
       <Button
