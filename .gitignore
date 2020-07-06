@@ -60,3 +60,6 @@ npm-debug.log
 
 # webpack stuff
 stats.json
+
+# debugging
+.gdb_history

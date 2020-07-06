@@ -49,22 +49,28 @@ async function main() {
   process.env.ITCH_REFRESH_PORT = `${refreshPort}`;
   await new Promise((resolve, reject) => {
     let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
-    const proc = childProcess.spawn(
-      electronBinaryPath,
-      [
-        ".",
-        "--dev",
-        `--${inspectArg}=9222`,
-        "--color",
-        "--no-sandbox" /* on Linux, sandboxing requires a SUID helper and it's a hassle */,
-      ],
-      {
-        env: {
-          ...process.env,
-        },
-        stdio: ["ignore", "inherit", "inherit"],
-      }
-    );
+    let exe = electronBinaryPath;
+    let args = [
+      ".",
+      "--dev",
+      `--${inspectArg}=9222`,
+      "--color",
+      "--no-sandbox" /* on Linux, sandboxing requires a SUID helper and it's a hassle */,
+    ];
+    if (process.env.ITCH_GDB === "1") {
+      process.env.RUST_BACKTRACE = "full";
+      process.env.RUST_LOG = "debug";
+      console.log(`Running in GDB...`);
+      args = ["--args", exe, ...args];
+      exe = "gdb";
+    }
+
+    const proc = childProcess.spawn(exe, args, {
+      env: {
+        ...process.env,
+      },
+      stdio: ["inherit", "inherit", "inherit"],
+    });
 
     let watcher = chokidar.watch("src");
     watcher.once("ready", () => {
