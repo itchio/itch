@@ -10,6 +10,9 @@ import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { socket } from "renderer";
 import valet from "@itchio/valet";
+import env from "common/env";
+const { app } = require("electron").remote;
+import { join } from "path";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -101,9 +104,13 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
       <Separator />
       <Button
         label="Self-update check"
+        icon="repeat"
         onClick={async () => {
           try {
-            let res = await (valet as any).selfUpdateCheck();
+            let res = await (valet as any).selfUpdateCheck({
+              isCanary: env.isCanary,
+              componentsDir: join(app.getPath("userData"), "components"),
+            });
             console.log(`self-update res: `, res);
           } catch (e) {
             console.log(`self-update err as string: `, e);
