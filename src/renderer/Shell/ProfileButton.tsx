@@ -75,18 +75,12 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
     await socket.query(queries.exit);
   }, []);
 
+  const [selfUpdateCheck] = useAsyncCb(async () => {
+    await socket.query(queries.selfUpdateCheck);
+  }, []);
+
   return (
     <MenuContents>
-      <Button
-        label={"Test valet"}
-        icon="globe2"
-        onClick={() => {
-          socket
-            .query(queries.testValet, {})
-            .then((s) => alert(s))
-            .catch((e) => console.warn(e.stack));
-        }}
-      />
       <Button
         label={<FormattedMessage id="sidebar.preferences" />}
         icon="cog"
@@ -105,18 +99,7 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
       <Button
         label="Self-update check"
         icon="repeat"
-        onClick={async () => {
-          try {
-            let res = await (valet as any).selfUpdateCheck({
-              isCanary: env.isCanary,
-              componentsDir: join(app.getPath("userData"), "components"),
-            });
-            console.log(`self-update res: `, res);
-          } catch (e) {
-            console.log(`self-update err as string: `, e);
-            console.log(`self-update err stack: `, e.stack);
-          }
-        }}
+        onClick={selfUpdateCheck}
       />
       <Separator />
       <Button

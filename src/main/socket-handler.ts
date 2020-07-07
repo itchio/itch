@@ -25,6 +25,7 @@ import {
   RpcError,
   RpcResult,
 } from "@itchio/valet/support";
+import { registerQueriesSelfUpdate } from "main/queries-selfupdate";
 
 const logger = mainLogger.childWithName("socket-handler");
 
@@ -39,9 +40,9 @@ export function broadcastPacket<T>(
   }
   const text = JSON.stringify(msg);
 
-  let ws = ms.socket;
-  if (ws) {
-    for (const cx of Object.values(ws.sockets)) {
+  let sock = ms.socket;
+  if (sock) {
+    for (const cx of Object.values(sock.sockets)) {
       cx.sendText(text);
     }
   } else {
@@ -114,6 +115,10 @@ export class SocketHandler {
       this.queryHandlers[qc.__method] = f;
     };
 
+    registerQueriesLaunch(ms, onQuery);
+    registerQueriesWebview(ms, onQuery);
+    registerQueriesSelfUpdate(ms, onQuery);
+
     onQuery(queries.minimize, async () => {
       let win = ms.browserWindow;
       if (win) {
@@ -185,9 +190,6 @@ export class SocketHandler {
     onQuery(queries.openExternalURL, async ({ url }) => {
       shell.openExternal(url);
     });
-
-    registerQueriesLaunch(ms, onQuery);
-    registerQueriesWebview(ms, onQuery);
 
     onQuery(queries.getPreferences, async () => {
       const { preferences } = ms;
