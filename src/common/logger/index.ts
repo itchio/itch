@@ -1,9 +1,11 @@
 export const levelNumbers = {
   silent: 100,
+  fatal: 50,
   error: 50,
   warn: 40,
   info: 30,
   debug: 20,
+  trace: 10,
 } as { [key: string]: number };
 
 export const levels = {
@@ -52,7 +54,7 @@ export class BaseLogger<S extends LogSink> {
     this.log(levelNumbers.error, msg);
   }
 
-  private log(level: number, msg: string) {
+  log(level: number, msg: string) {
     this.write({ time: Date.now(), level, msg, name: this.name });
   }
 
