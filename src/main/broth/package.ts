@@ -350,6 +350,7 @@ export class Package implements PackageLike {
         archiveUrl,
         archivePath
       );
+      logger.info(`Download completed.`);
 
       this.stage("install");
       logger.info(`Extracting...`);

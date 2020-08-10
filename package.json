@@ -117,7 +117,7 @@
     "codecov": "^3.5.0",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
-    "electron": "^7.0.0",
+    "electron": "^9.2.0",
     "electron-notarize": "^0.1.1",
     "electron-packager": "^14.0.6",
     "file-loader": "^4.0.0",

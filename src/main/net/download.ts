@@ -1,4 +1,3 @@
-import { isEmpty } from "underscore";
 import { dirname } from "path";
 import progress from "progress-stream";
 
@@ -40,6 +39,7 @@ export async function downloadToFile(
     let totalSize = 0;
 
     let progressStream: NodeJS.ReadWriteStream;
+    let fileSinkPromise = sf.promised(fileSink);
     await request(
       "get",
       url,
@@ -83,7 +83,8 @@ export async function downloadToFile(
         },
       }
     );
-    await sf.promised(fileSink);
+    logger.debug(`Awaiting file sink promise`);
+    await fileSinkPromise;
 
     const stats = await sf.lstat(file);
     logger.info(
