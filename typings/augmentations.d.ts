@@ -1,24 +1,29 @@
 import "electron";
 
-interface WebViewProps {
-  is?: boolean;
-  src?: string;
-  preload?: string;
-  plugins?: string;
-  partition?: string;
-  sandbox?: boolean;
-  ref?: (wv: Electron.WebviewTag) => void;
-  style?: React.CSSProperties;
-  autosize?: boolean;
-  enableremotemodule?: "false";
-}
-
 declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      webview: WebViewProps;
+  namespace React {
+    interface WebViewHTMLAttributes<T> extends HTMLAttributes<T> {
+      allowFullScreen?: boolean;
+      allowpopups?: boolean;
+      autoFocus?: boolean;
+      autosize?: boolean;
+      blinkfeatures?: string;
+      disableblinkfeatures?: string;
+      disableguestresize?: boolean;
+      disablewebsecurity?: boolean;
+      guestinstance?: string;
+      httpreferrer?: string;
+      nodeintegration?: boolean;
+      partition?: string;
+      plugins?: boolean;
+      preload?: string;
+      src?: string;
+      useragent?: string;
+      webpreferences?: string;
+      enableremotemodule?: "false";
     }
   }
+
   interface NodeModule {
     hot?: {
       accept: (name: string, cb: () => void) => void;
