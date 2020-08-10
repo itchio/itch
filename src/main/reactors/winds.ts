@@ -544,7 +544,9 @@ function commonBrowserWindowOpts(
       worldSafeExecuteJavaScript: true,
       // itch v25's architecture relies on it - some modules need `require()`.
       nodeIntegration: true,
+      // needed for the web browser part of itch
       webviewTag: true,
+      // custom session with `itch://` protocol support
       session: getAppSession(store),
     },
   };

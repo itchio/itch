@@ -56,21 +56,28 @@ export async function performHTMLLaunch(
     center: true,
     show: true,
 
-    /* used to be black, but that didn't work for everything */
+    // used to be black, but a lot of web pages don't
+    // specify their own background color and default
+    // to black text, so.
     backgroundColor: "#fff",
 
-    /* the width x height we give is content size, window will be slightly larger */
+    // the width x height we give is content size, window will be slightly larger
     useContentSize: true,
 
     webPreferences: {
-      /* don't let web code control the OS */
+      // don't let web code control the OS
       nodeIntegration: false,
-      /* hook up a few keyboard shortcuts of our own */
+      // disable remote module
+      enableRemoteModule: false,
+      // hooks up keyboard shortcuts, etc.
       preload: noPreload ? null : getInjectPath("game"),
-      /* stores cookies etc. in persistent session to save progress */
+      // stores cookies etc. in persistent session to save progress
       session: gameSession,
-      /* disable CORS to allow access to the itch.io API */
+      // disable CORS to allow access to the itch.io API from an
+      // itch:// origin.
       webSecurity: false,
+      // run preload scripts in isolated context
+      contextIsolation: true,
     },
   });
 
