@@ -533,8 +533,16 @@ function commonBrowserWindowOpts(
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
-      affinity: "all-in-one",
+      // Will be deprecatd in a future version of electron,
+      // but itch v25's architecture relies on it.
+      enableRemoteModule: true,
+      // In development, the front-end is served by webpack-dev-server
+      // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
+      // Will become the default in a future Electron version.
+      // Ensures values returned from `executeJavascript` are "world-safe".
+      worldSafeExecuteJavaScript: true,
+      // itch v25's architcture relies on it - some modules need `require()`.
       nodeIntegration: true,
       webviewTag: true,
       session: getAppSession(store),
