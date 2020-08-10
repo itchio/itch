@@ -155,7 +155,7 @@ async function handle(type: ErrorType, e: Error) {
   if (response === 0) {
     reportIssue({ log });
   } else if (response === 1) {
-    shell.openItem(crashFile);
+    shell.openPath(crashFile);
   } else if (response === 3) {
     // ignore and continue
     return;

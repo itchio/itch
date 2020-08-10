@@ -6,6 +6,6 @@ export function open(folder: string) {
     // which is a bit silly, so we just reveal it instead.
     shell.showItemInFolder(folder);
   } else {
-    shell.openItem(folder);
+    shell.openPath(folder);
   }
 }

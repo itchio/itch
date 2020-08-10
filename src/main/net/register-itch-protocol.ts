@@ -1,11 +1,12 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Store } from "common/types";
-import { Session } from "electron";
+import { Session, OnHeadersReceivedListenerDetails } from "electron";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { handleItchioUrl } from "main/reactors/url";
 import { doAsync } from "renderer/helpers/doAsync";
+import * as _ from "underscore";
 import urlParser from "url";
 
 const logger = mainLogger.child(__filename);
@@ -21,7 +22,7 @@ export function registerItchProtocol(store: Store, ses: Session) {
     );
     ses.protocol.registerStringProtocol(
       "itch",
-      (req, cb) => {
+      (_req, cb) => {
         cb("");
       },
       e => {
@@ -49,20 +50,25 @@ export function registerItchProtocol(store: Store, ses: Session) {
       callback({});
       doAsync(async () => {
         try {
-          const dkIdString = details.responseHeaders["X-Itch-Download-Key-Id"];
-          const pIdString =
-            details.responseHeaders["X-Itch-Download-Key-Owner-Id"];
+          const dkIdString = getResponseHeader(
+            details,
+            "X-Itch-Download-Key-Id"
+          );
+          const pIdString = getResponseHeader(
+            details,
+            "X-Itch-Download-Key-Owner-Id"
+          );
           if (dkIdString && pIdString) {
             const downloadKeyId = parseInt(dkIdString, 10);
             const profileId = parseInt(pIdString, 10);
             const { downloadKeys } = store.getState().commons;
 
-            logger.info(
+            logger.debug(
               `Visiting download key page, has key ${downloadKeyId} (owner ${profileId})`
             );
 
             if (!downloadKeys[downloadKeyId]) {
-              logger.info(`That's a new key, fetching...`);
+              logger.debug(`That's a new key, fetching...`);
               await mcall(messages.FetchDownloadKey, {
                 downloadKeyId,
                 profileId,
@@ -76,4 +82,11 @@ export function registerItchProtocol(store: Store, ses: Session) {
       });
     });
   }
+}
+
+function getResponseHeader(
+  details: OnHeadersReceivedListenerDetails,
+  headerName: string
+): string | null {
+  return _.head(details.responseHeaders[headerName]);
 }

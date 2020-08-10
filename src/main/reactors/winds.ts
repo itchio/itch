@@ -542,7 +542,7 @@ function commonBrowserWindowOpts(
       // Will become the default in a future Electron version.
       // Ensures values returned from `executeJavascript` are "world-safe".
       worldSafeExecuteJavaScript: true,
-      // itch v25's architcture relies on it - some modules need `require()`.
+      // itch v25's architecture relies on it - some modules need `require()`.
       nodeIntegration: true,
       webviewTag: true,
       session: getAppSession(store),

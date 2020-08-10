@@ -115,7 +115,7 @@ export async function performLaunch(
             });
 
             convo.on(messages.ShellLaunch, async ({ itemPath }) => {
-              shell.openItem(itemPath);
+              shell.openPath(itemPath);
               return {};
             });
 

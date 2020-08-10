@@ -72,6 +72,8 @@ class BrowserPage extends React.PureComponent<Props> {
                 ref={this.gotWebview}
                 partition={partition}
                 useragent={userAgent()}
+                enableremotemodule="false"
+                webpreferences="worldSafeExecuteJavaScript"
               />
             )}
           </WebviewShell>
@@ -100,7 +102,7 @@ class BrowserPage extends React.PureComponent<Props> {
   wcDomReady = () => {
     if (this.wv) {
       this.wv.removeEventListener("dom-ready", this.wcDomReady);
-      const webContentsId = this.wv.getWebContents().id;
+      const webContentsId = this.wv.getWebContentsId();
       dispatchTabGotWebContents(this.props, webContentsId);
     }
   };

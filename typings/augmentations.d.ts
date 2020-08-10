@@ -10,6 +10,7 @@ interface WebViewProps {
   ref?: (wv: Electron.WebviewTag) => void;
   style?: React.CSSProperties;
   autosize?: boolean;
+  enableremotemodule?: "false";
 }
 
 declare global {
