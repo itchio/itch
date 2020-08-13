@@ -124,7 +124,7 @@
     "html-webpack-plugin": "^3.2.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.0.2",
-    "mocha": "^6.1.4",
+    "mocha": "^8.1.1",
     "node-loader": "^0.6.0",
     "prettier": "^1.18.2",
     "react-container-dimensions": "^1.4.1",
