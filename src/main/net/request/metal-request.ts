@@ -18,10 +18,11 @@ import { Readable } from "stream";
 import { ItchPromise } from "common/util/itch-promise";
 import { userAgent } from "common/constants/useragent";
 import { mainLogger } from "main/logger";
+import { fileSize } from "common/format/filesize";
 // TODO: revert that when Electron fixes their typings.
 type ActualElectronResponse = Electron.IncomingMessage & Readable;
 
-const logger = mainLogger.child(__filename);
+const logger = mainLogger.child("net/request");
 
 // use chromium's net API
 export async function request(
@@ -54,7 +55,9 @@ export async function request(
     req.on("response", (inputRes: any) => {
       const res = inputRes as ActualElectronResponse;
       logger.debug(
-        `Got HTTP ${res.statusCode}, content-length = ${res.headers["content-length"]}`
+        `Got HTTP ${res.statusCode}, content-length: ${fileSize(
+          res.headers["content-length"]
+        )}`
       );
       const response = {
         statusCode: res.statusCode,
@@ -75,7 +78,6 @@ export async function request(
       let text: any = "";
 
       if (opts.sink) {
-        logger.debug(`Piping to sink`);
         res.pipe(opts.sink());
       } else {
         res.setEncoding("utf8");
@@ -91,7 +93,6 @@ export async function request(
 
       let onEnd = async () => {
         try {
-          logger.debug(`HTTP requested finished`);
           response.size = text.length;
 
           if (opts.sink) {

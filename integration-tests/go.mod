@@ -3,7 +3,7 @@ module github.com/itchio/itch/integration-tests
 go 1.13
 
 require (
-	github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64
+	github.com/fasterthanlime/go-selenium v0.2.1-0.20200813130311-6ceb45d29c4b
 	github.com/hpcloud/tail v1.0.0
 	github.com/itchio/ox v0.0.0-20200728133515-5b7a81fb16fe
 	github.com/logrusorgru/aurora v0.0.0-20190428105938-cea283e61946

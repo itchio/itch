@@ -94,9 +94,10 @@ func doMain() error {
 
 	r = &runner{
 		prefix:       "tmp",
-		logger:       log.New(os.Stdout, "• ", log.Ltime|log.Lmicroseconds),
-		chromeLogger: log.New(os.Stdout, "[chrome] ", log.Ltime|log.Lmicroseconds),
+		logger:       log.New(os.Stdout, "=== ", log.Ltime|log.Lmicroseconds),
+		chromeLogger: log.New(os.Stdout, "️💻 ", 0),
 		errLogger:    log.New(os.Stderr, "❌ ", log.Ltime|log.Lmicroseconds),
+		testStart:    time.Now(),
 	}
 	must(os.RemoveAll(r.prefix))
 	must(os.RemoveAll("screenshots"))
@@ -154,8 +155,6 @@ func doMain() error {
 	setupWatch := makeLogWatch(regexp.MustCompile("Setup done"))
 
 	go func() {
-		logger := log.New(os.Stdout, "★ ", 0)
-
 		t, err := tail.TailFile(filepath.Join(cwd, r.prefix, "prefix", "userData", "logs", "itch.txt"), tail.Config{
 			Follow: true,
 			Poll:   true,
@@ -172,7 +171,6 @@ func doMain() error {
 					logWatches = logWatches[:len(logWatches)-1]
 				}
 			}
-			logger.Print(line.Text)
 		}
 	}()
 
@@ -287,7 +285,6 @@ func doMain() error {
 
 	r.logf("Waiting for setup to be done...")
 	must(setupWatch.WaitWithTimeout(60 * time.Second))
-	r.testStart = time.Now()
 
 	allFlows(r)
 

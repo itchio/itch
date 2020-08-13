@@ -5,6 +5,8 @@ github.com/detailyang/go-fallocate v0.0.0-20180908115635-432fa640bd2e h1:lj77EKY
 github.com/detailyang/go-fallocate v0.0.0-20180908115635-432fa640bd2e/go.mod h1:3ZQK6DMPSz/QZ73jlWxBtUhNA8xZx7LzUFSq/OfP8vk=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64 h1:YfzNjf7WpFTI3X/vZpbFL7pe9hVqYbobRDwZP/OxBlg=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64/go.mod h1:Hh/f4/5sGAs+qAR5l5+AD+cYfq+AskIBsxJodsL6uPw=
+github.com/fasterthanlime/go-selenium v0.2.1-0.20200813130311-6ceb45d29c4b h1:v9IUPXvb9d5MslzHeXK1xkfwzky0VHoGU81U6sk91OE=
+github.com/fasterthanlime/go-selenium v0.2.1-0.20200813130311-6ceb45d29c4b/go.mod h1:Hh/f4/5sGAs+qAR5l5+AD+cYfq+AskIBsxJodsL6uPw=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
