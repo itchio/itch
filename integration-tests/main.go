@@ -171,6 +171,14 @@ func doMain() error {
 					logWatches = logWatches[:len(logWatches)-1]
 				}
 			}
+
+			// TODO: parse JSON, print in structured format
+			ill, err := parseLogLine(line.Text)
+			if err != nil {
+				r.chromeLogger.Printf("could not parse itch log line: %s", line.Text)
+			} else {
+				r.chromeLogger.Printf("%s", ill)
+			}
 		}
 	}()
 

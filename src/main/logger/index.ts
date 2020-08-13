@@ -1,9 +1,10 @@
-import { Logger, multiSink, streamSink } from "common/logger";
+import { Logger, multiSink, streamSink, LogSink } from "common/logger";
 import { mainLogPath } from "common/util/paths";
 import stream from "logrotate-stream";
 import { consoleSink } from "main/logger/console-sink";
 import path from "path";
 import * as mkdirp from "mkdirp";
+import env from "common/env";
 
 export function getLogStream(): NodeJS.WritableStream {
   const logPath = mainLogPath();
@@ -24,6 +25,17 @@ export function getLogStream(): NodeJS.WritableStream {
   });
 }
 
-export const mainLogger = new Logger(
-  multiSink(streamSink(getLogStream()), consoleSink)
-);
+function buildMainLogger(): Logger {
+  let fileSink = streamSink(getLogStream());
+
+  let sink: LogSink;
+  if (env.integrationTests) {
+    sink = fileSink;
+  } else {
+    sink = multiSink(fileSink, consoleSink);
+  }
+
+  return new Logger(sink);
+}
+
+export const mainLogger = buildMainLogger();
