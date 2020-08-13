@@ -19,6 +19,7 @@ import { ItchPromise } from "common/util/itch-promise";
 import { userAgent } from "common/constants/useragent";
 import { mainLogger } from "main/logger";
 import { fileSize } from "common/format/filesize";
+import { getResponseHeader } from "common/util/net";
 // TODO: revert that when Electron fixes their typings.
 type ActualElectronResponse = Electron.IncomingMessage & Readable;
 
@@ -56,7 +57,7 @@ export async function request(
       const res = inputRes as ActualElectronResponse;
       logger.debug(
         `Got HTTP ${res.statusCode}, content-length: ${fileSize(
-          res.headers["content-length"]
+          parseInt(getResponseHeader(res.headers, "content-length") || "0", 10)
         )}`
       );
       const response = {
