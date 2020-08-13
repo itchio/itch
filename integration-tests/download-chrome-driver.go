@@ -36,7 +36,7 @@ func downloadChromeDriver(r *runner) error {
 
 	currentVersion, err := getChromeDriverVersion()
 	if err == nil {
-		if currentVersion == chromeDriverVersionString {
+		if strings.HasPrefix(currentVersion, chromeDriverVersionString) {
 			r.logf("Good version found, keeping it: %s", currentVersion)
 			return nil
 		}
@@ -93,6 +93,12 @@ func downloadChromeDriver(r *runner) error {
 			name := filepath.Join(driverCache, f.Name)
 			mode := f.FileInfo().Mode()
 			flags := os.O_WRONLY | os.O_CREATE | os.O_TRUNC
+
+			err = os.MkdirAll(filepath.Dir(name), 0o755)
+			if err != nil {
+				return errors.WithMessage(err, "creating chromedriver entry file's parent")
+			}
+
 			w, err := os.OpenFile(name, flags, mode)
 			if err != nil {
 				return errors.WithMessage(err, "creating chromedriver entry file")
@@ -118,9 +124,6 @@ func downloadChromeDriver(r *runner) error {
 
 	return nil
 }
-
-const electronVersion = "7.0.0"
-const chromeDriverVersionString = "ChromeDriver 78.0.3905.1 (c26947c5f17eccf78e199253792030657457c687-refs/heads/master@{#703739})"
 
 func chromeDriverURL(r *runner) string {
 	suffix := ""

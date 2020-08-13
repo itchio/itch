@@ -38,6 +38,7 @@ func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
 			"--disable-dev-shm-usage",
 			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489#c20
 			"--remote-debugging-port=9222",
+			"--color",
 		},
 	}
 
@@ -87,10 +88,15 @@ func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
 	opts.Binary = binaryPath
 	opts.AddArg("app=" + appPath)
 
-	r.logf("But first, let's bundle all that javascript...")
-	err = r.bundle()
-	if err != nil {
-		return nil, errors.WithMessage(err, "while bundling")
+	if os.Getenv("DONT_BUNDLE") == "1" {
+		r.logf("Skipping bundle, because $DONT_BUNDLE is set to 1")
+	} else {
+		r.logf("But first, let's bundle all that javascript...")
+		err = r.bundle()
+		if err != nil {
+			return nil, errors.WithMessage(err, "while bundling")
+		}
+		r.logf("✓ Everything is bundled!")
 	}
 	r.logf("✓ Everything is bundled!")
 
