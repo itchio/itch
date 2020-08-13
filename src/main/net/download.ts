@@ -6,7 +6,7 @@ import { fileSize } from "common/format/filesize";
 import { Logger } from "common/logger";
 import { request } from "main/net/request";
 import { ProgressInfo } from "common/types";
-import { WriteStream } from "fs";
+import { WriteStream, createWriteStream } from "fs";
 import { delay } from "main/reactors/delay";
 import { isArray } from "util";
 
@@ -25,15 +25,15 @@ export async function downloadToFile(
 ) {
   const dir = dirname(file);
   try {
-    await sf.mkdirp(dir);
+    await sf.mkdir(dir);
   } catch (e) {
     logger.error(`Could not create ${dir}: ${e.message}`);
   }
 
-  const fileSink = sf.createWriteStream(file, {
+  const fileSink = createWriteStream(file, {
     flags: "w",
     mode: 0o777,
-    defaultEncoding: "binary",
+    encoding: "binary",
   }) as WriteStream;
   try {
     let totalSize = 0;

@@ -325,6 +325,7 @@ var badFileCharRe = regexp.MustCompile("[^A-Za-z0-9-.]")
 var screenshotMaxNameLen = 100
 
 func (r *runner) takeScreenshot(name string) error {
+	r.logf("Taking screenshot with name: %s", name)
 	if len(name) > screenshotMaxNameLen {
 		name = name[:screenshotMaxNameLen]
 	}

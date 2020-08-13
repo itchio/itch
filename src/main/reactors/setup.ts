@@ -11,7 +11,7 @@ import { app } from "electron";
 import { Manager } from "main/broth/manager";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { mkdirp } from "main/os/sf";
+import { mkdir } from "main/os/sf";
 import { delay } from "main/reactors/delay";
 import { indexBy, isEmpty } from "underscore";
 import { recordingLogger } from "common/logger";
@@ -24,7 +24,7 @@ async function syncInstallLocations(store: Store) {
 
   const { preferences } = store.getState();
   if (!preferences.importedOldInstallLocations) {
-    await mkdirp(appdataLocationPath());
+    await mkdir(appdataLocationPath());
     let oldLocations = {
       ...preferences.installLocations,
       appdata: {
@@ -217,9 +217,7 @@ async function refreshButlerd(store: Store) {
 
   const versionInfo = await incarnation.client.call(messages.VersionGet, {});
   logger.info(
-    `Now speaking with butlerd instance ${id}, version ${
-      versionInfo.versionString
-    }, endpoint ${endpoint.tcp.address}`
+    `Now speaking with butlerd instance ${id}, version ${versionInfo.versionString}, endpoint ${endpoint.tcp.address}`
   );
 
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));

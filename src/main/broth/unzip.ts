@@ -24,7 +24,7 @@ const DIR_RE = /\/$/;
 
 export async function unzip(opts: UnzipOpts) {
   const { archivePath, destination, logger } = opts;
-  await sf.mkdirp(destination);
+  await sf.mkdir(destination);
 
   const zipfile = await yauzlOpen(archivePath, { lazyEntries: true });
   logger.debug(`Total zip entries: ${zipfile.entryCount}`);
@@ -45,7 +45,7 @@ export async function unzip(opts: UnzipOpts) {
     const entryPath = join(destination, entry.fileName);
     logger.info(`Extracting ${entryPath}`);
 
-    await sf.mkdirp(dirname(entryPath));
+    await sf.mkdir(dirname(entryPath));
     const dst = createWriteStream(entryPath);
     const progressStream = progress({
       length: entry.uncompressedSize,
@@ -134,9 +134,7 @@ export async function unzip(opts: UnzipOpts) {
     if (hash !== entry.crc32) {
       await sf.unlink(entryPath);
       throw new Error(
-        `CRC32 mismatch for ${entry.fileName}: expected ${
-          entry.crc32
-        } got ${hash}`
+        `CRC32 mismatch for ${entry.fileName}: expected ${entry.crc32} got ${hash}`
       );
     }
   };

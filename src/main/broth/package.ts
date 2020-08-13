@@ -12,7 +12,7 @@ import whichCallback from "which";
 import { downloadToFileWithRetry } from "main/net/download";
 import { request } from "main/net/request/metal-request";
 import * as sf from "main/os/sf";
-import { mkdirp, readdir } from "main/os/sf";
+import { mkdir, readdir } from "main/os/sf";
 import { delay } from "main/reactors/delay";
 import formulas, { FormulaSpec } from "main/broth/formulas";
 import { goarch, goos } from "main/broth/platform";
@@ -180,7 +180,7 @@ export class Package implements PackageLike {
       return;
     }
 
-    await mkdirp(this.getVersionsDir());
+    await mkdir(this.getVersionsDir());
 
     const chosenVersion = await this.getChosenVersion();
     if (chosenVersion) {

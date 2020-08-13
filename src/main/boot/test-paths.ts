@@ -1,6 +1,6 @@
 import { app } from "electron";
 import { resolve } from "path";
-import { sync as mkdirp } from "mkdirp";
+import { mkdirSync } from "original-fs";
 
 const electronLocations = [
   "home",
@@ -22,7 +22,7 @@ export function setup() {
   for (const name of electronLocations) {
     const location = resolve(base, name);
     try {
-      mkdirp(location);
+      mkdirSync(location, { recursive: true });
       app.setPath(name, location);
     } catch (e) {
       console.warn(`Could not set location ${name} to ${location}: ${e.stack}`);

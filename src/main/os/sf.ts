@@ -1,94 +1,35 @@
-import { promisify, ItchPromise } from "common/util/itch-promise";
+import { ItchPromise } from "common/util/itch-promise";
 
-import fs from "fs";
+import { promises as fs, constants, Stats } from "fs";
 import path from "path";
 
-import { FSError, ReadFileOpts, WriteFileOpts } from "common/types/sf";
-
-/*
- * Let's patch all the things! Electron randomly decides to
- * substitute 'fs' with their own version that considers '.asar'
- * files to be read-only directories.
- *
- * Since itch can install applications that have .asar files, that
- * won't do.
- *
- * We want sf to operate on actual files, so we need to operate some
- * magic for various modules to use the original fs module, not the
- * asar-aware one.
- */
+import { ReadFileOpts, WriteFileOpts } from "common/types/sf";
 
 import { EventEmitter } from "events";
-
-type Mkdirp = (path: string, opts?: any) => Promise<void>;
-export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
-
-type Rimraf = (path: string, opts?: any) => Promise<void>;
-const rimraf: Rimraf = promisify(require("rimraf")) as any;
-
-export const nodeReaddir = (promisify(fs.readdir) as any) as typeof readdir;
-export const nodeReadFile = (promisify(fs.readFile) as any) as typeof readFile;
-export const nodeWriteFile = (promisify(
-  fs.writeFile
-) as any) as typeof writeFile;
-export const nodeAppendFile = (promisify(
-  fs.appendFile
-) as any) as typeof appendFile;
-
-export const utimes = (promisify(fs.utimes) as any) as (
-  path: string,
-  atime: number,
-  mtime: number
-) => Promise<void>;
-export const chmod = (promisify(fs.chmod) as any) as (
-  path: string,
-  mode: number
-) => Promise<void>;
-export const stat = promisify(fs.stat);
-export const lstat = promisify(fs.lstat);
-export const readlink = promisify(fs.readlink);
-export const symlink = (promisify(fs.symlink) as any) as (
-  srcpath: string,
-  dstpath: string
-) => Promise<void>;
-export const rename = (promisify(fs.rename) as any) as (
-  oldpath: string,
-  newpath: string
-) => Promise<void>;
-export const rmdir = promisify(fs.rmdir);
-export const unlink = (promisify(fs.unlink) as any) as (
-  file: string
-) => Promise<void>;
-
-export const createReadStream = fs.createReadStream.bind(fs);
-export const createWriteStream = fs.createWriteStream.bind(fs);
+import rimraf from "rimraf";
+import { string } from "prop-types";
 
 /**
  * Returns true if file exists, false if ENOENT, throws if other error
  */
 export async function exists(file: string) {
-  return new ItchPromise((resolve, reject) => {
-    const callback = (err: FSError) => {
-      if (err) {
-        if (err.code === "ENOENT") {
-          resolve(false);
-        } else {
-          reject(err);
-        }
-      } else {
-        resolve(true);
-      }
-    };
-
-    fs.access(file, fs.constants.R_OK, callback);
-  });
+  try {
+    await fs.access(file, constants.R_OK);
+    return true;
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      return false;
+    } else {
+      throw err;
+    }
+  }
 }
 
 /**
  * List children of a directory
  */
 export async function readdir(dir: string): Promise<string[]> {
-  return await nodeReaddir(dir);
+  return await fs.readdir(dir);
 }
 
 /**
@@ -98,7 +39,7 @@ export async function readFile(
   file: string,
   opts: ReadFileOpts
 ): Promise<string> {
-  return await nodeReadFile(file, opts);
+  return await fs.readFile(file, opts);
 }
 
 /**
@@ -111,7 +52,7 @@ export async function appendFile(
   opts?: WriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
-  return await nodeAppendFile(file, contents, opts);
+  return await fs.appendFile(file, contents, opts);
 }
 
 /**
@@ -124,7 +65,7 @@ export async function writeFile(
   opts: WriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
-  return await nodeWriteFile(file, contents, opts);
+  return await fs.writeFile(file, contents, opts);
 }
 
 /**
@@ -141,20 +82,45 @@ export async function promised(stream: EventEmitter): Promise<any> {
 }
 
 /**
- * Create each supplied directory including any necessary parent directories that
- * don't yet exist.
- *
- * If the directory already exists, do nothing.
- * Uses mkdirp: https://www.npmjs.com/package/mkdirp
+ * `mkdir -p`
  */
 export async function mkdir(dir: string): Promise<void> {
-  await mkdirp(dir);
+  return await fs.mkdir(dir, { recursive: true });
 }
 
 /**
- * Burn to the ground an entire directory and everything in it
- * Also works on file, don't bother with unlink.
+ * `mv older newer`
  */
-export async function wipe(shelter: string): Promise<void> {
-  await rimraf(shelter);
+export async function rename(older: string, newer: string): Promise<void> {
+  return await fs.rename(older, newer);
+}
+
+export async function lstat(file: string): Promise<Stats> {
+  return await fs.lstat(file);
+}
+
+/**
+ * `rm -rf`
+ */
+export async function wipe(dir: string): Promise<void> {
+  return await new Promise((resolve, reject) => {
+    rimraf(dir, {}, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+export async function unlink(file: string): Promise<void> {
+  return await fs.unlink(file);
+}
+
+export async function chmod(
+  file: string,
+  mode: string | number
+): Promise<void> {
+  return await fs.chmod(file, mode);
 }

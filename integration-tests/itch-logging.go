@@ -18,7 +18,7 @@ type ItchLogLine struct {
 func (line *ItchLogLine) String() string {
 	timestamp := time.Unix(line.Time/1000, 0)
 
-	res := aurora.Sprintf(aurora.Green("%s "), timestamp.Format("15:04:05.000"))
+	res := aurora.Sprintf(aurora.Gray(5, "%s "), timestamp.Format("15:04:05.000"))
 
 	switch line.Level {
 	case 60:
