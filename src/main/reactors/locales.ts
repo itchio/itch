@@ -61,9 +61,11 @@ async function doDownloadLocale(
     throw new Error("Locale update server is down, try again later");
   }
 
+  const payload = JSON.parse(resp.body);
+
   const finalResources = {
     ...resources,
-    ...resp.body,
+    ...payload,
   };
 
   try {
@@ -88,6 +90,7 @@ async function loadLocale(store: Store, lang: string) {
   }
 
   try {
+    logger.debug(`Reading local locale file ${local}`);
     const payload = await readFile(local);
     const resources = JSON.parse(payload);
     commitLocale(store, lang, resources);
@@ -104,6 +107,7 @@ async function loadLocale(store: Store, lang: string) {
     try {
       let payload: string;
       try {
+        logger.debug(`Reading remote locale file ${local}`);
         payload = await readFile(remote);
       } catch (e) {
         // no updated version of the locale available

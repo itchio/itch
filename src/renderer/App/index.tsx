@@ -41,6 +41,8 @@ class App extends React.PureComponent<Props, State> {
 
   realRender() {
     const { localeVersion, locale, messages } = this.state;
+    console.log("i18n state", { localeVersion, locale, messages });
+
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
         <ThemeProvider theme={theme}>

@@ -8,7 +8,13 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
 const merge = require("webpack-merge");
 
-module.exports = (env) => {
+module.exports = (_notSureWhatThatArgumentDoes, env) => {
+  // note: webpack-command used to pass `env` as the
+  // first argument, but webpack-command died. I advise
+  // not switching to webpack-nano, as it's from the same
+  // maintainer and might also die. wepback-cli seems to
+  // pass env as the second argument.
+
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
