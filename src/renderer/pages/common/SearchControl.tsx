@@ -1,14 +1,13 @@
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import { InjectedIntl } from "react-intl";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabEvolve, urlWithParams } from "renderer/hocs/tab-utils";
-import { withIntl } from "renderer/hocs/withIntl";
 import { withTab } from "renderer/hocs/withTab";
 import FilterInput from "renderer/pages/common/FilterInput";
 import { TString } from "renderer/t";
 import { debounce } from "underscore";
+import { IntlShape, injectIntl } from "react-intl";
 
 class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
@@ -38,14 +37,14 @@ class SearchControl extends React.PureComponent<Props> {
 interface Props {
   tab: string;
   dispatch: Dispatch;
-  intl: InjectedIntl;
+  intl: IntlShape;
 
   url: string;
   defaultValue: string;
 }
 
 export default withTab(
-  withIntl(
+  injectIntl(
     hookWithProps(SearchControl)(map => ({
       url: map((rs, props) => ambientTab(rs, props).location.url),
       defaultValue: map(

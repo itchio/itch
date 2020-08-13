@@ -4,15 +4,14 @@ import { DATE_FORMAT, formatDate } from "common/format/datetime";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import ReactHintFactory from "react-hint";
-import { InjectedIntl } from "react-intl";
 import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
 import { hook } from "renderer/hocs/hook";
 import { ProfileProvider } from "renderer/hocs/withProfile";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { withIntl } from "renderer/hocs/withIntl";
 import Loadable from "react-loadable";
+import { injectIntl, IntlShape } from "react-intl";
 
 const GateScene = Loadable({
   loader: () => import("renderer/scenes/GateScene"),
@@ -145,10 +144,10 @@ interface Props {
   focused: boolean;
   profile: Profile;
 
-  intl: InjectedIntl;
+  intl: IntlShape;
 }
 
-export default withIntl(
+export default injectIntl(
   hook(map => ({
     maximized: map(rs => rs.winds[ambientWind()].native.maximized),
     focused: map(rs => rs.winds[ambientWind()].native.focused),

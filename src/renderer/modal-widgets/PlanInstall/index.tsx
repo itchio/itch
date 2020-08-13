@@ -16,7 +16,7 @@ import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
-import { InjectedIntl } from "react-intl";
+import { IntlShape, injectIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
@@ -28,7 +28,6 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
 import InstallLocationOptionComponent, {
   InstallLocationOption,
@@ -249,8 +248,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
         {busy
           ? this.renderBusy()
           : error
-            ? this.renderError()
-            : this.renderSizes()}
+          ? this.renderError()
+          : this.renderSizes()}
         <Filler />
         <ModalButtons>
           <Button onClick={this.onCancel}>{T(["prompt.action.cancel"])}</Button>
@@ -509,7 +508,7 @@ interface Props
   defaultInstallLocation: string;
   dispatch: Dispatch;
 
-  intl: InjectedIntl;
+  intl: IntlShape;
 }
 
 interface State {
@@ -527,7 +526,7 @@ interface State {
   pickedInstallLocationId?: string;
 }
 
-export default withIntl(
+export default injectIntl(
   hook(map => ({
     defaultInstallLocation: map(rs => rs.preferences.defaultInstallLocation),
   }))(PlanInstall)

@@ -6,17 +6,16 @@ import searchExamples from "common/constants/search-examples";
 import { Dispatch } from "common/types";
 import { urlForGame } from "common/util/navigation";
 import React from "react";
-import { InjectedIntl } from "react-intl";
 import Floater from "renderer/basics/Floater";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { withIntl } from "renderer/hocs/withIntl";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
 import { debounce, isEmpty, sample, size } from "underscore";
+import { injectIntl, IntlShape } from "react-intl";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {
@@ -309,7 +308,7 @@ class Search extends React.PureComponent<Props, State> {
 interface Props {
   profileId: number;
   dispatch: Dispatch;
-  intl: InjectedIntl;
+  intl: IntlShape;
 }
 
 interface State {
@@ -329,4 +328,4 @@ function pickExample(): string {
 
 export default hook(map => ({
   profileId: map(rs => rs.profile.profile.id),
-}))(withIntl(Search));
+}))(injectIntl(Search));

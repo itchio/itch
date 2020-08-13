@@ -14,8 +14,7 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import Label from "renderer/pages/PreferencesPage/Label";
 import styled, { css } from "renderer/styles";
-import { InjectedIntl } from "react-intl";
-import { withIntl } from "renderer/hocs/withIntl";
+import { IntlShape, injectIntl } from "react-intl";
 import { T } from "renderer/t";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
 
@@ -527,7 +526,7 @@ ${log}
 
 interface Props
   extends ModalWidgetProps<SendFeedbackParams, SendFeedbackResponse> {
-  intl: InjectedIntl;
+  intl: IntlShape;
   dispatch: Dispatch;
   brothPackages: PackagesState;
 }
@@ -542,7 +541,7 @@ interface State {
   errorMessage?: string;
 }
 
-export default withIntl(
+export default injectIntl(
   hook(map => ({
     brothPackages: map(rs => rs.broth.packages),
   }))(ReportIssue)

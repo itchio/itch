@@ -1,5 +1,5 @@
 import React from "react";
-import { FormattedRelative } from "react-intl";
+import { FormattedRelativeTime } from "react-intl";
 
 class TimeAgo extends React.PureComponent<Props> {
   render() {
@@ -23,7 +23,11 @@ class TimeAgo extends React.PureComponent<Props> {
         data-rh={JSON.stringify({ date: dateObject.toISOString() })}
       >
         {before ? <>{before} </> : null}
-        <FormattedRelative value={dateObject} />
+        <FormattedRelativeTime
+          value={(dateObject.getTime() - Date.now()) / 1000}
+          unit="second"
+          updateIntervalInSeconds={1}
+        />
       </span>
     );
   }

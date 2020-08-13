@@ -5,10 +5,8 @@ import {
   TwoFactorInputResponse,
 } from "common/modals/types";
 import React from "react";
-import { InjectedIntl } from "react-intl";
-import { withIntl } from "renderer/hocs/withIntl";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import { T, TString } from "renderer/t";
+import { T } from "renderer/t";
 import styled from "renderer/styles";
 import { hook } from "renderer/hocs/hook";
 import { Dispatch } from "common/types";
@@ -16,6 +14,7 @@ import { actions } from "common/actions";
 import { ambientWind } from "common/util/navigation";
 import { ModalButtons } from "renderer/basics/modal-styles";
 import Button from "renderer/basics/Button";
+import { injectIntl, IntlShape } from "react-intl";
 
 const CodeInput = styled.input`
   font-size: 36px !important;
@@ -130,7 +129,7 @@ interface Props
   extends ModalWidgetProps<TwoFactorInputParams, TwoFactorInputResponse> {
   params: TwoFactorInputParams;
 
-  intl: InjectedIntl;
+  intl: IntlShape;
   dispatch: Dispatch;
 }
 
@@ -138,4 +137,4 @@ interface State {
   valid: boolean;
 }
 
-export default withIntl(hook()(TwoFactorInput));
+export default injectIntl(hook()(TwoFactorInput));

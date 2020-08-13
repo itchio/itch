@@ -13,7 +13,7 @@ import {
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import { stripUnit } from "polished";
 import React from "react";
-import { InjectedIntl } from "react-intl";
+import { IntlShape, injectIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
@@ -29,7 +29,6 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import Hoverable from "renderer/hocs/withHover";
-import { withIntl } from "renderer/hocs/withIntl";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
@@ -206,11 +205,11 @@ const ModalsDiv = styled.div`
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.58);
 
         &:not(.action-play) {
-          -webkit-filter: grayscale(100%) brightness(70%);
+          filter: grayscale(100%) brightness(70%);
         }
 
         &:hover {
-          -webkit-filter: brightness(110%);
+          filter: brightness(110%);
         }
 
         &,
@@ -579,7 +578,7 @@ class Modals extends React.PureComponent<Props, State> {
 
 interface Props {
   modal: Modal;
-  intl: InjectedIntl;
+  intl: IntlShape;
   dispatch: Dispatch;
 }
 
@@ -589,4 +588,4 @@ interface State {
 
 export default hook(map => ({
   modal: map(rs => ambientWindState(rs).modals[0]),
-}))(withIntl(Modals));
+}))(injectIntl(Modals));

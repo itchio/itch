@@ -1,6 +1,6 @@
 import IntlMessageFormat from "intl-messageformat";
 import React from "react";
-import { FormattedMessage, InjectedIntl } from "react-intl";
+import { FormattedMessage, IntlShape } from "react-intl";
 import { LocalizedString } from "common/types";
 import { memoize } from "common/util/lru-memoize";
 
@@ -17,7 +17,7 @@ export function T(input: any): JSX.Element | string {
   }
 }
 
-export function TString(intl: InjectedIntl, input: any): string {
+export function TString(intl: IntlShape, input: any): string {
   if (Array.isArray(input)) {
     const id = input[0];
     const valuesIn = input[1] || {};

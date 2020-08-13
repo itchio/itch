@@ -13,10 +13,9 @@ import {
   getPendingDownloads,
 } from "main/reactors/downloads/getters";
 import React from "react";
-import { InjectedIntl } from "react-intl";
+import { injectIntl, IntlShape } from "react-intl";
 import { SortableElement } from "react-sortable-hoc";
 import { hookWithProps } from "renderer/hocs/hook";
-import { withIntl } from "renderer/hocs/withIntl";
 import { modals } from "common/modals";
 import { size } from "underscore";
 import Item from "renderer/scenes/HubScene/Sidebar/Item";
@@ -142,14 +141,14 @@ interface Props {
   downloads: DownloadsState | null;
   dispatch: Dispatch;
 
-  intl: InjectedIntl;
+  intl: IntlShape;
 }
 
-export default withIntl(
+export default injectIntl(
   hookWithProps(Tab)(map => ({
     tabInstance: map((rs, p) => ambientWindState(rs).tabInstances[p.tab]),
-    downloads: map(
-      (rs, p) => (p.tab === "itch://downloads" ? rs.downloads : null)
+    downloads: map((rs, p) =>
+      p.tab === "itch://downloads" ? rs.downloads : null
     ),
   }))(Tab)
 );
