@@ -2,7 +2,6 @@ import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 
 import { ProxySettings } from "common/types";
-import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
 
 export default function(watcher: Watcher) {
@@ -48,7 +47,7 @@ export async function applyProxySettings(
 
   const proxyRules = system.proxy;
 
-  return await new ItchPromise<void>((resolve, reject) => {
+  return await new Promise<void>((resolve, reject) => {
     session.setProxy(
       {
         pacScript: null,

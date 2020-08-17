@@ -1,5 +1,4 @@
 import { actions } from "common/actions";
-import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
 import { mainLogPath, preferencesPath } from "common/util/paths";
 import { Watcher } from "common/util/watcher";

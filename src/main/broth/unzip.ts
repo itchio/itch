@@ -1,6 +1,5 @@
 import yauzl from "yauzl";
 import progress from "progress-stream";
-import { ItchPromise, promisify } from "common/util/itch-promise";
 const crc32 = require("crc-32");
 const yauzlOpen = promisify(yauzl.open) as (
   path: string,
@@ -12,6 +11,7 @@ import { dirname, join } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "common/logger";
 import { ProgressInfo } from "common/types";
+import { promisify } from "util";
 
 interface UnzipOpts {
   archivePath: string;
@@ -139,7 +139,7 @@ export async function unzip(opts: UnzipOpts) {
     }
   };
 
-  await new ItchPromise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     zipfile.on("entry", (entry: yauzl.Entry) => {
       logger.debug(`→ ${entry.fileName}`);
       if (DIR_RE.test(entry.fileName)) {

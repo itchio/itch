@@ -15,7 +15,6 @@ import env from "common/env";
 
 import { net } from "electron";
 import { Readable } from "stream";
-import { ItchPromise } from "common/util/itch-promise";
 import { userAgent } from "common/constants/useragent";
 import { mainLogger } from "main/logger";
 import { fileSize } from "common/format/filesize";
@@ -52,7 +51,7 @@ export async function request(
   });
   req.setHeader("user-agent", userAgent());
 
-  const p = new ItchPromise<Response>((resolve, reject) => {
+  const p = new Promise<Response>((resolve, reject) => {
     req.on("response", (inputRes: any) => {
       const res = inputRes as ActualElectronResponse;
       logger.debug(

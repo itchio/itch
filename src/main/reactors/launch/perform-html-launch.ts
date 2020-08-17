@@ -16,7 +16,6 @@ import {
   HTMLLaunchResult,
 } from "common/butlerd/messages";
 import { Logger } from "common/logger";
-import { ItchPromise } from "common/util/itch-promise";
 import { registerItchCaveProtocol } from "main/reactors/launch/itch-cave-protocol";
 
 interface HTMLLaunchOpts {
@@ -146,7 +145,7 @@ export async function performHTMLLaunch(
   win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
 
   logger.info(`Waiting for window to close or context to be aborted...`);
-  await new ItchPromise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     win.on("closed", () => {
       resolve();
     });

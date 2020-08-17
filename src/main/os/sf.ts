@@ -1,5 +1,3 @@
-import { ItchPromise } from "common/util/itch-promise";
-
 import { promises as fs, constants, Stats } from "fs";
 import path from "path";
 
@@ -73,7 +71,7 @@ export async function writeFile(
  * 'close' or 'end' is emitted, rejects when 'error' is
  */
 export async function promised(stream: EventEmitter): Promise<any> {
-  const p = new ItchPromise((resolve, reject) => {
+  const p = new Promise((resolve, reject) => {
     stream.on("close", resolve);
     stream.on("end", resolve);
     stream.on("error", reject);

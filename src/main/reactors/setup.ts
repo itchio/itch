@@ -4,7 +4,6 @@ import { messages } from "common/butlerd";
 import { makeButlerInstance } from "common/butlerd/make-butler-instance";
 import env from "common/env";
 import { Store } from "common/types";
-import { ItchPromise } from "common/util/itch-promise";
 import { appdataLocationPath } from "common/util/paths";
 import { Watcher } from "common/util/watcher";
 import { app } from "electron";
@@ -70,7 +69,7 @@ async function syncInstallLocations(store: Store) {
 export let manager: Manager;
 
 let initialButlerdResolve: (value?: any) => void;
-let initialButlerdPromise = new ItchPromise((resolve, reject) => {
+let initialButlerdPromise = new Promise((resolve, reject) => {
   initialButlerdResolve = resolve;
 });
 
@@ -121,7 +120,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     logger.debug(`Waiting for butler promise...`);
     await Promise.race([
       initialButlerdPromise,
-      new ItchPromise((resolve, reject) => {
+      new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error("Timed out while connecting to butlerd"));
         }, 5000);

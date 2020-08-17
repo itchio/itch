@@ -1,5 +1,3 @@
-import { ItchPromise } from "common/util/itch-promise";
-
 class CancelError extends Error {
   constructor() {
     super("");
@@ -29,7 +27,7 @@ function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
         rejectOther(new CancelError());
         rejectOther = null;
       }
-      await new ItchPromise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         rejectOther = reject;
         setTimeout(resolve, ms);
       });

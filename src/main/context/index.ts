@@ -1,7 +1,6 @@
 import { Store, ProgressInfo, ProgressListener, Cancelled } from "common/types";
 
 import { EventEmitter } from "events";
-import { ItchPromise } from "common/util/itch-promise";
 
 interface Stopper {
   (): Promise<void>;
@@ -29,7 +28,7 @@ export class MinimalContext {
   private taskId: string = null;
 
   constructor() {
-    this.cancelPromise = new ItchPromise((resolve, reject) => {
+    this.cancelPromise = new Promise((resolve, reject) => {
       this.resolveCancelPromise = resolve;
     });
   }

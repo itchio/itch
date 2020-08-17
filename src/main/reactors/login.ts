@@ -3,7 +3,6 @@ import { messages, hookLogging } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Store } from "common/types";
-import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";

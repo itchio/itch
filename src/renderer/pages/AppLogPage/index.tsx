@@ -160,9 +160,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
   };
 
   doFetch = async () => {
-    const fs = await import("fs");
-    const { promisify } = await import("common/util/itch-promise");
-    const readFile = promisify(fs.readFile);
+    const promisedFs = (await import("fs")).promises;
 
     let filePath = this.props.file;
     if (filePath) {
@@ -171,7 +169,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
       const { mainLogPath } = await import("common/util/paths");
       filePath = mainLogPath();
     }
-    const log = await readFile(filePath, { encoding: "utf8" });
+    const log = await promisedFs.readFile(filePath, { encoding: "utf8" });
     this.setState({ log, error: null });
   };
 

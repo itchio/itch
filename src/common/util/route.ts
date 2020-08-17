@@ -3,7 +3,6 @@ import { Store, isCancelled, Action } from "common/types";
 import { Watcher } from "common/util/watcher";
 
 import { Logger } from "common/logger";
-import { ItchPromise } from "common/util/itch-promise";
 
 const emptyArr = [] as any[];
 
@@ -35,7 +34,7 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
         promises.push(r(store, action));
       }
     }
-    ItchPromise.all(promises).catch(e => err(watcher.logger, e, action));
+    Promise.all(promises).catch(e => err(watcher.logger, e, action));
   }, 0);
   return;
 }

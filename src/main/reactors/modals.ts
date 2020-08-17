@@ -7,7 +7,6 @@ import { Store } from "common/types";
 
 import modalResolves from "main/reactors/modals-persistent-state";
 import { TypedModal } from "common/modals";
-import { ItchPromise } from "common/util/itch-promise";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
@@ -19,7 +18,7 @@ export async function promisedModal<Params, Response>(
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;
 
-  const p = new ItchPromise<any>(resolve => {
+  const p = new Promise<any>(resolve => {
     modalResolves[id] = resolve;
   });
 

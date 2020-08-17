@@ -1,4 +1,3 @@
-import { ItchPromise } from "common/util/itch-promise";
 import * as url from "common/util/url";
 import { Session } from "electron";
 import { createReadStream, statSync } from "original-fs";
@@ -20,7 +19,7 @@ export async function registerItchCaveProtocol(
   }
   registeredSessions.add(gameSession);
 
-  await new ItchPromise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     gameSession.protocol.registerStreamProtocol(
       WEBGAME_PROTOCOL,
       (request, callback) => {

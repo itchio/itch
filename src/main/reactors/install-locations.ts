@@ -2,7 +2,6 @@ import { actions } from "common/actions";
 import { hookLogging, messages } from "common/butlerd";
 import { t } from "common/format/t";
 import { modals } from "common/modals";
-import { ItchPromise } from "common/util/itch-promise";
 import { Watcher } from "common/util/watcher";
 import { dialog } from "electron";
 import { mcall } from "main/butlerd/mcall";

@@ -19,7 +19,6 @@ import { Watcher } from "common/util/watcher";
 import { Store, Action } from "common/types";
 import reducer from "common/reducers";
 import { actions } from "common/actions";
-import { ItchPromise } from "common/util/itch-promise";
 import { Logger } from "common/logger";
 
 export class TestWatcher extends Watcher {
@@ -64,7 +63,7 @@ export class TestWatcher extends Watcher {
  * infinite recursion.
  */
 async function immediate() {
-  await new ItchPromise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     setImmediate(resolve);
   });
 }

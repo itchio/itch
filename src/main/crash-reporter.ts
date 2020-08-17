@@ -4,7 +4,6 @@ import env from "common/env";
 import { t } from "common/format/t";
 import { currentRuntime } from "common/os/runtime";
 import { isCancelled } from "common/types";
-import { ItchPromise } from "common/util/itch-promise";
 import { app, dialog, shell } from "electron";
 import { isNetworkError } from "main/net/errors";
 import { exit } from "main/os/exit";

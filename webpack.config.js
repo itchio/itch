@@ -1,4 +1,4 @@
-const {NamedModulesPlugin} = require("webpack");
+const { NamedModulesPlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
@@ -19,18 +19,15 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
       resolve: {
-        mainFields: ["electron-main", "module", "main"]
+        alias: { "react-dom": "@hot-loader/react-dom" },
+        mainFields: ["electron-main", "module", "main"],
       },
       entry: {
         main: ["./src/main/index.ts"],
         "inject-game": ["./src/main/inject/inject-game.ts"],
         "inject-captcha": ["./src/main/inject/inject-captcha.ts"],
       },
-      externals: [
-        "bindings",
-        "electron-fetch",
-        "eventsource"
-      ],
+      externals: ["bindings", "electron-fetch", "eventsource"],
       plugins: [
         new CleanWebpackPlugin(),
         new WebpackBuildNotifierPlugin({
@@ -41,30 +38,23 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
     merge.smart(getCommonConfig("renderer", env), {
       target: "electron-renderer",
       resolve: {
-        mainFields: ["browser", "module", "main"]
+        mainFields: ["browser", "module", "main"],
       },
       entry: {
         renderer: ["./src/renderer/index.tsx"],
       },
-      externals: [
-        "systeminformation",
-      ],
+      externals: ["systeminformation"],
       module: {
         rules: [
           {
             test: /\.(png|svg|woff|woff2)$/,
-            use: [
-              { loader: "file-loader" },
-            ],
+            use: [{ loader: "file-loader" }],
           },
           {
             test: /\.css$/,
-            use: [
-              { loader: "style-loader" },
-              { loader: "css-loader" },
-            ],
-          }
-        ]
+            use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+          },
+        ],
       },
       plugins: [
         new CleanWebpackPlugin(),
@@ -84,7 +74,7 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
         contentBase: __dirname,
       },
     }),
-  ]
+  ];
 };
 
 function getCommonConfig(type, env) {
@@ -106,26 +96,16 @@ function getCommonConfig(type, env) {
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],
-      plugins: [
-        new TsconfigPathsPlugin({})
-      ],
+      plugins: [new TsconfigPathsPlugin({})],
     },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
           exclude: "/node_modules/",
-          use: [
-            { loader: "happypack/loader?id=ts" },
-          ]
+          use: [{ loader: "happypack/loader?id=ts" }],
         },
-        {
-          test: /\.node$/,
-          use: [
-            { loader: "node-loader" },
-          ],
-        }
-      ]
+      ],
     },
     plugins: [
       new HappyPack({
@@ -134,15 +114,15 @@ function getCommonConfig(type, env) {
         loaders: [
           {
             path: "ts-loader",
-            query: { happyPackMode: true }
-          }
+            query: { happyPackMode: true },
+          },
         ],
         verbose: false,
-      })
+      }),
     ],
     optimization: {
       minimize: false,
       minimizer: [],
     },
-  }
+  };
 }

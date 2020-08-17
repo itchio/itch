@@ -1,7 +1,6 @@
 import childProcess from "child_process";
 import { formatExitCode } from "common/format/exit-code";
 import { Logger } from "common/logger";
-import { ItchPromise } from "common/util/itch-promise";
 import { mainLogger } from "main/logger";
 import split2 from "split2";
 import stream from "stream";
@@ -122,7 +121,7 @@ spawn = async function(opts: SpawnOpts): Promise<number> {
       cancelled = true;
     },
     work: () =>
-      new ItchPromise<number>((resolve, reject) => {
+      new Promise<number>((resolve, reject) => {
         child.on("close", (code: number, signal: string) => {
           if (cbErr) {
             reject(cbErr);
