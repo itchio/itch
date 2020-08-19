@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const path = require("path");
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 
 module.exports = (_notSureWhatThatArgumentDoes, env) => {
   // note: webpack-command used to pass `env` as the
@@ -16,7 +16,7 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
   // pass env as the second argument.
 
   return [
-    merge.smart(getCommonConfig("main", env), {
+    merge(getCommonConfig("main", env), {
       target: "electron-main",
       resolve: {
         alias: { "react-dom": "@hot-loader/react-dom" },
@@ -35,7 +35,7 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
         }),
       ],
     }),
-    merge.smart(getCommonConfig("renderer", env), {
+    merge(getCommonConfig("renderer", env), {
       target: "electron-renderer",
       resolve: {
         mainFields: ["browser", "module", "main"],
