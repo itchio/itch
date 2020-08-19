@@ -65,7 +65,7 @@
     "semver": "^7.3.2",
     "shell-quote": "^1.7.2",
     "source-map-support": "^0.5.12",
-    "split2": "^3.1.1",
+    "split2": "^3.2.1",
     "styled-components": "^5.1.1",
     "systeminformation": "^4.26.10",
     "term-color": "^1.0.1",
