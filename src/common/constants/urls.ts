@@ -10,7 +10,7 @@ export default {
   originalItchio,
   itchio,
   appHomepage: "https://itch.io/app",
-  itchTranslationPlatform: "https://weblate.itch.ovh/",
+  itchTranslationPlatform: "https://weblate.itch.ovh",
   brothRepo: "https://broth.itch.ovh",
   remoteLocalePath: "https://locales.itch.ovh/itch",
   manual,

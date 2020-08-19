@@ -39,9 +39,7 @@ class LanguageSettings extends React.PureComponent<Props> {
     }
 
     const badgeLang = lang ? lang.substr(0, 2) : "en";
-    const translationBadgeUrl = `${
-      urls.itchTranslationPlatform
-    }/widgets/itch/${badgeLang}/svg-badge.svg`;
+    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itchio/${badgeLang}/itch/svg-badge.svg`;
 
     const downloading = this.props.downloading[lang];
 
