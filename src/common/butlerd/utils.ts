@@ -44,9 +44,7 @@ async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
   const currentEndpoint = store.getState().butlerd.endpoint;
   if (client.endpoint !== currentEndpoint) {
     parentLogger.warn(
-      `(butlerd) Endpoint changed (${client.endpoint.tcp.address} => ${
-        currentEndpoint.tcp.address
-      }), making fresh client`
+      `(butlerd) Endpoint changed (${client.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
     );
     p = makeClient(store, parentLogger);
     clientPromises.set(store, p);
@@ -66,7 +64,7 @@ export async function call<Params, Res>(
   const client = await getClient(store, logger);
 
   try {
-    logger.debug(`🙏 ${rc({} as any)(client).method}`);
+    logger.debug(`Calling ${rc({} as any)(client).method}`);
     return await client.call(rc, params, setup);
   } catch (e) {
     if (isCancelled(e)) {

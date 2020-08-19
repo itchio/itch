@@ -7,8 +7,7 @@ import spawn from "main/os/spawn";
 import { dirname, join } from "path";
 import querystring from "querystring";
 import * as semver from "semver";
-import { promisify } from "util";
-import whichCallback from "which";
+import which from "which";
 import { downloadToFileWithRetry } from "main/net/download";
 import { request } from "main/net/request/metal-request";
 import * as sf from "main/os/sf";
@@ -17,8 +16,6 @@ import { delay } from "main/reactors/delay";
 import formulas, { FormulaSpec } from "main/broth/formulas";
 import { goarch, goos } from "main/broth/platform";
 import { unzip } from "main/broth/unzip";
-
-const which = promisify(whichCallback);
 
 const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
