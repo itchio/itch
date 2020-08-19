@@ -48,7 +48,7 @@
     "progress-stream": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-fast-compare": "^2.0.4",
+    "react-fast-compare": "^3.2.0",
     "react-hint": "^3.2.0",
     "react-intl": "^5.6.5",
     "react-json-inspector": "^7.1.1",
