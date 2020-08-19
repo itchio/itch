@@ -27,7 +27,7 @@ async function pushTag() {
   }
 
   const versionInput =
-    args[0] || (await prompt(`Package version is: ${pkg.version}, type yours`));
+    args[0] || (await prompt(`Package version is: ${pkg.version}, type yours in vX.Y.Z(-canary?) format`));
   if (!/^v\d+.\d+.\d+(-canary)?$/.test(versionInput)) {
     throw new Error(
       `Version must be of the form /vX.Y.Z(-canary)?/ (was '${versionInput}')`
