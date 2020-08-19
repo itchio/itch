@@ -28,11 +28,14 @@ export default function (watcher: Watcher) {
           hookProgress(convo, ctx);
           hookLogging(convo, logger.child(__filename));
 
-          convo.on(messages.TaskStarted, async ({ type, reason }) => {
-            logger.info(`Task ${type} started (for ${reason})`);
-          });
+          convo.onNotification(
+            messages.TaskStarted,
+            async ({ type, reason }) => {
+              logger.info(`Task ${type} started (for ${reason})`);
+            }
+          );
 
-          convo.on(messages.TaskSucceeded, async ({ type }) => {
+          convo.onNotification(messages.TaskSucceeded, async ({ type }) => {
             logger.info(`Task ${type} succeeded`);
           });
         });

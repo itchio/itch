@@ -68,24 +68,36 @@ async function driverPoll(store: Store) {
             state.registerConvo(convo);
             driveConvo = convo;
 
-            convo.on(messages.DownloadsDriveStarted, async ({ download }) => {
-              await refreshDownloads(store);
-            });
+            convo.onNotification(
+              messages.DownloadsDriveStarted,
+              async ({ download }) => {
+                await refreshDownloads(store);
+              }
+            );
 
-            convo.on(messages.DownloadsDriveDiscarded, async ({ download }) => {
-              await refreshDownloads(store);
-            });
+            convo.onNotification(
+              messages.DownloadsDriveDiscarded,
+              async ({ download }) => {
+                await refreshDownloads(store);
+              }
+            );
 
-            convo.on(messages.DownloadsDriveErrored, async ({ download }) => {
-              await refreshDownloads(store);
-            });
+            convo.onNotification(
+              messages.DownloadsDriveErrored,
+              async ({ download }) => {
+                await refreshDownloads(store);
+              }
+            );
 
-            convo.on(messages.DownloadsDriveFinished, async ({ download }) => {
-              await refreshDownloads(store);
-              store.dispatch(actions.downloadEnded({ download }));
-            });
+            convo.onNotification(
+              messages.DownloadsDriveFinished,
+              async ({ download }) => {
+                await refreshDownloads(store);
+                store.dispatch(actions.downloadEnded({ download }));
+              }
+            );
 
-            convo.on(
+            convo.onNotification(
               messages.DownloadsDriveProgress,
               async ({ download, progress, speedHistory }) => {
                 store.dispatch(

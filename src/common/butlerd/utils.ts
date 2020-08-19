@@ -89,13 +89,13 @@ export async function call<Params, Res>(
 }
 
 export function hookProgress(convo: Conversation, ctx: MinimalContext) {
-  convo.onNotification(messages.Progress, ({ params }) => {
+  convo.onNotification(messages.Progress, (params) => {
     ctx.emitProgress(params);
   });
 }
 
 export function hookLogging(convo: Conversation, logger: Logger) {
-  convo.on(messages.Log, async ({ level, message }) => {
+  convo.onNotification(messages.Log, async ({ level, message }) => {
     switch (level) {
       case "debug":
         logger.debug(message);

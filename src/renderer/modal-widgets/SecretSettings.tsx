@@ -204,7 +204,7 @@ class SecretSettings extends React.PureComponent<Props> {
   onDoubleTwice = () => {
     doAsync(async () => {
       await rcall(messages.TestDoubleTwice, { number: 7 }, (client) => {
-        client.on(messages.TestDouble, async ({ number }) => {
+        client.onRequest(messages.TestDouble, async ({ number }) => {
           return { number: number * 2 };
         });
       });

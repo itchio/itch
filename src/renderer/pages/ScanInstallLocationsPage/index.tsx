@@ -132,16 +132,19 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
           { legacyMarketPath: legacyMarketPath() },
           (convo) => {
             hookLogging(convo, logger);
-            convo.on(messages.Progress, async ({ progress }) => {
+            convo.onNotification(messages.Progress, async ({ progress }) => {
               this.setState({ progress });
             });
-            convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
-              this.setState((state) => ({
-                game,
-                games: [...state.games, game],
-              }));
-            });
-            convo.on(
+            convo.onNotification(
+              messages.InstallLocationsScanYield,
+              async ({ game }) => {
+                this.setState((state) => ({
+                  game,
+                  games: [...state.games, game],
+                }));
+              }
+            );
+            convo.onRequest(
               messages.InstallLocationsScanConfirmImport,
               async ({ numItems }) => {
                 this.setState({ stage: Stage.NeedConfirm, numItems });

@@ -22,13 +22,16 @@ export default function (watcher: Watcher) {
         },
         (convo) => {
           hookLogging(convo, logger);
-          convo.on(messages.Progress, async ({ progress }) => {
+          convo.onNotification(messages.Progress, async ({ progress }) => {
             store.dispatch(actions.locationScanProgress({ progress }));
           });
-          convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
-            logger.info(`Found ${game.title} - ${game.url}`);
-          });
-          convo.on(
+          convo.onNotification(
+            messages.InstallLocationsScanYield,
+            async ({ game }) => {
+              logger.info(`Found ${game.title} - ${game.url}`);
+            }
+          );
+          convo.onRequest(
             messages.InstallLocationsScanConfirmImport,
             async ({ numItems }) => {
               logger.info(`In total, found ${numItems} items.`);

@@ -27,7 +27,7 @@
     "@hot-loader/react-dom": "^16.13.0",
     "array-move": "^3.0.1",
     "btoa": "^1.2.1",
-    "butlerd": "^11.3.0",
+    "butlerd": "^14.1.0",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^3.0.0",
     "colors": "^1.4.0",

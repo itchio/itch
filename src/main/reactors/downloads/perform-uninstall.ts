@@ -13,11 +13,11 @@ export async function performUninstall(
   await mcall(messages.UninstallPerform, { caveId }, (convo) => {
     hookLogging(convo, logger);
 
-    convo.on(messages.TaskStarted, async ({ type, reason }) => {
+    convo.onNotification(messages.TaskStarted, async ({ type, reason }) => {
       logger.info(`Task ${type} started (for ${reason})`);
     });
 
-    convo.on(messages.TaskSucceeded, async ({ type }) => {
+    convo.onNotification(messages.TaskSucceeded, async ({ type }) => {
       logger.info(`Task ${type} succeeded`);
     });
   });

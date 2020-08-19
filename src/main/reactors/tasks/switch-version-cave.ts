@@ -20,7 +20,7 @@ export default function (watcher: Watcher) {
           messages.InstallVersionSwitchQueue,
           { caveId: cave.id },
           (client) => {
-            client.on(
+            client.onRequest(
               messages.InstallVersionSwitchPick,
               async ({ cave, upload, builds }) => {
                 const response = await promisedModal(

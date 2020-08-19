@@ -75,12 +75,15 @@ export async function performLaunch(
             launchConvo = convo;
             hookLogging(convo, logger);
 
-            convo.on(messages.PickManifestAction, async ({ actions }) => {
-              const index = await pickManifestAction(store, actions, game);
-              return { index };
-            });
+            convo.onRequest(
+              messages.PickManifestAction,
+              async ({ actions }) => {
+                const index = await pickManifestAction(store, actions, game);
+                return { index };
+              }
+            );
 
-            convo.on(messages.AcceptLicense, async ({ text }) => {
+            convo.onRequest(messages.AcceptLicense, async ({ text }) => {
               const res = await promisedModal(
                 store,
                 modals.naked.make({
@@ -105,7 +108,7 @@ export async function performLaunch(
               return { accept: false };
             });
 
-            convo.on(messages.HTMLLaunch, async (params) => {
+            convo.onRequest(messages.HTMLLaunch, async (params) => {
               return await performHTMLLaunch({
                 ctx,
                 logger,
@@ -114,17 +117,17 @@ export async function performLaunch(
               });
             });
 
-            convo.on(messages.ShellLaunch, async ({ itemPath }) => {
+            convo.onRequest(messages.ShellLaunch, async ({ itemPath }) => {
               shell.openPath(itemPath);
               return {};
             });
 
-            convo.on(messages.URLLaunch, async ({ url }) => {
+            convo.onRequest(messages.URLLaunch, async ({ url }) => {
               store.dispatch(actions.navigate({ wind: "root", url }));
               return {};
             });
 
-            convo.on(messages.PrereqsStarted, async ({ tasks }) => {
+            convo.onNotification(messages.PrereqsStarted, async ({ tasks }) => {
               prereqsStateParams = {
                 gameTitle: game.title,
                 tasks: {},
@@ -160,7 +163,7 @@ export async function performLaunch(
               store.dispatch(actions.openModal(prereqsModal));
             });
 
-            convo.on(
+            convo.onNotification(
               messages.PrereqsTaskState,
               async ({ name, status, progress, eta, bps }) => {
                 if (!prereqsModal) {
@@ -193,54 +196,57 @@ export async function performLaunch(
               }
             );
 
-            convo.on(messages.PrereqsFailed, async ({ errorStack, error }) => {
-              closePrereqsModal();
+            convo.onRequest(
+              messages.PrereqsFailed,
+              async ({ errorStack, error }) => {
+                closePrereqsModal();
 
-              const { title } = game;
-              let errorMessage = error;
-              errorMessage = errorMessage.split("\n")[0];
+                const { title } = game;
+                let errorMessage = error;
+                errorMessage = errorMessage.split("\n")[0];
 
-              let log = logger.getLog();
+                let log = logger.getLog();
 
-              const res = await promisedModal(
-                store,
-                modals.showError.make({
-                  wind: "root",
-                  title: ["game.install.could_not_launch", { title }],
-                  message: [
-                    "game.install.could_not_launch.message",
-                    { title, errorMessage },
-                  ],
-                  detail: ["game.install.could_not_launch.detail"],
-                  widgetParams: {
-                    game,
-                    rawError: { stack: errorStack },
-                    log,
-                  },
-                  buttons: [
-                    {
-                      label: ["prompt.action.continue"],
-                      action: actions.modalResponse({
-                        continue: true,
-                      }),
+                const res = await promisedModal(
+                  store,
+                  modals.showError.make({
+                    wind: "root",
+                    title: ["game.install.could_not_launch", { title }],
+                    message: [
+                      "game.install.could_not_launch.message",
+                      { title, errorMessage },
+                    ],
+                    detail: ["game.install.could_not_launch.detail"],
+                    widgetParams: {
+                      game,
+                      rawError: { stack: errorStack },
+                      log,
                     },
-                    "cancel",
-                  ],
-                })
-              );
+                    buttons: [
+                      {
+                        label: ["prompt.action.continue"],
+                        action: actions.modalResponse({
+                          continue: true,
+                        }),
+                      },
+                      "cancel",
+                    ],
+                  })
+                );
 
-              if (res) {
-                return { continue: true };
+                if (res) {
+                  return { continue: true };
+                }
+
+                return { continue: false };
               }
+            );
 
-              return { continue: false };
-            });
-
-            convo.on(messages.PrereqsEnded, async () => {
+            convo.onNotification(messages.PrereqsEnded, async () => {
               closePrereqsModal();
             });
 
-            convo.on(messages.LaunchRunning, async () => {
+            convo.onNotification(messages.LaunchRunning, async () => {
               logger.info("Now running!");
               ctx.emitProgress({ progress: 1, stage: "run" });
 
@@ -251,12 +257,12 @@ export async function performLaunch(
               }
             });
 
-            convo.on(messages.LaunchExited, async () => {
+            convo.onNotification(messages.LaunchExited, async () => {
               logger.info("Exited!");
               ctx.emitProgress({ progress: -1, stage: "clean" });
             });
 
-            convo.on(messages.AllowSandboxSetup, async () => {
+            convo.onRequest(messages.AllowSandboxSetup, async () => {
               let messageString: LocalizedString = "";
               let detailString: LocalizedString = "";
 
@@ -307,7 +313,7 @@ export async function performLaunch(
       logger.debug(`Asked to stop, cancelling butler process`);
       cancelled = true;
       if (launchConvo) {
-        await launchConvo.cancel();
+        launchConvo.cancel();
       }
     },
   });

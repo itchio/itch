@@ -56,7 +56,7 @@ export default function (watcher: Watcher) {
         },
         (client) => {
           logger.debug(`Setting up handlers for TOTP & captcha`);
-          client.on(
+          client.onRequest(
             messages.ProfileRequestCaptcha,
             async ({ recaptchaUrl }) => {
               logger.info(`Showing captcha`);
@@ -84,7 +84,7 @@ export default function (watcher: Watcher) {
             }
           );
 
-          client.on(messages.ProfileRequestTOTP, async () => {
+          client.onRequest(messages.ProfileRequestTOTP, async () => {
             logger.info(`Showing TOTP`);
             const modalRes = await promisedModal(
               store,
