@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
-    "array-move": "^2.1.0",
+    "array-move": "^3.0.1",
     "btoa": "^1.2.1",
     "butlerd": "^11.3.0",
     "classnames": "^2.2.6",
