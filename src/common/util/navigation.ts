@@ -65,7 +65,7 @@ export function windSpec(): WindSpec {
   if (process.type !== "renderer") {
     throw new Error("windSpec() can only be called from the renderer");
   }
-  return (window as ExtendedWindow).windSpec;
+  return ((window as unknown) as ExtendedWindow).windSpec;
 }
 
 export function ambientWind(): string {

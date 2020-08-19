@@ -75,7 +75,7 @@ if (process.platform === "darwin") {
 
 async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
-  const extWindow = window as ExtendedWindow;
+  const extWindow = (window as unknown) as ExtendedWindow;
   extWindow.windSpec = {
     wind: String(opts.wind),
     role: String(opts.role) as any,

@@ -17,7 +17,7 @@ const HubSceneDiv = styled.div`
 
 class HubScene extends React.PureComponent {
   render() {
-    const iw = (window as ExtendedWindow).windSpec;
+    const iw = ((window as unknown) as ExtendedWindow).windSpec;
 
     return (
       <HubSceneDiv>
