@@ -20,6 +20,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
+    - npm ci
     - node release/package-all.js --os darwin --arch amd64
   artifacts:
     expire_in: 1 week
@@ -43,6 +44,7 @@ package-windows-amd64:
   tags:
     - windows
   script:
+    - npm ci
     - node release/package-all.js --os windows --arch amd64
   artifacts:
     expire_in: 1 week
