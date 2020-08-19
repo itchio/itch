@@ -28,7 +28,7 @@ class LocationPage extends React.PureComponent<Props> {
     );
   }
 
-  onResult = InstallLocationsGetByID.onResultCallback(result => {
+  onResult = InstallLocationsGetByID.onResultCallback((result) => {
     if (!(result && result.installLocation)) {
       return;
     }
@@ -53,7 +53,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(LocationPage)(map => ({
+  hookWithProps(LocationPage)((map) => ({
     installLocationId: map(
       (rs, props) => ambientTab(rs, props).location.firstPathElement
     ),

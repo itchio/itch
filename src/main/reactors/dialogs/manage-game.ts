@@ -8,13 +8,15 @@ import { mainLogger } from "main/logger";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 
-    const caves = (await mcall(messages.FetchCaves, {
-      filters: { gameId: game.id },
-    })).items;
+    const caves = (
+      await mcall(messages.FetchCaves, {
+        filters: { gameId: game.id },
+      })
+    ).items;
 
     const widgetParams: ManageGameParams = {
       game,

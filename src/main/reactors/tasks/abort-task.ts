@@ -5,7 +5,7 @@ import { getCurrentTasks } from "main/reactors/tasks/as-task-persistent-state";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.abortTask, async (store, action) => {
     const { id } = action.payload;
     const ctx = getCurrentTasks()[id];

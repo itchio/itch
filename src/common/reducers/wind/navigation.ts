@@ -11,7 +11,7 @@ const initialState: NavigationState = {
   tab: "initial-tab",
 };
 
-export default reducer<NavigationState>(initialState, on => {
+export default reducer<NavigationState>(initialState, (on) => {
   on(actions.tabOpened, (state, action) => {
     const { tab, background } = action.payload;
     if (!tab) {
@@ -95,7 +95,7 @@ export default reducer<NavigationState>(initialState, on => {
       map(snapshot.items, (tab: TabDataSave) => {
         return tab.id;
       }),
-      x => !!x
+      (x) => !!x
     );
 
     return {

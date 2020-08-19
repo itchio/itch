@@ -93,6 +93,6 @@ interface Props {
   pkg: PackageState;
 }
 
-export default hookWithProps(BrothComponent)(map => ({
+export default hookWithProps(BrothComponent)((map) => ({
   pkg: map((rs, props) => rs.broth.packages[props.name]),
 }))(BrothComponent);

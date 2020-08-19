@@ -47,7 +47,7 @@ const NavigationBarDiv = styled.div`
       content: " ";
       width: 100%;
       height: 2px;
-      background: ${props => props.theme.accent};
+      background: ${(props) => props.theme.accent};
       animation: ${styles.animations.lineSpinner} 2s ease-in-out infinite;
     }
   }
@@ -331,7 +331,7 @@ interface State {
 }
 
 export default withTab(
-  hookWithProps(NavigationBar)(map => ({
+  hookWithProps(NavigationBar)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     internalPage: map(
       (rs, props) => ambientTab(rs, props).location.internalPage

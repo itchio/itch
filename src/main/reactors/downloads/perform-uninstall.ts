@@ -10,7 +10,7 @@ export async function performUninstall(
 ) {
   const logger = parentLogger.child(__filename);
 
-  await mcall(messages.UninstallPerform, { caveId }, convo => {
+  await mcall(messages.UninstallPerform, { caveId }, (convo) => {
     hookLogging(convo, logger);
 
     convo.on(messages.TaskStarted, async ({ type, reason }) => {

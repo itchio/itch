@@ -4,7 +4,7 @@ import { actions } from "common/actions";
 import { promisedModal } from "main/reactors/modals";
 import { modals } from "common/modals";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
     const { wind } = action.payload;
     const response = await promisedModal(

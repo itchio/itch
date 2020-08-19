@@ -18,7 +18,7 @@ const logger = mainLogger.child(__filename);
 let testProxy = false;
 let proxyTested = false;
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     let t1 = Date.now();
     try {
@@ -85,9 +85,9 @@ export default function(watcher: Watcher) {
           app.setAsDefaultProtocolClient("itch");
         } catch (e) {
           logger.error(
-            `Could not set app as default protocol client: ${e.stack ||
-              e.message ||
-              e}`
+            `Could not set app as default protocol client: ${
+              e.stack || e.message || e
+            }`
           );
         }
       } else if (env.appName === "kitch") {
@@ -96,9 +96,9 @@ export default function(watcher: Watcher) {
           app.setAsDefaultProtocolClient("kitch");
         } catch (e) {
           logger.error(
-            `Could not set app as default protocol client: ${e.stack ||
-              e.message ||
-              e}`
+            `Could not set app as default protocol client: ${
+              e.stack || e.message || e
+            }`
           );
         }
       }

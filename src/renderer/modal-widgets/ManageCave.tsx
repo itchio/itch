@@ -40,7 +40,7 @@ const CaveItem = styled.div`
 
   .time-ago,
   .total-playtime {
-    color: ${props => props.theme.secondaryText} !important;
+    color: ${(props) => props.theme.secondaryText} !important;
   }
 `;
 

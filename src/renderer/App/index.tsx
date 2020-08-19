@@ -103,11 +103,11 @@ interface State {
 
 const emptyObj = {};
 
-export default hook(map => ({
-  locale: map(rs => rs.i18n.lang),
-  localeMessages: map(rs => {
+export default hook((map) => ({
+  locale: map((rs) => rs.i18n.lang),
+  localeMessages: map((rs) => {
     const { strings, lang } = rs.i18n;
     return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
   }),
-  fallbackMessages: map(rs => rs.i18n.strings.en || emptyObj),
+  fallbackMessages: map((rs) => rs.i18n.strings.en || emptyObj),
 }))(App);

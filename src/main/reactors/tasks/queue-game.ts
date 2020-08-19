@@ -15,7 +15,7 @@ import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-mo
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game, caveId } = action.payload;
     let caves: Cave[];
@@ -26,9 +26,11 @@ export default function(watcher: Watcher) {
         caves = [cave];
       }
     } else {
-      caves = (await mcall(messages.FetchCaves, {
-        filters: { gameId: game.id },
-      })).items;
+      caves = (
+        await mcall(messages.FetchCaves, {
+          filters: { gameId: game.id },
+        })
+      ).items;
     }
 
     if (isEmpty(caves)) {
@@ -55,7 +57,7 @@ export default function(watcher: Watcher) {
           wind: "root",
           title: ["prompt.launch.title", { title: game.title }],
           message: ["prompt.launch.message"],
-          bigButtons: map(caves, cave => {
+          bigButtons: map(caves, (cave) => {
             return {
               ...makeUploadButton(cave.upload),
               action: actions.queueLaunch({ cave }),

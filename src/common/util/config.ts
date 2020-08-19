@@ -18,25 +18,25 @@ try {
 }
 
 const self = {
-  save: function() {
+  save: function () {
     const promise = writeFile(configFile, JSON.stringify(data), {
       encoding: "utf8",
     });
-    promise.catch(err => {
+    promise.catch((err) => {
       console.warn(`Could not save config: ${err}`);
     });
   },
 
-  get: function(key: string): any {
+  get: function (key: string): any {
     return data[key];
   },
 
-  set: function(key: string, value: any) {
+  set: function (key: string, value: any) {
     data[key] = value;
     self.save();
   },
 
-  clear: function(key: string) {
+  clear: function (key: string) {
     delete data[key];
     self.save();
   },

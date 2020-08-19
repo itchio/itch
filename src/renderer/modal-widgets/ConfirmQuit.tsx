@@ -42,7 +42,7 @@ export default class ConfirmQuit extends React.PureComponent<Props> {
 
     return (
       <ModalWidgetDiv>
-        {map(gameIds, gameId => (
+        {map(gameIds, (gameId) => (
           <RunningGame gameId={gameId} key={gameId} />
         ))}
       </ModalWidgetDiv>

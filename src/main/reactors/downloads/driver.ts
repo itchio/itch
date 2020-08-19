@@ -9,7 +9,7 @@ import { Conversation } from "butlerd";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   // we don't have to worry about login because we start out with paused downloads
   // and it unpauses them on login.
 
@@ -63,7 +63,7 @@ async function driverPoll(store: Store) {
         state.setPhase(Phase.STARTING);
         let driveConvo: Conversation;
         try {
-          await mcall(messages.DownloadsDrive, {}, convo => {
+          await mcall(messages.DownloadsDrive, {}, (convo) => {
             hookLogging(convo, logger);
             state.registerConvo(convo);
             driveConvo = convo;

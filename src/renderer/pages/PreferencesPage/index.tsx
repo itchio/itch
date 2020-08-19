@@ -19,7 +19,7 @@ const PreferencesContentDiv = styled.div`
   padding: 0px 20px 30px 20px;
   font-size: 20px;
 
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
 
   .heading,
   h2 {

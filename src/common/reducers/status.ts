@@ -10,7 +10,7 @@ const initialState = {
   reduxLoggingEnabled: false,
 } as StatusState;
 
-export default reducer<StatusState>(initialState, on => {
+export default reducer<StatusState>(initialState, (on) => {
   on(actions.statusMessage, (state, action) => {
     const { message } = action.payload;
 

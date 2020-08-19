@@ -24,7 +24,7 @@ describe("group-id-by", () => {
     } as any);
 
     assert.deepEqual(
-      groupIdBy<typeof items[0]>(items, o => String(o.gameId * 10)),
+      groupIdBy<typeof items[0]>(items, (o) => String(o.gameId * 10)),
       {
         110: [1],
         440: [4],

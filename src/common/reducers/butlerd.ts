@@ -8,7 +8,7 @@ const initialState = {
   endpoint: null,
 } as ButlerdState;
 
-export default reducer<ButlerdState>(initialState, on => {
+export default reducer<ButlerdState>(initialState, (on) => {
   on(actions.gotButlerdEndpoint, (state, action) => {
     const { endpoint } = action.payload;
     return { ...state, endpoint };

@@ -5,7 +5,7 @@ import { parse as parseQueryString } from "querystring";
 import env from "common/env";
 if (process.env.NODE_ENV === "production") {
   // cf. https://electronjs.org/docs/tutorial/security
-  (window as any).eval = global.eval = function() {
+  (window as any).eval = global.eval = function () {
     throw new Error(`Sorry, this app does not support window.eval().`);
   };
 } else {
@@ -94,11 +94,11 @@ async function start() {
 
 start();
 
-document.addEventListener("drop", event => {
+document.addEventListener("drop", (event) => {
   event.preventDefault();
   const urls = event.dataTransfer.getData("text/uri-list");
   if (urls) {
-    urls.split("\n").forEach(url => {
+    urls.split("\n").forEach((url) => {
       store.dispatch(actions.navigate({ wind: ambientWind(), url }));
     });
   }

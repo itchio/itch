@@ -6,13 +6,13 @@ import { indexBy, map } from "underscore";
 const SPEED_DATA_POINT_COUNT = 60;
 
 const initialState: DownloadsState = {
-  speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
+  speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => 0),
   items: {},
   progresses: {},
   paused: true,
 };
 
-export default reducer<DownloadsState>(initialState, on => {
+export default reducer<DownloadsState>(initialState, (on) => {
   on(actions.downloadsListed, (state, action) => {
     const { downloads } = action.payload;
     return {

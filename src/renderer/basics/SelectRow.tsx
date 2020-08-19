@@ -13,10 +13,10 @@ const Select = styled.select`
   border: none;
   padding: 6px 8px;
   margin-left: 2px;
-  background: ${props => props.theme.itemBackground};
+  background: ${(props) => props.theme.itemBackground};
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 2px;
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;

@@ -33,7 +33,7 @@ const StripeDiv = styled.div`
 `;
 
 const FloaterContainer = styled.div`
-  background: ${props => props.theme.breadBackground};
+  background: ${(props) => props.theme.breadBackground};
   opacity: 0.7;
   padding: 4px;
 
@@ -45,8 +45,8 @@ const FloaterContainer = styled.div`
 
 const ViewAll = styled.a`
   position: absolute;
-  background: ${props => props.theme.breadBackground};
-  box-shadow: 0 0 30px ${props => props.theme.breadBackground};
+  background: ${(props) => props.theme.breadBackground};
+  box-shadow: 0 0 30px ${(props) => props.theme.breadBackground};
   padding: 0 4em;
   top: 0;
   bottom: 0;
@@ -177,7 +177,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       const { getGame } = this.props;
       return (
         <>
-          {result.items.map(item => {
+          {result.items.map((item) => {
             const game = getGame(item);
             if (!game || doneSet.has(game.id)) {
               return null;
@@ -200,7 +200,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       const { dispatch } = this.props;
       return (
         <>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(id => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => (
             <StripeItem key={`empty-${id}`} />
           ))}
         </>
@@ -214,7 +214,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
     }
   }
   let result = withTab(
-    hookWithProps(Stripe)(map => ({
+    hookWithProps(Stripe)((map) => ({
       sequence: map((rs, props) => ambientTab(rs, props).sequence),
     }))(Stripe)
   );

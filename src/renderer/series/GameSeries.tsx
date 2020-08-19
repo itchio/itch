@@ -43,8 +43,8 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
     constructor(props: Props, context: any) {
       super(props, context);
       this.selector = createStructuredSelector({
-        renderDescExtras: props => props.renderDescExtras,
-        renderItemExtras: props => props.renderItemExtras,
+        renderDescExtras: (props) => props.renderDescExtras,
+        renderItemExtras: (props) => props.renderItemExtras,
       });
     }
 

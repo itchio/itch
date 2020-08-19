@@ -177,7 +177,7 @@ function makeHandler(type: ErrorType) {
     }
 
     handle(type, e)
-      .catch(e2 => {
+      .catch((e2) => {
         // well, we tried.
         logger.error(`Error in crash-reporter (${type})\n${e2.stack}`);
       })

@@ -10,7 +10,7 @@ import { mcall } from "main/butlerd/mcall";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
       caveId,
       store,
       work: async (ctx, logger) => {
-        await mcall(messages.UninstallPerform, { caveId }, convo => {
+        await mcall(messages.UninstallPerform, { caveId }, (convo) => {
           hookProgress(convo, ctx);
           hookLogging(convo, logger.child(__filename));
 

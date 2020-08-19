@@ -28,7 +28,7 @@ import PrimeDownload from "renderer/scenes/HubScene/Sidebar/PrimeDownload";
 
 const SidebarDiv = styled.div`
   width: 240px;
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
   animation: ${styles.animations.enterLeft} 0.2s;
@@ -252,13 +252,13 @@ interface State {
   openTabs: string[];
 }
 
-export default hook(map => ({
-  me: map(rs => rs.profile.profile.user),
+export default hook((map) => ({
+  me: map((rs) => rs.profile.profile.user),
 
-  tab: map(rs => ambientNavigation(rs).tab),
-  openTabs: map(rs => ambientNavigation(rs).openTabs),
-  enableTabs: map(rs => rs.preferences.enableTabs),
-  url: map(rs => {
+  tab: map((rs) => ambientNavigation(rs).tab),
+  openTabs: map((rs) => ambientNavigation(rs).openTabs),
+  enableTabs: map((rs) => rs.preferences.enableTabs),
+  url: map((rs) => {
     const ws = ambientWindState(rs);
     const ti = ws.tabInstances[ambientNavigation(rs).tab];
     return ti.history[ti.currentIndex].url;

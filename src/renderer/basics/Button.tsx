@@ -12,7 +12,7 @@ const ButtonDiv = styled.div`
   ${styles.singleLine};
   transition: all 0.2s;
 
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
   font-weight: normal;
   padding: 4px 10px;
 
@@ -27,15 +27,15 @@ const ButtonDiv = styled.div`
   );
   border-color: hsla(355, 40%, 44%, 1);
 
-  box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
+  box-shadow: 0 1px 3px ${(props) => props.theme.inputBoxShadow};
   text-shadow: 0px 1px rgba(0, 0, 0, 0.4);
 
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
   min-height: 38px;
   min-width: 7em;
 
   &:hover {
-    box-shadow: 0 0 8px ${props => props.theme.inputBoxShadow};
+    box-shadow: 0 0 8px ${(props) => props.theme.inputBoxShadow};
     cursor: pointer;
   }
 
@@ -54,7 +54,7 @@ const ButtonDiv = styled.div`
   }
 
   &.fat {
-    font-size: ${props => props.theme.fontSizes.huge};
+    font-size: ${(props) => props.theme.fontSizes.huge};
     font-weight: bold;
     padding: 16px 80px;
   }
@@ -62,7 +62,7 @@ const ButtonDiv = styled.div`
   &.wide {
     min-width: 160px;
     justify-content: center;
-    font-size: ${props => props.theme.fontSizes.large};
+    font-size: ${(props) => props.theme.fontSizes.large};
     padding-top: 16px;
     padding-bottom: 12px;
     padding-left: 20px;

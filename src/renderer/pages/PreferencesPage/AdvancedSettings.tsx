@@ -88,6 +88,6 @@ interface Props {
   system: SystemState;
 }
 
-export default hook(map => ({
-  system: map(rs => rs.system),
+export default hook((map) => ({
+  system: map((rs) => rs.system),
 }))(AdvancedSettings);

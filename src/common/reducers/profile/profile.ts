@@ -4,7 +4,7 @@ import { Profile } from "common/butlerd/messages";
 
 const initialState = null as Profile;
 
-export default reducer<Profile>(initialState, on => {
+export default reducer<Profile>(initialState, (on) => {
   on(actions.loginSucceeded, (state, action) => {
     const { profile } = action.payload;
     return profile;

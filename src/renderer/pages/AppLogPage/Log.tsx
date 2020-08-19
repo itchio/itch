@@ -43,7 +43,7 @@ const LogControls = styled.div`
 `;
 
 const LogTable = styled.table`
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   width: 100%;
   height: 100%;
 
@@ -61,8 +61,8 @@ const LogTable = styled.table`
     padding: 0 0.5em;
     padding-left: 0;
     line-height: 1.4;
-    color: ${props => props.theme.secondaryText};
-    font-size: ${props => props.theme.fontSizes.smaller};
+    color: ${(props) => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.smaller};
 
     &.fatal {
       background: #cd3131;
@@ -95,7 +95,7 @@ const LogTable = styled.table`
     }
 
     &.timecol {
-      color: ${props => props.theme.ternaryText};
+      color: ${(props) => props.theme.ternaryText};
     }
   }
 `;
@@ -123,7 +123,7 @@ class Log extends React.PureComponent<Props, State> {
     const { log, className, extraControls } = this.props;
     let lines = log.split("\n");
 
-    let entries = lines.map(x => {
+    let entries = lines.map((x) => {
       // TODO: use fast-json-parse instead ?
       try {
         const entry = JSON.parse(x);
@@ -132,7 +132,7 @@ class Log extends React.PureComponent<Props, State> {
         return x;
       }
     });
-    entries = _.filter(entries, x => (x.level ? x.level >= level : false));
+    entries = _.filter(entries, (x) => (x.level ? x.level >= level : false));
     let hasMore = _.size(entries) > maxLines;
     entries = _.last(entries, maxLines);
 
@@ -219,7 +219,7 @@ class Log extends React.PureComponent<Props, State> {
   }
 
   onLoadMore = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       maxLines: state.maxLines + linesPerPage,
     }));
   };

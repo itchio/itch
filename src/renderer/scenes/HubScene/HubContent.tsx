@@ -30,6 +30,6 @@ interface Props {
   profile: Profile;
 }
 
-export default hook(map => ({
-  profile: map(rs => rs.profile.profile),
+export default hook((map) => ({
+  profile: map((rs) => rs.profile.profile),
 }))(HubContent);

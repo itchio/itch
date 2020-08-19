@@ -56,7 +56,7 @@ interface SortOptionsProps {
   reverse: boolean;
 }
 
-const hooked = hookWithProps(SortOptionBase)(map => ({
+const hooked = hookWithProps(SortOptionBase)((map) => ({
   url: map((rs, props) => ambientTab(rs, props).location.url),
   active: map(
     (rs, props) => ambientTab(rs, props).location.query.sortBy === props.sortBy

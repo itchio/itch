@@ -27,7 +27,7 @@ class RememberedProfiles extends React.PureComponent<Props> {
 
     return (
       <RememberedProfilesDiv>
-        {map(profiles, profile => (
+        {map(profiles, (profile) => (
           <RememberedProfile key={profile.user.id} profile={profile} />
         ))}
 

@@ -18,7 +18,7 @@ type ExtendedGlobal = typeof global & {
 };
 const extendedGlobal = global as ExtendedGlobal;
 
-(function() {
+(function () {
   try {
     console.log(
       "%c ========== Loading itch app HTML5 environment ===========",

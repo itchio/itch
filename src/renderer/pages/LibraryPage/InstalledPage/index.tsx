@@ -44,9 +44,9 @@ class InstalledPage extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = CaveGameSeries.getRecordCallback(cave => cave.game);
-  getKey = CaveGameSeries.getKeyCallback(cave => cave.id);
-  renderItemExtras = CaveGameSeries.renderItemExtrasCallback(cave => (
+  getRecord = CaveGameSeries.getRecordCallback((cave) => cave.game);
+  getKey = CaveGameSeries.getKeyCallback((cave) => cave.id);
+  renderItemExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
     <StandardMainAction game={cave.game} />
   ));
   renderMainFilters = () => <SearchControl />;
@@ -79,7 +79,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(InstalledPage)(map => ({
+  hookWithProps(InstalledPage)((map) => ({
     sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
     sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
     search: map((rs, props) => ambientTab(rs, props).location.query.search),

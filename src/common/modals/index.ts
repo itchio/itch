@@ -69,8 +69,8 @@ function widget<Params, Response>(): ModalWidgetSpec<Params, Response> {
   let spec: ModalWidgetSpec<Params, Response>;
   spec = {
     key: null,
-    action: payload => actions.modalResponse(payload),
-    make: base => {
+    action: (payload) => actions.modalResponse(payload),
+    make: (base) => {
       return {
         ...base,
         widget: spec.key,
@@ -78,7 +78,7 @@ function widget<Params, Response>(): ModalWidgetSpec<Params, Response> {
         id: uuid(),
       };
     },
-    update: payload => {
+    update: (payload) => {
       return {
         ...payload,
         __params: undefined,

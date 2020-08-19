@@ -11,7 +11,7 @@ const initialState = {
   },
 } as SetupState;
 
-export default reducer<SetupState>(initialState, on => {
+export default reducer<SetupState>(initialState, (on) => {
   on(actions.setupStatus, (state, action) => {
     const blockingOperation = action.payload;
     return {

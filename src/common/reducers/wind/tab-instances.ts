@@ -21,7 +21,7 @@ const tabOpenedType = actions.tabOpened({} as any).type;
 const tabsClosedType = actions.tabsClosed({} as any).type;
 const loggedOutType = actions.loggedOut({} as any).type;
 
-export default function(state: TabInstances, action: Action<any>) {
+export default function (state: TabInstances, action: Action<any>) {
   if (typeof state === "undefined") {
     return initialState();
   }

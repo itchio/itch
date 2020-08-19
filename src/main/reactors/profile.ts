@@ -3,7 +3,7 @@ import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 import { getActiveDownload } from "main/reactors/downloads/getters";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     // resume downloads
     store.dispatch(actions.setDownloadsPaused({ paused: false }));

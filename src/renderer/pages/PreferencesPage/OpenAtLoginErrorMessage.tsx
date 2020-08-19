@@ -50,6 +50,6 @@ interface Props {
   openAtLoginError: OpenAtLoginError;
 }
 
-export default hook(map => ({
-  openAtLoginError: map(rs => rs.status.openAtLoginError),
+export default hook((map) => ({
+  openAtLoginError: map((rs) => rs.status.openAtLoginError),
 }))(OpenAtLoginErrorMessage);

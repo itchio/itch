@@ -4,23 +4,23 @@ import { first, filter, sortBy } from "underscore";
 import { memoize } from "common/util/lru-memoize";
 import { Download } from "common/butlerd/messages";
 
-export const getActiveDownload = memoize(1, function(
+export const getActiveDownload = memoize(1, function (
   downloads: DownloadsState
 ): Download {
   return first(getPendingDownloads(downloads));
 });
 
-export const getPendingDownloads = memoize(1, function(
+export const getPendingDownloads = memoize(1, function (
   downloads: DownloadsState
 ): Download[] {
-  const pending = filter(downloads.items, i => !i.finishedAt);
+  const pending = filter(downloads.items, (i) => !i.finishedAt);
   return sortBy(pending, "position");
 });
 
-export const getFinishedDownloads = memoize(1, function(
+export const getFinishedDownloads = memoize(1, function (
   downloads: DownloadsState
 ): Download[] {
-  const pending = filter(downloads.items, i => !!i.finishedAt);
+  const pending = filter(downloads.items, (i) => !!i.finishedAt);
   return sortBy(pending, "finishedAt").reverse();
 });
 
@@ -30,6 +30,6 @@ export function getPendingForGame(
 ): Download[] {
   return filter(
     getPendingDownloads(downloads),
-    i => i.game && +i.game.id === +gameId
+    (i) => i.game && +i.game.id === +gameId
   );
 }

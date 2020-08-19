@@ -8,7 +8,7 @@ export function fillShape(input: any, shape: Shape): any {
   }
   if (Array.isArray(input)) {
     const arr = input as any[];
-    return arr.map(subInput => fillShape(subInput, shape));
+    return arr.map((subInput) => fillShape(subInput, shape));
   }
   const keys = Object.keys(shape);
   let output: any = {};

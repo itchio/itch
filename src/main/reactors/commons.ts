@@ -45,7 +45,7 @@ async function updateCommonsNowThrows(store: Store) {
 
 const updateCommons = throttle(updateCommonsNow, 500);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     updateCommons(store);
   });

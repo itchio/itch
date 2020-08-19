@@ -52,7 +52,7 @@ export class Watcher {
       oldRs = rs;
 
       if (!selector) {
-        const schedule: Schedule = f => {
+        const schedule: Schedule = (f) => {
           setImmediate(() => {
             try {
               f();
@@ -98,7 +98,7 @@ export class Watcher {
   }
 
   validate() {
-    each(Object.keys(this.reactors), key => {
+    each(Object.keys(this.reactors), (key) => {
       if (!actions.hasOwnProperty(key)) {
         throw new Error(`trying to react to unknown action type ${key}`);
       }

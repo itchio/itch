@@ -29,7 +29,7 @@ const CaveItem = styled.div`
   margin: 12px 4px;
   padding: 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: ${props => props.theme.itemBackground};
+  background: ${(props) => props.theme.itemBackground};
   border-radius: 2px;
 
   display: flex;
@@ -79,7 +79,7 @@ const Title = styled.div`
 `;
 
 const FileSize = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   margin-left: 8px;
 `;
 
@@ -94,7 +94,7 @@ class ManageGame extends React.PureComponent<Props> {
     const { game, caves, allUploads, loadingUploads } = params;
 
     const installedUploadIds: { [key: number]: boolean } = {};
-    each(caves, cave => {
+    each(caves, (cave) => {
       if (cave.upload) {
         installedUploadIds[cave.upload.id] = true;
       }
@@ -102,7 +102,7 @@ class ManageGame extends React.PureComponent<Props> {
 
     const uninstalledUploads = filter(
       allUploads,
-      u => !installedUploadIds[u.id]
+      (u) => !installedUploadIds[u.id]
     );
 
     return (
@@ -169,7 +169,7 @@ class ManageGame extends React.PureComponent<Props> {
         )}
         {uninstalledUploads.length > 0 ? (
           <CaveItemList>
-            {map(uninstalledUploads, u => {
+            {map(uninstalledUploads, (u) => {
               return (
                 <CaveItem key={u.id}>
                   <CaveDetails>

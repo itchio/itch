@@ -41,7 +41,7 @@ class LogoIndicator extends React.PureComponent<Props> {
         type: "delayed",
         start: "manual",
         animTimingFunction: Vivus.EASE_OUT,
-        onReady: vivus => {
+        onReady: (vivus) => {
           this.vivus = vivus;
           this.update();
         },
@@ -64,8 +64,8 @@ interface Props {
   progress: number;
 }
 
-export default hook(map => ({
-  progress: map(rs => {
+export default hook((map) => ({
+  progress: map((rs) => {
     const { blockingOperation, done } = rs.setup;
     if (done) {
       return 1.0;

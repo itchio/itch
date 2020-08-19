@@ -279,20 +279,20 @@ export const animations = {
 // mixins
 
 export const heavyInput = css`
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
   padding: 12px 10px 9px 10px;
   margin: 8px 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 
   background-color: rgba(0, 0, 0, 0.4);
-  color: ${props => props.theme.inputText};
+  color: ${(props) => props.theme.inputText};
 
-  text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
+  text-shadow: 0 0 2px ${(props) => props.theme.inputTextShadow};
   transition: all 0.4s;
 
   &::-webkit-input-placeholder {
     text-shadow: 0 0 2px transparent;
-    color: ${props => props.theme.inputPlaceholder};
+    color: ${(props) => props.theme.inputPlaceholder};
   }
 
   &:focus {
@@ -302,10 +302,10 @@ export const heavyInput = css`
 `;
 
 export const searchInput = css`
-  color: ${props => props.theme.secondaryTextHover};
+  color: ${(props) => props.theme.secondaryTextHover};
 
   ::-webkit-input-placeholder {
-    color: ${props => props.theme.inputPlaceholder};
+    color: ${(props) => props.theme.inputPlaceholder};
   }
 
   background: none;
@@ -322,7 +322,7 @@ export const searchIcon = css`
   bottom: 50%;
   transform: translateY(50%);
   font-size: 14px;
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   pointer-events: none;
 `;
 
@@ -357,7 +357,7 @@ export const progress = css`
     left: 0;
     top: 0;
     bottom: 0;
-    background-color: ${props => props.theme.accent};
+    background-color: ${(props) => props.theme.accent};
     background-image: -webkit-repeating-linear-gradient(
       -60deg,
       ${downloadProgressColorInA} 0,
@@ -371,9 +371,9 @@ export const progress = css`
 export const horizontalScan = css`
   background: -webkit-linear-gradient(
     left,
-    ${props => props.theme.secondaryTextHover} 0%
-      ${props => props.theme.secondaryTextHover} 50%
-      ${props => props.theme.secondaryText} 50%
+    ${(props) => props.theme.secondaryTextHover} 0%
+      ${(props) => props.theme.secondaryTextHover} 50%
+      ${(props) => props.theme.secondaryText} 50%
   );
   background-size: 200% 100%;
   animation: horizontal-scan 2s infinite;
@@ -389,12 +389,12 @@ export const singleLine = css`
 `;
 
 export const secondaryLink = css`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   text-decoration: underline;
 
   &:hover {
     cursor: pointer;
-    color: ${props => props.theme.secondaryTextHover};
+    color: ${(props) => props.theme.secondaryTextHover};
   }
 `;
 
@@ -406,25 +406,25 @@ export const meat = css`
   width: 100%;
   max-height: 100%;
 
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
 `;
 
 export const prefChunk = css`
-  border-left: 3px solid ${props => props.theme.prefBorder};
+  border-left: 3px solid ${(props) => props.theme.prefBorder};
   transition: 0.2s border ease-in-out;
 `;
 
 export const prefChunkActive = css`
-  border-left: 3px solid ${props => props.theme.accent};
+  border-left: 3px solid ${(props) => props.theme.accent};
 `;
 
 export const boxy = css`
   border: 1px solid rgba(255, 255, 255, 0.05);
-  background: ${props => props.theme.itemBackground};
+  background: ${(props) => props.theme.itemBackground};
   overflow: hidden;
 `;
 
 export const windowBorder = css`
-  border: 1px solid ${props => props.theme.windowBorder};
+  border: 1px solid ${(props) => props.theme.windowBorder};
   border-radius: 2px;
 `;

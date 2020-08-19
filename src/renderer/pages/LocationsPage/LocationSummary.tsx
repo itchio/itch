@@ -18,7 +18,7 @@ const LocationStripe = makeGameStripe(messages.FetchCaves);
 
 const SizeTag = styled.div`
   margin-left: 1em;
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
 class LocationSummary extends React.PureComponent<Props> {
@@ -40,7 +40,7 @@ class LocationSummary extends React.PureComponent<Props> {
     );
   }
 
-  getGame = LocationStripe.getGameCallback(cave => cave.game);
+  getGame = LocationStripe.getGameCallback((cave) => cave.game);
   renderTitleExtras = () => {
     const { location } = this.props;
     let installedSize: string;

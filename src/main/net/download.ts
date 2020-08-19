@@ -47,7 +47,7 @@ export async function downloadToFile(
       {
         sink: () => {
           progressStream = progress({ length: totalSize, time: 500 });
-          progressStream.on("progress", info => {
+          progressStream.on("progress", (info) => {
             onProgress({
               progress: info.percentage / 100,
               eta: info.eta,
@@ -64,7 +64,7 @@ export async function downloadToFile(
           progressStream.pipe(fileSink);
           return progressStream;
         },
-        cb: res => {
+        cb: (res) => {
           logger.info(`HTTP ${res.statusCode} ${url}`);
           if (!/^2/.test("" + res.statusCode)) {
             const e = new Error(`HTTP ${res.statusCode} ${url}`) as HTTPError;

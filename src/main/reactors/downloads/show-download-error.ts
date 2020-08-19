@@ -8,7 +8,7 @@ import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-mo
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.showDownloadError, async (store, action) => {
     const { id } = action.payload;
 

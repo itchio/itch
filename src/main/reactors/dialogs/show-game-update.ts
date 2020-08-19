@@ -7,7 +7,7 @@ import { ModalButtonSpec } from "common/types";
 import { modals } from "common/modals";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.showGameUpdate, async (store, action) => {
     const { update } = action.payload;
     const { game } = update;
@@ -41,7 +41,7 @@ export default function(watcher: Watcher) {
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,
-          bigButtons: map(update.choices, choice => {
+          bigButtons: map(update.choices, (choice) => {
             const spec: ModalButtonSpec = {
               ...makeUploadButton(choice.upload, { showSize: false }),
               action: actions.queueGameUpdate({ update, choice }),

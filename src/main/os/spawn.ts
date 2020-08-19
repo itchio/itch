@@ -62,7 +62,7 @@ interface SpawnInterface {
 
 let spawn: SpawnInterface;
 
-spawn = async function(opts: SpawnOpts): Promise<number> {
+spawn = async function (opts: SpawnOpts): Promise<number> {
   const { ctx, split, onToken, onErrToken, logger = spawnLogger } = opts;
   if (!ctx) {
     throw new Error("spawn cannot be called with a null context");
@@ -141,14 +141,14 @@ spawn = async function(opts: SpawnOpts): Promise<number> {
   });
 } as any;
 
-spawn.assert = async function(opts: SpawnOpts): Promise<void> {
+spawn.assert = async function (opts: SpawnOpts): Promise<void> {
   const code = await spawn(opts);
   if (code !== 0) {
     throw new Error(`spawn ${opts.command} exit code: ${formatExitCode(code)}`);
   }
 };
 
-spawn.exec = async function(opts: SpawnOpts): Promise<ExecResult> {
+spawn.exec = async function (opts: SpawnOpts): Promise<ExecResult> {
   let out = "";
   let err = "";
 
@@ -174,7 +174,7 @@ spawn.exec = async function(opts: SpawnOpts): Promise<ExecResult> {
   return { code, out, err };
 };
 
-spawn.getOutput = async function(opts: SpawnOpts): Promise<string> {
+spawn.getOutput = async function (opts: SpawnOpts): Promise<string> {
   const { code, err, out } = await spawn.exec(opts);
   const { command } = opts;
 
@@ -186,7 +186,7 @@ spawn.getOutput = async function(opts: SpawnOpts): Promise<string> {
   return out.trim();
 };
 
-spawn.escapePath = function(arg) {
+spawn.escapePath = function (arg) {
   return `"${arg.replace(/"/g, '\\"')}"`;
 };
 

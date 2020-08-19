@@ -336,7 +336,7 @@ export class Package implements PackageLike {
       logger.info(`...to (${archivePath})`);
 
       await downloadToFileWithRetry(
-        info => {
+        (info) => {
           let newInfo = {
             ...info,
             progress: downloadStart + info.progress * downloadWeight,
@@ -358,7 +358,7 @@ export class Package implements PackageLike {
         archivePath,
         destination: versionPrefix,
         logger,
-        onProgress: info => {
+        onProgress: (info) => {
           let newInfo = {
             ...info,
             progress: extractStart + info.progress * extractWeight,
@@ -469,7 +469,7 @@ export class Package implements PackageLike {
       logger.warn(`Sanity check failed: ${e.message}`);
       return false;
     } finally {
-      ctx.tryAbort().catch(e => {
+      ctx.tryAbort().catch((e) => {
         logger.warn(`While aborting validation context: ${e.stack}`);
       });
     }

@@ -43,8 +43,8 @@ class LocationContents extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = CaveGameSeries.getRecordCallback(cave => cave.game);
-  getKey = CaveGameSeries.getKeyCallback(cave => cave.id);
+  getRecord = CaveGameSeries.getRecordCallback((cave) => cave.game);
+  getKey = CaveGameSeries.getKeyCallback((cave) => cave.id);
   renderMainFilters = () => {
     const { location } = this.props;
     return (
@@ -75,7 +75,7 @@ class LocationContents extends React.PureComponent<Props> {
       </FilterGroup>
     </SortsAndFilters>
   );
-  renderItemExtras = CaveGameSeries.renderItemExtrasCallback(cave => (
+  renderItemExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
     <LocationItemExtras cave={cave} />
   ));
 
@@ -112,7 +112,7 @@ interface Props {
 }
 
 export default withTab(
-  hookWithProps(LocationContents)(map => ({
+  hookWithProps(LocationContents)((map) => ({
     installLocationId: map(
       (rs, props) => ambientTab(rs, props).location.firstPathElement
     ),

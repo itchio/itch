@@ -17,7 +17,7 @@ interface Snapshot {
 
 const tabAutoSaveThreshold = 1 * 1000;
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.onDebounced(
     actions.tabsChanged,
     tabAutoSaveThreshold,
@@ -41,7 +41,7 @@ export async function saveTabs(store: Store) {
   const { tab, openTabs } = navigation;
   const profileId = profile.id;
   let items: TabDataSave[];
-  items = map(openTabs, id => {
+  items = map(openTabs, (id) => {
     const ti = tabInstances[id];
     if (!ti) {
       return null;
@@ -52,7 +52,7 @@ export async function saveTabs(store: Store) {
     const savedLabel = sp.label();
     return { id, history, currentIndex, savedLabel };
   });
-  items = filter(items, x => !!x);
+  items = filter(items, (x) => !!x);
 
   const snapshot: Snapshot = { current: tab, items };
 
@@ -84,7 +84,7 @@ export async function restoreTabs(store: Store, profile: Profile) {
       }
     }
 
-    const validTabs = new Set(snapshot.items.map(x => x.id));
+    const validTabs = new Set(snapshot.items.map((x) => x.id));
     if (validTabs.has(snapshot.current)) {
       store.dispatch(
         actions.tabsRestored({

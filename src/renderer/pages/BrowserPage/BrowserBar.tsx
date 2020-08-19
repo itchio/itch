@@ -57,7 +57,7 @@ interface Props {
 }
 
 export default withTab(
-  hookWithProps(BrowserBar)(map => ({
+  hookWithProps(BrowserBar)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     loading: map((rs, props) => ambientTab(rs, props).loading),
   }))(BrowserBar)

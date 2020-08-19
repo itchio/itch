@@ -12,7 +12,7 @@ import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template"
 import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 
-export default function(watcher: Watcher, runtime: Runtime) {
+export default function (watcher: Watcher, runtime: Runtime) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       let templateSelector = createSelector(

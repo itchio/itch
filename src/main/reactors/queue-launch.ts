@@ -17,7 +17,7 @@ import { t } from "common/format/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { modals } from "common/modals";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {
     const { cave } = action.payload;
     const { game } = cave;

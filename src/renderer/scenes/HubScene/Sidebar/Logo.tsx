@@ -70,6 +70,6 @@ interface Props {
   appVersion: string;
 }
 
-export default hook(map => ({
-  appVersion: map(rs => rs.system.appVersion),
+export default hook((map) => ({
+  appVersion: map((rs) => rs.system.appVersion),
 }))(Logo);

@@ -70,7 +70,7 @@ const LoadMoreContainer = styled.div`
 `;
 
 const LoadMoreText = styled.div`
-  font-size: ${props => props.theme.fontSizes.huge};
+  font-size: ${(props) => props.theme.fontSizes.huge};
 `;
 
 interface Snapshot {
@@ -215,7 +215,7 @@ export function makeSeries<
       let doneSet = new Set<any>();
       return (
         <>
-          {items.map(item => {
+          {items.map((item) => {
             const record = getRecord(item);
             if (!record) {
               return null;
@@ -405,13 +405,13 @@ export function makeSeries<
     };
 
     loadNextPage = (cursor: string) => {
-      this.setState(state => ({
+      this.setState((state) => ({
         cursors: [...state.cursors, cursor],
       }));
     };
   }
   return withTab(
-    hookWithProps(Series)(map => ({
+    hookWithProps(Series)((map) => ({
       sequence: map((rs, props) => ambientTab(rs, props).sequence),
       restoredScrollTop: map(
         (rs, props) => ambientPage(rs, props).restoredScrollTop

@@ -48,7 +48,7 @@ function loadURL(wc: WebContents, url: string) {
   wc.loadURL(url);
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.windHtmlFullscreenChanged, async (store, action) => {
     const { wind, htmlFullscreen } = action.payload;
 
@@ -79,7 +79,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.analyzePage, async (store, action) => {
     const { wind, tab, url } = action.payload;
-    await withWebContents(store, wind, tab, async wc => {
+    await withWebContents(store, wind, tab, async (wc) => {
       const onNewPath = (url: string, resource: string) => {
         if (resource) {
           logger.debug(`Got resource ${resource}`);
@@ -105,7 +105,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.tabReloaded, async (store, action) => {
     const { wind, tab } = action.payload;
-    withWebContents(store, wind, tab, wc => {
+    withWebContents(store, wind, tab, (wc) => {
       wc.reload();
     });
   });
@@ -113,7 +113,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.commandStop, async (store, action) => {
     const { wind } = action.payload;
     const { tab } = store.getState().winds[wind].navigation;
-    withWebContents(store, wind, tab, wc => {
+    withWebContents(store, wind, tab, (wc) => {
       wc.stop();
     });
   });
@@ -151,7 +151,7 @@ export default function(watcher: Watcher) {
     const { wind, tab } = action.payload;
     if (tab) {
       const { tab } = store.getState().winds[wind].navigation;
-      withWebContents(store, wind, tab, wc => {
+      withWebContents(store, wind, tab, (wc) => {
         wc.openDevTools({ mode: "detach" });
       });
     } else {
@@ -236,7 +236,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    withWebContents(store, wind, tab, wc => {
+    withWebContents(store, wind, tab, (wc) => {
       let offset = index - oldIndex;
       const url = rs.winds[wind].tabInstances[tab].history[index].url;
       if (
@@ -280,7 +280,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    withWebContents(store, wind, tab, async wc => {
+    withWebContents(store, wind, tab, async (wc) => {
       const webUrl = wc.history[wc.currentIndex];
       if (webUrl !== url) {
         logger.debug(
@@ -319,9 +319,7 @@ async function hookWebContents(
   wc.on("certificate-error", (ev, url, error, certificate, cb) => {
     cb(false);
     logger.warn(
-      `Certificate error ${error} for ${url}, issued by ${
-        certificate.issuerName
-      } for ${certificate.subjectName}`
+      `Certificate error ${error} for ${url}, issued by ${certificate.issuerName} for ${certificate.subjectName}`
     );
   });
 
@@ -483,9 +481,7 @@ async function hookWebContents(
     logger.debug(`=================================`);
     logger.debug(`navigation-entry-committed ${url}`);
     logger.debug(
-      `currentIndex ${wc.currentIndex} pendingIndex ${
-        wc.pendingIndex
-      } inPageIndex ${wc.inPageIndex} inPage ${inPage}`
+      `currentIndex ${wc.currentIndex} pendingIndex ${wc.pendingIndex} inPageIndex ${wc.inPageIndex} inPage ${inPage}`
     );
 
     printWebContentsHistory(previousIndex);

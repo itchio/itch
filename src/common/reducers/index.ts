@@ -3,7 +3,7 @@ import { RootState, Action } from "common/types";
 
 let all = allInitial;
 
-let extModule = module as (typeof module & { hot?: { accept?: any } });
+let extModule = module as typeof module & { hot?: { accept?: any } };
 
 if (extModule.hot) {
   extModule.hot.accept("./all", () => {

@@ -15,7 +15,7 @@ const logger = mainLogger.child(__filename);
 
 let shownHistoryItems = 12;
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.commandGoBack, async (store, action) => {
     const { wind } = action.payload;
     const { tab } = store.getState().winds[wind].navigation;
@@ -339,7 +339,7 @@ function makeSubWatcher(rs: RootState) {
       makeSelector: (store, schedule) =>
         createSelector(
           (rs: RootState) => rs.winds[wind].navigation.tab,
-          tab => schedule.dispatch(actions.tabChanged({ wind, tab }))
+          (tab) => schedule.dispatch(actions.tabChanged({ wind, tab }))
         ),
     });
 

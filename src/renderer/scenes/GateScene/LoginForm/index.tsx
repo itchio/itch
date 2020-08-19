@@ -25,7 +25,7 @@ const ErrorDiv = styled.div`
     margin-right: 8px;
   }
 
-  color: ${props => props.theme.error};
+  color: ${(props) => props.theme.error};
 `;
 
 const PasswordContainer = styled.div`
@@ -40,12 +40,12 @@ const RevealButton = styled(IconButton)`
   font-size: 20px;
 
   .icon {
-    color: ${props => props.theme.ternaryText} !important;
+    color: ${(props) => props.theme.ternaryText} !important;
   }
 
   &.passwordShown {
     .icon {
-      color: ${props => props.theme.accent} !important;
+      color: ${(props) => props.theme.accent} !important;
     }
   }
 `;
@@ -209,7 +209,7 @@ const Form = styled.form`
 
     span {
       margin: 0 4px;
-      color: ${props => props.theme.secondaryText};
+      color: ${(props) => props.theme.secondaryText};
       font-size: 90%;
     }
   }
@@ -220,7 +220,7 @@ const Form = styled.form`
 
   input {
     ${styles.heavyInput};
-    font-size: ${props => props.theme.fontSizes.large};
+    font-size: ${(props) => props.theme.fontSizes.large};
     width: 380px;
   }
 
@@ -245,7 +245,7 @@ interface State {
   passwordShown: boolean;
 }
 
-export default hook(map => ({
-  lastUsername: map(rs => rs.profile.login.lastUsername),
-  error: map(rs => rs.profile.login.error),
+export default hook((map) => ({
+  lastUsername: map((rs) => rs.profile.login.lastUsername),
+  error: map((rs) => rs.profile.login.error),
 }))(LoginForm);

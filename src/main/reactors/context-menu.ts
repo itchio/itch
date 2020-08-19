@@ -26,7 +26,7 @@ function openMenu(
   store.dispatch(actions.popupContextMenu({ template, ...base }));
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.openGameContextMenu, async (store, action) => {
     const { game } = action.payload;
     const template = gameControls(store, game);

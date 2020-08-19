@@ -10,10 +10,10 @@ describe("Context", () => {
 
     let p1 = 0;
     let p2 = 0;
-    c.on("progress", info => {
+    c.on("progress", (info) => {
       p1 = info.progress;
     });
-    c.on("progress", info => {
+    c.on("progress", (info) => {
       p2 = info.progress;
     });
 
@@ -93,7 +93,7 @@ describe("Context", () => {
           return Promise.resolve();
         },
       })
-      .catch(e => {
+      .catch((e) => {
         if (isCancelled(e)) {
           cancelledSecondTask = true;
         } else {
@@ -114,7 +114,7 @@ describe("Context", () => {
 
     let subRef: Context;
     let canAbort = false;
-    c.withSub(async sub => {
+    c.withSub(async (sub) => {
       subRef = sub;
       await sub.withStopper({
         stop: async () => {

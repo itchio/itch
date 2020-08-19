@@ -3,7 +3,7 @@ import reducer from "common/reducers/reducer";
 
 const initialState: string[] = [];
 
-export default reducer<string[]>(initialState, on => {
+export default reducer<string[]>(initialState, (on) => {
   on(actions.pushItchioURI, (state, action) => {
     const { uri } = action.payload;
     return [...state, uri];

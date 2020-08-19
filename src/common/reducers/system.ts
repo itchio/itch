@@ -7,7 +7,7 @@ const initialState = {
   locationScanProgress: null,
 } as SystemState;
 
-export default reducer<SystemState>(initialState, on => {
+export default reducer<SystemState>(initialState, (on) => {
   on(actions.systemAssessed, (state, action) => {
     const { system } = action.payload;
     return {

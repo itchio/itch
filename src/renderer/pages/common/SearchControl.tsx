@@ -45,7 +45,7 @@ interface Props {
 
 export default withTab(
   injectIntl(
-    hookWithProps(SearchControl)(map => ({
+    hookWithProps(SearchControl)((map) => ({
       url: map((rs, props) => ambientTab(rs, props).location.url),
       defaultValue: map(
         (rs, props) => ambientTab(rs, props).location.query.search

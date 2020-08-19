@@ -46,8 +46,8 @@ class LibraryPage extends React.PureComponent<Props> {
     );
   }
 
-  ownedGetGame = OwnedGameStripe.getGameCallback(x => x.game);
-  installedGetGame = InstalledGameStripe.getGameCallback(x => x.game);
+  ownedGetGame = OwnedGameStripe.getGameCallback((x) => x.game);
+  installedGetGame = InstalledGameStripe.getGameCallback((x) => x.game);
 
   installedTitleExtras = () => {
     return <ScanningIndicator />;

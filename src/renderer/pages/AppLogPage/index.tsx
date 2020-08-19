@@ -151,7 +151,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
   queueFetch = () => {
     this.setState({ loading: true, error: null });
     this.doFetch()
-      .catch(e => {
+      .catch((e) => {
         this.setState({ error: e });
       })
       .then(() => {
@@ -197,7 +197,7 @@ interface State {
 }
 
 export default withTab(
-  hookWithProps(AppLogPage)(map => ({
+  hookWithProps(AppLogPage)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     file: map((rs, props) => ambientTab(rs, props).location.query.file),
   }))(AppLogPage)

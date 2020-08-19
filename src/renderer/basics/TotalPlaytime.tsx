@@ -15,8 +15,8 @@ class TotalPlaytime extends React.PureComponent<Props> {
       classAction === "open"
         ? "opened"
         : classification === "game"
-          ? "played"
-          : "used";
+        ? "played"
+        : "used";
 
     if (secondsRun > 0 && classAction === "launch") {
       return (

@@ -25,9 +25,9 @@ const HubScene = Loadable({
 const ReactHint = ReactHintFactory(React);
 
 const LayoutContainer = styled.div`
-  background: ${props => props.theme.baseBackground};
-  color: ${props => props.theme.baseText};
-  font-size: ${props => props.theme.fontSizes.baseText};
+  background: ${(props) => props.theme.baseBackground};
+  color: ${(props) => props.theme.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
 
   position: absolute;
   top: 0;
@@ -51,25 +51,25 @@ const ReactHintContainer = styled.div`
   .react-hint__content {
     padding: 5px;
     border-radius: 2px;
-    background: ${props => props.theme.tooltipBackground};
-    color: ${props => props.theme.tooltipText};
+    background: ${(props) => props.theme.tooltipBackground};
+    color: ${(props) => props.theme.tooltipText};
     font-size: 90%;
   }
 
   .react-hint--top:after {
-    border-top-color: ${props => props.theme.tooltipBackground};
+    border-top-color: ${(props) => props.theme.tooltipBackground};
   }
 
   .react-hint--left:after {
-    border-left-color: ${props => props.theme.tooltipBackground};
+    border-left-color: ${(props) => props.theme.tooltipBackground};
   }
 
   .react-hint--right:after {
-    border-right-color: ${props => props.theme.tooltipBackground};
+    border-right-color: ${(props) => props.theme.tooltipBackground};
   }
 
   .react-hint--bottom:after {
-    border-bottom-color: ${props => props.theme.tooltipBackground};
+    border-bottom-color: ${(props) => props.theme.tooltipBackground};
   }
 `;
 
@@ -148,10 +148,10 @@ interface Props {
 }
 
 export default injectIntl(
-  hook(map => ({
-    maximized: map(rs => rs.winds[ambientWind()].native.maximized),
-    focused: map(rs => rs.winds[ambientWind()].native.focused),
-    ready: map(rs => !!(rs.setup.done && rs.profile.profile)),
-    profile: map(rs => rs.profile.profile),
+  hook((map) => ({
+    maximized: map((rs) => rs.winds[ambientWind()].native.maximized),
+    focused: map((rs) => rs.winds[ambientWind()].native.focused),
+    ready: map((rs) => !!(rs.setup.done && rs.profile.profile)),
+    profile: map((rs) => rs.profile.profile),
   }))(Layout)
 );

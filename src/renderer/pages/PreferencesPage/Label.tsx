@@ -3,7 +3,7 @@ import styled, * as styles from "renderer/styles";
 import classNames from "classnames";
 
 const LabelEl = styled.label`
-  background: ${props => props.theme.explanation};
+  background: ${(props) => props.theme.explanation};
   padding: 8px 11px;
   font-size: 14px;
   display: flex;

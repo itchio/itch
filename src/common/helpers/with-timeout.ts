@@ -8,10 +8,10 @@ export function withTimeout<T>(
       reject(new Error(`${label} timed out!`));
     }, millis);
 
-    p.then(v => {
+    p.then((v) => {
       clearTimeout(timeout);
       resolve(v);
-    }).catch(err => {
+    }).catch((err) => {
       clearTimeout(timeout);
       reject(err);
     });

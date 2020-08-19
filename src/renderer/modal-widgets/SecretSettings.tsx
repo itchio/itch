@@ -30,7 +30,7 @@ const ControlsDiv = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-left: 2px solid ${props => props.theme.prefBorder};
+    border-left: 2px solid ${(props) => props.theme.prefBorder};
   }
 
   input[type="checkbox"] {
@@ -203,7 +203,7 @@ class SecretSettings extends React.PureComponent<Props> {
 
   onDoubleTwice = () => {
     doAsync(async () => {
-      await rcall(messages.TestDoubleTwice, { number: 7 }, client => {
+      await rcall(messages.TestDoubleTwice, { number: 7 }, (client) => {
         client.on(messages.TestDouble, async ({ number }) => {
           return { number: number * 2 };
         });
@@ -261,6 +261,6 @@ interface Props
   status: RootState["status"];
 }
 
-export default hook(map => ({
-  status: map(rs => rs.status),
+export default hook((map) => ({
+  status: map((rs) => rs.status),
 }))(SecretSettings);

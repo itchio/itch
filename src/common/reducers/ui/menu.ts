@@ -7,7 +7,7 @@ const initialState = {
   template: [],
 } as UIMenuState;
 
-export default reducer<UIMenuState>(initialState, on => {
+export default reducer<UIMenuState>(initialState, (on) => {
   on(actions.menuChanged, (state, action) => {
     const { template } = action.payload;
     return { template };

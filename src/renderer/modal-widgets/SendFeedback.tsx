@@ -31,8 +31,8 @@ const blockStyle = css`
   font-family: inherit;
   font-size: inherit;
   background: rgba(0, 0, 0, 0.4);
-  border: 1px solid ${props => props.theme.inputBorder};
-  color: ${props => props.theme.baseText};
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  color: ${(props) => props.theme.baseText};
   line-height: 1.4;
 
   width: 100%;
@@ -80,7 +80,7 @@ const BigButton = styled(Button)`
 const SystemInfo = styled.div`
   em {
     font-weight: lighter;
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 
@@ -108,7 +108,7 @@ const SendFeedbackDiv = styled(ModalWidgetDiv)`
 `;
 
 const ExternalLink = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   text-decoration: underline;
 
   &:hover {
@@ -324,10 +324,10 @@ class ReportIssue extends React.PureComponent<Props, State> {
     );
   }
 
-  onTabSelected = tabIndex => this.setState({ tabIndex });
-  onGoBack = () => this.setState(state => ({ tabIndex: state.tabIndex - 1 }));
+  onTabSelected = (tabIndex) => this.setState({ tabIndex });
+  onGoBack = () => this.setState((state) => ({ tabIndex: state.tabIndex - 1 }));
   onGoForward = () =>
-    this.setState(state => ({ tabIndex: state.tabIndex + 1 }));
+    this.setState((state) => ({ tabIndex: state.tabIndex + 1 }));
   onIncludeSystemInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ includeSystemInfo: e.currentTarget.checked });
   };
@@ -485,7 +485,7 @@ ${log}
     if (typeof input === "object") {
       return (
         <>
-          {Object.keys(input).map(k => (
+          {Object.keys(input).map((k) => (
             <>
               {!Array.isArray(input[k]) && typeof input[k] !== "object" ? (
                 <div>
@@ -542,7 +542,7 @@ interface State {
 }
 
 export default injectIntl(
-  hook(map => ({
-    brothPackages: map(rs => rs.broth.packages),
+  hook((map) => ({
+    brothPackages: map((rs) => rs.broth.packages),
   }))(ReportIssue)
 );

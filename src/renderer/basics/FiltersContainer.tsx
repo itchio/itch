@@ -11,8 +11,8 @@ export const FiltersContainerDiv = styled.section`
   padding-bottom: 2px;
   width: 100%;
   overflow: hidden;
-  background: ${props => props.theme.sidebarBackground};
-  box-shadow: 0 4px 8px -4px ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
+  box-shadow: 0 4px 8px -4px ${(props) => props.theme.sidebarBackground};
   flex-shrink: 0;
   padding-left: 10px;
   padding-right: 10px;
@@ -27,7 +27,7 @@ export const FiltersContainerDiv = styled.section`
       content: " ";
       width: 100%;
       height: 2px;
-      background: ${props => props.theme.accent};
+      background: ${(props) => props.theme.accent};
       animation: ${animations.lineSpinner} 2s ease-in-out infinite;
     }
   }

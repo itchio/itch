@@ -23,7 +23,7 @@ class BrothComponents extends React.Component<Props> {
         >
           {T(["menu.help.check_for_update"])}
         </span>
-        {packageNames.map(name => (
+        {packageNames.map((name) => (
           <BrothComponent name={name} />
         ))}
       </div>
@@ -42,6 +42,6 @@ interface Props {
   packageNames: string[];
 }
 
-export default hook(map => ({
-  packageNames: map(rs => rs.broth.packageNames),
+export default hook((map) => ({
+  packageNames: map((rs) => rs.broth.packageNames),
 }))(BrothComponents);

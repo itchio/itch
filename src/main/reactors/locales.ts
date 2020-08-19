@@ -145,7 +145,7 @@ function commitLocale(store: Store, lang: string, resourcesIn: I18nResources) {
   store.dispatch(actions.localeDownloadEnded({ lang, resources }));
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     // load initial locales
     const configPayload = await readFile(localesConfigPath);

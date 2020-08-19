@@ -14,7 +14,7 @@ export const TitleBox = styled.div`
 `;
 
 export const Title = styled.div`
-  font-size: ${props => props.theme.fontSizes.huger};
+  font-size: ${(props) => props.theme.fontSizes.huger};
   font-weight: 200;
   display: flex;
   flex-flow: row wrap;
@@ -34,5 +34,5 @@ export const TitleSpacer = styled.div`
 `;
 
 export const Desc = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
 `;

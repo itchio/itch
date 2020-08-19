@@ -9,7 +9,7 @@ const IconButtonDiv = styled.div`
     ${styles.clickable};
   }
 
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,7 +20,7 @@ const IconButtonDiv = styled.div`
   height: 30px;
 
   &:hover {
-    color: ${props => props.theme.secondaryTextHover};
+    color: ${(props) => props.theme.secondaryTextHover};
   }
 
   &.disabled {
@@ -35,19 +35,19 @@ const IconButtonDiv = styled.div`
   }
 
   &.big {
-    font-size: ${props => props.theme.fontSizes.huge};
+    font-size: ${(props) => props.theme.fontSizes.huge};
     width: 36px;
     height: 36px;
   }
 
   &.huge {
-    font-size: ${props => props.theme.fontSizes.huger};
+    font-size: ${(props) => props.theme.fontSizes.huger};
     width: 48px;
     height: 48px;
   }
 
   &.enormous {
-    font-size: ${props => props.theme.fontSizes.enormous};
+    font-size: ${(props) => props.theme.fontSizes.enormous};
     width: 48px;
     height: 48px;
   }

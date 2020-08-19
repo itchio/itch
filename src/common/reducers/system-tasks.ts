@@ -10,7 +10,7 @@ const initialState = {
   nextGameUpdateCheck: Date.now() + 30 * seconds,
 } as SystemTasksState;
 
-export default reducer<SystemTasksState>(initialState, on => {
+export default reducer<SystemTasksState>(initialState, (on) => {
   on(actions.scheduleSystemTask, (state, action) => {
     const { payload } = action;
     return {

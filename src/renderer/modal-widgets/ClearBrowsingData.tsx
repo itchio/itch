@@ -36,7 +36,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
       { cache: true }
     );
 
-    ourSession.getCacheSize().then(cacheSize => {
+    ourSession.getCacheSize().then((cacheSize) => {
       this.setState({
         fetchedCacheSize: true,
         cacheSize,
@@ -133,7 +133,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
 const ClearBrowsingDataList = styled.div`
   label {
     display: block;
-    border-left: 3px solid ${props => props.theme.prefBorder};
+    border-left: 3px solid ${(props) => props.theme.prefBorder};
     padding: 5px 0;
     padding-left: 5px;
     margin: 3px 0;
@@ -145,7 +145,7 @@ const ClearBrowsingDataList = styled.div`
     }
 
     &.active {
-      border-color: ${props => props.theme.accent};
+      border-color: ${(props) => props.theme.accent};
     }
   }
 
@@ -164,7 +164,7 @@ const ClearBrowsingDataList = styled.div`
     margin-top: 5px;
     margin-left: 5px;
     font-size: 90%;
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 
@@ -183,6 +183,6 @@ interface State {
   clearCookies?: boolean;
 }
 
-export default hook(map => ({
-  userId: map(rs => rs.profile.profile.id),
+export default hook((map) => ({
+  userId: map((rs) => rs.profile.profile.id),
 }))(ClearBrowsingData);

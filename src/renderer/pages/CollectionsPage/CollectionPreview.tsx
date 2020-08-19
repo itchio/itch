@@ -15,8 +15,8 @@ const CollectionInfo = styled.div`
   flex-direction: row;
   align-items: center;
 
-  font-size: ${props => props.theme.fontSizes.baseText};
-  color: ${props => props.theme.ternaryText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+  color: ${(props) => props.theme.ternaryText};
   font-weight: 700;
   margin: 0 0.5em;
 `;
@@ -39,7 +39,7 @@ class CollectionPreview extends React.PureComponent<Props> {
     );
   }
 
-  getGame = CollectionGameStripe.getGameCallback(cg => cg.game);
+  getGame = CollectionGameStripe.getGameCallback((cg) => cg.game);
 
   renderTitleExtras = () => {
     const { coll } = this.props;

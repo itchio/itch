@@ -18,7 +18,7 @@ export async function promisedModal<Params, Response>(
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;
 
-  const p = new Promise<any>(resolve => {
+  const p = new Promise<any>((resolve) => {
     modalResolves[id] = resolve;
   });
 
@@ -26,7 +26,7 @@ export async function promisedModal<Params, Response>(
   return await p;
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.closeModal, async (store, outerAction) => {
     const { payload } = outerAction;
     const { wind, action, id } = payload;
@@ -40,7 +40,7 @@ export default function(watcher: Watcher) {
     let response: any = null;
     if (action) {
       if (Array.isArray(action)) {
-        each(action, a => store.dispatch(a));
+        each(action, (a) => store.dispatch(a));
       } else {
         store.dispatch(action);
         if (action.type === "modalResponse") {

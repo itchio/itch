@@ -91,7 +91,7 @@ export function main() {
       })
     );
 
-    globalShortcut.register("Control+Alt+Backspace", function() {
+    globalShortcut.register("Control+Alt+Backspace", function () {
       store.dispatch(actions.forceCloseLastGame({}));
     });
 
@@ -103,7 +103,7 @@ export function main() {
       store.dispatch(actions.focusWind({ wind: "root" }));
     });
 
-    app.on("before-quit", e => {
+    app.on("before-quit", (e) => {
       e.preventDefault();
       store.dispatch(actions.quit({}));
     });

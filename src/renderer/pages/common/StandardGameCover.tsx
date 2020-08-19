@@ -84,7 +84,7 @@ const DarkBox = styled.div`
 const DarkTitle = styled.div`
   ${styles.singleLine};
   flex-shrink: 0;
-  font-size: ${props => props.theme.fontSizes.huge};
+  font-size: ${(props) => props.theme.fontSizes.huge};
   font-weight: 200;
   padding: 0.3em 0;
 `;
@@ -134,7 +134,7 @@ class StandardGameCover extends React.PureComponent<Props> {
     );
   }
 
-  onContextMenu = ev => {
+  onContextMenu = (ev) => {
     const { game, dispatch } = this.props;
     if (!game) {
       return;

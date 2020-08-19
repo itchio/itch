@@ -12,7 +12,8 @@ class ProxySettings extends React.PureComponent<Props> {
 
     return (
       <ProxySettingsSpan>
-        <Icon icon="earth" />&nbsp;{T(["preferences.proxy_server_address"])}
+        <Icon icon="earth" />
+        &nbsp;{T(["preferences.proxy_server_address"])}
         {proxy ? (
           <span className="value" data-rh-at="right" data-rh={proxySource}>
             {proxy}
@@ -34,7 +35,7 @@ const ProxySettingsSpan = styled.span`
 
   .value {
     margin: 0 10px;
-    color: ${props => props.theme.baseColors.ivory};
+    color: ${(props) => props.theme.baseColors.ivory};
     user-select: initial;
   }
 `;
@@ -44,7 +45,7 @@ interface Props {
   proxySource: ProxySource;
 }
 
-export default hook(map => ({
-  proxy: map(rs => rs.system.proxy),
-  proxySource: map(rs => rs.system.proxySource),
+export default hook((map) => ({
+  proxy: map((rs) => rs.system.proxy),
+  proxySource: map((rs) => rs.system.proxySource),
 }))(ProxySettings);

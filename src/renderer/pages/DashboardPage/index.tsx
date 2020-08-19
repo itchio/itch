@@ -57,7 +57,7 @@ class DashboardPage extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = ProfileGameSeries.getRecordCallback(pg => pg.game);
+  getRecord = ProfileGameSeries.getRecordCallback((pg) => pg.game);
   renderMainFilters = () => <SearchControl />;
   renderExtraFilters = () => (
     <SortsAndFilters>
@@ -73,7 +73,7 @@ class DashboardPage extends React.PureComponent<Props> {
       {this.renderPaidStatusFilter()}
     </SortsAndFilters>
   );
-  renderItemExtras = ProfileGameSeries.renderItemExtrasCallback(pg => (
+  renderItemExtras = ProfileGameSeries.renderItemExtrasCallback((pg) => (
     <>
       <ProfileGameStats pg={pg} />
       <StandardMainAction game={pg.game} />
@@ -131,7 +131,7 @@ interface Props extends MeatProps {
 
 export default withProfile(
   withTab(
-    hookWithProps(DashboardPage)(map => ({
+    hookWithProps(DashboardPage)((map) => ({
       sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
       sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
       search: map((rs, props) => ambientTab(rs, props).location.query.search),

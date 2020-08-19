@@ -32,7 +32,7 @@ class GamePage extends React.PureComponent<Props> {
     <FiltersContainer loading={loading} />
   ));
 
-  onResult = FetchGame.onResultCallback(result => {
+  onResult = FetchGame.onResultCallback((result) => {
     if (result) {
       const { game } = result;
       if (game) {
@@ -57,7 +57,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(GamePage)(map => ({
+  hookWithProps(GamePage)((map) => ({
     gameId: map((rs, props) => ambientTab(rs, props).location.firstPathNumber),
   }))(GamePage)
 );

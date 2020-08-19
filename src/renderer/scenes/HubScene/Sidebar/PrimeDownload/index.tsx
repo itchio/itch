@@ -96,9 +96,9 @@ interface Props {
   progress: DownloadProgress;
 }
 
-export default hook(map => ({
-  task: map(rs => getActiveTask(rs.tasks)),
-  download: map(rs => getActiveDownload(rs.downloads)),
+export default hook((map) => ({
+  task: map((rs) => getActiveTask(rs.tasks)),
+  download: map((rs) => getActiveDownload(rs.downloads)),
   progress: map(
     (rs): DownloadProgress => {
       const active = getActiveDownload(rs.downloads);

@@ -29,7 +29,7 @@ const BrowserMain = styled.div`
 `;
 
 const WebviewShell = styled.div`
-  background-color: ${props => props.theme.breadBackground};
+  background-color: ${(props) => props.theme.breadBackground};
   position: absolute;
   top: 0;
   right: 0;
@@ -128,14 +128,14 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(BrowserPage)(map => ({
+  hookWithProps(BrowserPage)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     sleepy: map((rs, props) => ambientTab(rs, props).sleepy),
     loading: map((rs, props) => ambientTab(rs, props).loading),
 
-    proxy: map(rs => rs.system.proxy),
-    proxySource: map(rs => rs.system.proxySource),
-    disableBrowser: map(rs => rs.preferences.disableBrowser),
+    proxy: map((rs) => rs.system.proxy),
+    proxySource: map((rs) => rs.system.proxySource),
+    disableBrowser: map((rs) => rs.preferences.disableBrowser),
 
     partition: map((rs, props) =>
       partitionForUser(String(rs.profile.profile.id))

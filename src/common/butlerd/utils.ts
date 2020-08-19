@@ -20,7 +20,7 @@ async function makeClient(store: Store, parentLogger: Logger): Promise<Client> {
     const { endpoint } = store.getState().butlerd;
     if (endpoint) {
       const client = new Client(endpoint);
-      client.onWarning(msg => {
+      client.onWarning((msg) => {
         logger.warn(`(butlerd) ${msg}`);
       });
       return client;

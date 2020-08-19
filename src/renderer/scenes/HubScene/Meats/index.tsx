@@ -19,7 +19,7 @@ import Meat from "renderer/scenes/HubScene/Meats/Meat";
 import { TabProvider } from "renderer/hocs/withTab";
 
 const MeatContainer = styled.div`
-  background: ${props => props.theme.meatBackground};
+  background: ${(props) => props.theme.meatBackground};
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -54,7 +54,7 @@ class Meats extends React.PureComponent<Props> {
     return (
       <MeatContainer onClick={this.onClick}>
         <TitleBar tab={currentId} />
-        {map(openTabs, tab => {
+        {map(openTabs, (tab) => {
           const ti = tabInstances[tab];
           const visible = tab === currentId;
           return (
@@ -107,9 +107,9 @@ interface Props {
   profile: Profile;
 }
 
-export default hook(map => ({
-  profile: map(rs => rs.profile.profile),
-  tab: map(rs => ambientNavigation(rs).tab),
-  openTabs: map(rs => ambientNavigation(rs).openTabs),
-  tabInstances: map(rs => ambientWindState(rs).tabInstances),
+export default hook((map) => ({
+  profile: map((rs) => rs.profile.profile),
+  tab: map((rs) => ambientNavigation(rs).tab),
+  openTabs: map((rs) => ambientNavigation(rs).openTabs),
+  tabInstances: map((rs) => ambientWindState(rs).tabInstances),
 }))(Meats);

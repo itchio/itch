@@ -326,6 +326,6 @@ function pickExample(): string {
   return sample(searchExamples);
 }
 
-export default hook(map => ({
-  profileId: map(rs => rs.profile.profile.id),
+export default hook((map) => ({
+  profileId: map((rs) => rs.profile.profile.id),
 }))(injectIntl(Search));

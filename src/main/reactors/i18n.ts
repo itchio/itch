@@ -9,7 +9,7 @@ import { mainLogger } from "main/logger";
 const fallbackLang = "en";
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(

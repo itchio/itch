@@ -93,8 +93,8 @@ class LocationsPage extends React.PureComponent<Props> {
       <ItemList>
         {sortBy(
           result.installLocations,
-          location => -location.sizeInfo.installedSize
-        ).map(location => (
+          (location) => -location.sizeInfo.installedSize
+        ).map((location) => (
           <LocationSummary
             key={location.id}
             location={location}
@@ -123,8 +123,8 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hook(map => ({
-    scanningLocations: map(rs => rs.system.locationScanProgress !== null),
-    locationScanProgress: map(rs => rs.system.locationScanProgress),
+  hook((map) => ({
+    scanningLocations: map((rs) => rs.system.locationScanProgress !== null),
+    locationScanProgress: map((rs) => rs.system.locationScanProgress),
   }))(LocationsPage)
 );

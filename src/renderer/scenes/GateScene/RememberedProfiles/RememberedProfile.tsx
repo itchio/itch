@@ -121,21 +121,21 @@ const RememberedProfileDiv = styled.div`
   }
 
   .username {
-    color: ${props => props.theme.baseText};
-    font-size: ${props => props.theme.fontSizes.huge};
+    color: ${(props) => props.theme.baseText};
+    font-size: ${(props) => props.theme.fontSizes.huge};
     font-weight: bold;
     padding: 4px 0;
   }
 
   .last-connected {
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
     font-size: 14px;
   }
 
-  box-shadow: 0 0 4px ${props => props.theme.sidebarBackground};
+  box-shadow: 0 0 4px ${(props) => props.theme.sidebarBackground};
 
   &:hover {
-    box-shadow: 0 0 8px ${props => props.theme.sidebarBackground};
+    box-shadow: 0 0 8px ${(props) => props.theme.sidebarBackground};
     cursor: pointer;
   }
 

@@ -13,7 +13,7 @@ const DisabledBrowserContainer = styled.div`
   align-items: center;
   overflow: hidden;
 
-  background: ${props => props.theme.meatBackground};
+  background: ${(props) => props.theme.meatBackground};
 `;
 
 const DisabledBrowserDiv = styled.div`

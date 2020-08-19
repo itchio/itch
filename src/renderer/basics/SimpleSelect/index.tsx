@@ -24,14 +24,14 @@ const SimpleSelectDiv = styled.div`
   cursor: default;
   flex-grow: 1;
 
-  background: ${props => props.theme.inputBackground};
-  border: 1px solid ${props => props.theme.inputBorder};
+  background: ${(props) => props.theme.inputBackground};
+  border: 1px solid ${(props) => props.theme.inputBorder};
   border-radius: 2px;
 
   transition: border-color: 0.1s;
 
   &:hover {
-    border-color: ${props => props.theme.inputBorderFocused};
+    border-color: ${(props) => props.theme.inputBorderFocused};
   }
 
   &:focus {
@@ -59,14 +59,14 @@ const ValueWrapper = styled.div`
 
 const OptionWrapperDiv = styled.div`
   ${wrapperLike};
-  background: ${props => props.theme.inputBackground};
+  background: ${(props) => props.theme.inputBackground};
 
   &.focused {
-    background: ${props => props.theme.inputFocusedBackground};
+    background: ${(props) => props.theme.inputFocusedBackground};
   }
 
   &.selected {
-    background: ${props => props.theme.inputSelectedBackground};
+    background: ${(props) => props.theme.inputSelectedBackground};
   }
 `;
 
@@ -101,7 +101,7 @@ class OptionWrapper extends React.PureComponent<
 const Bar = styled.div`
   height: auto;
   width: 1px;
-  background: ${props => props.theme.inputBorderFocused};
+  background: ${(props) => props.theme.inputBorderFocused};
   align-self: stretch;
 `;
 
@@ -126,7 +126,7 @@ const OptionsDiv = styled.div`
   padding: 4px 0;
   border-radius: 2px;
 
-  border: 1px solid ${props => props.theme.inputBorder};
+  border: 1px solid ${(props) => props.theme.inputBorder};
 
   z-index: 10;
 
@@ -138,7 +138,7 @@ const DummyOption = styled.div`
   display: flex;
   flex-flow: row;
   align-items: center;
-  color: ${props => props.theme.ternaryText};
+  color: ${(props) => props.theme.ternaryText};
 `;
 
 const searchClearThreshold = 2000; // 2 seconds
@@ -269,7 +269,7 @@ export default class SimpleSelect<
 
     const focusedValue = find(
       this.props.options,
-      x =>
+      (x) =>
         typeof x.label === "string" && x.label.toLowerCase().startsWith(search)
     );
     if (focusedValue) {
@@ -332,7 +332,7 @@ export default class SimpleSelect<
   }
 
   onToggle = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       open: !state.open,
     }));
     if (this.state.open) {

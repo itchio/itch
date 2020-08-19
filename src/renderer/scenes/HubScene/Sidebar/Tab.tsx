@@ -145,7 +145,7 @@ interface Props {
 }
 
 export default injectIntl(
-  hookWithProps(Tab)(map => ({
+  hookWithProps(Tab)((map) => ({
     tabInstance: map((rs, p) => ambientWindState(rs).tabInstances[p.tab]),
     downloads: map((rs, p) =>
       p.tab === "itch://downloads" ? rs.downloads : null

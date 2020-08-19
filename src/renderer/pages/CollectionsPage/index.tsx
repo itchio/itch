@@ -50,7 +50,7 @@ class CollectionsPage extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = ProfileCollectionsSeries.getRecordCallback(c => c);
+  getRecord = ProfileCollectionsSeries.getRecordCallback((c) => c);
 
   renderMainFilters = () => {
     return (
@@ -109,7 +109,7 @@ interface Props extends MeatProps {
   search: string;
 }
 
-const hooked = hookWithProps(CollectionsPage)(map => ({
+const hooked = hookWithProps(CollectionsPage)((map) => ({
   url: map((rs, props) => ambientTab(rs, props).location.url),
   sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
   sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),

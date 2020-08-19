@@ -25,12 +25,12 @@ const StatusBarDiv = styled.div`
   padding: 8px 12px;
   z-index: 200;
 
-  font-size: ${props => props.theme.fontSizes.sidebar};
+  font-size: ${(props) => props.theme.fontSizes.sidebar};
 
   border-radius: 4px;
-  background: ${props => props.theme.accent};
-  border: 1px solid ${props => props.theme.lightAccent};
-  box-shadow: 0 0 14px ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.accent};
+  border: 1px solid ${(props) => props.theme.lightAccent};
+  box-shadow: 0 0 14px ${(props) => props.theme.sidebarBackground};
 
   display: flex;
   flex-direction: row;
@@ -115,6 +115,6 @@ interface Props {
   statusMessages: LocalizedString[];
 }
 
-export default hook(map => ({
-  statusMessages: map(rs => rs.status.messages),
+export default hook((map) => ({
+  statusMessages: map((rs) => rs.status.messages),
 }))(StatusBar);

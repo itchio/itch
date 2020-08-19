@@ -40,7 +40,7 @@ const TitleBlock = styled.div`
 `;
 
 const EnormousIcon = styled(Icon)`
-  font-size: ${props => props.theme.fontSizes.enormous};
+  font-size: ${(props) => props.theme.fontSizes.enormous};
 `;
 
 const GameCover = styled(StandardGameCover)`
@@ -221,6 +221,6 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default hook(map => ({
-  downloadsPaused: map(rs => rs.downloads.paused),
+export default hook((map) => ({
+  downloadsPaused: map((rs) => rs.downloads.paused),
 }))(PrimeDownloadContents);

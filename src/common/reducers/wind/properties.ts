@@ -7,7 +7,7 @@ const initialState: WindPropertiesState = {
   role: null,
 };
 
-export default reducer<WindPropertiesState>(initialState, on => {
+export default reducer<WindPropertiesState>(initialState, (on) => {
   on(actions.windOpened, (state, action) => {
     const { initialURL, role } = action.payload;
     return { initialURL, role };

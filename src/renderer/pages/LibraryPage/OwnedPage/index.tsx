@@ -56,8 +56,8 @@ class OwnedPage extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = OwnedSeries.getRecordCallback(dk => dk.game);
-  renderItemExtras = OwnedSeries.renderItemExtrasCallback(cave => (
+  getRecord = OwnedSeries.getRecordCallback((dk) => dk.game);
+  renderItemExtras = OwnedSeries.renderItemExtrasCallback((cave) => (
     <StandardMainAction game={cave.game} />
   ));
   renderMainFilters = () => <SearchControl />;
@@ -96,7 +96,7 @@ interface Props extends MeatProps {
 
 export default withTab(
   withProfile(
-    hookWithProps(OwnedPage)(map => ({
+    hookWithProps(OwnedPage)((map) => ({
       sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
       sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
       search: map((rs, props) => ambientTab(rs, props).location.query.search),

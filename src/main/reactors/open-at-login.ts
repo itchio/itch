@@ -105,7 +105,7 @@ function getSelector(store: Store) {
   return cachedSelector;
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.updatePreferences, async (store, action) => {
     const selector = getSelector(store);
     selector(store.getState().preferences);

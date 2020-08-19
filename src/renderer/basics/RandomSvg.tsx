@@ -27,7 +27,7 @@ class RandomSvg extends React.PureComponent<Props> {
   render() {
     let { seed, ...restProps } = this.props;
 
-    const random = function() {
+    const random = function () {
       if (!seed) {
         return Math.random();
       }
@@ -41,7 +41,7 @@ class RandomSvg extends React.PureComponent<Props> {
     let varyVal = Math.floor(random() * 3);
 
     const width = 250 + random() * 80;
-    const colorGenerator = function(path: Path) {
+    const colorGenerator = function (path: Path) {
       const variance = 32;
       const ratio = (path.x * path.y) / (path.cols * path.lines);
       const code = Math.floor(

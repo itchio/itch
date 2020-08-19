@@ -74,8 +74,8 @@ class CollectionPage extends React.PureComponent<Props> {
     );
   }
 
-  getRecord = CollectionGameSeries.getRecordCallback(cg => cg.game);
-  renderItemExtras = CollectionGameSeries.renderItemExtrasCallback(cave => (
+  getRecord = CollectionGameSeries.getRecordCallback((cg) => cg.game);
+  renderItemExtras = CollectionGameSeries.renderItemExtrasCallback((cave) => (
     <StandardMainAction game={cave.game} />
   ));
   renderMainFilters = () => (
@@ -90,7 +90,7 @@ class CollectionPage extends React.PureComponent<Props> {
     </>
   );
 
-  onFetchedCollection = FetchCollection.onResultCallback(result => {
+  onFetchedCollection = FetchCollection.onResultCallback((result) => {
     let label = "Collection not found";
     if (result && result.collection) {
       const c = result.collection;
@@ -141,7 +141,7 @@ interface Props extends MeatProps {
   filterInstalled: boolean;
 }
 
-const hooked = hookWithProps(CollectionPage)(map => ({
+const hooked = hookWithProps(CollectionPage)((map) => ({
   collectionId: map(
     (rs, props) => ambientTab(rs, props).location.firstPathNumber
   ),

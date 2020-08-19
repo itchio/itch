@@ -94,7 +94,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
             );
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
         });
     }, 500);

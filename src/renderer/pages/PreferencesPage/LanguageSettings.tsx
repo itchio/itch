@@ -101,9 +101,9 @@ interface Props {
   downloading: RootState["i18n"]["downloading"];
 }
 
-export default hook(map => ({
-  locales: map(rs => rs.i18n.locales),
-  lang: map(rs => rs.i18n.lang),
-  sniffedLang: map(rs => rs.system.sniffedLanguage),
-  downloading: map(rs => rs.i18n.downloading),
+export default hook((map) => ({
+  locales: map((rs) => rs.i18n.locales),
+  lang: map((rs) => rs.i18n.lang),
+  sniffedLang: map((rs) => rs.system.sniffedLanguage),
+  downloading: map((rs) => rs.i18n.downloading),
 }))(LanguageSettings);

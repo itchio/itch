@@ -19,7 +19,7 @@ import { withTimeout } from "common/helpers/with-timeout";
 const logger = mainLogger.child(__filename);
 const LOGIN_TIMEOUT = 5 * 1000; // 5 seconds
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
     const { username, password } = action.payload;
 
@@ -54,7 +54,7 @@ export default function(watcher: Watcher) {
           username,
           password,
         },
-        client => {
+        (client) => {
           logger.debug(`Setting up handlers for TOTP & captcha`);
           client.on(
             messages.ProfileRequestCaptcha,
@@ -140,7 +140,7 @@ export default function(watcher: Watcher) {
           {
             profileId,
           },
-          convo => {
+          (convo) => {
             hookLogging(convo, logger);
           }
         )
@@ -166,7 +166,7 @@ export default function(watcher: Watcher) {
 }
 
 const YEAR_IN_SECONDS =
-    365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
+  365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60; /* seconds */
 
 async function setCookie(profile: Profile, cookie: { [key: string]: string }) {
   const partition = partitionForUser(String(profile.user.id));
@@ -228,7 +228,7 @@ async function loginSucceeded(store: Store, profile: Profile) {
         fresh: true,
         limit: 1,
       },
-      convo => {
+      (convo) => {
         hookLogging(convo, logger);
       }
     );

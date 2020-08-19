@@ -31,7 +31,7 @@ class CavePage extends React.PureComponent<Props> {
     <FiltersContainer loading={loading} />
   ));
 
-  onResult = FetchCave.onResultCallback(result => {
+  onResult = FetchCave.onResultCallback((result) => {
     if (result) {
       const { cave } = result;
       if (cave && cave.game) {
@@ -57,7 +57,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(CavePage)(map => ({
+  hookWithProps(CavePage)((map) => ({
     caveId: map((rs, props) => ambientTab(rs, props).location.firstPathElement),
     actionName: map(
       (rs, props) => ambientTab(rs, props).location.secondPathElement

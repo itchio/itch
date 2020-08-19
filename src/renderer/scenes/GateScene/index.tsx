@@ -56,13 +56,12 @@ interface Props {
   blockingOperation: SetupOperation;
 }
 
-export default hook(map => ({
-  stage: map(rs => (rs.setup.done ? "login" : "setup")),
-  errors: map(rs => (rs.setup.done ? null : rs.setup.errors)),
-  blockingOperation: map(
-    rs =>
-      rs.setup.done
-        ? rs.profile.login.blockingOperation
-        : rs.setup.blockingOperation
+export default hook((map) => ({
+  stage: map((rs) => (rs.setup.done ? "login" : "setup")),
+  errors: map((rs) => (rs.setup.done ? null : rs.setup.errors)),
+  blockingOperation: map((rs) =>
+    rs.setup.done
+      ? rs.profile.login.blockingOperation
+      : rs.setup.blockingOperation
   ),
 }))(GateScene);

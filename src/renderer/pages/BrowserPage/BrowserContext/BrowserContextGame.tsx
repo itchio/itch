@@ -31,7 +31,7 @@ const SmallerGameCover = styled(StandardGameCover)`
 `;
 
 const BrowserContextDiv = styled.div`
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
 
   display: flex;
   justify-content: center;
@@ -93,6 +93,6 @@ interface Props {
   status: GameStatus;
 }
 
-export default hookWithProps(BrowserContextGame)(map => ({
+export default hookWithProps(BrowserContextGame)((map) => ({
   status: map((rs, props) => getGameStatus(rs, props.game)),
 }))(BrowserContextGame);

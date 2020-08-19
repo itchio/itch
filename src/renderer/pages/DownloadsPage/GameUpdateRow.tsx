@@ -17,7 +17,7 @@ const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;
   line-height: 1.6;
 
-  background-color: ${props => props.theme.itemBackground};
+  background-color: ${(props) => props.theme.itemBackground};
 
   display: flex;
   flex-direction: row;
@@ -50,11 +50,11 @@ const GameTitle = styled.div`
 `;
 
 const StyledTimeAgo = styled(TimeAgo)`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
 `;
 
 const VersionInfo = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
 `;
 
 class GameUpdateRow extends React.PureComponent<Props> {

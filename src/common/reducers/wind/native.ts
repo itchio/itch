@@ -11,7 +11,7 @@ const initialState = {
   maximized: false,
 } as NativeWindowState;
 
-export default reducer<NativeWindowState>(initialState, on => {
+export default reducer<NativeWindowState>(initialState, (on) => {
   on(actions.windOpened, (state, action) => {
     const { nativeId } = action.payload;
     return { ...state, id: nativeId };

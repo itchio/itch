@@ -13,6 +13,6 @@ export const withTab = <P extends TabContextProps>(
   Component: React.ComponentType<P>
 ) => (props: Subtract<P, TabContextProps>) => (
   <TabConsumer>
-    {tab => <Component {...((props as unknown) as P)} tab={tab} />}
+    {(tab) => <Component {...((props as unknown) as P)} tab={tab} />}
   </TabConsumer>
 );

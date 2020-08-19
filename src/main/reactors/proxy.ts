@@ -4,7 +4,7 @@ import { actions } from "common/actions";
 import { ProxySettings } from "common/types";
 import { partitionForUser } from "common/util/partition-for-user";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const userId = action.payload.profile.user.id;
 
@@ -57,7 +57,7 @@ export async function applyProxySettings(
       resolve
     );
 
-    setTimeout(function() {
+    setTimeout(function () {
       reject(new Error("proxy settings adjustment timed out"));
     }, 1000);
   });

@@ -17,7 +17,7 @@ async function applyTabOffset(store: Store, wind: string, offset: number) {
   store.dispatch(actions.tabFocused({ wind, tab: newTab }));
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.newTab, async (store, action) => {
     const { wind } = action.payload;
     store.dispatch(actions.navigate({ wind, url: "itch://new-tab" }));

@@ -24,7 +24,7 @@ const ItemHeading = styled.div`
 `;
 
 const ItemSection = styled.section`
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;
   word-break: break-word;
@@ -43,21 +43,21 @@ const ItemSection = styled.section`
   &.active {
     .icon-cross {
       opacity: 1;
-      color: ${props => props.theme.secondaryText}
+      color: ${(props) => props.theme.secondaryText}
 
       &:hover {
-        color: ${props => props.theme.secondaryTextHover}
+        color: ${(props) => props.theme.secondaryTextHover}
       }
     }
     
-    background: ${props => props.theme.sidebarEntryFocusedBackground}
+    background: ${(props) => props.theme.sidebarEntryFocusedBackground}
   }
 
   &:hover {
     cursor: pointer;
-    background: ${props =>
+    background: ${(props) =>
       darken(0.02, props.theme.sidebarEntryFocusedBackground)};
-    color: ${props => props.theme.baseText};
+    color: ${(props) => props.theme.baseText};
 
     .icon-cross {
       opacity: 1;
@@ -107,7 +107,7 @@ const Bubble = styled.span`
   font-size: 11px;
   background: white;
   border-radius: 2px;
-  color: ${props => props.theme.sidebarBackground};
+  color: ${(props) => props.theme.sidebarBackground};
   font-weight: bold;
   padding: 1px 6px;
   margin-left: 8px;

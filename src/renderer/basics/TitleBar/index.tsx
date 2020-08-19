@@ -63,7 +63,7 @@ const TitleBarDiv = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   padding-left: 10px;
   height: ${titleBarHeight}px;
 `;
@@ -71,7 +71,7 @@ const TitleBarDiv = styled.div`
 const TitleDiv = styled.div`
   ${styles.singleLine};
 
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${(props) => props.theme.fontSizes.large};
 `;
 
 const emptyObj = {};
@@ -189,7 +189,7 @@ interface Props {
   macos: boolean;
 }
 
-export default hookWithProps(TitleBar)(map => ({
+export default hookWithProps(TitleBar)((map) => ({
   tabInstance: map(
     (rs, props) => ambientWindState(rs).tabInstances[props.tab] || emptyObj
   ),

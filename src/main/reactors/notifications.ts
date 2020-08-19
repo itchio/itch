@@ -16,7 +16,7 @@ const DEFAULT_ICON =
     ? null
     : `./static/images/tray/${env.appName}.png`;
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.bounce, async (store, action) => {
     const { dock } = app;
     if (dock) {
@@ -41,7 +41,7 @@ export default function(watcher: Watcher) {
         actions: null,
       });
       if (onClick) {
-        n.on("click", e => {
+        n.on("click", (e) => {
           store.dispatch(actions.focusWind({ wind: "root" }));
           store.dispatch(onClick);
         });

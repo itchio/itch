@@ -181,7 +181,7 @@ async function refreshButlerd(store: Store) {
 
   instance
     .promise()
-    .catch(e => {
+    .catch((e) => {
       logger.error(`butlerd instance ${id} threw:`);
       logger.error(e.stack);
       let endpointAtCrash = store.getState().butlerd.endpoint;
@@ -210,7 +210,7 @@ async function refreshButlerd(store: Store) {
   );
 
   incarnation.client = new Client(endpoint);
-  incarnation.client.onWarning(msg => {
+  incarnation.client.onWarning((msg) => {
     logger.warn(`(butlerd) ${msg}`);
   });
 
@@ -228,7 +228,7 @@ async function refreshButlerd(store: Store) {
   previousIncarnation = incarnation;
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     await initialSetup(store, { retry: false });
   });

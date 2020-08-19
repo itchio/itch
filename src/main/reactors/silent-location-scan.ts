@@ -7,7 +7,7 @@ import { legacyMarketPath } from "common/util/paths";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.setupDone, async (store, action) => {
     store.dispatch(actions.silentlyScanInstallLocations({}));
   });
@@ -20,7 +20,7 @@ export default function(watcher: Watcher) {
         {
           legacyMarketPath: legacyMarketPath(),
         },
-        convo => {
+        (convo) => {
           hookLogging(convo, logger);
           convo.on(messages.Progress, async ({ progress }) => {
             store.dispatch(actions.locationScanProgress({ progress }));

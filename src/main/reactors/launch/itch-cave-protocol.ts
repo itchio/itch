@@ -65,7 +65,7 @@ export async function registerItchCaveProtocol(
           return;
         }
       },
-      error => {
+      (error) => {
         if (error) {
           reject(error);
         } else {

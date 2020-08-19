@@ -66,8 +66,8 @@ const ErrorParagraph = styled.div`
   flex-grow: 1;
   line-height: 1.4;
   margin-right: 1em;
-  color: ${props => props.theme.error};
-  font-size: ${props => props.theme.fontSizes.baseText};
+  color: ${(props) => props.theme.error};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
 const WideBox = styled(Box)`
@@ -80,11 +80,11 @@ const SizeTable = styled.table`
     padding-right: 0.4em;
 
     &.low {
-      color: ${props => props.theme.error};
+      color: ${(props) => props.theme.error};
     }
 
     &.desc {
-      color: ${props => props.theme.secondaryText};
+      color: ${(props) => props.theme.secondaryText};
     }
 
     strong {
@@ -124,12 +124,12 @@ const SelectHeader = styled.h3`
 const StyledSelect = styled.select`
   flex-grow: 1;
   padding: 0.4em;
-  border: 1px solid ${props => props.theme.filterBorder};
+  border: 1px solid ${(props) => props.theme.filterBorder};
   border-radius: 3px;
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
 
   background: rgba(0, 0, 0, 0.1);
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${(props) => props.theme.fontSizes.large};
 `;
 
 enum PlanStage {
@@ -180,7 +180,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
     } = this.state;
 
     let canInstall = !error && !busy;
-    let locationOptions = installLocations.map(il => {
+    let locationOptions = installLocations.map((il) => {
       let val: InstallLocationOption = {
         label: `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`,
         value: il.id,
@@ -199,7 +199,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
     let uploadOptions = [];
     if (uploads) {
-      uploadOptions = uploads.map(u => {
+      uploadOptions = uploads.map((u) => {
         let val: UploadOption = {
           label: `${formatUploadTitle(u)} ${
             u.size > 0 ? fileSize(u.size) : ""
@@ -419,7 +419,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             queueDownload: true,
             fastQueue: true,
           },
-          convo => {
+          (convo) => {
             hookLogging(convo, logger);
           }
         );
@@ -482,7 +482,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
         const res = await rcall(
           messages.InstallPlan,
           { gameId, uploadId },
-          convo => {
+          (convo) => {
             hookLogging(convo, logger);
           }
         );
@@ -533,7 +533,7 @@ interface State {
 }
 
 export default injectIntl(
-  hook(map => ({
-    defaultInstallLocation: map(rs => rs.preferences.defaultInstallLocation),
+  hook((map) => ({
+    defaultInstallLocation: map((rs) => rs.preferences.defaultInstallLocation),
   }))(PlanInstall)
 );

@@ -18,7 +18,7 @@ const logger = mainLogger.child(__filename);
 const UPDATE_INTERVAL = 2 * 60 * 60 * 1000;
 const UPDATE_INTERVAL_WIGGLE = 0.2 * 60 * 60 * 1000;
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.tick, async (store, action) => {
     const rs = store.getState();
     const { nextComponentsUpdateCheck } = rs.systemTasks;

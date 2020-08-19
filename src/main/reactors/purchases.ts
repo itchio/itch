@@ -23,7 +23,7 @@ function buildLoginAndReturnUrl(returnTo: string): string {
   return url.format(urlOpts);
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.initiatePurchase, async (store, action) => {
     const { game } = action.payload;
     const purchaseUrl = game.url + "/purchase";

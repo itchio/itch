@@ -28,12 +28,12 @@ const BuildListDiv = styled.div`
 
   .builds--month {
     width: 100%;
-    border-left: 2px solid ${props => props.theme.accent};
+    border-left: 2px solid ${(props) => props.theme.accent};
     margin-top: 24px;
     padding-left: 12px;
     padding-top: 8px;
     padding-bottom: 8px;
-    font-size: ${props => props.theme.fontSizes.larger};
+    font-size: ${(props) => props.theme.fontSizes.larger};
     font-weight: bold;
   }
 
@@ -43,13 +43,13 @@ const BuildListDiv = styled.div`
 
     width: 100%;
     margin: 8px 0;
-    background: ${props => props.theme.sidebarBackground};
+    background: ${(props) => props.theme.sidebarBackground};
     padding: 12px 16px;
     align-items: center;
 
     &:hover {
       cursor: pointer;
-      background: ${props => lighten(0.05, props.theme.sidebarBackground)};
+      background: ${(props) => lighten(0.05, props.theme.sidebarBackground)};
     }
 
     .item--version {
@@ -70,13 +70,13 @@ const BuildListDiv = styled.div`
 
   .version--user {
     font-weight: bold;
-    font-size: ${props => props.theme.fontSizes.large};
+    font-size: ${(props) => props.theme.fontSizes.large};
     margin-right: 16px;
   }
 
   .version--raw,
   .version--timeago {
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 

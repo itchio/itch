@@ -101,7 +101,7 @@ export async function lstat(file: string): Promise<Stats> {
  */
 export async function wipe(dir: string): Promise<void> {
   return await new Promise((resolve, reject) => {
-    rimraf(dir, {}, err => {
+    rimraf(dir, {}, (err) => {
       if (err) {
         reject(err);
       } else {

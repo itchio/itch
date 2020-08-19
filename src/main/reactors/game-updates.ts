@@ -4,7 +4,7 @@ import { DownloadReason } from "common/butlerd/messages";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
     const { manualGameUpdates = false } = store.getState().preferences;
     if (manualGameUpdates) {

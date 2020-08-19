@@ -81,7 +81,7 @@ export async function request(
         res.pipe(opts.sink());
       } else {
         res.setEncoding("utf8");
-        res.on("data", function(chunk) {
+        res.on("data", function (chunk) {
           text += chunk;
         });
       }
@@ -117,7 +117,7 @@ export async function request(
       res.on("end", onEnd);
     });
 
-    req.on("error", e => {
+    req.on("error", (e) => {
       reject(new RequestError(e.message));
     });
 

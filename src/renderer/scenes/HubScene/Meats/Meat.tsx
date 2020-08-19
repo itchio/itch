@@ -322,7 +322,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(Meat)(map => ({
+  hookWithProps(Meat)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     isBrowser: map((rs, props) => ambientTab(rs, props).location.isBrowser),
     internalPage: map(

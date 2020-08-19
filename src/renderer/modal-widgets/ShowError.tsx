@@ -30,7 +30,7 @@ const StyledLog = styled(Log)`
 const Pre = styled.pre`
   max-height: 10em;
   overflow-y: scroll;
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   padding: 1em;
   line-height: 1.4;
   margin-bottom: 1em;
@@ -42,7 +42,7 @@ const ContainerDiv = styled.div`
     padding-left: 1em;
 
     summary {
-      color: ${props => props.theme.secondaryText};
+      color: ${(props) => props.theme.secondaryText};
       margin-left: -1em;
       margin-bottom: 1em;
       padding: 0.2m;
@@ -59,7 +59,7 @@ const ContainerDiv = styled.div`
   }
 
   p.butler-version {
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 
@@ -79,7 +79,7 @@ const ReportLabel = styled.label`
   }
 
   transition: color 0.4s;
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
 
   &:not(.enabled) {
     opacity: 0.8;

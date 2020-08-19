@@ -11,6 +11,6 @@ const UncollapsibleMainAction = styled(MainAction)`
 export default ({ game }: { game: Game }) => (
   <GameStatusGetter
     game={game}
-    render={status => <UncollapsibleMainAction game={game} status={status} />}
+    render={(status) => <UncollapsibleMainAction game={game} status={status} />}
   />
 );

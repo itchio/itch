@@ -52,7 +52,7 @@ export async function unzip(opts: UnzipOpts) {
       time: 100,
     });
     let progressFactor = entry.compressedSize / zipfile.fileSize;
-    progressStream.on("progress", info => {
+    progressStream.on("progress", (info) => {
       opts.onProgress({
         progress: progressOffset + (info.percentage / 100) * progressFactor,
       });
@@ -107,15 +107,15 @@ export async function unzip(opts: UnzipOpts) {
         _reject(err);
       };
 
-      src.on("error", err => {
+      src.on("error", (err) => {
         logger.warn(`Caught yauzl error: ${err.stack}`);
         reject(err);
       });
-      progressStream.on("error", err => {
+      progressStream.on("error", (err) => {
         logger.warn(`Caught progress stream error: ${err.stack}`);
         reject(err);
       });
-      dst.on("error", err => {
+      dst.on("error", (err) => {
         logger.warn(`Caught output stream error: ${err.stack}`);
         reject(err);
       });
@@ -147,19 +147,19 @@ export async function unzip(opts: UnzipOpts) {
         zipfile.readEntry();
       } else {
         // file entry
-        zipfile.openReadStream(entry, function(err, src) {
+        zipfile.openReadStream(entry, function (err, src) {
           extractEntry(entry, err, src)
             .then(() => {
               zipfile.readEntry();
             })
-            .catch(err => {
+            .catch((err) => {
               reject(err);
               zipfile.close();
             });
         });
       }
     });
-    zipfile.on("end", entry => {
+    zipfile.on("end", (entry) => {
       resolve();
     });
   });

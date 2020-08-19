@@ -1,7 +1,7 @@
 import styled from "renderer/styles";
 
 export const SidebarSection = styled.div`
-  color: ${props => props.theme.ternaryText};
+  color: ${(props) => props.theme.ternaryText};
 
   padding-left: 14px;
   margin: 12px 0;
@@ -14,13 +14,13 @@ export const SidebarSection = styled.div`
     text-decoration: none;
     font-size: 16px;
     font-weight: 200;
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
     &:hover {
-      color: ${props => props.theme.secondaryTextHover};
+      color: ${(props) => props.theme.secondaryTextHover};
     }
 
     &.active {
-      color: ${props => props.theme.baseText};
+      color: ${(props) => props.theme.baseText};
       font-weight: 400;
     }
 

@@ -43,7 +43,7 @@ describeFormula("butler", {
     const client = new Client(await instance.getEndpoint());
     await client.call(messages.VersionGet, {});
   },
-  transformChannel: channel => {
+  transformChannel: (channel) => {
     if (env.isCanary) {
       return `${channel}-head`;
     }
@@ -71,7 +71,7 @@ describeFormula("itch-setup", {
       args: ["--version"],
     });
   },
-  transformChannel: channel => {
+  transformChannel: (channel) => {
     if (env.isCanary) {
       return `${channel}-head`;
     }

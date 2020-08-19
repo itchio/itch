@@ -8,7 +8,7 @@ const initialState: WindsState = {};
 const windOpenedType = actions.windOpened({} as any).type;
 const windClosedType = actions.windClosed({} as any).type;
 
-export default function(state: WindsState, action: Action<any>) {
+export default function (state: WindsState, action: Action<any>) {
   if (typeof state === "undefined") {
     return initialState;
   }

@@ -5,7 +5,7 @@ const GameTitleDiv = styled.div`
   ${singleLine};
   max-width: 90%;
   text-align: center;
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${(props) => props.theme.fontSizes.larger};
 
   &.gt-17 {
     font-size: 14px;

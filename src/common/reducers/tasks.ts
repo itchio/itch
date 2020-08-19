@@ -13,7 +13,7 @@ const initialState = {
   finishedTasks: [],
 } as TasksState;
 
-const baseReducer = reducer<TasksState>(initialState, on => {
+const baseReducer = reducer<TasksState>(initialState, (on) => {
   on(actions.taskStarted, (state, action) => {
     const task = action.payload;
     return {
@@ -64,7 +64,7 @@ const selector = createStructuredSelector<
   Partial<TasksState>,
   Partial<TasksState>
 >({
-  tasksByGameId: state => groupBy(state.tasks, "gameId"),
+  tasksByGameId: (state) => groupBy(state.tasks, "gameId"),
 });
 
 export default derivedReducer<TasksState>(baseReducer, selector);

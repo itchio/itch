@@ -130,13 +130,13 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
         const { numImportedItems } = await rcall(
           messages.InstallLocationsScan,
           { legacyMarketPath: legacyMarketPath() },
-          convo => {
+          (convo) => {
             hookLogging(convo, logger);
             convo.on(messages.Progress, async ({ progress }) => {
               this.setState({ progress });
             });
             convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
-              this.setState(state => ({
+              this.setState((state) => ({
                 game,
                 games: [...state.games, game],
               }));
@@ -262,7 +262,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
       <ListDiv>
         <p>{T(_("preferences.scan_install_locations.message"))}</p>
         <List>
-          {games.map(g => (
+          {games.map((g) => (
             <li key={g.id}>
               <TinyCover game={g} showGifMarker={false} />
               <span>{g.title}</span>

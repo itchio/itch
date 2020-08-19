@@ -32,6 +32,6 @@ interface Props {
   active: boolean;
 }
 
-export default hookWithProps(Checkbox)(map => ({
+export default hookWithProps(Checkbox)((map) => ({
   active: map((rs, props) => rs.preferences[props.name]),
 }))(Checkbox);

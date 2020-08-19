@@ -10,7 +10,7 @@ const initialState = {
   progress: -1,
 } as GameUpdatesState;
 
-export default reducer<GameUpdatesState>(initialState, on => {
+export default reducer<GameUpdatesState>(initialState, (on) => {
   on(actions.gameUpdateCheckStatus, (state, action) => {
     const { checking, progress } = action.payload;
     return {

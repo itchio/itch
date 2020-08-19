@@ -9,7 +9,7 @@ import showGameUpdate from "main/reactors/dialogs/show-game-update";
 import clearBrowsingData from "main/reactors/dialogs/clear-browsing-data";
 import scanInstallLocations from "main/reactors/dialogs/scan-install-locations";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   changeUser(watcher);
   manageGame(watcher);
   manageCave(watcher);

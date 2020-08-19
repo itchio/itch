@@ -12,7 +12,7 @@ export function fileSize(s: number) {
 
   const e = Math.floor(Math.log(s) / logE1024);
   const suffix = sizes[Math.trunc(e)];
-  const val = Math.floor(s / Math.pow(base, e) * 10 + 0.5) / 10;
+  const val = Math.floor((s / Math.pow(base, e)) * 10 + 0.5) / 10;
   if (val < 10) {
     return `${val.toFixed(1)} ${suffix}`;
   } else {

@@ -17,7 +17,7 @@ export const SelectValueDiv = styled.div`
   }
 
   .tag {
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
     text-shadow: none;
 
     font-size: 80%;
@@ -26,7 +26,7 @@ export const SelectValueDiv = styled.div`
       padding-right: 0;
     }
 
-    border-radius: ${props => props.theme.borderRadii.explanation};
+    border-radius: ${(props) => props.theme.borderRadii.explanation};
     flex-shrink: 0;
     ${singleLine};
   }

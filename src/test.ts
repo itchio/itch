@@ -26,7 +26,7 @@ export class TestWatcher extends Watcher {
   p: Promise<void> | null;
 
   constructor() {
-    super(new Logger({ write: entry => {} }));
+    super(new Logger({ write: (entry) => {} }));
     this.store = createStore(reducer, {} as any) as Store;
     const storeDotDispatch = this.store.dispatch;
     this.store.dispatch = <A extends Action<any>>(action: A): A => {

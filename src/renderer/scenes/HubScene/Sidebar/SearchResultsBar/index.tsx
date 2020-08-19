@@ -15,11 +15,11 @@ import { each, isEmpty } from "underscore";
 import { Game } from "common/butlerd/messages";
 
 const ResultsContainer = styled.div`
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   z-index: 40;
 
   position: absolute;
-  box-shadow: 0 0 30px ${props => props.theme.sidebarBackground};
+  box-shadow: 0 0 30px ${(props) => props.theme.sidebarBackground};
   border-radius: 0 0 0 2px;
 
   display: flex;
@@ -44,11 +44,11 @@ const ResultList = styled.div`
 
   flex-grow: 1;
 
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
 const NoResults = styled.p`
-  font-size: ${props => props.theme.fontSizes.smaller};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
   padding: 8px 12px;
 `;
 
@@ -103,13 +103,13 @@ class SearchResultsBar extends React.PureComponent<Props> {
           {loading
             ? T(["sidebar.loading"])
             : query
-              ? T(["search.empty.no_results"])
-              : T(["search.empty.tagline", { example }])}
+            ? T(["search.empty.no_results"])
+            : T(["search.empty.tagline", { example }])}
         </NoResults>
       );
     } else {
       let index = 0;
-      each(games, game => {
+      each(games, (game) => {
         items.push(
           <GameSearchResult
             key={`game-${game.id}`}

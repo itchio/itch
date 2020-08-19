@@ -37,7 +37,7 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hookWithProps(InstallPage)(map => ({
+  hookWithProps(InstallPage)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     gameId: map((rs, props) =>
       parseInt(ambientTab(rs, props).location.query.game_id, 10)

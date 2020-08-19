@@ -25,8 +25,8 @@ const GameSearchResultDiv = styled.div`
   border-left: 1px solid transparent;
 
   &.chosen {
-    background-color: ${props => props.theme.sidebarEntryFocusedBackground};
-    border-color: ${props => props.theme.accent};
+    background-color: ${(props) => props.theme.sidebarEntryFocusedBackground};
+    border-color: ${(props) => props.theme.accent};
     cursor: pointer;
   }
 
@@ -66,17 +66,17 @@ const TitleDiv = styled.div`
 `;
 
 const Title = styled.span`
-  font-size: ${props => props.theme.fontSizes.smaller};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
   ${styles.singleLine};
 
   &.chosen {
-    font-size: ${props => props.theme.fontSizes.larger};
+    font-size: ${(props) => props.theme.fontSizes.larger};
   }
 `;
 
 const ShortText = styled.span`
-  font-size: ${props => props.theme.fontSizes.smaller};
-  color: ${props => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
+  color: ${(props) => props.theme.secondaryText};
   margin-right: 8px;
   overflow-x: hidden;
   text-overflow: ellipsis;

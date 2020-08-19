@@ -26,7 +26,7 @@ export function registerItchProtocol(store: Store, ses: Session) {
       (_req, cb) => {
         cb("");
       },
-      e => {
+      (e) => {
         if (e) {
           logger.error(`While registering itch protocol: ${e.stack || e}`);
         }

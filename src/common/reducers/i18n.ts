@@ -15,7 +15,7 @@ const initialState = {
   locales: [],
 } as I18nState;
 
-export default reducer<I18nState>(initialState, on => {
+export default reducer<I18nState>(initialState, (on) => {
   on(actions.localesConfigLoaded, (state, action) => {
     const config = action.payload;
     return { ...state, ...config };

@@ -15,7 +15,7 @@ const Label = styled.div`
 const RowButtonDiv = styled.div`
   ${styles.singleLine};
 
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
   font-weight: bold;
   padding: 8px 16px;
 
@@ -24,23 +24,23 @@ const RowButtonDiv = styled.div`
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
   border-radius: 4px;
-  box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
+  box-shadow: 0 1px 3px ${(props) => props.theme.inputBoxShadow};
 
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
 
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${(props) => props.theme.fontSizes.large};
 
   &:hover {
-    background: ${props => lighten(0.12, props.theme.breadBackground)};
-    border-color: ${props => lighten(0.1, props.theme.inputBorder)};
-    color: ${props => props.theme.secondaryTextHover};
+    background: ${(props) => lighten(0.12, props.theme.breadBackground)};
+    border-color: ${(props) => lighten(0.1, props.theme.inputBorder)};
+    color: ${(props) => props.theme.secondaryTextHover};
 
     cursor: pointer;
   }
 
-  color: ${props => lighten(0.1, props.theme.baseText)};
-  background: ${props => lighten(0.1, props.theme.breadBackground)};
-  border-color: ${props => props.theme.inputBorder};
+  color: ${(props) => lighten(0.1, props.theme.baseText)};
+  background: ${(props) => lighten(0.1, props.theme.breadBackground)};
+  border-color: ${(props) => props.theme.inputBorder};
 
   &:active {
     transform: translateY(1px);
@@ -119,7 +119,7 @@ interface Props {
 export default RowButton;
 
 const TagDiv = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   text-shadow: none;
 
   font-size: 80%;
@@ -128,7 +128,7 @@ const TagDiv = styled.div`
     padding-right: 0;
   }
 
-  border-radius: ${props => props.theme.borderRadii.explanation};
+  border-radius: ${(props) => props.theme.borderRadii.explanation};
 `;
 
 export const BigButtonContent = styled.div`

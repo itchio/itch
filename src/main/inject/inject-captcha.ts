@@ -4,6 +4,6 @@ interface ExtWindow {
 }
 const extWindow: ExtWindow = window as any;
 
-extWindow.onCaptcha = function(response: string) {
+extWindow.onCaptcha = function (response: string) {
   extWindow.captchaResponse = response;
 };

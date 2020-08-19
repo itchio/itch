@@ -132,13 +132,15 @@ export function hookWebContentsContextMenu(
 
 function delUnusedElements(menuTpl: Electron.MenuItemConstructorOptions[]) {
   let notDeletedPrevEl: Electron.MenuItemConstructorOptions;
-  return menuTpl.filter(el => el.visible !== false).filter((el, i, arr) => {
-    const toDelete =
-      el.type === "separator" &&
-      (!notDeletedPrevEl ||
-        i === arr.length - 1 ||
-        arr[i + 1].type === "separator");
-    notDeletedPrevEl = toDelete ? notDeletedPrevEl : el;
-    return !toDelete;
-  });
+  return menuTpl
+    .filter((el) => el.visible !== false)
+    .filter((el, i, arr) => {
+      const toDelete =
+        el.type === "separator" &&
+        (!notDeletedPrevEl ||
+          i === arr.length - 1 ||
+          arr[i + 1].type === "separator");
+      notDeletedPrevEl = toDelete ? notDeletedPrevEl : el;
+      return !toDelete;
+    });
 }

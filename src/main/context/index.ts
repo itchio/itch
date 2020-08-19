@@ -81,7 +81,7 @@ export class MinimalContext {
     } catch (e) {
       throw e;
     } finally {
-      this.stoppers = this.stoppers.filter(c => c !== opts.stop);
+      this.stoppers = this.stoppers.filter((c) => c !== opts.stop);
     }
   }
 

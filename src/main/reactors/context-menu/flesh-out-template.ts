@@ -25,7 +25,7 @@ export function fleshOutTemplate(
       node.label = t(i18n, localizedLabel);
     }
     if (enabled && !node.click) {
-      node.click = e => {
+      node.click = (e) => {
         const menuAction = convertMenuAction(
           wind,
           { localizedLabel, role },

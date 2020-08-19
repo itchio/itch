@@ -143,7 +143,8 @@ const ModalsDiv = styled.div`
       h5,
       h6 {
         margin-bottom: 0.4em;
-        font-size: ${props => stripUnit(props.theme.fontSizes.baseText) + 2}px;
+        font-size: ${(props) =>
+          stripUnit(props.theme.fontSizes.baseText) + 2}px;
         font-weight: bold;
       }
 
@@ -165,7 +166,7 @@ const ModalsDiv = styled.div`
       }
 
       .secondary {
-        color: ${props => props.theme.secondaryText};
+        color: ${(props) => props.theme.secondaryText};
       }
 
       strong {
@@ -240,7 +241,7 @@ const ModalsDiv = styled.div`
 `;
 
 const HeaderDiv = styled.div`
-  background: ${props => props.theme.sidebarBackground};
+  background: ${(props) => props.theme.sidebarBackground};
   padding: 8px;
   padding-left: 20px;
   display: flex;
@@ -260,8 +261,8 @@ const HeaderDiv = styled.div`
   }
 
   .title {
-    color: ${props => props.theme.secondaryText};
-    font-size: ${props => props.theme.fontSizes.large};
+    color: ${(props) => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.large};
   }
 `;
 
@@ -313,7 +314,7 @@ class Modals extends React.PureComponent<Props, State> {
         let primaryButtons = map(modal.buttons, specToButton);
         primaryButtons = filter(
           primaryButtons,
-          b => !b.className || !/secondary/.test(b.className)
+          (b) => !b.className || !/secondary/.test(b.className)
         );
         // if there's more than one primary button, or none at all, 'ok' does nothing
         if (primaryButtons.length === 1) {
@@ -484,7 +485,7 @@ class Modals extends React.PureComponent<Props, State> {
                 {tags || timeAgo ? (
                   <BigButtonRow>
                     {tags
-                      ? map(tags, tag => {
+                      ? map(tags, (tag) => {
                           return (
                             <Tag>
                               {tag.icon ? <Icon icon={tag.icon} /> : null}
@@ -586,6 +587,6 @@ interface State {
   widgetPayload?: typeof actions.modalResponse.payload;
 }
 
-export default hook(map => ({
-  modal: map(rs => ambientWindState(rs).modals[0]),
+export default hook((map) => ({
+  modal: map((rs) => ambientWindState(rs).modals[0]),
 }))(injectIntl(Modals));

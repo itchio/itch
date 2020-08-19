@@ -24,7 +24,7 @@ export const initialState = {
   enableTabs: false,
 } as PreferencesState;
 
-export default reducer<PreferencesState>(initialState, on => {
+export default reducer<PreferencesState>(initialState, (on) => {
   on(actions.updatePreferences, (state, action) => {
     const record = action.payload;
     return {

@@ -8,7 +8,7 @@ const initialState = {
   packages: {},
 } as BrothState;
 
-export default reducer<BrothState>(initialState, on => {
+export default reducer<BrothState>(initialState, (on) => {
   on(actions.packagesListed, (state, action) => {
     let packages: BrothState["packages"] = {};
     const { packageNames } = action.payload;

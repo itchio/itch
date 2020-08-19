@@ -15,7 +15,7 @@ import { messages } from "common/butlerd";
 
 const logger = mainLogger.child(__filename);
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {
     const { args } = action.payload;
     for (const uri of args) {

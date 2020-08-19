@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 
 import { sortBy } from "underscore";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.forceCloseLastGame, async (store, action) => {
     const tasks = sortBy(store.getState().tasks.tasks, "startedAt");
 

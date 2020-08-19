@@ -60,7 +60,7 @@ type ModalWidgetRegistry = {
   [K in keyof ModalRegistry]: React.ComponentType<
     ModalWidgetProps<ModalRegistry[K]["params"], ModalRegistry[K]["response"]> &
       any
-  >
+  >;
 } & {
   [key: string]: React.ComponentType<any>;
 };

@@ -5,7 +5,7 @@ import { Watcher } from "common/util/watcher";
 import { modals } from "common/modals";
 import { mcall } from "main/butlerd/mcall";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.manageCave, async (store, action) => {
     const { caveId } = action.payload;
 

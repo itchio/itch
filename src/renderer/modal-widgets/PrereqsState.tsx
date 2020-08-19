@@ -77,7 +77,7 @@ const PrereqsRow = styled.li`
   .task-status {
     margin-top: 5px;
     font-size: 80%;
-    color: ${props => props.theme.secondaryText};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 

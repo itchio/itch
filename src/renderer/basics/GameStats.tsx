@@ -14,8 +14,8 @@ import { T } from "renderer/t";
 const GameStatsDiv = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: ${props => props.theme.fontSizes.baseText};
-  color: ${props => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+  color: ${(props) => props.theme.secondaryText};
   line-height: 1.8;
   justify-content: flex-end;
 
@@ -27,7 +27,7 @@ const GameStatsDiv = styled.div`
     color: #fff;
 
     .nice-ago {
-      color: ${props => props.theme.secondaryText}; // sigh
+      color: ${(props) => props.theme.secondaryText}; // sigh
     }
 
     &.original-price {
@@ -44,7 +44,7 @@ const GameStatsDiv = styled.div`
 
   .total-playtime,
   .last-playthrough {
-    font-size: ${props => props.theme.fontSizes.baseText};
+    font-size: ${(props) => props.theme.fontSizes.baseText};
     margin-right: 5px;
   }
 `;
@@ -118,31 +118,31 @@ class GameStats extends React.PureComponent<Props> {
                     },
                   ])
                 : minPrice > 0
-                  ? T([
-                      "usage_stats.description.price",
-                      {
-                        price: sale ? (
-                          <span>
-                            <label
-                              key="original-price"
-                              className="original-price"
-                            >
-                              {formatPrice(currency, minPrice)}
-                            </label>
-                            <label key="discounted-price">
-                              {" "}
-                              {formatPrice(
-                                currency,
-                                minPrice * (1 - sale.rate / 100)
-                              )}
-                            </label>
-                          </span>
-                        ) : (
-                          <label>{formatPrice(currency, minPrice)}</label>
-                        ),
-                      },
-                    ])
-                  : T(["usage_stats.description.free_download"])}
+                ? T([
+                    "usage_stats.description.price",
+                    {
+                      price: sale ? (
+                        <span>
+                          <label
+                            key="original-price"
+                            className="original-price"
+                          >
+                            {formatPrice(currency, minPrice)}
+                          </label>
+                          <label key="discounted-price">
+                            {" "}
+                            {formatPrice(
+                              currency,
+                              minPrice * (1 - sale.rate / 100)
+                            )}
+                          </label>
+                        </span>
+                      ) : (
+                        <label>{formatPrice(currency, minPrice)}</label>
+                      ),
+                    },
+                  ])
+                : T(["usage_stats.description.free_download"])}
             </div>
           </div>
         </GameStatsDiv>

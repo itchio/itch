@@ -71,7 +71,7 @@ export async function performLaunch(
             prereqsDir,
             sandbox: preferences.isolateApps,
           },
-          convo => {
+          (convo) => {
             launchConvo = convo;
             hookLogging(convo, logger);
 
@@ -105,7 +105,7 @@ export async function performLaunch(
               return { accept: false };
             });
 
-            convo.on(messages.HTMLLaunch, async params => {
+            convo.on(messages.HTMLLaunch, async (params) => {
               return await performHTMLLaunch({
                 ctx,
                 logger,

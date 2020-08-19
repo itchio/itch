@@ -48,7 +48,7 @@ const base = (props: FilterOptionProps) => {
     </FilterOptionLink>
   );
 };
-const hooked = hookWithProps(base)(map => ({
+const hooked = hookWithProps(base)((map) => ({
   url: map((rs, props) => ambientTab(rs, props).location.url),
   active: map(
     (rs, props) =>

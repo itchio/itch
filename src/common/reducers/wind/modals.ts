@@ -7,7 +7,7 @@ import reducer from "common/reducers/reducer";
 
 const initialState: ModalsState = [];
 
-export default reducer<ModalsState>(initialState, on => {
+export default reducer<ModalsState>(initialState, (on) => {
   on(actions.openModal, (state, action) => {
     const modal = action.payload;
     return [modal, ...state];
@@ -15,7 +15,7 @@ export default reducer<ModalsState>(initialState, on => {
 
   on(actions.updateModalWidgetParams, (state, action) => {
     const { id, widgetParams } = action.payload;
-    return state.map(modal => {
+    return state.map((modal) => {
       if (modal.id === id) {
         return { ...modal, widgetParams };
       }
@@ -25,6 +25,6 @@ export default reducer<ModalsState>(initialState, on => {
 
   on(actions.modalClosed, (state, action) => {
     const { id } = action.payload;
-    return reject(state, modal => modal.id === id);
+    return reject(state, (modal) => modal.id === id);
   });
 });

@@ -7,7 +7,7 @@ const initialState = {
   blockingOperation: null,
 } as ProfileLoginState;
 
-export default reducer<ProfileLoginState>(initialState, on => {
+export default reducer<ProfileLoginState>(initialState, (on) => {
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,

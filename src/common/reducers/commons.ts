@@ -11,7 +11,7 @@ const initialState: CommonsState = {
   locationSizes: {},
 };
 
-export default reducer<CommonsState>(initialState, on => {
+export default reducer<CommonsState>(initialState, (on) => {
   // TODO: be much smarter+faster here.
   // this is a good place to dedupe updates if records
   // are deepEqual

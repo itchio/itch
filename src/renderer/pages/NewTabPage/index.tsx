@@ -43,7 +43,7 @@ const NewTabGrid = styled.div`
 const NewTabItem = styled.a`
   ${styles.clickable};
 
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
   text-decoration: none;
 
   width: auto;
@@ -68,7 +68,7 @@ const Title = styled.h2`
   flex-basis: 100%;
   text-align: center;
   padding: 20px 0;
-  font-size: ${props => props.theme.fontSizes.huge};
+  font-size: ${(props) => props.theme.fontSizes.huge};
 `;
 
 class NewTabPage extends React.PureComponent<Props> {
@@ -78,7 +78,7 @@ class NewTabPage extends React.PureComponent<Props> {
         <BrowserBar />
         <NewTabMain>
           <NewTabGrid>
-            {map(newTabPrimaryItems, item => {
+            {map(newTabPrimaryItems, (item) => {
               const { label, icon, url } = item;
 
               return (
@@ -92,7 +92,7 @@ class NewTabPage extends React.PureComponent<Props> {
 
           <NewTabGrid>
             <Title>{T(["new_tab.titles.buttons"])}</Title>
-            {map(newTabSecondaryItems, item => {
+            {map(newTabSecondaryItems, (item) => {
               const { label, icon, url } = item;
 
               return (

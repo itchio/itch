@@ -233,7 +233,7 @@ class DownloadsPage extends React.PureComponent<Props> {
             {T(["status.downloads.clear_all_finished"])}
           </Link>
         </div>
-        {map(finishedItems, item => (
+        {map(finishedItems, (item) => (
           <Row key={item.id} item={item} finished />
         ))}
       </>
@@ -265,12 +265,12 @@ interface Props extends MeatProps {
 }
 
 export default withTab(
-  hook(map => ({
-    items: map(rs => getPendingDownloads(rs.downloads)),
-    finishedItems: map(rs => getFinishedDownloads(rs.downloads)),
-    updates: map(rs => rs.gameUpdates.updates),
-    updateCheckHappening: map(rs => rs.gameUpdates.checking),
-    updateCheckProgress: map(rs => rs.gameUpdates.progress),
-    downloadsPaused: map(rs => rs.downloads.paused),
+  hook((map) => ({
+    items: map((rs) => getPendingDownloads(rs.downloads)),
+    finishedItems: map((rs) => getFinishedDownloads(rs.downloads)),
+    updates: map((rs) => rs.gameUpdates.updates),
+    updateCheckHappening: map((rs) => rs.gameUpdates.checking),
+    updateCheckProgress: map((rs) => rs.gameUpdates.progress),
+    downloadsPaused: map((rs) => rs.downloads.paused),
   }))(DownloadsPage)
 );

@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { t } from "common/format/t";
 import { urlForGame } from "common/util/navigation";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
     const { download } = action.payload;
     if (download.error) {
@@ -35,8 +35,9 @@ export default function(watcher: Watcher) {
           notificationOptions.version = `?`;
           const { build } = download;
           if (build) {
-            notificationOptions.version = `#${build.userVersion ||
-              build.version}`;
+            notificationOptions.version = `#${
+              build.userVersion || build.version
+            }`;
           }
           break;
         default:

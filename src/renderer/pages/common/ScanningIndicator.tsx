@@ -6,7 +6,7 @@ import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
 const ScanningIndicatorDiv = styled.div`
-  font-size: ${props => props.theme.fontSizes.smaller};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
   height: 15px;
   opacity: 0;
   transition: all 0.4s;
@@ -48,6 +48,6 @@ interface Props {
   progress: number | null;
 }
 
-export default hook(map => ({
-  progress: map(rs => rs.system.locationScanProgress),
+export default hook((map) => ({
+  progress: map((rs) => rs.system.locationScanProgress),
 }))(ScanningIndicator);

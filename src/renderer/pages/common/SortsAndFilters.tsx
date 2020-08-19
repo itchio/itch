@@ -35,7 +35,7 @@ const optionButtonLike = css`
   margin: 0;
   border: 1px solid ${borderColor};
   border-left: none;
-  color: ${props => props.theme.baseText};
+  color: ${(props) => props.theme.baseText};
   transition: all 0.4s;
 
   &:first-child {
@@ -53,7 +53,7 @@ const optionButtonLike = css`
 
   &.active {
     background: ${activeBg};
-    color: ${props => props.theme.baseText};
+    color: ${(props) => props.theme.baseText};
   }
 
   &:hover {

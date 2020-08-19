@@ -6,7 +6,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 
 const EmptyStateDiv = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${(props) => props.theme.secondaryText};
   width: 100%;
   text-align: center;
   margin: 60px 0;
@@ -18,13 +18,13 @@ const EmptyStateDiv = styled.div`
   }
 
   h1 {
-    font-size: ${props => props.theme.fontSizes.enormous};
+    font-size: ${(props) => props.theme.fontSizes.enormous};
     font-weight: bold;
     margin-bottom: 10px;
   }
 
   h2 {
-    font-size: ${props => props.theme.fontSizes.huge};
+    font-size: ${(props) => props.theme.fontSizes.huge};
   }
 `;
 

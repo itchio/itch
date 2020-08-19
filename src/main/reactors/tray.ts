@@ -19,7 +19,7 @@ import { mcall } from "main/butlerd/mcall";
 import { messages } from "common/butlerd";
 import { Menu } from "common/helpers/menu";
 
-const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
+const setTrayMenu = memoize(1, function (template: MenuTemplate, store: Store) {
   const fleshedOut = fleshOutTemplate(
     "root",
     store,
@@ -107,7 +107,7 @@ async function refreshTray(store: Store) {
   setTrayMenu(menuTemplate, store);
 }
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.notify, async (store, action) => {
     const { onClick } = action.payload;
     rememberNotificationAction(onClick);

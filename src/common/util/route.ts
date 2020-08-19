@@ -34,7 +34,7 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
         promises.push(r(store, action));
       }
     }
-    Promise.all(promises).catch(e => err(watcher.logger, e, action));
+    Promise.all(promises).catch((e) => err(watcher.logger, e, action));
   }, 0);
   return;
 }

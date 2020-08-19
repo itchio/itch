@@ -85,6 +85,6 @@ interface Props {
   me: User;
 }
 
-export default hook(map => ({
-  me: map(rs => rs.profile.profile.user),
+export default hook((map) => ({
+  me: map((rs) => rs.profile.profile.user),
 }))(UserMenu);

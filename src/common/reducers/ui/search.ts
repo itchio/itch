@@ -7,7 +7,7 @@ const initialState = {
   open: false,
 } as UISearchState;
 
-export default reducer<UISearchState>(initialState, on => {
+export default reducer<UISearchState>(initialState, (on) => {
   on(actions.searchVisibilityChanged, (state, action) => {
     const { open } = action.payload;
     return { ...state, open };

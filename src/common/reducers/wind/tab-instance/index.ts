@@ -151,7 +151,7 @@ const selector = (state: TabInstance): TabInstance => {
   return newState;
 };
 
-const baseReducer = reducer<TabInstance>(initialState, on => {
+const baseReducer = reducer<TabInstance>(initialState, (on) => {
   on(actions.tabPageUpdate, (state, action) => {
     const { page } = action.payload;
 
@@ -286,7 +286,7 @@ const baseReducer = reducer<TabInstance>(initialState, on => {
   });
 });
 
-export default function(state: TabInstance, action: Action<any>): TabInstance {
+export default function (state: TabInstance, action: Action<any>): TabInstance {
   state = baseReducer(state, action);
   state = selector(state);
   return state;

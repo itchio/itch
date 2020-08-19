@@ -18,7 +18,7 @@ const Container = styled.div`
   border-radius: 2px;
 
   &:hover {
-    background: ${props => props.theme.baseBackground};
+    background: ${(props) => props.theme.baseBackground};
     cursor: pointer;
   }
 `;
@@ -56,8 +56,8 @@ interface Props {
   available: boolean;
 }
 
-export default hook(map => ({
-  available: map(rs => {
+export default hook((map) => ({
+  available: map((rs) => {
     const pkg = rs.broth.packages[rs.system.appName];
     return pkg && pkg.stage === "need-restart";
   }),

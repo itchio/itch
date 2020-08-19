@@ -51,7 +51,7 @@ interface Props {
 }
 
 export default withTab(
-  hookWithProps(BrowserContext)(map => ({
+  hookWithProps(BrowserContext)((map) => ({
     sequence: map((props, rs) => ambientTab(props, rs).sequence),
     gameId: map((props, rs) => {
       const { resource } = ambientTab(props, rs);

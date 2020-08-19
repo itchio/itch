@@ -8,7 +8,7 @@ const LocationSizeDiv = styled.div`
   width: 400px;
 
   .progress-wrapper {
-    font-size: ${props => props.theme.fontSizes.smaller};
+    font-size: ${(props) => props.theme.fontSizes.smaller};
     &:hover {
       cursor: pointer;
     }

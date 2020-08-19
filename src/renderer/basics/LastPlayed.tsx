@@ -16,8 +16,8 @@ class LastPlayed extends React.PureComponent<Props> {
       classAction === "open"
         ? "opened"
         : classification === "game"
-          ? "played"
-          : "used";
+        ? "played"
+        : "used";
 
     return (
       <div className={classNames("last-playthrough", className)}>

@@ -15,7 +15,7 @@ import { modals } from "common/modals";
 import { ambientWind } from "common/util/navigation";
 
 const BlockingOperationDiv = styled.div`
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${(props) => props.theme.fontSizes.large};
 
   .message {
     padding: 1em;
@@ -36,8 +36,8 @@ const BlockingOperationDiv = styled.div`
 
   .progress {
     padding: 1em;
-    font-size: ${props => props.theme.fontSizes.smaller};
-    color: ${props => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.smaller};
+    color: ${(props) => props.theme.secondaryText};
     text-align: center;
   }
 
@@ -174,6 +174,6 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default hook(map => ({
-  windows: map(rs => rs.system.windows),
+export default hook((map) => ({
+  windows: map((rs) => rs.system.windows),
 }))(BlockingOperation);

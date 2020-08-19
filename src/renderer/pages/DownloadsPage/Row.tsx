@@ -36,18 +36,18 @@ import styled, { css } from "renderer/styles";
 import { T, _ } from "renderer/t";
 
 const TitleCompact = styled(Title)`
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${(props) => props.theme.fontSizes.larger};
   padding-bottom: 0.2em;
 `;
 
 const DownloadRowDiv = styled.div`
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${(props) => props.theme.fontSizes.large};
   position: relative;
 
   border: 1px solid transparent;
   transition: all 0.4s;
 
-  background-color: ${props => props.theme.inputBackground};
+  background-color: ${(props) => props.theme.inputBackground};
   margin: 14px 0;
 
   &.first {
@@ -55,8 +55,8 @@ const DownloadRowDiv = styled.div`
   }
 
   &.has-operation {
-    background-color: ${props => lighten(0.05, props.theme.inputBackground)};
-    border-color: ${props => lighten(0.2, props.theme.inputBackground)};
+    background-color: ${(props) => lighten(0.05, props.theme.inputBackground)};
+    border-color: ${(props) => lighten(0.2, props.theme.inputBackground)};
   }
 
   display: flex;
@@ -77,7 +77,7 @@ const DownloadRowDiv = styled.div`
 
     .control--details,
     .control--status {
-      font-size: ${props => props.theme.fontSizes.baseText};
+      font-size: ${(props) => props.theme.fontSizes.baseText};
 
       display: flex;
       flex-direction: row;
@@ -93,11 +93,11 @@ const DownloadRowDiv = styled.div`
 
       max-width: 500px;
 
-      color: ${props => props.theme.baseColors.carnation};
+      color: ${(props) => props.theme.baseColors.carnation};
     }
 
     .control--details {
-      color: ${props => props.theme.secondaryText};
+      color: ${(props) => props.theme.secondaryText};
     }
 
     .progress {
@@ -495,9 +495,9 @@ interface Props extends HoverProps {
 }
 
 export default withHover(
-  hookWithProps(DownloadRow)(map => ({
-    speeds: map(rs => rs.downloads.speeds),
-    downloadsPaused: map(rs => rs.downloads.paused),
+  hookWithProps(DownloadRow)((map) => ({
+    speeds: map((rs) => rs.downloads.speeds),
+    downloadsPaused: map((rs) => rs.downloads.paused),
     status: map((rs, props) =>
       getGameStatus(rs, props.item.game, props.item.caveId)
     ),

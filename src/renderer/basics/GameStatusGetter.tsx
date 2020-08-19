@@ -18,6 +18,6 @@ class GameStatusGetter extends React.PureComponent<Props> {
   }
 }
 
-export default hookWithProps(GameStatusGetter)(map => ({
+export default hookWithProps(GameStatusGetter)((map) => ({
   status: map((rs, props) => getGameStatus(rs, props.game, props.caveId)),
 }))(GameStatusGetter);

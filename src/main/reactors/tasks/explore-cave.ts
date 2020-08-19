@@ -6,7 +6,7 @@ import { dirname } from "path";
 import * as explorer from "main/os/explorer";
 import { mcall } from "main/butlerd/mcall";
 
-export default function(watcher: Watcher) {
+export default function (watcher: Watcher) {
   watcher.on(actions.exploreCave, async (store, action) => {
     const { caveId } = action.payload;
 
