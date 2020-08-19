@@ -36,7 +36,10 @@ export function hook<DerivedProps = {}>(
     return connect();
   }
   const selectors = makeSelectors(identity);
-  return connect(createStructuredSelector<RootState, DerivedProps>(selectors));
+  // FIXME: dirty typing workaround, seems to work in practice
+  return (connect(
+    createStructuredSelector<RootState, DerivedProps>(selectors)
+  ) as unknown) as any;
 }
 
 export function hookWithProps<InputProps>(

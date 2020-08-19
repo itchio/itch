@@ -6,7 +6,7 @@ import itchioUris from "common/reducers/profile/itchio-uris";
 import { Reducer } from "redux";
 import { ProfileState } from "common/types";
 
-const reducers: any = {
+const reducers = {
   login,
   profile,
   itchioUris,
