@@ -1,5 +1,6 @@
 import React from "react";
 import { FormattedRelativeTime } from "react-intl";
+import { selectUnit } from "@formatjs/intl-utils";
 
 class TimeAgo extends React.PureComponent<Props> {
   render() {
@@ -17,6 +18,22 @@ class TimeAgo extends React.PureComponent<Props> {
       return null;
     }
 
+    const { value, unit } = selectUnit(dateObject);
+    let extra = {
+      updateIntervalInSeconds: undefined,
+    };
+    switch (unit) {
+      case "second":
+        extra.updateIntervalInSeconds = 1;
+        break;
+      case "minute":
+        extra.updateIntervalInSeconds = 60;
+        break;
+      case "hour":
+        extra.updateIntervalInSeconds = 60 * 60;
+        break;
+    }
+
     return (
       <span
         className={`time-ago ${className}`}
@@ -24,9 +41,10 @@ class TimeAgo extends React.PureComponent<Props> {
       >
         {before ? <>{before} </> : null}
         <FormattedRelativeTime
-          value={(dateObject.getTime() - Date.now()) / 1000}
-          unit="second"
-          updateIntervalInSeconds={1}
+          value={value}
+          unit={unit}
+          style="long"
+          {...extra}
         />
       </span>
     );
