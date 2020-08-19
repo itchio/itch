@@ -4,6 +4,7 @@
 const { readFileSync } = require("fs");
 const { OSES, ARCHES, getAppName, getBuildVersion } = require("../common");
 const ospath = require("path");
+const { chalk } = require("@itchio/bob");
 
 /**
  * @typedef Context
@@ -32,6 +33,7 @@ async function parseContext() {
   let os = undefined;
   let arch = undefined;
   let testDev = false;
+  let detectOSArch = false;
 
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
@@ -41,16 +43,33 @@ async function parseContext() {
     } else if (arg === "--arch") {
       arch = args[i + 1];
       i++;
+    } else if (arg === "--detect-osarch") {
+      detectOSArch = true;
     } else if (arg === "--test-dev") {
       testDev = true;
     }
   }
 
+  if (detectOSArch) {
+    if (!os) {
+      os = "linux";
+      if (process.platform === "win32") {
+        os = "windows";
+      } else if (process.platform === "darwin") {
+        os = "darwin";
+      }
+    }
+
+    if (!arch) {
+      arch = "amd64";
+    }
+  }
+
   if (!os || !OSES[os]) {
     throw new Error(
-      `Missing/wrong --os argument (should be one of ${Object.keys(
-        OSES
-      ).join(", ")}, was ${JSON.stringify(os)})`
+      `Missing/wrong --os argument (should be one of ${Object.keys(OSES).join(
+        ", "
+      )}, was ${JSON.stringify(os)})`
     );
   }
 
@@ -90,16 +109,7 @@ async function parseContext() {
     readFileSync("package.json", { encoding: "utf-8" })
   ).devDependencies.electron.replace(/^\^/, "");
 
-  console.log(`============= Context info =============`);
-  console.log(`App name (${appName})`);
-  console.log(`OS (${os}), Arch (${arch})`);
-  console.log(`Electron version (${electronVersion})`);
-  console.log(`Code signing enabled: (${shouldSign})`);
-  console.log(`Project dir (${projectDir})`);
-  console.log(`Artifact dir (${artifactDir})`);
-  console.log(`Binary subPath (${binarySubdir})`);
-  console.log(`Binary name (${binaryName})`);
-  console.log(`========================================`);
+  console.log(`| ${chalk.green(appName)} for ${chalk.green(os)}-${chalk.green(arch)}, Electron ${chalk.blue(electronVersion)}, code signing (${shouldSign ? chalk.green("enabled") : chalk.magenta("disabled")})`);
 
   return {
     appName,

@@ -2,21 +2,23 @@
 "use strict";
 
 const { readFileSync, writeFileSync } = require("fs");
-const { $, cd } = require("@itchio/bob");
-const { getAppName, getBuildVersion } = require("../common");
+const { $, cd, header } = require("@itchio/bob");
+const { getAppName, getBuildVersion, measure } = require("../common");
 
 /**
  * @param {import("./context").Context} cx
  */
 async function build(cx) {
-  console.log(`Building ${getAppName()} ${getBuildVersion()}`);
+  header("Transpiling and bundling TypeScript, CSS, etc.");
 
   console.log("Wiping prefix/");
   $("rm -rf prefix");
   $("mkdir -p prefix");
 
   console.log("Compiling sources");
-  $("npm run compile");
+  await measure("webpack invocation", async () => {
+    $("npm run compile");
+  });
 
   console.log("Copying dist files to prefix/");
   $("cp -rf dist prefix/");

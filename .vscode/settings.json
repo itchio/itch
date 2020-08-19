@@ -21,19 +21,12 @@
   "files.eol": "\n",
   "editor.tabSize": 2,
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "coverage-gutters.lcovname": "./coverage/lcov.info",
   "prettier.trailingComma": "es5",
   "[typescript]": {
     "editor.formatOnSave": true
   },
   "[typescriptreact]": {
     "editor.formatOnSave": true
-  },
-  "TodoParser": {
-    "only": ["src/"],
-    "showInProblems": true,
-    "markers": ["FIXME", "TODO", "XXX"],
-    "folderExclude": ["node_modules"]
   },
   "typescript.preferences.importModuleSpecifier": "non-relative"
 }

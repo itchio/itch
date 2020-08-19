@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 
-const { $ } = require("@itchio/bob");
+const { $, header } = require("@itchio/bob");
 const {
   measure,
   getAppName,
@@ -15,8 +15,7 @@ const electronPackager = require("electron-packager");
 
 /** @param {import("./context").Context} cx */
 async function doPackage(cx) {
-  const { os, arch } = cx;
-  console.log(`Packaging ${cx.appName} for ${os}-${arch}`);
+  header("Packaging as a portable Electron application");
 
   const appName = getAppName();
   const appVersion = getBuildVersion();
