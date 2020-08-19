@@ -50,7 +50,7 @@ async function doPackage(cx) {
   console.log(`Built app is in ${buildPath}`);
 
   console.log(`Moving to ${cx.artifactDir}`);
-  $(`rm -rf artifacts`);
+  $(`rm -rf "${toUnixPath(cx.artifactDir)}"`);
   $(`mkdir -p artifacts`);
   $(`mv "${buildPath}" "${toUnixPath(cx.artifactDir)}"`);
 
