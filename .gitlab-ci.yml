@@ -1,114 +1,53 @@
 
 stages:
-  - build
   - package
   - deploy
 
-test-linux:
-  stage: build
-  tags:
-    - linux
-  script:
-    - release/ci-test.js
-  except:
-    - tags
-  artifacts:
-    expire_in: 1 week
-    when: always
-    paths:
-      - screenshots
-      - chrome-driver.log.txt
-
-test-darwin:
-  stage: build
-  tags:
-    - darwin
-  script:
-    - release/ci-test.js
-  except:
-    - tags
-  artifacts:
-    expire_in: 1 week
-    when: always
-    paths:
-      - screenshots
-      - chrome-driver.log.txt
-
-test-windows:
-  stage: build
-  retry: 2
-  tags:
-    - windows
-  script:
-    - release/ci-test.js
-  except:
-    - tags
-  artifacts:
-    expire_in: 1 week
-    when: always
-    paths:
-      - screenshots
-      - chrome-driver.log.txt
-
-# i18n check
-i18n-check:
-  stage: build
-  tags:
-    - linux
-  script:
-    - release/ci-i18n-check.js
-  except:
-    - tags
-
-# 64-bit linux portable builds
 package-linux-amd64:
   stage: package
   tags:
     - linux
   script:
-    - release/ci-package.js linux amd64
+    - npm ci
+    - node release/package-all.js --os linux --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
-# macOS .zip
 package-darwin-amd64:
   stage: package
   tags:
     - darwin
   script:
-    - release/ci-package.js darwin amd64
+    - node release/package-all.js --os darwin --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
-# windows 32-bit build
 package-windows-386:
   stage: package
-  retry: 2
   tags:
     - windows
   script:
-    - release/ci-package.js windows 386
+    - npm ci
+    - node release/package-all.js --os windows --arch 386
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
-# windows 64-bit build
 package-windows-amd64:
   stage: package
-  retry: 2
   tags:
     - windows
   script:
-    - release/ci-package.js windows amd64
+    - node release/package-all.js --os windows --arch amd64
   artifacts:
     expire_in: 1 week
     paths:
-      - packages
+      - artifacts
 
 deploy-itchio:
   stage: deploy

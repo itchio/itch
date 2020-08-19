@@ -27,7 +27,6 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
         "inject-game": ["./src/main/inject/inject-game.ts"],
         "inject-captcha": ["./src/main/inject/inject-captcha.ts"],
       },
-      externals: ["bindings", "electron-fetch", "eventsource"],
       plugins: [
         new CleanWebpackPlugin(),
         new WebpackBuildNotifierPlugin({

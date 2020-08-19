@@ -1,11 +1,13 @@
-#!/usr/bin/env node
+//@ts-check
+"use strict";
 
-const $ = require("./common");
+const { $, prompt, confirm } = require("@itchio/bob");
+const { readFileSync, writeFileSync } = require("fs");
 const { resolve } = require("path");
 
 async function pushTag() {
   const pkgPath = resolve(__dirname, "..", "package.json");
-  const pkg = JSON.parse(await $.readFile(pkgPath));
+  const pkg = JSON.parse(readFileSync(pkgPath, { encoding: "utf-8" }));
   const pkgVersion = pkg.version;
 
   let force = false;
@@ -13,7 +15,7 @@ async function pushTag() {
   for (const arg of process.argv.slice(2)) {
     switch (arg) {
       case "--force":
-        $.say("(Running in forced mode)");
+        console.log("(Running in forced mode)");
         force = true;
         break;
       default:
@@ -25,8 +27,7 @@ async function pushTag() {
   }
 
   const versionInput =
-    args[0] ||
-    (await $.prompt(`Package version is: ${pkg.version}, type yours`));
+    args[0] || (await prompt(`Package version is: ${pkg.version}, type yours`));
   if (!/^v\d+.\d+.\d+(-canary)?$/.test(versionInput)) {
     throw new Error(
       `Version must be of the form /vX.Y.Z(-canary)?/ (was '${versionInput}')`
@@ -37,40 +38,42 @@ async function pushTag() {
 
   if (pkgVersion !== nextVersion) {
     if (!force) {
-      await $.yesno(`Bump package.json? [${pkgVersion} => ${nextVersion}]`);
+      await confirm(`Bump package.json? [${pkgVersion} => ${nextVersion}]`);
     }
     pkg.version = nextVersion;
-    await $.writeFile(pkgPath, JSON.stringify(pkg, 0, 2));
-    $.say("Bumped package.json");
-    $(await $.sh("git add package.json"));
-    $(await $.sh(`git commit -m ':arrow_up: ${nextVersion}'`));
+    writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), { encoding: "utf-8" });
+    console.log("Bumped package.json");
+    $("git add package.json");
+    $(`git commit -m ':arrow_up: ${nextVersion}'`);
   }
 
   const tag = `v${nextVersion}`;
   const isCanary = /-canary$/.test(nextVersion);
   const addCmd = `git tag ${isCanary ? "" : "-s"} -a ${tag} -m ${tag}`;
 
-  if (await $.sh(addCmd)) {
-    $.say("Tag added...");
-  } else {
+  try {
+    $(addCmd);
+    console.log("Tag added...");
+  } catch (e) {
     if (!force) {
-      await $.yesno("Tag already exists locally. Replace?");
+      await confirm("Tag already exists locally. Replace?");
     }
-    $(await $.sh(`git tag -d ${tag}`));
-    $(await $.sh(addCmd));
+    $(`git tag -d ${tag}`);
+    $(addCmd);
   }
 
   const pushCmd = `git push origin ${tag}`;
-  if (await $.sh(pushCmd)) {
-    $.say("Tag pushed...");
-  } else {
+  try {
+    $(pushCmd);
+    console.log("Tag pushed...");
+  } catch (e) {
     if (!force) {
-      await $.yesno("Tag already exists on remote. Force-push?");
+      confirm("Tag already exists on remote. Force-push?");
     }
-    $(await $.sh(`${pushCmd} --force`));
+    $(`${pushCmd} --force`);
   }
 
-  $(await $.sh("git push"));
+  $("git push");
 }
 
 pushTag();

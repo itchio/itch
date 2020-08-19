@@ -1,19 +1,21 @@
-#!/usr/bin/env node
+//@ts-check
+"use strict";
 
-const $ = require("./common");
+const { lstatSync } = require("fs");
+const { $ } = require("@itchio/bob");
 
 async function importStrings() {
   let src = `../itch-i18n/locales`;
   try {
-    await $.lstat(src);
+    lstatSync(src);
   } catch (e) {
-    $.say(`Missing ../itch-i18n, not importing anything`);
+    console.log(`Missing ../itch-i18n, not importing anything`);
     process.exit(1);
   }
   let dst = `./src/static/locales`;
 
-  await $.sh(`rm -rf ${dst}`);
-  await $.sh(`cp -rfv ${src} ${dst}`);
+  $(`rm -rf ${dst}`);
+  $(`cp -rfv ${src} ${dst}`);
 }
 
 importStrings();

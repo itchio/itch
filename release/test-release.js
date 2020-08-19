@@ -1,14 +1,11 @@
-#!/usr/bin/env node
+//@ts-check
+"use strict";
 
-const $ = require("./common");
+const { $, chalk } = require("@itchio/bob");
 
 async function main() {
-  $.say("Wiping build/");
-  $(await $.sh("rm -rf build/"));
-  $.say("Setting fake build tag...");
-  process.env.CI_BUILD_TAG = "v9999.0.0";
-  $.say("Building...");
-  $(await $.sh("node release/ci-compile.js"));
+  console.log("Wiping build/");
+  $("rm -rf build/");
   let os = "linux";
   if (process.platform === "win32") {
     os = "windows";
@@ -16,11 +13,14 @@ async function main() {
     os = "darwin";
   }
   let arch = "amd64";
-  $(await $.sh(`node release/ci-package.js ${os} ${arch}`));
+  console.log(`OS ${chalk.yellow(os)} arch ${chalk.yellow(arch)}`);
+  console.log("Building...");
+  $(`node release/build.js --os ${os} --arch ${arch}`);
+  $(`node release/package.js --os ${os} --arch ${arch}`);
 
-  $.say("All done!");
+  console.log("All done!");
 }
 
-main().catch(e => {
+main().catch((e) => {
   console.error("In main: ", e.stack);
 });

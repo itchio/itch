@@ -20,6 +20,7 @@ npm-debug.log
 *.tmp.txt
 /butler
 *.exe
+/artifacts
 
 # capsule stuff
 /*.mp4
