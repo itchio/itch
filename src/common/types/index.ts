@@ -367,11 +367,11 @@ export interface WindPropertiesState {
   role: WindRole;
 }
 
-export interface I18nResources {
-  [lang: string]: I18nKeys;
+export interface I18nResourceSet {
+  [lang: string]: I18nResources;
 }
 
-export interface I18nKeys {
+export interface I18nResources {
   [key: string]: string;
 }
 
@@ -389,7 +389,7 @@ export interface I18nState {
   lang: string;
 
   /** all translated strings */
-  strings: I18nResources;
+  strings: I18nResourceSet;
 
   /** locales we'll download soon */
   queued: {

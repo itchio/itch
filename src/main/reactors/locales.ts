@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import env from "common/env";
-import { I18nKeys, I18nResources, Store } from "common/types";
+import { I18nResources, I18nResourceSet, Store } from "common/types";
 import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
 import { Watcher } from "common/util/watcher";
 import { app } from "electron";
@@ -25,6 +25,17 @@ function canonicalFileName(lang: string): string {
 
 function remoteFileName(lang: string): string {
   return join(remoteDir, `${lang}.json`);
+}
+
+function processLocaleResources(resources: I18nResources): I18nResources {
+  // react-intl now uses ASCII single quotes ("'") to escape characters,
+  // however, we have strings like `Try searching for '{{example}}'`, and we
+  // want them to appear as actual quotes, and we want "{{example}}" to be
+  // interpolated, we don't want it to appear verbatim.
+  for (const k of Object.keys(resources)) {
+    resources[k] = resources[k].replace("'{{", "''{{");
+  }
+  return resources;
 }
 
 async function doDownloadLocale(
@@ -78,7 +89,7 @@ async function doDownloadLocale(
     );
   }
 
-  return finalResources;
+  return processLocaleResources(finalResources);
 }
 
 async function loadLocale(store: Store, lang: string) {
@@ -92,7 +103,7 @@ async function loadLocale(store: Store, lang: string) {
   try {
     logger.debug(`Reading local locale file ${local}`);
     const payload = await readFile(local);
-    const resources = JSON.parse(payload);
+    const resources = processLocaleResources(JSON.parse(payload));
     commitLocale(store, lang, resources);
   } catch (e) {
     if (e.code === "ENOENT") {
@@ -114,7 +125,7 @@ async function loadLocale(store: Store, lang: string) {
       }
 
       if (payload) {
-        const resources = JSON.parse(payload);
+        const resources = processLocaleResources(JSON.parse(payload));
         commitLocale(store, lang, resources);
       }
     } catch (e) {
@@ -125,8 +136,8 @@ async function loadLocale(store: Store, lang: string) {
   store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
 }
 
-function commitLocale(store: Store, lang: string, resourcesIn: I18nKeys) {
-  const resources: I18nKeys = {};
+function commitLocale(store: Store, lang: string, resourcesIn: I18nResources) {
+  const resources: I18nResources = {};
   for (const key of Object.keys(resourcesIn)) {
     const value = resourcesIn[key];
     resources[key] = value.replace(/{{/g, "{").replace(/}}/g, "}");

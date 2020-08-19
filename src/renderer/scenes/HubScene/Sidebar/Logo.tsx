@@ -26,8 +26,12 @@ class Logo extends React.PureComponent<Props> {
     const { appVersion } = this.props;
 
     return (
-      <LogoDiv className={classNames("logo-div")} onClick={this.onClick}>
-        <img src={require("static/images/logos/app-white.svg")} />
+      <LogoDiv
+        title={appVersion}
+        className={classNames("logo-div")}
+        onClick={this.onClick}
+      >
+        <img src={require("static/images/logos/app-white.svg").default} />
       </LogoDiv>
     );
   }

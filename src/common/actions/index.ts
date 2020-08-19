@@ -18,8 +18,8 @@ import {
   Dispatch,
   EvolveTabPayload,
   GenerosityLevel,
-  I18nKeys,
   I18nResources,
+  I18nResourceSet,
   ItchAppTabs,
   LocalizedString,
   MenuTemplate,
@@ -499,7 +499,7 @@ export const actions = wireActions({
   // locales
   localesConfigLoaded: action<{
     /** initial set of i18n strings */
-    strings: I18nResources;
+    strings: I18nResourceSet;
   }>(),
   queueLocaleDownload: action<{
     /** language to download */
@@ -517,7 +517,7 @@ export const actions = wireActions({
     lang: string;
 
     /** i18n strings */
-    resources: I18nKeys;
+    resources: I18nResources;
   }>(),
   reloadLocales: action<{}>(),
 

@@ -3,7 +3,8 @@ import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import Vivus from "vivus";
 
-const appWhiteContour = require("static/images/logos/app-white-contour.svg");
+const appWhiteContour = require("static/images/logos/app-white-contour.svg")
+  .default;
 
 const LogoIndicatorDiv = styled.div`
   pointer-events: none;
