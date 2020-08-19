@@ -163,7 +163,7 @@ class ManageGame extends React.PureComponent<Props> {
             {loadingUploads ? (
               <Floater />
             ) : (
-              <p>T(["prompt.manage_game.no_other_uploads"])</p>
+              <p>{T(["prompt.manage_game.no_other_uploads"])}</p>
             )}
           </>
         )}
