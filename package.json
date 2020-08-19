@@ -40,7 +40,7 @@
     "fast-memoize": "^2.5.2",
     "ftl-redux-electron-store": "^2.0.0",
     "intl-messageformat": "^4.4.0",
-    "logrotate-stream": "^0.2.6",
+    "logrotate-stream": "^0.2.7",
     "lru-cache": "^5.1.1",
     "marked-extra": "^0.2.6",
     "memory-streams": "^0.1.2",
