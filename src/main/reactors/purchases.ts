@@ -7,7 +7,7 @@ function buildLoginAndReturnUrl(returnTo: string): string {
   const parsed = url.parse(returnTo);
   const hostname = url.subdomainToDomain(parsed.hostname);
 
-  let urlOpts: url.UrlWithParsedQuery = {
+  let urlOpts: Partial<url.UrlWithParsedQuery> = {
     hostname,
     pathname: "/login",
     query: { return_to: returnTo },

@@ -81,7 +81,7 @@ export async function promised(stream: EventEmitter): Promise<any> {
 /**
  * `mkdir -p`
  */
-export async function mkdir(dir: string): Promise<void> {
+export async function mkdir(dir: string): Promise<string> {
   return await fs.mkdir(dir, { recursive: true });
 }
 
