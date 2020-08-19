@@ -53,7 +53,7 @@
     "react-dom": "^16.8.6",
     "react-fast-compare": "^2.0.4",
     "react-hint": "^3.2.0",
-    "react-intl": "^5.4.8",
+    "react-intl": "^5.6.5",
     "react-json-inspector": "^7.1.1",
     "react-loadable": "^5.5.0",
     "react-onclickoutside": "^6.8.0",
