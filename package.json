@@ -46,7 +46,7 @@
     "mime-types": "^2.1.24",
     "multi-write-stream": "^2.0.1",
     "node-emoji": "^1.10.0",
-    "polished": "^3.4.1",
+    "polished": "^3.6.5",
     "progress-stream": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.8.6",
