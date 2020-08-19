@@ -56,7 +56,7 @@
     "react-intl": "^5.6.5",
     "react-json-inspector": "^7.1.1",
     "react-loadable": "^5.5.0",
-    "react-onclickoutside": "^6.8.0",
+    "react-onclickoutside": "^6.9.0",
     "react-redux": "^7.1.0",
     "react-sortable-hoc": "^1.9.1",
     "react-tabs": "^3.0.0",
