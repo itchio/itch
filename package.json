@@ -152,8 +152,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --trailing-comma es5 --write",
-      "git add"
+      "prettier --trailing-comma es5 --write"
     ]
   },
   "electronWebpack": {
