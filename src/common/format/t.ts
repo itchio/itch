@@ -28,8 +28,16 @@ export function t(i18n: I18nState, input: string | LocalizedString): string {
       (values && values.defaultValue) ||
       key;
     const formatter = new IntlMessageFormat(message, lang);
-    return formatter.format(values);
+    return collapseIntlChunks(formatter.format<string>(values));
   } else {
     return input;
+  }
+}
+
+export function collapseIntlChunks(s: string | string[]): string {
+  if (Array.isArray(s)) {
+    return s.join("");
+  } else {
+    return s;
   }
 }
