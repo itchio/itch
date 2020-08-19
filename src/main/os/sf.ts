@@ -5,7 +5,6 @@ import { ReadFileOpts, WriteFileOpts } from "common/types/sf";
 
 import { EventEmitter } from "events";
 import rimraf from "rimraf";
-import { string } from "prop-types";
 
 /**
  * Returns true if file exists, false if ENOENT, throws if other error
