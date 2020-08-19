@@ -334,23 +334,29 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
     return (
       <SizeTable>
-        <tr>
-          <td className="desc">{T(_("plan_install.disk_space_required"))}</td>
-          <td>
-            <strong>{requiredSpace > 0 ? fileSize(requiredSpace) : "?"}</strong>
-          </td>
-        </tr>
-        <tr>
-          <td className="desc">{T(_("plan_install.disk_space_available"))}</td>
-          <td className={classNames({ low: !haveEnoughSpace })}>
-            <strong>{fileSize(freeSpace)}</strong>
-            {haveEnoughSpace ? (
-              <DiskSpaceIcon icon="checkmark" />
-            ) : (
-              <DiskSpaceIcon icon="warning" />
-            )}
-          </td>
-        </tr>
+        <tbody>
+          <tr>
+            <td className="desc">{T(_("plan_install.disk_space_required"))}</td>
+            <td>
+              <strong>
+                {requiredSpace > 0 ? fileSize(requiredSpace) : "?"}
+              </strong>
+            </td>
+          </tr>
+          <tr>
+            <td className="desc">
+              {T(_("plan_install.disk_space_available"))}
+            </td>
+            <td className={classNames({ low: !haveEnoughSpace })}>
+              <strong>{fileSize(freeSpace)}</strong>
+              {haveEnoughSpace ? (
+                <DiskSpaceIcon icon="checkmark" />
+              ) : (
+                <DiskSpaceIcon icon="warning" />
+              )}
+            </td>
+          </tr>
+        </tbody>
       </SizeTable>
     );
   }

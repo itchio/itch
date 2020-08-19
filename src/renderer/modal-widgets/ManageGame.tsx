@@ -158,13 +158,14 @@ class ManageGame extends React.PureComponent<Props> {
             <p>{T(["prompt.manage_game.available_uploads"])}</p>
           ) : null
         ) : (
-          <p>
+          <>
+            {" "}
             {loadingUploads ? (
               <Floater />
             ) : (
-              T(["prompt.manage_game.no_other_uploads"])
+              <p>T(["prompt.manage_game.no_other_uploads"])</p>
             )}
-          </p>
+          </>
         )}
         {uninstalledUploads.length > 0 ? (
           <CaveItemList>
