@@ -445,6 +445,10 @@ async function hookWebContents(
     inPage: boolean, // in-page navigation (HTML5 pushState/popState/replaceState)
     replaceEntry: boolean // previous history entry was replaced
   ) => {
+    logger.debug(
+      `in commit, url = ${url}, wc.currentIndex = ${wc.currentIndex}`
+    );
+
     if (wc.currentIndex < 0) {
       // We get those spurious events after a "clear history & loadURL()"
       // at this point `wc.history.length` is 0 anyway, so it's not like we
@@ -503,20 +507,6 @@ async function hookWebContents(
         label: wcTitle,
       });
     }
-
-    // The logic that follows may not make sense to the casual observer.
-    // Let's recap our assumptions:
-    //   - The Redux state (ie. Space.history(), Space.currentIndex(), etc.)
-    //     should always mirror Electron's navigation controller history.
-    //   - Navigation can occur in-page (in which case it's important to
-    //     call webContents.{goBack,goForward,goToOffset}), or it can be http-level
-    //     navigation (in which case Electron's navigation controller restarts the
-    //     renderer process anyway - because "just using Chrome's navigation controller"
-    //     apparently broke nodeIntegration (which we don't use for web tabs anyway...))
-    //   - Navigation can be triggered by the itch app (actions.tabGoBack is dispatched, etc.)
-    //     or by the webContents (window.history.go(-1), pushState, clicking on a link, etc.)
-    //   - We choose not to rely on events like `did-start-navigation` (Electron 3.x+),
-    //     `did-navigate`, `did-navigate-in-page` etc. to avoid race conditions
 
     let offset = wc.currentIndex - previousIndex;
     let sizeOffset = wc.history.length - previousHistorySize;
@@ -637,5 +627,13 @@ async function hookWebContents(
     }
     return;
   };
-  wc.on("navigation-entry-commited" as any, commit);
+  wc.on("will-navigate", (event, url) => {
+    commit(event, url, false, false);
+  });
+  wc.on("did-navigate", (event, url) => {
+    commit(event, url, false, false);
+  });
+  wc.on("did-navigate-in-page", (event, url) => {
+    commit(event, url, true, false);
+  });
 }
