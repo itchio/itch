@@ -8,6 +8,7 @@ import {
 import { fileSize } from "common/format/filesize";
 import { SelectValueDiv } from "renderer/modal-widgets/PlanInstall/select-common";
 import { Upload } from "common/butlerd/messages";
+import PlatformIcon from "renderer/basics/PlatformIcons/PlatformIcon";
 
 export interface UploadOption {
   value: number;
@@ -26,6 +27,21 @@ export default function UploadOptionComponent(
       <div className="title" title={formatUploadTitle(u)}>
         {formatUploadTitleFancy(u)}
       </div>
+      <PlatformIcon
+        target={u}
+        field="windows"
+        before={<div className="spacer" />}
+      />
+      <PlatformIcon
+        target={u}
+        field="linux"
+        before={<div className="spacer" />}
+      />
+      <PlatformIcon
+        target={u}
+        field="osx"
+        before={<div className="spacer" />}
+      />
       <div className="spacer" />
       {u.size > 0 ? <div className="tag">{fileSize(u.size)}</div> : null}
       {u.demo ? <div className="tag">demo</div> : null}
