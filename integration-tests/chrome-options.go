@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,6 +31,11 @@ func (opts *ChromeOptions) Apply(caps *gs.Capabilities) {
 }
 
 func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
+	remoteDebuggingPort, err := getFreePort()
+	if err != nil {
+		return nil, err
+	}
+
 	opts := &ChromeOptions{
 		Binary: "",
 		Args: []string{
@@ -37,7 +43,9 @@ func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
 			"--no-sandbox",
 			"--disable-dev-shm-usage",
 			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489#c20
-			"--remote-debugging-port=9222",
+			// traditionally '9222', but apparently chromedriver still works with
+			// other ports. We pick a free port so that concurrent CI runs still work.
+			fmt.Sprintf("--remote-debugging-port=%d", remoteDebuggingPort),
 			"--color",
 		},
 	}
