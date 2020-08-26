@@ -43,7 +43,9 @@ async function pushTag() {
     pkg.version = nextVersion;
     writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), { encoding: "utf-8" });
     console.log("Bumped package.json");
-    $("git add package.json");
+    console.log("Letting npm bump package-lock.json...");
+    $(`npm i`);
+    $(`git add package.json package-lock.json`);
     $(`git commit -m ':arrow_up: ${nextVersion}'`);
   }
 
