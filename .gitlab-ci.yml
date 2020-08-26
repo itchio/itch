@@ -59,6 +59,7 @@ deploy-itchio:
   only:
     - tags
   script:
+    - npm ci
     - node release/deploy.js
   dependencies:
     - package-linux-amd64
