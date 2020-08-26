@@ -59,7 +59,7 @@ deploy-itchio:
   only:
     - tags
   script:
-    - release/ci-deploy.js
+    - node release/deploy.js
   dependencies:
     - package-linux-amd64
     - package-darwin-amd64
