@@ -30,7 +30,6 @@ export default function (watcher: Watcher) {
       // integration tests for the integration test goddess
       if (username === "#api-key") {
         logger.info(`Doing direct API key login...`);
-        const t1 = Date.now();
         const { profile } = await withTimeout(
           "API key login",
           LOGIN_TIMEOUT,
@@ -38,21 +37,18 @@ export default function (watcher: Watcher) {
             apiKey: password,
           })
         );
-        const t2 = Date.now();
-        logger.debug(
-          `ProfileLoginWithAPIKey call succeeded in ${elapsed(t1, t2)}`
-        );
+        logger.debug(`ProfileLoginWithAPIKey call succeeded`);
         await loginSucceeded(store, profile);
         return;
       }
 
       logger.info(`Doing username/password login...`);
-      const t1 = Date.now();
       const { profile, cookie } = await mcall(
         messages.ProfileLoginWithPassword,
         {
           username,
           password,
+          forceRecaptcha: process.env.ITCH_FORCE_RECAPTCHA === "1",
         },
         (client) => {
           logger.debug(`Setting up handlers for TOTP & captcha`);
