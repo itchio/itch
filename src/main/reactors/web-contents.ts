@@ -415,6 +415,7 @@ async function hookWebContents(
     if (wc.history.length === 0) {
       logger.debug(`(The webcontents history are empty for some reason)`);
     } else {
+      logger.debug("WebContents history:");
       for (let i = 0; i < wc.history.length; i++) {
         let prevMark = i === previousIndex ? "<" : " ";
         let pendMark = i === wc.pendingIndex ? "P" : " ";
@@ -428,6 +429,7 @@ async function hookWebContents(
   let printStateHistory = () => {
     const space = Space.fromStore(store, wind, tab);
     logger.debug(`---------------------------------`);
+    logger.debug("State history:");
     for (let i = 0; i < space.history().length; i++) {
       const page = space.history()[i];
       logger.debug(`S| ${i === space.currentIndex() ? ">" : " "} ${page.url}`);
@@ -440,22 +442,17 @@ async function hookWebContents(
   };
 
   const commit = (
+    reason: "will-navigate" | "did-navigate" | "did-navigate-in-page",
     event: any,
     url: string, // latest URL
     inPage: boolean, // in-page navigation (HTML5 pushState/popState/replaceState)
     replaceEntry: boolean // previous history entry was replaced
   ) => {
-    logger.debug(
-      `in commit, url = ${url}, wc.currentIndex = ${wc.currentIndex}`
-    );
-
     if (wc.currentIndex < 0) {
       // We get those spurious events after a "clear history & loadURL()"
       // at this point `wc.history.length` is 0 anyway, so it's not like we
       // can figure out much. They're followed by a meaningful event shortly after.
-      logger.debug(
-        `Ignoring navigation-entry-committed with negative currentIndex`
-      );
+      logger.debug(`Ignoring commit with negative currentIndex`);
       return;
     }
 
@@ -483,7 +480,7 @@ async function hookWebContents(
 
     logger.debug("\n");
     logger.debug(`=================================`);
-    logger.debug(`navigation-entry-committed ${url}`);
+    logger.debug(`commit ${url}, reason ${reason}`);
     logger.debug(
       `currentIndex ${wc.currentIndex} pendingIndex ${wc.pendingIndex} inPageIndex ${wc.inPageIndex} inPage ${inPage}`
     );
@@ -543,7 +540,7 @@ async function hookWebContents(
     }
 
     if (sizeOffset === 0) {
-      logger.debug(`History stayed the same size, offset is ${1}`);
+      logger.debug(`History stayed the same size, offset is ${offset}`);
       if (offset === 1) {
         if (stateURL === url) {
           logger.debug(`web and state point to same URL, doing nothing`);
@@ -583,8 +580,21 @@ async function hookWebContents(
           printStateHistory();
           return;
         } else {
-          logger.debug(`Not a replace, doing nothing.`);
-          return;
+          const index = space.currentIndex();
+          let prevURL = getStateURL(index - 1);
+          let webURL = wc.history[wc.currentIndex];
+          logger.debug(`prevURL = ${prevURL}`);
+          logger.debug(` webURL = ${webURL}`);
+          if (prevURL === webURL) {
+            logger.debug(
+              `looks like a forward navigation, but previous is a dupe`
+            );
+            didNavigate(url, NavMode.Replace);
+            return;
+          } else {
+            logger.debug(`Not a replace, doing nothing.`);
+            return;
+          }
         }
       }
 
@@ -628,12 +638,12 @@ async function hookWebContents(
     return;
   };
   wc.on("will-navigate", (event, url) => {
-    commit(event, url, false, false);
+    commit("will-navigate", event, url, false, false);
   });
   wc.on("did-navigate", (event, url) => {
-    commit(event, url, false, false);
+    commit("did-navigate", event, url, false, false);
   });
   wc.on("did-navigate-in-page", (event, url) => {
-    commit(event, url, true, false);
+    commit("did-navigate-in-page", event, url, true, false);
   });
 }
