@@ -130,7 +130,12 @@ export async function performHTMLLaunch(
 
   win.webContents.on("new-window", (ev: Event, url: string) => {
     ev.preventDefault();
-    shell.openExternal(url);
+    let u = new URL(url);
+    if (u.protocol == "http" || u.protocol == "https") {
+      shell.openExternal(url);
+    } else {
+      logger.warn(`Prevented opening external URL: ${url}`);
+    }
   });
 
   // nasty hack to pass in the itchObject
