@@ -30,8 +30,6 @@ export async function showInstallErrorModal(params: InstallErrorParams) {
   const { store, e, log, retryAction, stopAction, game } = params;
   const { i18n } = store.getState();
 
-  const re = asRequestError(e);
-
   if (shouldRetry) {
     buttons = [
       ...buttons,
