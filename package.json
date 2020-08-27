@@ -114,7 +114,7 @@
     "happypack": "^5.0.1",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
-    "lint-staged": "^10.2.11",
+    "lint-staged": "^10.2.13",
     "prettier": "^2.0.5",
     "react-container-dimensions": "^1.4.1",
     "react-hot-loader": "^4.12.21",
