@@ -32,18 +32,6 @@ export async function showInstallErrorModal(params: InstallErrorParams) {
 
   const re = asRequestError(e);
 
-  if (re) {
-    switch (re.rpcError.code) {
-      case messages.Code.UnsupportedPackaging: {
-        const learnMore = t(i18n, ["docs.how_to_help"]);
-        detail = `[${learnMore}](https://itch.io/docs/itch/integrating/quickstart.html)`;
-        shouldRetry = false;
-        forceDetails = true;
-        break;
-      }
-    }
-  }
-
   if (shouldRetry) {
     buttons = [
       ...buttons,
