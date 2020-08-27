@@ -7,8 +7,7 @@ class TimeAgo extends React.PureComponent<Props> {
     const { className, before } = this.props;
     let { date } = this.props;
 
-    // TODO: we shouldn't need that
-    const dateObject = new Date(date);
+    let dateObject = typeof date === "string" ? new Date(date) : date;
     if (!dateObject) {
       return null;
     }
@@ -54,7 +53,7 @@ class TimeAgo extends React.PureComponent<Props> {
 export default TimeAgo;
 
 interface Props {
-  date: Date;
+  date: Date | string;
   className?: string;
   before?: string | JSX.Element;
 }

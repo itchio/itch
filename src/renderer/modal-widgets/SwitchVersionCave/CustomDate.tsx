@@ -21,7 +21,7 @@ class CustomDate extends React.PureComponent<Props> {
 }
 
 interface Props {
-  date: Date;
+  date: Date | string;
   format?: DateFormat;
   intl: IntlShape;
 }

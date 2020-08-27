@@ -10,7 +10,7 @@ interface UploadButton {
   tags: ModalButtonTag[];
   icon: string;
   timeAgo: {
-    date: Date;
+    date: Date | string;
   };
 }
 
