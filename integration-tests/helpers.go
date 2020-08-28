@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	gs "github.com/fasterthanlime/go-selenium"
+	gs "github.com/itchio/go-selenium"
 	"github.com/pkg/errors"
 )
 

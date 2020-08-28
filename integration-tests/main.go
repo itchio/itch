@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	gs "github.com/fasterthanlime/go-selenium"
 	"github.com/hpcloud/tail"
+	gs "github.com/itchio/go-selenium"
 	"github.com/logrusorgru/aurora"
 	"github.com/onsi/gocleanup"
 	"github.com/pkg/errors"
