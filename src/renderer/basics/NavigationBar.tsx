@@ -26,7 +26,7 @@ import {
 } from "renderer/hocs/tab-utils";
 
 const HTTPS_RE = /^https:\/\//;
-const HTTP_RE = /^https:\/\//;
+const HTTP_RE = /^http:\/\//;
 const ITCH_RE = /^itch:\/\//;
 
 const NavigationBarDiv = styled.div`
