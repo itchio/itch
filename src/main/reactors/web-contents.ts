@@ -378,9 +378,8 @@ async function hookWebContents(
     "new-window",
     (ev, url, frameName, disposition, options, additionalFeatures) => {
       ev.preventDefault();
-      logger.debug(`new-window fired for ${url}, navigating instead`);
-      const background = disposition === "background-tab";
-      store.dispatch(actions.navigate({ url, wind, background }));
+      logger.debug(`new-window fired for ${url}`);
+      wc.loadURL(url);
     }
   );
 
@@ -637,9 +636,6 @@ async function hookWebContents(
     }
     return;
   };
-  wc.on("will-navigate", (event, url) => {
-    commit("will-navigate", event, url, false, false);
-  });
   wc.on("did-navigate", (event, url) => {
     commit("did-navigate", event, url, false, false);
   });
