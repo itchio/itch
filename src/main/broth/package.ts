@@ -107,10 +107,10 @@ export class Package implements PackageLike {
         throw new Error(`got HTTP ${res.statusCode} while fetching (${url})`);
       }
 
-      const versionsRes = res.body as VersionsRes;
+      const versionsRes = JSON.parse(res.body) as VersionsRes;
       if (!versionsRes.versions) {
         throw new Error(
-          `got invalid response from broth server: expected JSON object with 'broth' field, got: ${JSON.stringify(
+          `got invalid response from broth server: expected JSON object with 'versions' field, got: ${JSON.stringify(
             versionsRes
           )}`
         );
