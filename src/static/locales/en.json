@@ -630,6 +630,7 @@
   "filter_by.games.classification.assets": "Game assets",
   "filter_by.games.classification.comics": "Comics",
   "filter_by.games.classification.books": "Books",
+  "filter_by.games.classification.physical_game": "Physical Games",
 
   "filter_by.games.status.installed": "Installed",
 

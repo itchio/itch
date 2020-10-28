@@ -33,6 +33,11 @@ export const FilterGroupGameClassification = () => {
           optionValue={GameClassification.Book}
           label={_("filter_by.games.classification.books")}
         />
+        <FilterOption
+          optionKey="classification"
+          optionValue={GameClassification.PhysicalGame}
+          label={_("filter_by.games.classification.physical_game")}
+        />
       </FilterGroup>
     </>
   );
