@@ -41,6 +41,7 @@ async function sign(cx, packageDir) {
       hardenedRuntime: true,
       entitlements: entitlementsPath,
       "entitlements-inherit": entitlementsPath,
+      "gatekeeper-assess": false,
       platform: "darwin",
       version: cx.electronVersion,
     });
@@ -48,7 +49,7 @@ async function sign(cx, packageDir) {
 
   console.log("Verifying signature...");
   $(`codesign --verify -vvvv ${appBundle}`);
-  $(`spctl -a -vvvv ${appBundle}`);
+  // $(`spctl -a -vvvv ${appBundle}`); // on modern osx this will also verify notarization, so we can't use this to check signature anymore
 
   if (process.env.SKIP_NOTARIZE) {
     console.log(`$SKIP_NOTARIZE is set, skipping notarization...`);
