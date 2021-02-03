@@ -62,7 +62,7 @@ async function sign(cx, packageDir) {
       await notarize({
         appBundleId: appBundleId(),
         appPath: appBundle,
-        appleId: "amoswenger@gmail.com",
+        appleId: "leafot@gmail.com",
         appleIdPassword: process.env.APPLE_ID_PASSWORD || "",
       });
     });
