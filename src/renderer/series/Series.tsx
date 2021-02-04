@@ -260,7 +260,7 @@ export function makeSeries<
 
       if (props.restoredScrollTop) {
         console.log(`Aiming for scrollTop ${props.restoredScrollTop}`);
-        this.restoreScrollInterval = setInterval(() => {
+        this.restoreScrollInterval = window.setInterval(() => {
           if (this.itemList) {
             this.itemList.scrollTop = props.restoredScrollTop;
 
