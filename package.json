@@ -106,7 +106,7 @@
     "clarify": "^2.1.0",
     "codecov": "^3.8.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^4.3.0",
+    "css-loader": "^5.2.4",
     "electron": "10.4.5",
     "electron-notarize": "^1.0.0",
     "electron-packager": "^15.2.0",
