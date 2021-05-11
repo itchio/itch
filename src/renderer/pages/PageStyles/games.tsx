@@ -15,7 +15,7 @@ export const TitleBox = styled.div`
 
 export const Title = styled.div`
   font-size: ${(props) => props.theme.fontSizes.huger};
-  font-weight: 200;
+  font-weight: bold;
   display: flex;
   flex-flow: row wrap;
   align-items: center;

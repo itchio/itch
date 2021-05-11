@@ -85,7 +85,7 @@ const DarkTitle = styled.div`
   ${styles.singleLine};
   flex-shrink: 0;
   font-size: ${(props) => props.theme.fontSizes.huge};
-  font-weight: 200;
+  font-weight: bold;
   padding: 0.3em 0;
 `;
 

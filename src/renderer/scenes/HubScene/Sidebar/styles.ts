@@ -13,7 +13,6 @@ export const SidebarSection = styled.div`
   a {
     text-decoration: none;
     font-size: 16px;
-    font-weight: 200;
     color: ${(props) => props.theme.secondaryText};
     &:hover {
       color: ${(props) => props.theme.secondaryTextHover};
