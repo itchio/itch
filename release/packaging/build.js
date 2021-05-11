@@ -41,7 +41,10 @@ async function build(cx) {
     "source-map-support", "systeminformation"
   ];
   await cd("prefix", async function () {
-    $(`npm install --no-save ${externals.join(" ")}`);
+    // TODO: legacy-peer-deps is used here due to react-json-inspector having
+    // dependencies set incorrectly locked to old version of react. In the future we should remove it
+    // this flag was added for npm 7 support
+    $(`npm install --no-save --legacy-peer-deps ${externals.join(" ")}`);
   });
 }
 
