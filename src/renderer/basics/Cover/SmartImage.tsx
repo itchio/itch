@@ -27,6 +27,7 @@ class Image extends React.PureComponent<Props> {
 
 interface Props {
   src?: string;
+  alt?: string;
   className?: string;
   onLoadStart: () => void;
   onLoadEnd: () => void;

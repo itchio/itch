@@ -70,6 +70,7 @@ class IconButton extends React.PureComponent<Props> {
 
     return (
       <IconButtonDiv
+        tabIndex={0}
         className={classNames(className, {
           disabled,
           big,
@@ -79,6 +80,9 @@ class IconButton extends React.PureComponent<Props> {
         })}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at={hintPosition}
+        aria-label={hint ? JSON.stringify(hint) : null}
+        aria-disabled={disabled}
+        role="button"
         {...restProps}
       >
         {typeof icon === "string" ? <Icon icon={icon} /> : icon}

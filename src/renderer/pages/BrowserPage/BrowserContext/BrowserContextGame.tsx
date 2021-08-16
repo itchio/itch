@@ -15,6 +15,7 @@ import StandardGameCover, {
   standardCoverWidth,
 } from "renderer/pages/common/StandardGameCover";
 import styled from "renderer/styles";
+import { _ } from "renderer/t";
 
 const Spacer = styled.div`
   flex-basis: 16px;
@@ -60,6 +61,7 @@ class BrowserContextGame extends React.PureComponent<Props> {
           huge
           emphasized
           icon="cog"
+          hint={_("icon.manage")}
           onClick={this.onManage}
         />
       </BrowserContextDiv>

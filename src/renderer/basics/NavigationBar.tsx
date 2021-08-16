@@ -13,6 +13,7 @@ import IconButton from "renderer/basics/IconButton";
 import { hook, hookWithProps } from "renderer/hocs/hook";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
+import { _ } from "renderer/t";
 import watching, { Watcher } from "renderer/hocs/watching";
 import { withTab } from "renderer/hocs/withTab";
 import {
@@ -183,12 +184,14 @@ class NavigationBar extends React.PureComponent<Props, State> {
       <NavigationBarDiv className={classNames({ loading })}>
         <IconButton
           icon="arrow-left"
+          hint={_("icon.back")}
           disabled={!canGoBack}
           onClick={this.goBack}
           onContextMenu={this.showBackHistory}
         />
         <IconButton
           icon="arrow-right"
+          hint={_("icon.next")}
           disabled={!canGoForward}
           onClick={this.goForward}
           onContextMenu={this.showForwardHistory}
@@ -210,9 +213,13 @@ class NavigationBar extends React.PureComponent<Props, State> {
     return (
       <>
         {loading ? (
-          <IconButton icon="cross" onClick={this.stop} />
+          <IconButton icon="cross" hint={_("icon.stop")} onClick={this.stop} />
         ) : (
-          <IconButton icon="repeat" onClick={this.reload} />
+          <IconButton
+            icon="repeat"
+            hint={_("icon.reload")}
+            onClick={this.reload}
+          />
         )}
         <AddressWrapper className={classNames({ editing: editingAddress })}>
           {editingAddress ? (

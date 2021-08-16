@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React from "react";
+import { _ } from "renderer/t";
 import GifMarker from "renderer/basics/Cover/GifMarker";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import withHover, { HoverProps } from "renderer/hocs/withHover";
@@ -58,6 +59,7 @@ class Cover extends React.PureComponent<Props, State> {
         {url ? (
           <SmartImage
             src={url}
+            alt={_("alt.cover_image")}
             onLoadStart={this.onLoadStart}
             onLoadEnd={this.onLoadEnd}
             onError={this.onError}

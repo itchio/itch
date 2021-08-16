@@ -701,5 +701,19 @@
   "plan_install.disk_space_required": "Disk space required",
   "plan_install.disk_space_available": "Disk space available",
 
-  "empty_state.nothing_to_see_here": "Nothing to see here"
+  "empty_state.nothing_to_see_here": "Nothing to see here",
+
+  "icon.back": "Back",
+  "icon.next": "Next",
+  "icon.reload": "Reload",
+  "icon.minimize": "Minimize",
+  "icon.maximize": "Maximize",
+  "icon.restore": "Restore",
+  "icon.close": "Close",
+  "icon.play": "Play",
+  "icon.forget_profile": "Forget profile",
+  "icon.manage": "Manage",
+  "icon.more": "More...",
+
+  "alt.cover_image": "Cover image"
 }

@@ -117,6 +117,8 @@ class Button extends React.PureComponent<Props, any> {
 
     return (
       <ButtonDiv
+        role="button"
+        tabIndex={0}
         onClick={disabled ? null : onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"

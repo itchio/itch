@@ -11,7 +11,7 @@ import UserMenu from "renderer/basics/TitleBar/UserMenu";
 import { hookWithProps } from "renderer/hocs/hook";
 import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
+import { _, T } from "renderer/t";
 import { isSecretClick } from "common/helpers/secret-click";
 
 const DraggableDiv = styled.div`
@@ -128,14 +128,24 @@ class TitleBar extends React.PureComponent<Props> {
       <>
         {secondary ? null : (
           <>
-            <WindowButton icon="minus" onClick={this.minimizeClick} />
+            <WindowButton
+              icon="minus"
+              aria-label={_("icon.minimize")}
+              onClick={this.minimizeClick}
+            />
             <WindowButton
               icon={maximized ? "window-restore" : "window-maximize"}
+              aria-label={maximized ? _("icon.restore") : _("icon.maximize")}
               onClick={this.maximizeRestoreClick}
             />
           </>
         )}
-        <WindowButton className="exit" icon="cross" onClick={this.closeClick} />
+        <WindowButton
+          className="exit"
+          icon="cross"
+          aria-label={_("icon.close")}
+          onClick={this.closeClick}
+        />
       </>
     );
   }

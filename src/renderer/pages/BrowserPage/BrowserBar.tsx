@@ -6,13 +6,18 @@ import FiltersContainer from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
+import { _ } from "renderer/t";
 
 class BrowserBar extends React.PureComponent<Props> {
   render() {
     const { loading } = this.props;
     return (
       <FiltersContainer loading={loading}>
-        <IconButton icon="more_vert" onClick={this.onMore} />
+        <IconButton
+          icon="more_vert"
+          hint={_("icon.more")}
+          onClick={this.onMore}
+        />
       </FiltersContainer>
     );
   }

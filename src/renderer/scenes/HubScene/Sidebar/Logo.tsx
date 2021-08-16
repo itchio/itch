@@ -27,6 +27,8 @@ class Logo extends React.PureComponent<Props> {
 
     return (
       <LogoDiv
+        role="button"
+        tabIndex="0"
         title={appVersion}
         className={classNames("logo-div")}
         onClick={this.onClick}

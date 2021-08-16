@@ -15,7 +15,7 @@ class Link extends React.PureComponent<Props> {
     const { label, children, ...restProps } = this.props;
 
     return (
-      <LinkSpan {...restProps}>
+      <LinkSpan role="link" tabIndex="0" {...restProps}>
         {label}
         {children}
       </LinkSpan>

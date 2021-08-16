@@ -19,6 +19,7 @@ class Icon extends React.PureComponent<Props> {
       <span
         className={finalClassName}
         data-rh={hint ? JSON.stringify(hint) : null}
+        aria-label={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
         {...restProps}
       />

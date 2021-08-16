@@ -6,7 +6,7 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
 import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
+import { _, T, _ } from "renderer/t";
 import { Dispatch } from "common/types";
 import { getUserCoverURL } from "common/constants/get-user-cover-url";
 
@@ -24,7 +24,9 @@ class RememberedProfile extends React.PureComponent<Props> {
       >
         <img className="avatar" src={coverUrl} />
         <div className="rest">
-          <p className="username">{displayName || username}</p>
+          <p role="button" tabIndex={0} className="username">
+            {displayName || username}
+          </p>
           <p className="last-connected">
             {T(["login.remembered_session.last_connected"])}{" "}
             <TimeAgo date={profile.lastConnected} />
@@ -38,6 +40,7 @@ class RememberedProfile extends React.PureComponent<Props> {
           <IconButton
             icon="cross"
             className="forget-profile"
+            hint={_("icon.forget_profile")}
             onClick={this.onForget}
           />
         </span>
