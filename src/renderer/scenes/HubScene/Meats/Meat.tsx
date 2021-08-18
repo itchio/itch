@@ -171,14 +171,18 @@ class Meat extends React.PureComponent<Props, State> {
     if (ConcreteMeat) {
       return (
         <>
-          <ConcreteMeat {...this.props} />
+          <main>
+            <ConcreteMeat {...this.props} />
+          </main>
         </>
       );
     } else {
       return (
         <Page>
           <BrowserBar />
-          <div>Invalid url: {JSON.stringify(this.props.url)}</div>
+          <main>
+            <div>Invalid url: {JSON.stringify(this.props.url)}</div>
+          </main>
         </Page>
       );
     }
