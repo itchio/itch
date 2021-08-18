@@ -47,11 +47,19 @@ const CircleContainer = styled.span`
 class LoadingCircle extends React.PureComponent<LoadingCircleProps> {
   render() {
     const { className, progress, bare, wide, huge } = this.props;
+    const percent = progress * 100.0;
 
     return (
-      <CircleContainer className={classNames(className, { bare, wide, huge })}>
+      <CircleContainer
+        role="progressbar"
+        aria-valuenow={percent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuetext={`${Math.trunc(percent)}%`}
+        className={classNames(className, { bare, wide, huge })}
+      >
         <Circle
-          percent={progress > 0 ? progress * 100.0 : 100 / 3}
+          percent={progress > 0 ? percent : 100 / 3}
           trailWidth={3}
           trailColor="#e0e0e2"
           strokeWidth={15}
