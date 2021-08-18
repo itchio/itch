@@ -715,5 +715,7 @@
   "icon.manage": "Manage",
   "icon.more": "More...",
 
-  "alt.cover_image": "Cover image"
+  "alt.cover_image": "Cover image",
+
+  "region.prime_download": "Prime download"
 }

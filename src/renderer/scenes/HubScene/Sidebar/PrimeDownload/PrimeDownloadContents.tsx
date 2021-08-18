@@ -93,6 +93,8 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
     const { game } = this.props;
     return (
       <PrimeDownloadDiv
+        role="region"
+        aria-label={_("region.prime_download")}
         onClick={this.onMainClick}
         onContextMenu={this.onContextMenu}
       >
