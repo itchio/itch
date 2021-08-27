@@ -49,7 +49,11 @@ class BrowserContextGame extends React.PureComponent<Props> {
     const { game, status } = this.props;
 
     return (
-      <BrowserContextDiv onContextMenu={this.onContextMenu}>
+      <BrowserContextDiv
+        role="region"
+        aria-label={_("region.game")}
+        onContextMenu={this.onContextMenu}
+      >
         <SmallerGameCover game={game} showInfo={false} />
         <Spacer />
         <GameStats game={game} status={status} />
