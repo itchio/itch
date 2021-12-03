@@ -49,9 +49,13 @@ itch is released under the MIT License, see the [LICENSE][] file for details.
 
 [LICENSE]: LICENSE
 
-## Other apps
+## Other relevant projects
 
 Here are some other apps people have started:
 
-* Android: https://github.com/gotosleep/ItchDroid
-* iOS: https://github.com/khwang/cantaloupe
+### Android
+* [ItchDroid](https://github.com/gotosleep/ItchDroid)
+* [Mitch](https://sr.ht/~gardenapple/mitch)
+
+### iOS
+* [Cantaloupe](https://github.com/khwang/cantaloupe)
