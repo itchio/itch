@@ -93,7 +93,7 @@ async function parseContext() {
     }
   }
 
-  const shouldSign = !!process.env.CI || !!process.env.FORCE_CODESIGN;
+  const shouldSign = !!process.env.SKIP_CODESIGN ? false : !!process.env.CI || !!process.env.FORCE_CODESIGN;
   const projectDir = process.cwd();
 
   const artifactDir = ospath.join(projectDir, "artifacts", `${os}-${arch}`);
