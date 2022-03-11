@@ -113,7 +113,7 @@
     "file-loader": "^6.2.0",
     "happypack": "^5.0.1",
     "html-webpack-plugin": "^4.5.1",
-    "husky": "^4.3.8",
+    "husky": "^7.0.0",
     "lint-staged": "^10.5.3",
     "prettier": "^2.2.1",
     "react-container-dimensions": "^1.4.1",
@@ -137,7 +137,8 @@
     "compile": "webpack --mode=production --display=errors-only",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
-    "ts-watch": "tsc --noEmit --skipLibCheck --watch"
+    "ts-watch": "tsc --noEmit --skipLibCheck --watch",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -204,11 +205,6 @@
         "./src/renderer/inject/inject-game.ts",
         "./src/renderer/inject/inject-captcha.ts"
       ]
-    }
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
     }
   }
 }
