@@ -2,6 +2,9 @@ name: "build"
 
 on: [push, pull_request]
 
+env:
+  SKIP_CODESIGN: 1
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -29,7 +32,7 @@ jobs:
 
     - name: release
       run: |
-        SKIP_CODESIGN=1 node release/package-all.js --os windows --arch amd64
+        node release/package-all.js --os windows --arch amd64
 
   build-macos:
     runs-on: macos-latest
@@ -43,4 +46,4 @@ jobs:
 
     - name: release
       run: |
-        SKIP_CODESIGN=1 node release/package-all.js --os darwin --arch amd64
+        node release/package-all.js --os darwin --arch amd64
