@@ -23,7 +23,7 @@
   "download.ongoing.update": "Updating {{title}}…",
   "download.ongoing.reinstall": "Re-installing {{title}}…",
   "download.ongoing.revert": "Switching {{title}} to another version…",
-  "download.ongoing.heal": "Repairing {{title}…",
+  "download.ongoing.heal": "Repairing {{title}}…",
   "download.outcome.installed": "installed",
   "download.outcome.updated": "updated to the latest version",
   "download.outcome.reinstalled": "re-installed",
