@@ -63,7 +63,7 @@
     "reselect": "^4.0.0",
     "rimraf": "^3.0.2",
     "semver": "^7.3.4",
-    "shell-quote": "^1.7.2",
+    "shell-quote": "^1.7.3",
     "source-map-support": "^0.5.19",
     "split2": "^3.2.2",
     "styled-components": "^5.2.1",
