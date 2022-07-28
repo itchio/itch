@@ -19,14 +19,7 @@ const logger = mainLogger.child(__filename);
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 
-export type ExtendedWebContents = Electron.WebContents & {
-  history: string[];
-  currentIndex: number;
-  pendingIndex: number;
-  inPageIndex: number;
-};
-
-type WebContentsCallback<T> = (wc: ExtendedWebContents) => T;
+type WebContentsCallback<T> = (wc: Electron.WebContents) => T;
 
 function withWebContents<T>(
   store: Store,
@@ -36,7 +29,7 @@ function withWebContents<T>(
 ): T | null {
   const wc = getWebContents(wind, tab);
   if (wc && !wc.isDestroyed()) {
-    return cb(wc as ExtendedWebContents);
+    return cb(wc);
   }
   return null;
 }
@@ -66,7 +59,7 @@ export default function (watcher: Watcher) {
     storeWebContents(wind, tab, wc);
 
     logger.debug(`Loading url '${initialURL}'`);
-    await hookWebContents(store, wind, tab, wc as ExtendedWebContents);
+    await hookWebContents(store, wind, tab, wc);
     loadURL(wc, initialURL);
   });
 
@@ -237,40 +230,8 @@ export default function (watcher: Watcher) {
     }
 
     withWebContents(store, wind, tab, (wc) => {
-      let offset = index - oldIndex;
-      const url = rs.winds[wind].tabInstances[tab].history[index].url;
-      if (
-        wc.canGoToOffset(offset) &&
-        wc.history[wc.currentIndex + offset] === url
-      ) {
-        logger.debug(`\n`);
-        logger.debug(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
-        logger.debug(
-          `For index ${oldIndex} => ${index}, applying offset ${offset}`
-        );
-        logger.debug(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`);
-        wc.goToOffset(offset);
-      } else {
-        const url = Space.fromState(rs, wind, tab).url();
-        logger.debug(`\n`);
-        logger.debug(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`);
-        logger.debug(
-          `For index ${oldIndex} => ${index}, clearing history and loading ${url}`
-        );
-        logger.debug(`(could go to offset? ${wc.canGoToOffset(offset)})`);
-        logger.debug(`(wcl = ${wc.history[wc.currentIndex + offset]})`);
-        logger.debug(`(url = ${url})`);
-
-        if (offset == 1) {
-          logger.debug(
-            `Wait, no, we're just going forward one, we don't need to clear history`
-          );
-        } else {
-          wc.clearHistory();
-        }
-        logger.debug(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`);
-        loadURL(wc, url);
-      }
+      const url = Space.fromState(rs, wind, tab).url();
+      loadURL(wc, url);
     });
   });
 
@@ -281,7 +242,7 @@ export default function (watcher: Watcher) {
     }
 
     withWebContents(store, wind, tab, async (wc) => {
-      const webUrl = wc.history[wc.currentIndex];
+      const webUrl = wc.getURL();
       if (webUrl !== url) {
         logger.debug(
           `WebContents has\n--> ${webUrl}\ntab evolved to\n--> ${url}\nlet's load`
@@ -300,7 +261,7 @@ async function hookWebContents(
   store: Store,
   wind: string,
   tab: string,
-  wc: ExtendedWebContents
+  wc: Electron.WebContents
 ) {
   let setLoading = (loading: boolean) => {
     store.dispatch(actions.tabLoadingStateChanged({ wind, tab, loading }));
@@ -410,83 +371,12 @@ async function hookWebContents(
     );
   };
 
-  let printWebContentsHistory = (previousIndex: number) => {
-    if (wc.history.length === 0) {
-      logger.debug(`(The webcontents history are empty for some reason)`);
-    } else {
-      logger.debug("WebContents history:");
-      for (let i = 0; i < wc.history.length; i++) {
-        let prevMark = i === previousIndex ? "<" : " ";
-        let pendMark = i === wc.pendingIndex ? "P" : " ";
-        let currMark = i === wc.currentIndex ? ">" : " ";
-
-        logger.debug(`W|${prevMark}${pendMark}${currMark} ${wc.history[i]}`);
-      }
-    }
-  };
-
-  let printStateHistory = () => {
-    const space = Space.fromStore(store, wind, tab);
-    logger.debug(`---------------------------------`);
-    logger.debug("State history:");
-    for (let i = 0; i < space.history().length; i++) {
-      const page = space.history()[i];
-      logger.debug(`S| ${i === space.currentIndex() ? ">" : " "} ${page.url}`);
-    }
-  };
-
-  let previousState = {
-    previousIndex: 0,
-    previousHistorySize: 1,
-  };
-
   const commit = (
-    reason: "will-navigate" | "did-navigate" | "did-navigate-in-page",
+    reason: "will-navigate" | "did-navigate",
     event: any,
-    url: string, // latest URL
-    inPage: boolean, // in-page navigation (HTML5 pushState/popState/replaceState)
-    replaceEntry: boolean // previous history entry was replaced
+    url: string // latest URL
   ) => {
-    if (wc.currentIndex < 0) {
-      // We get those spurious events after a "clear history & loadURL()"
-      // at this point `wc.history.length` is 0 anyway, so it's not like we
-      // can figure out much. They're followed by a meaningful event shortly after.
-      logger.debug(`Ignoring commit with negative currentIndex`);
-      return;
-    }
-
-    let { previousIndex, previousHistorySize } = previousState;
-    previousState = {
-      previousIndex: wc.currentIndex,
-      previousHistorySize: wc.history.length,
-    };
-
     const space = Space.fromStore(store, wind, tab);
-    const stateHistory = space.history();
-    const getStateURL = (index: number) => {
-      if (index >= 0 && index < stateHistory.length) {
-        return stateHistory[index].url;
-      }
-      // The index passed to this function is sometimes computed
-      // from the current index + an offset, so it might be out
-      // of bounds.
-      // We always use it to find equal URLs,
-      // so it's okay to just return undefined in these cases
-      return undefined;
-    };
-    const stateIndex = space.currentIndex();
-    const stateURL = getStateURL(stateIndex);
-
-    logger.debug("\n");
-    logger.debug(`=================================`);
-    logger.debug(`commit ${url}, reason ${reason}`);
-    logger.debug(
-      `currentIndex ${wc.currentIndex} pendingIndex ${wc.pendingIndex} inPageIndex ${wc.inPageIndex} inPage ${inPage}`
-    );
-
-    printWebContentsHistory(previousIndex);
-    printStateHistory();
-
     const wcTitle = wc.getTitle();
     if (
       wcTitle !== url &&
@@ -504,142 +394,9 @@ async function hookWebContents(
       });
     }
 
-    let offset = wc.currentIndex - previousIndex;
-    let sizeOffset = wc.history.length - previousHistorySize;
-
-    if (sizeOffset === 1) {
-      logger.debug(`History grew one, offset is ${offset}`);
-
-      if (stateURL === url) {
-        logger.debug(`web and state point to same URL, doing nothing`);
-      }
-
-      if (offset === 0) {
-        logger.debug(`Replacing because offset is 0`);
-        didNavigate(url, NavMode.Replace);
-        printStateHistory();
-        return;
-      }
-
-      let currentURL = space.url();
-      let previousWebURL = wc.history[wc.currentIndex - 1];
-      if (currentURL && previousWebURL !== currentURL) {
-        logger.debug(
-          `Replacing because previous web url \n${previousWebURL}\n is not current state url \n${currentURL}`
-        );
-        didNavigate(url, NavMode.Replace);
-        printStateHistory();
-        return;
-      }
-
-      logger.debug(`Assuming regular navigation happened`);
-      didNavigate(url, NavMode.Append);
-      printStateHistory();
-      return;
-    }
-
-    if (sizeOffset === 0) {
-      logger.debug(`History stayed the same size, offset is ${offset}`);
-      if (offset === 1) {
-        if (stateURL === url) {
-          logger.debug(`web and state point to same URL, doing nothing`);
-          return;
-        }
-
-        if (getStateURL(stateIndex + offset) === url) {
-          logger.debug(`If we apply the history offset, the URLs match!`);
-          // fallthrough to in-history navigation
-        } else {
-          logger.debug(`Assuming normal navigation happened`);
-          didNavigate(url, NavMode.Append);
-          printStateHistory();
-          return;
-        }
-      } else if (offset === 0) {
-        if (replaceEntry) {
-          const index = space.currentIndex();
-          if (inPage) {
-            if (getStateURL(index - 1) === url) {
-              logger.debug(
-                `replaceEntry is true, but inPage & previous is a dupe, ignoring`
-              );
-              return;
-            }
-
-            if (getStateURL(index + 1) === url) {
-              logger.debug(
-                `replaceEntry is true, but inPage & next is a dupe, ignoring`
-              );
-              return;
-            }
-          }
-
-          logger.debug(`Handling it like a replace`);
-          didNavigate(url, NavMode.Replace);
-          printStateHistory();
-          return;
-        } else {
-          const index = space.currentIndex();
-          let prevURL = getStateURL(index - 1);
-          let webURL = wc.history[wc.currentIndex];
-          logger.debug(`prevURL = ${prevURL}`);
-          logger.debug(` webURL = ${webURL}`);
-          if (prevURL === webURL) {
-            logger.debug(
-              `looks like a forward navigation, but previous is a dupe`
-            );
-            didNavigate(url, NavMode.Replace);
-            return;
-          } else {
-            logger.debug(`Not a replace, doing nothing.`);
-            return;
-          }
-        }
-      }
-
-      if (stateURL === url) {
-        logger.debug(`web and state point to same URL, doing nothing`);
-        return;
-      }
-
-      let oldIndex = stateIndex;
-      let index = oldIndex + offset;
-      if (getStateURL(index) === url) {
-        logger.debug(
-          `Assuming in-history navigation (${oldIndex} => ${index})`
-        );
-        store.dispatch(
-          actions.tabWentToIndex({
-            wind,
-            tab,
-            oldIndex,
-            index,
-            fromWebContents: true,
-          })
-        );
-        printStateHistory();
-        return;
-      } else {
-        logger.debug(`We're not sure what happened, doing nothing`);
-        return;
-      }
-    }
-
-    logger.debug(`History shrunk ; usually means normal navigation.`);
-
-    if (stateURL === url) {
-      logger.debug(`Except the url is already good, nvm!`);
-    } else {
-      logger.debug(`Assuming normal navigation happened`);
-      didNavigate(url, NavMode.Append);
-      printStateHistory();
-    }
-    return;
+    didNavigate(url, NavMode.Append);
   };
   wc.on("did-navigate", (event, url) => {
-    commit("did-navigate", event, url, false, false);
-  });
-  wc.on("did-navigate-in-page", (event, url) => {
-    commit("did-navigate-in-page", event, url, true, false);
+    commit("did-navigate", event, url);
   });
 }
