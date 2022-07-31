@@ -1,7 +1,7 @@
 const isDev = () => require("electron-is-dev");
-import { app, remote } from "electron";
+import { app } from "electron";
 
-let realApp = app || (remote && remote.app) || { getName: () => "itch" };
+let realApp = app || { getName: () => "itch" };
 const isCanary = realApp.getName() === "kitch";
 
 const envName =
