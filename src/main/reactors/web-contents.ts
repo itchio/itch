@@ -335,14 +335,11 @@ async function hookWebContents(
     });
   });
 
-  wc.on(
-    "new-window",
-    (ev, url, frameName, disposition, options, additionalFeatures) => {
-      ev.preventDefault();
-      logger.debug(`new-window fired for ${url}`);
-      wc.loadURL(url);
-    }
-  );
+  wc.setWindowOpenHandler(({ url }) => {
+    logger.debug(`new-window fired for ${url}`);
+    wc.loadURL(url);
+    return { action: "deny" };
+  });
 
   enum NavMode {
     Append,
