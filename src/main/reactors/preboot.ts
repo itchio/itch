@@ -140,7 +140,7 @@ export default function (watcher: Watcher) {
     if (devtoolsPath) {
       try {
         logger.info(`Adding react devtools from ${devtoolsPath}`);
-        BrowserWindow.addDevToolsExtension(devtoolsPath);
+        session.defaultSession.loadExtension(devtoolsPath);
       } catch (e) {
         logger.error(`While adding react devtools path: ${e.stack}`);
       }

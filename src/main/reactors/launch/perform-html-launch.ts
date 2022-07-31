@@ -128,14 +128,14 @@ export async function performHTMLLaunch(
     }
   );
 
-  win.webContents.on("new-window", (ev: Event, url: string) => {
-    ev.preventDefault();
+  win.webContents.setWindowOpenHandler(({ url }) => {
     let u = new URL(url);
     if (u.protocol == "http" || u.protocol == "https") {
       shell.openExternal(url);
     } else {
       logger.warn(`Prevented opening external URL: ${url}`);
     }
+    return { action: "deny" };
   });
 
   // nasty hack to pass in the itchObject
