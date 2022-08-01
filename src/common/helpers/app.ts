@@ -2,7 +2,7 @@ import electron from "electron";
 
 let app: Electron.App;
 if (process.type) {
-  app = electron.app || electron.remote.app;
+  app = electron.app || require("@electron/remote").app;
 }
 
 export function getAppPath(): string {

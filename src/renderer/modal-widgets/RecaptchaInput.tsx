@@ -59,8 +59,6 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
           ref={this.gotWebview}
           src={url}
           preload={getInjectURL("captcha")}
-          enableremotemodule="false"
-          webpreferences="worldSafeExecuteJavaScript"
         />
       </WidgetDiv>
     );

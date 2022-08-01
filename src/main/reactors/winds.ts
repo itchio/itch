@@ -84,6 +84,7 @@ async function createRootWindow(store: Store) {
     center,
   };
   const nativeWindow = new BrowserWindow(opts);
+  require("@electron/remote/main").enable(nativeWindow.webContents);
   store.dispatch(
     actions.windOpened({
       wind,
@@ -425,6 +426,7 @@ export default function (watcher: Watcher) {
     };
 
     const nativeWindow = new BrowserWindow(opts);
+    require("@electron/remote/main").enable(nativeWindow.webContents);
     const wind = `secondary-${secondaryWindowSeed++}`;
     const role: WindRole = "secondary";
     store.dispatch(
@@ -533,15 +535,9 @@ function commonBrowserWindowOpts(
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
-      // Will be deprecatd in a future version of electron,
-      // but itch v25's architecture relies on it.
-      enableRemoteModule: true,
       // In development, the front-end is served by webpack-dev-server
       // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
-      // Will become the default in a future Electron version.
-      // Ensures values returned from `executeJavascript` are "world-safe".
-      worldSafeExecuteJavaScript: true,
       // itch v25's architecture relies on it - some modules need `require()`.
       nodeIntegration: true,
       // same as above

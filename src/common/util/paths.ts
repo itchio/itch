@@ -1,6 +1,6 @@
 import { join } from "path";
 import electron from "electron";
-const app = electron.app || electron.remote.app;
+const app = electron.app || require("@electron/remote").app;
 
 import urls from "common/constants/urls";
 import urlParser from "url";
