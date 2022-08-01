@@ -1,7 +1,5 @@
-import * as electron from "electron";
+import { app, session } from "electron";
 import { NET_PARTITION_NAME } from "common/constants/net";
-const app = electron.app || electron.remote.app;
-const session = electron.session || electron.remote.session;
 
 let _cachedUserAgent: string;
 export function userAgent() {

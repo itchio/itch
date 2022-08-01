@@ -1,4 +1,3 @@
-import { userAgent } from "common/constants/useragent";
 import { Dispatch, ProxySource } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -54,7 +53,13 @@ class BrowserPage extends React.PureComponent<Props> {
   }
 
   render() {
-    const { sleepy, disableBrowser, visible, partition } = this.props;
+    const {
+      sleepy,
+      disableBrowser,
+      visible,
+      partition,
+      userAgent,
+    } = this.props;
     if (sleepy && !visible) {
       return null;
     }
@@ -71,7 +76,7 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                useragent={userAgent()}
+                useragent={userAgent}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
               />
@@ -125,6 +130,8 @@ interface Props extends MeatProps {
   disableBrowser: boolean;
 
   partition: string;
+
+  userAgent: string;
 }
 
 export default withTab(
@@ -140,5 +147,7 @@ export default withTab(
     partition: map((rs, props) =>
       partitionForUser(String(rs.profile.profile.id))
     ),
+
+    userAgent: map((rs) => rs.system.userAgent),
   }))(BrowserPage)
 );

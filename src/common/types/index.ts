@@ -281,6 +281,9 @@ export interface SystemState {
 
   /** true if we're currently scanning install locations */
   locationScanProgress?: number | null;
+
+  /** net session user agent */
+  userAgent: string;
 }
 
 export interface SystemTasksState {

@@ -12,6 +12,7 @@ import { itchPlatform } from "common/os/platform";
 import { arch } from "main/os/arch";
 import * as path from "path";
 import * as fs from "fs";
+import { userAgent } from "common/constants/useragent";
 
 const logger = mainLogger.child(__filename);
 
@@ -36,6 +37,7 @@ export default function (watcher: Watcher) {
         proxy: null,
         proxySource: null,
         quitting: false,
+        userAgent: userAgent(),
       };
       store.dispatch(actions.systemAssessed({ system }));
 
