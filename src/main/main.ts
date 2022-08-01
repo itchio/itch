@@ -10,6 +10,7 @@ import { app, protocol, globalShortcut } from "electron";
 import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
 import { mainLogger } from "main/logger";
+import { initIpcHandlers } from "main/ipc";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -61,6 +62,8 @@ export function main() {
       },
     },
   ]);
+
+  initIpcHandlers();
 
   let store: Store = require("main/store").default;
 

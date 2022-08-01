@@ -14,6 +14,7 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { ModalWidgetProps, modals } from "common/modals";
+import { ipcRenderer } from "electron";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -148,9 +149,8 @@ class SecretSettings extends React.PureComponent<Props> {
     );
   };
 
-  onGPUFeatureStatus = () => {
-    const app = require("electron").remote.app;
-    const data = app.getGPUFeatureStatus();
+  onGPUFeatureStatus = async () => {
+    const data = await ipcRenderer.invoke("getGPUFeatureStatus");
     const { dispatch } = this.props;
     dispatch(
       actions.openModal(
