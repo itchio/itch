@@ -11,10 +11,3 @@ export function getAppPath(): string {
   }
   return app.getAppPath();
 }
-
-export function getVersion(): string {
-  if (!app) {
-    return `<test version>`;
-  }
-  return app.getVersion();
-}
