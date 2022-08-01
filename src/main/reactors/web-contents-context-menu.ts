@@ -121,9 +121,7 @@ export function hookWebContentsContextMenu(
     }
 
     if (menuTpl.length > 0) {
-      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(
-        menuTpl as any
-      );
+      const menu = electron.Menu.buildFromTemplate(menuTpl as any);
 
       menu.popup({});
     }
