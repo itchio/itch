@@ -4,11 +4,9 @@ import {
   ClearBrowsingDataParams,
   ClearBrowsingDataResponse,
 } from "common/modals/types";
-import { partitionForUser } from "common/util/partition-for-user";
-import electron from "electron";
+import { ipcRenderer } from "electron";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -26,17 +24,9 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
-    const { userId } = this.props;
-
-    // FIXME: surely we can do that without remote ?
-    // more surely: that surely should just be done in metal
+    // FIXME: more surely: that surely should just be done in metal
     // and we should read from store or something
-    const ourSession = electron.remote.session.fromPartition(
-      partitionForUser(String(userId)),
-      { cache: true }
-    );
-
-    ourSession.getCacheSize().then((cacheSize) => {
+    ipcRenderer.invoke("getCacheSize").then((cacheSize) => {
       this.setState({
         fetchedCacheSize: true,
         cacheSize,
@@ -171,9 +161,10 @@ const ClearBrowsingDataList = styled.div`
 // props
 
 interface Props
-  extends ModalWidgetProps<ClearBrowsingDataParams, ClearBrowsingDataResponse> {
-  userId: number;
-}
+  extends ModalWidgetProps<
+    ClearBrowsingDataParams,
+    ClearBrowsingDataResponse
+  > {}
 
 interface State {
   fetchedCacheSize?: boolean;
@@ -183,6 +174,4 @@ interface State {
   clearCookies?: boolean;
 }
 
-export default hook((map) => ({
-  userId: map((rs) => rs.profile.profile.id),
-}))(ClearBrowsingData);
+export default ClearBrowsingData;
