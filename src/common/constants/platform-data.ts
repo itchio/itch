@@ -10,6 +10,7 @@ interface PlatformDataMap {
   windows: PlatformData;
   linux: PlatformData;
   osx: PlatformData;
+  unknown: PlatformData;
   [key: string]: PlatformData;
 }
 
@@ -17,6 +18,7 @@ const data: PlatformDataMap = {
   windows: { icon: "windows8", platform: "windows", emoji: "🏁" },
   linux: { icon: "tux", platform: "linux", emoji: "🐧" },
   osx: { icon: "apple", platform: "osx", emoji: "🍎" },
+  unknown: { icon: "warning", platform: "unknown", emoji: "?" },
 };
 export default data;
 
