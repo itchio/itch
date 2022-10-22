@@ -2,7 +2,7 @@
   "name": "kitch",
   "productName": "kitch",
   "desktopName": "kitch",
-  "version": "25.6.0-canary",
+  "version": "25.6.1-canary",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",
@@ -134,7 +134,7 @@
   },
   "scripts": {
     "start": "node develop.js",
-    "compile": "webpack --mode=production --display=errors-only",
+    "compile": "webpack --mode=production",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",
