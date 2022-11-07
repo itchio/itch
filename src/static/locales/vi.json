@@ -3,5 +3,8 @@
     "grid.item.install": "Cài đặt",
     "grid.item.installing": "Đang cài đặt",
     "grid.item.launch": "Khởi chạy",
-    "grid.item.probe": "Kiểm tra nguyên nhân lỗi"
+    "grid.item.probe": "Kiểm tra nguyên nhân lỗi",
+    "action.name.forums": "Diễn đàn",
+    "action.name.play": "Chơi ngay",
+    "action.name.manual": "Hướng dẫn sử dụng"
 }

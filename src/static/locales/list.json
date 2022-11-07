@@ -1,0 +1,214 @@
+{
+  "locales": [
+    {
+      "value": "ar",
+      "label": "العربية",
+      "englishName": "Arabic"
+    },
+    {
+      "value": "bg",
+      "label": "български",
+      "englishName": "Bulgarian"
+    },
+    {
+      "value": "ca",
+      "label": "Català",
+      "englishName": "Catalan"
+    },
+    {
+      "value": "chr",
+      "label": "Cherokee",
+      "englishName": "Cherokee"
+    },
+    {
+      "value": "cs",
+      "label": "Čeština",
+      "englishName": "Czech"
+    },
+    {
+      "value": "cy",
+      "label": "Cymraeg",
+      "englishName": "Welsh"
+    },
+    {
+      "value": "da",
+      "label": "Dansk",
+      "englishName": "Danish"
+    },
+    {
+      "value": "de",
+      "label": "Deutsch",
+      "englishName": "German"
+    },
+    {
+      "value": "el",
+      "label": "ελληνικά",
+      "englishName": "Greek"
+    },
+    {
+      "value": "en",
+      "label": "English",
+      "englishName": "English"
+    },
+    {
+      "value": "eo",
+      "label": "Esperanto",
+      "englishName": "Esperanto"
+    },
+    {
+      "value": "es",
+      "label": "Español",
+      "englishName": "Spanish"
+    },
+    {
+      "value": "et",
+      "label": "Eesti",
+      "englishName": "Estonian"
+    },
+    {
+      "value": "fa",
+      "label": "فارسی",
+      "englishName": "Persian"
+    },
+    {
+      "value": "fi",
+      "label": "Suomi",
+      "englishName": "Finnish"
+    },
+    {
+      "value": "fr",
+      "label": "Français",
+      "englishName": "French"
+    },
+    {
+      "value": "ga",
+      "label": "Gaeilge",
+      "englishName": "Gaelic"
+    },
+    {
+      "value": "he",
+      "label": "עברית",
+      "englishName": "Hebrew"
+    },
+    {
+      "value": "hi",
+      "label": "हिन्दी",
+      "englishName": "Hindi"
+    },
+    {
+      "value": "hu",
+      "label": "Magyar",
+      "englishName": "Hungarian"
+    },
+    {
+      "value": "in",
+      "label": "Bahasa Indonesia",
+      "englishName": "Indonesian"
+    },
+    {
+      "value": "is",
+      "label": "Íslenska",
+      "englishName": "Icelandic"
+    },
+    {
+      "value": "it",
+      "label": "Italiano",
+      "englishName": "Italian"
+    },
+    {
+      "value": "ja",
+      "label": "日本語",
+      "englishName": "Japanese"
+    },
+    {
+      "value": "ko",
+      "label": "한국어",
+      "englishName": "Korean"
+    },
+    {
+      "value": "lv",
+      "label": "Latviešu Valoda",
+      "englishName": "Latvian"
+    },
+    {
+      "value": "ms",
+      "label": "Bahasa Melayu",
+      "englishName": "Malay"
+    },
+    {
+      "value": "nb",
+      "label": "Norsk (bokmål)",
+      "englishName": "Norwegian Bokmål"
+    },
+    {
+      "value": "nl",
+      "label": "Nederlands Vlaams",
+      "englishName": "Dutch, Flemish"
+    },
+    {
+      "value": "pl",
+      "label": "Polski",
+      "englishName": "Polish"
+    },
+    {
+      "value": "pt-BR",
+      "label": "Português (do Brasil)",
+      "englishName": "Brazilian Portuguese"
+    },
+    {
+      "value": "pt-PT",
+      "label": "Português",
+      "englishName": "European Portuguese"
+    },
+    {
+      "value": "ro",
+      "label": "Română",
+      "englishName": "Romanian"
+    },
+    {
+      "value": "ru",
+      "label": "Русский",
+      "englishName": "Russian"
+    },
+    {
+      "value": "sk",
+      "label": "Slovenčina",
+      "englishName": "Slovak"
+    },
+    {
+      "value": "sr",
+      "label": "Cрпски језик",
+      "englishName": "Serbian"
+    },
+    {
+      "value": "sv",
+      "label": "Svenska",
+      "englishName": "Swedish"
+    },
+    {
+      "value": "th",
+      "label": "ไทย",
+      "englishName": "Thai"
+    },
+    {
+      "value": "tr",
+      "label": "Türkçe",
+      "englishName": "Turkish"
+    },
+    {
+      "value": "uk",
+      "label": "Українська",
+      "englishName": "Ukrainian"
+    },
+    {
+      "value": "vi",
+      "label": "Tiếng Việt",
+      "englishName": "Vietnamese"
+    },
+    {
+      "value": "zh",
+      "label": "中文",
+      "englishName": "Chinese"
+    }
+  ]
+}
