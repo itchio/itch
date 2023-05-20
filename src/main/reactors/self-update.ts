@@ -2,7 +2,7 @@ import childProcess from "child_process";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
 import { Store } from "common/types";
-import { relaunchLogPath } from "common/util/paths";
+import { relaunchLogPath } from "main/util/paths";
 import { Watcher } from "common/util/watcher";
 import fs from "fs";
 import { ISM } from "main/broth/itch-setup";

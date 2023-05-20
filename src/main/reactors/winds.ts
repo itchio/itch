@@ -12,9 +12,9 @@ import {
   Store,
   WindRole,
 } from "common/types";
-import config from "common/util/config";
+import config from "main/util/config";
 import { partitionForApp } from "common/util/partition-for-user";
-import { getImagePath, getRendererFilePath } from "common/util/resources";
+import { getImagePath, getRendererFilePath } from "main/util/resources";
 import { Watcher } from "common/util/watcher";
 import {
   app,

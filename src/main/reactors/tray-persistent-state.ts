@@ -1,6 +1,6 @@
 import { Store, Action } from "common/types";
 import { Tray, nativeImage } from "electron";
-import { getImagePath } from "common/util/resources";
+import { getImagePath } from "main/util/resources";
 import env from "main/env";
 import { actions } from "common/actions";
 import { release } from "os";

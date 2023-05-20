@@ -5,7 +5,7 @@ import { Logger, RecordingLogger } from "common/logger";
 import { modals, TypedModal } from "common/modals";
 import { PrereqsStateParams } from "common/modals/types";
 import { Cancelled, LocalizedString } from "common/types";
-import * as paths from "common/util/paths";
+import * as paths from "main/util/paths";
 import { powerSaveBlocker, shell } from "electron";
 import { Context } from "main/context";
 import { promisedModal } from "main/reactors/modals";

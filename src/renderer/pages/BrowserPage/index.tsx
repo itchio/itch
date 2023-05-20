@@ -1,4 +1,4 @@
-import { userAgent } from "common/constants/useragent";
+import { useragent } from "renderer/bridge";
 import { Dispatch, ProxySource } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -71,7 +71,7 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                useragent={userAgent()}
+                useragent={useragent.userAgent()}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
               />

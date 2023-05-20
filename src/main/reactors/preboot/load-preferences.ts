@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { camelifyObject } from "common/format/camelify";
 import { initialState } from "common/reducers/preferences";
 import { PreferencesState, Store } from "common/types";
-import { preferencesPath } from "common/util/paths";
+import { preferencesPath } from "main/util/paths";
 import fs from "fs";
 import { mainLogger } from "main/logger";
 

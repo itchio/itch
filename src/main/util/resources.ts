@@ -1,5 +1,5 @@
 import { join } from "path";
-import { getAppPath } from "common/helpers/app";
+import { getAppPath } from "main/helpers/app";
 
 let absoluteAppPath = join(getAppPath(), "src");
 let absoluteMainDistPath = join(getAppPath(), "dist", "main");

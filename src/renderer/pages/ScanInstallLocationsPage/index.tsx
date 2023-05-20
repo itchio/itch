@@ -3,7 +3,7 @@ import { hookLogging, messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { legacyMarketPath } from "common/util/paths";
+import { paths } from "renderer/bridge";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
@@ -129,7 +129,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
       try {
         const { numImportedItems } = await rcall(
           messages.InstallLocationsScan,
-          { legacyMarketPath: legacyMarketPath() },
+          { legacyMarketPath: paths.legacyMarketPath() },
           (convo) => {
             hookLogging(convo, logger);
             convo.onNotification(messages.Progress, async ({ progress }) => {

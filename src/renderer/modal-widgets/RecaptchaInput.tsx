@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { getInjectURL } from "common/util/resources";
+import { resources } from "renderer/bridge";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
@@ -58,7 +58,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
         <webview
           ref={this.gotWebview}
           src={url}
-          preload={getInjectURL("captcha")}
+          preload={resources.getInjectURL("captcha")}
           enableremotemodule="false"
           webpreferences="worldSafeExecuteJavaScript"
         />

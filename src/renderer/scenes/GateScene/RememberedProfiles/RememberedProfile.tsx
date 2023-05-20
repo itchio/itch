@@ -8,7 +8,7 @@ import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { Dispatch } from "common/types";
-import { getUserCoverURL } from "common/constants/get-user-cover-url";
+import { getUserCoverURL } from "renderer/util/get-user-cover-url";
 
 class RememberedProfile extends React.PureComponent<Props> {
   render() {

@@ -6,7 +6,7 @@ import React from "react";
 import Filler from "renderer/basics/Filler";
 import { hook } from "renderer/hocs/hook";
 import styled, * as styles from "renderer/styles";
-import { getUserCoverURL } from "common/constants/get-user-cover-url";
+import { getUserCoverURL } from "renderer/util/get-user-cover-url";
 
 const UserMenuDiv = styled.div`
   display: flex;

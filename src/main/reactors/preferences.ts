@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import { partitionForUser } from "common/util/partition-for-user";
-import { mainLogPath, preferencesPath } from "common/util/paths";
+import { mainLogPath, preferencesPath } from "main/util/paths";
 import { Watcher } from "common/util/watcher";
 import { session, shell } from "electron";
 import { mainLogger } from "main/logger";

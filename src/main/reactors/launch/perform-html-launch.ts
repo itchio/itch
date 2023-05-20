@@ -3,7 +3,7 @@ import querystring from "querystring";
 
 import { BrowserWindow, shell, session } from "electron";
 
-import { getInjectPath } from "common/util/resources";
+import { getInjectPath } from "main/util/resources";
 
 import { Context } from "main/context";
 

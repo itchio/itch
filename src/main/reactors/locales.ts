@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import env from "main/env";
 import { I18nResources, I18nResourceSet, Store } from "common/types";
-import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
+import { getLocalePath, getLocalesConfigPath } from "main/util/resources";
 import { Watcher } from "common/util/watcher";
 import { app } from "electron";
 import { mainLogger } from "main/logger";

@@ -20,6 +20,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import watching, { Watcher } from "renderer/hocs/watching";
+import { paths } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -166,8 +167,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
     if (filePath) {
       console.log(`Reading external log`, filePath);
     } else {
-      const { mainLogPath } = await import("common/util/paths");
-      filePath = mainLogPath();
+      filePath = paths.mainLogPath();
     }
     const log = await promisedFs.readFile(filePath, { encoding: "utf8" });
     this.setState({ log, error: null });
