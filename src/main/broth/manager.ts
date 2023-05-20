@@ -10,7 +10,7 @@ import { Store } from "common/types";
 import { app } from "electron";
 import { actions } from "common/actions";
 import { SelfPackage } from "main/broth/self-package";
-import env from "common/env";
+import env from "main/env";
 
 const regularPackageNames = ["butler", "itch-setup"];
 const packageNames = [env.appName, ...regularPackageNames];

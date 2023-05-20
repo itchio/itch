@@ -1,4 +1,4 @@
-import * as url from "common/util/url";
+import * as url from "main/util/url";
 import { Session } from "electron";
 import { createReadStream, statSync } from "original-fs";
 import { mainLogger } from "main/logger";

@@ -2,7 +2,10 @@
 
 import { parse as parseQueryString } from "querystring";
 
-import env from "common/env";
+import env from "renderer/env";
+
+env.setNodeEnv();
+
 if (process.env.NODE_ENV === "production") {
   // cf. https://electronjs.org/docs/tutorial/security
   (window as any).eval = global.eval = function () {

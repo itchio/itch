@@ -1,4 +1,4 @@
-import env from "common/env";
+import env from "main/env";
 
 export function exit(exitCode: number) {
   if (env.integrationTests) {

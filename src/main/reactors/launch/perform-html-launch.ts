@@ -4,7 +4,6 @@ import querystring from "querystring";
 import { BrowserWindow, shell, session } from "electron";
 
 import { getInjectPath } from "common/util/resources";
-import * as url from "common/util/url";
 
 import { Context } from "main/context";
 

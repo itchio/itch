@@ -1,6 +1,6 @@
 /* node's standard url module */
 import { parse } from "url";
-import env from "common/env";
+import env from "main/env";
 export * from "url";
 
 /** user.example.org => example.org */

@@ -4,7 +4,7 @@ import urls from "common/constants/urls";
 import ospath from "path";
 import { butlerUserAgent } from "common/constants/useragent";
 import { RootState } from "common/types";
-import env from "common/env";
+import env from "main/env";
 import { MinimalContext } from "main/context";
 
 interface ButlerInstanceOpts {

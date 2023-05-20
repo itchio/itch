@@ -1,26 +1,25 @@
-import { app, remote } from "electron";
-
-const appIsDev = (app) => {
+const isDev = (app) => {
   const isEnvSet = "ELECTRON_IS_DEV" in process.env;
   const getFromEnv = Number.parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
   return isEnvSet ? getFromEnv : !app.isPackaged;
 };
 
-let realApp = app || (remote && remote.app) || { getName: () => "itch" };
+const isCanary = (app) => app.getName() === "kitch";
 
-const isDev = appIsDev(realApp);
+const envName = (app) =>
+  process.env.NODE_ENV || (isDev(app) ? "development" : "production");
 
-const isCanary = realApp.getName() === "kitch";
-
-const envName = process.env.NODE_ENV || (isDev ? "development" : "production");
-process.env[["NODE", "ENV"].join("_")] = envName;
+const setNodeEnv = (app) => {
+  process.env[["NODE", "ENV"].join("_")] = envName(app);
+};
 
 export default {
   isCanary,
-  channel: isCanary ? "canary" : "stable",
-  appName: isCanary ? "kitch" : "itch",
+  setNodeEnv,
   integrationTests: !!process.env.ITCH_INTEGRATION_TESTS,
   unitTests: false,
-  development: envName === "development",
-  production: envName === "production",
+  channel: (app) => (isCanary(app) ? "canary" : "stable"),
+  appName: (app) => (isCanary(app) ? "kitch" : "itch"),
+  development: (app) => envName(app) === "development",
+  production: (app) => envName(app) === "production",
 };

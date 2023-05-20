@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import { NET_PARTITION_NAME } from "common/constants/net";
-import env from "common/env";
+import env from "main/env";
 import { elapsed } from "common/format/datetime";
 import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";

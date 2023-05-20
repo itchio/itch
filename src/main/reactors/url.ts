@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Store } from "common/types";
-import { isItchioURL } from "common/util/url";
+import { isItchioURL } from "main/util/url";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
 import { mainLogger } from "main/logger";

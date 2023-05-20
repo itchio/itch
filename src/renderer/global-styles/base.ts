@@ -1,5 +1,5 @@
 import { css, theme } from "renderer/styles";
-import env from "common/env";
+import env from "renderer/env";
 
 const testDisables = () => {
   if (!env.integrationTests) {

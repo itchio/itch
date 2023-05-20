@@ -1,8 +1,8 @@
 import { Client, Instance } from "butlerd";
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
-import { makeButlerInstance } from "common/butlerd/make-butler-instance";
-import env from "common/env";
+import { makeButlerInstance } from "main/butlerd/make-butler-instance";
+import env from "main/env";
 import { Store } from "common/types";
 import { appdataLocationPath } from "common/util/paths";
 import { Watcher } from "common/util/watcher";

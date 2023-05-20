@@ -1,5 +1,5 @@
 import { Watcher } from "common/util/watcher";
-import * as url from "common/util/url";
+import * as url from "main/util/url";
 
 import { actions } from "common/actions";
 

@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
 import { normalizeURL, opensInWindow } from "common/constants/windows";
-import env from "common/env";
+import env from "main/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
 import { modals } from "common/modals";

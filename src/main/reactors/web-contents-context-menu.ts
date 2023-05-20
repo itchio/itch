@@ -4,7 +4,7 @@ import { actions } from "common/actions";
 import { Store } from "common/types";
 
 import IntlMessageFormat from "intl-messageformat";
-import env from "common/env";
+import env from "main/env";
 import { _ } from "renderer/t";
 import { t } from "common/format/t";
 

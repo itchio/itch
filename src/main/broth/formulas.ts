@@ -1,7 +1,7 @@
 import { Client } from "butlerd";
 import { messages } from "common/butlerd";
-import { makeButlerInstance } from "common/butlerd/make-butler-instance";
-import env from "common/env";
+import { makeButlerInstance } from "main/butlerd/make-butler-instance";
+import env from "main/env";
 import { Logger } from "common/logger";
 import spawn from "main/os/spawn";
 import ospath from "path";

@@ -1,4 +1,6 @@
-import env from "common/env";
+import env from "main/env";
+
+env.setNodeEnv();
 
 if (env.integrationTests) {
   require("main/boot/test-paths").setup();

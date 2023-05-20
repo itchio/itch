@@ -1,8 +1,8 @@
 // This file is the entry point for the main (browser) process
 
-import env from "common/env";
+import env from "main/env";
 
-import { isItchioURL } from "common/util/url";
+import { isItchioURL } from "main/util/url";
 
 import { actions } from "common/actions";
 import { app, protocol, globalShortcut } from "electron";

@@ -11,7 +11,7 @@ import {
   RequestParsingFailure,
 } from "main/net/errors";
 
-import env from "common/env";
+import env from "main/env";
 
 import { net } from "electron";
 import { Readable } from "stream";

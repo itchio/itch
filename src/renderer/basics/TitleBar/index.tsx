@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import env from "common/env";
+import env from "renderer/env";
 import { Space } from "common/helpers/space";
 import { ExtendedWindow, TabInstance } from "common/types";
 import { Dispatch } from "common/types";

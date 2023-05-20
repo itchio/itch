@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import env from "common/env";
+import env from "main/env";
 import { t } from "common/format/t";
 import { Watcher } from "common/util/watcher";
 import { app, nativeImage, Notification } from "electron";

@@ -1,6 +1,6 @@
 import ospath from "path";
 import spawn from "main/os/spawn";
-import env from "common/env";
+import env from "main/env";
 import { MinimalContext } from "main/context";
 import { Store } from "common/types";
 import { Logger } from "common/logger";

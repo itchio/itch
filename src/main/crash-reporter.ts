@@ -1,6 +1,6 @@
 import platformData from "common/constants/platform-data";
 import urls from "common/constants/urls";
-import env from "common/env";
+import env from "main/env";
 import { t } from "common/format/t";
 import { currentRuntime } from "common/os/runtime";
 import { isCancelled } from "common/types";

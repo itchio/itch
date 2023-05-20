@@ -4,10 +4,10 @@ import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import {
   ambientWind,
-  transformUrl,
   ambientWindState,
   ambientTab,
 } from "common/util/navigation";
+import { transformUrl } from "renderer/util/url";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import { hook, hookWithProps } from "renderer/hocs/hook";
