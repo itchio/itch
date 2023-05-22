@@ -34,7 +34,6 @@ if (env.development) {
   }
 }
 
-import electron from "electron";
 import App from "renderer/App";
 import { actions } from "common/actions";
 import { ExtendedWindow } from "common/types";
@@ -65,16 +64,6 @@ window.addEventListener("beforeunload", () => {
     appNode = null;
   }
 });
-
-// disable two-finger zoom on macOS
-
-if (process.platform === "darwin") {
-  try {
-    electron.webFrame.setVisualZoomLevelLimits(1, 1);
-  } catch (e) {
-    console.log(`couldn't disable two-finger zoom: ${e.stack || e}`);
-  }
-}
 
 async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
