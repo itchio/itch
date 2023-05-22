@@ -39,7 +39,6 @@
     "logrotate-stream": "^0.2.7",
     "lru-cache": "^6.0.0",
     "marked-extra": "^0.2.6",
-    "memory-streams": "^0.1.2",
     "mime-types": "^2.1.28",
     "multi-write-stream": "^2.0.1",
     "node-emoji": "^1.10.0",

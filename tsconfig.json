@@ -12,7 +12,8 @@
     "paths": {
       "common": ["common"],
       "renderer": ["renderer"],
-      "main": ["main"]
+      "main": ["main"],
+      "vendor": ["vendor"]
     },
 
     "strictNullChecks": false,

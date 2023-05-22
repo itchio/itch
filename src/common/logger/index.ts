@@ -1,4 +1,4 @@
-import memory from "memory-streams";
+import memory from "../../vendor/memory_streams";
 
 const levelNumbers = {
   silent: 100,
