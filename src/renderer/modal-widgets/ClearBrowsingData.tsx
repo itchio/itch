@@ -5,7 +5,7 @@ import {
   ClearBrowsingDataResponse,
 } from "common/modals/types";
 import { partitionForUser } from "common/util/partition-for-user";
-import electron from "electron";
+import { electron } from "renderer/bridge";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
@@ -31,7 +31,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
     // FIXME: surely we can do that without remote ?
     // more surely: that surely should just be done in metal
     // and we should read from store or something
-    const ourSession = electron.remote.session.fromPartition(
+    const ourSession = electron.session.fromPartition(
       partitionForUser(String(userId)),
       { cache: true }
     );
