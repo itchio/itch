@@ -7,7 +7,7 @@ import { ChromeStore } from "common/types";
 import route from "common/util/route";
 import shouldLogAction from "common/util/should-log-action";
 import { Watcher } from "common/util/watcher";
-import { electronEnhancer } from "ftl-redux-electron-store";
+import { reduxElectronStore } from "renderer/bridge";
 import { applyMiddleware, compose, createStore, Middleware } from "redux";
 import { rendererLogger } from "renderer/logger";
 const { createLogger } = require("redux-logger");
@@ -29,7 +29,7 @@ const logger = createLogger({
 middleware.push(logger);
 
 const enhancers = [
-  electronEnhancer({
+  reduxElectronStore.electronEnhancer({
     filter,
     postDispatchCallback: (action: any) => {
       route(watcher, store, action);

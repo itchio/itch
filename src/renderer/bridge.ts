@@ -1,6 +1,7 @@
 import { parse } from "url";
 import { stringify } from "querystring";
 import { remote } from "electron";
+import { electronEnhancer } from "ftl-redux-electron-store";
 import { userAgent } from "main/util/useragent";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
@@ -30,4 +31,8 @@ export const resources = {
 export const paths = {
   legacyMarketPath,
   mainLogPath,
+};
+
+export const reduxElectronStore = {
+  electronEnhancer,
 };
