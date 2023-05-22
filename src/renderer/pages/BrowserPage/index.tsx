@@ -2,6 +2,9 @@ import { useragent } from "renderer/bridge";
 import { Dispatch, ProxySource } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
+// this import is used strictly for types
+// during compilation it will be eliminated, which we need
+// since this import isn't permitted in this context
 import { WebviewTag } from "electron";
 import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
