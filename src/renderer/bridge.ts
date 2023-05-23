@@ -17,6 +17,8 @@ export const querystring = {
 export const electron = {
   app: remote.app,
   session: remote.session,
+  dialog: remote.dialog,
+  BrowserWindow: remote.BrowserWindow,
 };
 
 export const useragent = {

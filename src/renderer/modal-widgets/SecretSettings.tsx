@@ -15,6 +15,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
+import { electron } from "renderer/bridge";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -150,8 +151,7 @@ class SecretSettings extends React.PureComponent<Props> {
   };
 
   onGPUFeatureStatus = () => {
-    const app = require("electron").remote.app;
-    const data = app.getGPUFeatureStatus();
+    const data = electron.app.getGPUFeatureStatus();
     const { dispatch } = this.props;
     dispatch(
       actions.openModal(

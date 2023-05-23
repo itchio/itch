@@ -20,7 +20,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { paths } from "renderer/bridge";
+import { paths, electron } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -59,7 +59,6 @@ class AppLogPage extends React.PureComponent<Props, State> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.openLogFileRequest, async () => {
       try {
-        const electron = require("electron").remote;
         const { dialog, BrowserWindow } = electron;
         const { filePaths } = await dialog.showOpenDialog(
           BrowserWindow.getFocusedWindow(),
