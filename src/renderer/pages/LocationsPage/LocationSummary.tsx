@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { Dispatch, MenuTemplate } from "common/types";
 import { ambientWind, urlForInstallLocation } from "common/util/navigation";

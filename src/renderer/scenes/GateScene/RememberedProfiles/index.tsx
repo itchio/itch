@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
 import React from "react";
 import Link from "renderer/basics/Link";

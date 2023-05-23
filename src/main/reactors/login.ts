@@ -1,5 +1,6 @@
 import { actions } from "common/actions";
-import { messages, hookLogging } from "common/butlerd";
+import { hookLogging } from "common/butlerd/utils";
+import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Store } from "common/types";

@@ -1,4 +1,4 @@
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientTab, urlForGame } from "common/util/navigation";
 import React from "react";

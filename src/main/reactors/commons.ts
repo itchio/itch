@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import groupIdBy from "common/helpers/group-id-by";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";

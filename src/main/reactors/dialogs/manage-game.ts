@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import modals from "main/modals";
 import { ManageGameParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";

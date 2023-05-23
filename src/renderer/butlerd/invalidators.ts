@@ -1,6 +1,6 @@
 import { RequestCreator } from "butlerd";
 import { actions, ActionCreator } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 
 type MessageType = RequestCreator<any, any>;
 export type ActionList = ActionCreator<any>[];

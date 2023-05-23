@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Watcher } from "common/util/watcher";
 import fs from "fs";
 import { dirname } from "path";

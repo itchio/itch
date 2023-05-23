@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
 import searchExamples from "common/constants/search-examples";
 import { Dispatch } from "common/types";

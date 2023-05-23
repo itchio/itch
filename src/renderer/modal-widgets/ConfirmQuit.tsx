@@ -1,4 +1,4 @@
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { ModalWidgetProps } from "common/modals";
 import { ConfirmQuitParams, ConfirmQuitResponse } from "common/modals/types";
 import React from "react";

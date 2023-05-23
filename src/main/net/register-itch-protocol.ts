@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Store } from "common/types";
 import { Session, OnHeadersReceivedListenerDetails } from "electron";
 import { mcall } from "main/butlerd/mcall";

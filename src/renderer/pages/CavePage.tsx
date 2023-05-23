@@ -1,4 +1,4 @@
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { ambientTab } from "common/util/navigation";
 import React from "react";

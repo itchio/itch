@@ -10,7 +10,7 @@ import {
   isInternalError,
   asRequestError,
   mergeLogAndError,
-} from "common/butlerd";
+} from "common/butlerd/errors";
 import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";
 import { t } from "common/format/t";

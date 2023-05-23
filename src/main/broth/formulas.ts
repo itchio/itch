@@ -1,5 +1,5 @@
 import { Client } from "butlerd";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { makeButlerInstance } from "main/butlerd/make-butler-instance";
 import env from "main/env";
 import { Logger } from "common/logger";

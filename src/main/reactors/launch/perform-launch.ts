@@ -1,5 +1,6 @@
 import { actions } from "common/actions";
-import { messages, hookLogging } from "common/butlerd";
+import { hookLogging } from "common/butlerd/utils";
+import * as messages from "common/butlerd/messages";
 import { Cave, Game, PrereqStatus } from "common/butlerd/messages";
 import { Logger, RecordingLogger } from "common/logger";
 import { TypedModal } from "common/modals";

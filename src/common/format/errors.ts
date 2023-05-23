@@ -1,4 +1,4 @@
-import { asRequestError } from "common/butlerd/utils";
+import { asRequestError } from "common/butlerd/errors";
 import { LocalizedString } from "common/types";
 import { RequestError } from "butlerd";
 import { Download, InstallPlanInfo } from "common/butlerd/messages";

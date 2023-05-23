@@ -1,5 +1,6 @@
 import { actions } from "common/actions";
-import { hookLogging, messages } from "common/butlerd";
+import { hookLogging } from "common/butlerd/utils";
+import * as messages from "common/butlerd/messages";
 import { t } from "common/format/t";
 import modals from "main/modals";
 import { Watcher } from "common/util/watcher";

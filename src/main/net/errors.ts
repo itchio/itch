@@ -1,4 +1,4 @@
-import { asRequestError } from "common/butlerd";
+import { asRequestError } from "common/butlerd/errors";
 import { Code } from "common/butlerd/messages";
 
 /**

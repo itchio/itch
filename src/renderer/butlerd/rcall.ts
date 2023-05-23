@@ -1,5 +1,5 @@
 import { RequestCreator } from "butlerd";
-import { SetupFunc } from "common/butlerd";
+import { SetupFunc } from "common/butlerd/utils";
 import store from "renderer/store";
 import { rendererLogger } from "renderer/logger";
 import { butlerd } from "renderer/bridge";

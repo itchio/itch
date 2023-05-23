@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { GameClassification, Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Dispatch } from "common/types";

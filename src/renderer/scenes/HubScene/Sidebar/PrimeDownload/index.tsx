@@ -1,4 +1,4 @@
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { Download, DownloadProgress } from "common/butlerd/messages";
 import { Dispatch, Task } from "common/types";
 import { getActiveDownload } from "main/reactors/downloads/getters";

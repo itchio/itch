@@ -11,7 +11,7 @@ import querystring from "querystring";
 import { doAsync } from "renderer/helpers/doAsync";
 import { queueInstall } from "main/reactors/tasks/queue-game";
 import { mcall } from "main/butlerd/mcall";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 
 const logger = mainLogger.child(__filename);
 

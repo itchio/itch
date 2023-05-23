@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { getCaveSummary } from "common/butlerd";
+import { getCaveSummary } from "common/butlerd/utils";
 import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";

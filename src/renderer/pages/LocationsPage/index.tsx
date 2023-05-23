@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import * as messages from "common/butlerd/messages";
 import { InstallLocationsListResult } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";

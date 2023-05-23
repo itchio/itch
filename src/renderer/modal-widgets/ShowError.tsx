@@ -4,7 +4,7 @@ import {
   getErrorStack,
   getRpcErrorData,
   isInternalError,
-} from "common/butlerd";
+} from "common/butlerd/errors";
 import { ShowErrorParams, ShowErrorResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import React from "react";
