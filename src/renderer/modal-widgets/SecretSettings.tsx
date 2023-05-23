@@ -1,4 +1,3 @@
-import { createRequest } from "butlerd";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import {
@@ -15,7 +14,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
-import { electron } from "renderer/bridge";
+import { electron, butlerd } from "renderer/bridge";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -167,7 +166,7 @@ class SecretSettings extends React.PureComponent<Props> {
   };
 
   onBadButlerdCall = () => {
-    const FakeRequest = createRequest<{}, {}>(
+    const FakeRequest = butlerd.createRequest<{}, {}>(
       "This.Is.Definitely.Not.A.Butlerd.Method"
     );
 

@@ -8,6 +8,7 @@ import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { promises } from "fs";
 import { cpu, graphics, osInfo } from "systeminformation";
 import { call, getCaveSummary, hookLogging } from "common/butlerd/utils";
+import { createRequest } from "butlerd";
 
 export const url = {
   parse,
@@ -56,4 +57,5 @@ export const butlerd = {
   rcall: call,
   getCaveSummary,
   hookLogging,
+  createRequest,
 };

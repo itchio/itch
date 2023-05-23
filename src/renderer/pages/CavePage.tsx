@@ -8,7 +8,6 @@ import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import { dispatchTabEvolve } from "renderer/hocs/tab-utils";
-import { mcall } from "main/butlerd/mcall";
 import { actions } from "common/actions";
 
 const FetchCave = butlerCaller(messages.FetchCave);
