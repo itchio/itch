@@ -1,7 +1,8 @@
 import { RequestCreator } from "butlerd";
-import { call, SetupFunc } from "common/butlerd";
+import { SetupFunc } from "common/butlerd";
 import store from "renderer/store";
 import { rendererLogger } from "renderer/logger";
+import { butlerd } from "renderer/bridge";
 
 if (process.type !== "renderer") {
   throw new Error(`rcall cannot be required from main process`);
@@ -17,5 +18,5 @@ export async function rcall<Params, Res>(
   params: {} & Params,
   setup?: SetupFunc
 ): Promise<Res> {
-  return await call(store, logger, rc, params, setup);
+  return await butlerd.rcall(store, logger, rc, params, setup);
 }
