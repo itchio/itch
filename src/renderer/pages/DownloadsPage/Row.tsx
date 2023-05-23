@@ -13,7 +13,7 @@ import getGameStatus, {
   Operation,
   OperationType,
 } from "common/helpers/get-game-status";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import { Dispatch, Task } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";

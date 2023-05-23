@@ -11,6 +11,7 @@ import { actions } from "common/actions";
 import { Logger, recordingLogger, RecordingLogger } from "common/logger";
 import { getCurrentTasks } from "main/reactors/tasks/as-task-persistent-state";
 import uuid from "common/util/uuid";
+import rng from "main/util/rng";
 import { mainLogger } from "main/logger";
 
 interface AsTaskOpts {
@@ -29,7 +30,7 @@ interface AsTaskOpts {
 }
 
 async function asTask(opts: AsTaskOpts) {
-  const id = uuid();
+  const id = uuid(rng);
 
   const { store, name, gameId, caveId } = opts;
 

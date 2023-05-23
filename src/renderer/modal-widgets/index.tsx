@@ -1,4 +1,5 @@
-import { modals, ModalWidgetProps } from "common/modals";
+import { ModalWidgetProps } from "common/modals";
+import modals from "renderer/modals";
 
 import Loadable from "react-loadable";
 const ClearBrowsingData = Loadable({

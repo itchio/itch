@@ -65,7 +65,9 @@ interface ModalWidgets {
   [key: string]: ModalWidgetSpec<any, any>;
 }
 
-function widget<Params, Response>(): ModalWidgetSpec<Params, Response> {
+function widget<Params, Response>(
+  uuid: () => string
+): ModalWidgetSpec<Params, Response> {
   let spec: ModalWidgetSpec<Params, Response>;
   spec = {
     key: null,
@@ -95,55 +97,59 @@ function wireWidgets<T extends ModalWidgets>(mws: T): T {
   return mws;
 }
 
-export const modals = wireWidgets({
-  clearBrowsingData: widget<
-    ClearBrowsingDataParams,
-    ClearBrowsingDataResponse
-  >(),
-  exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(),
-  manageGame: widget<ManageGameParams, ManageGameResponse>(),
-  manageCave: widget<ManageCaveParams, ManageCaveResponse>(),
-  planInstall: widget<PlanInstallParams, PlanInstallResponse>(),
-  prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(),
-  recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(),
-  switchVersionCave: widget<
-    SwitchVersionCaveParams,
-    SwitchVersionCaveResponse
-  >(),
-  secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(),
-  showError: widget<ShowErrorParams, ShowErrorResponse>(),
-  twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(),
-  sendFeedback: widget<SendFeedbackParams, void>(),
+export const prepModals = (uuid: () => string) => {
+  return wireWidgets({
+    clearBrowsingData: widget<
+      ClearBrowsingDataParams,
+      ClearBrowsingDataResponse
+    >(uuid),
+    exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(uuid),
+    manageGame: widget<ManageGameParams, ManageGameResponse>(uuid),
+    manageCave: widget<ManageCaveParams, ManageCaveResponse>(uuid),
+    planInstall: widget<PlanInstallParams, PlanInstallResponse>(uuid),
+    prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(uuid),
+    recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(uuid),
+    switchVersionCave: widget<
+      SwitchVersionCaveParams,
+      SwitchVersionCaveResponse
+    >(uuid),
+    secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(uuid),
+    showError: widget<ShowErrorParams, ShowErrorResponse>(uuid),
+    twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
+    sendFeedback: widget<SendFeedbackParams, void>(uuid),
 
-  // dummy widgets
+    // dummy widgets
 
-  pickUpload: widget<
-    {},
-    {
-      /** manually picked upload for install */
-      pickedUploadIndex?: number;
-    }
-  >(),
+    pickUpload: widget<
+      {},
+      {
+        /** manually picked upload for install */
+        pickedUploadIndex?: number;
+      }
+    >(uuid),
 
-  pickManifestAction: widget<
-    {},
-    {
-      /** index of the manifest action that was picked when launching a game */
-      index: number;
-    }
-  >(),
+    pickManifestAction: widget<
+      {},
+      {
+        /** index of the manifest action that was picked when launching a game */
+        index: number;
+      }
+    >(uuid),
 
-  sandboxBlessing: widget<
-    {},
-    {
-      /** whether or not to install the sandbox */
-      sandboxBlessing?: boolean;
-    }
-  >(),
+    sandboxBlessing: widget<
+      {},
+      {
+        /** whether or not to install the sandbox */
+        sandboxBlessing?: boolean;
+      }
+    >(uuid),
 
-  adminWipeBlessing: widget<{}, {}>(),
+    adminWipeBlessing: widget<{}, {}>(uuid),
 
-  naked: widget<{}, {}>(),
+    naked: widget<{}, {}>(uuid),
 
-  confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(),
-});
+    confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(uuid),
+  });
+};
+
+export const modalShape = prepModals(() => "");

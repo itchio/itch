@@ -13,7 +13,8 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
-import { ModalWidgetProps, modals } from "common/modals";
+import { ModalWidgetProps } from "common/modals";
+import modals from "renderer/modals";
 
 const ControlsDiv = styled.div`
   display: flex;

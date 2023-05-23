@@ -1,6 +1,6 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { modals } from "common/modals";
+import modals from "main/modals";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.changeUser, async (store, action) => {

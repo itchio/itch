@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";
 

@@ -7,7 +7,7 @@ import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import urlParser from "url";
 import { promisedModal } from "main/reactors/modals";
 import { restoreTabs, saveTabs } from "main/reactors/tab-save";

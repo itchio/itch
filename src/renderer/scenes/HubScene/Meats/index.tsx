@@ -12,7 +12,7 @@ import React from "react";
 import { filtersContainerHeight } from "renderer/basics/FiltersContainer";
 import TitleBar from "renderer/basics/TitleBar";
 import { hook } from "renderer/hocs/hook";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import styled from "renderer/styles";
 import { map } from "underscore";
 import Meat from "renderer/scenes/HubScene/Meats/Meat";

@@ -13,7 +13,7 @@ import FiltersContainer from "renderer/basics/FiltersContainer";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import Page from "renderer/pages/common/Page";
 import { actions } from "common/actions";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import { formatError } from "common/format/errors";
 
 const CrashyPage = Loadable({

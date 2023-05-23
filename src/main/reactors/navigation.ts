@@ -10,6 +10,7 @@ import { shell } from "electron";
 import { mainLogger } from "main/logger";
 import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
+import rng from "main/util/rng";
 
 const logger = mainLogger.child(__filename);
 
@@ -139,7 +140,7 @@ export default function (watcher: Watcher) {
         // let it navigate the open tab
       } else {
         // open a new tab!
-        const tab = uuid();
+        const tab = uuid(rng);
         store.dispatch(
           actions.tabOpened({
             wind,
@@ -233,7 +234,7 @@ export default function (watcher: Watcher) {
     }
 
     const { openTabs } = rs.winds[wind].navigation;
-    const tab = uuid();
+    const tab = uuid(rng);
     store.dispatch(
       actions.tabOpened({
         wind,

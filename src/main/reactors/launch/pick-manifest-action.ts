@@ -5,7 +5,7 @@ import { Store, ModalButtonSpec } from "common/types";
 import { promisedModal } from "main/reactors/modals";
 
 import { Game, Action } from "common/butlerd/messages";
-import { modals } from "common/modals";
+import modals from "main/modals";
 
 // TODO: support localized action names
 

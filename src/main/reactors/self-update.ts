@@ -9,7 +9,7 @@ import { ISM } from "main/broth/itch-setup";
 import { mainLogger } from "main/logger";
 import { manager } from "main/reactors/setup";
 import ospath, { dirname } from "path";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import { delay } from "main/reactors/delay";
 
 const logger = mainLogger.child(__filename);

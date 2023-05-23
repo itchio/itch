@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { formatUploadTitle } from "common/format/upload";
 import { Watcher } from "common/util/watcher";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import { mcall } from "main/butlerd/mcall";
 
 export default function (watcher: Watcher) {

@@ -11,7 +11,8 @@ import {
 import { formatError, getInstallPlanInfoError } from "common/format/errors";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
-import { modals, ModalWidgetProps } from "common/modals";
+import { ModalWidgetProps } from "common/modals";
+import modals from "renderer/modals";
 import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";

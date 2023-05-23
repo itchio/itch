@@ -1,17 +1,4 @@
-let rng: () => Uint8Array;
-
-if (process.type === "browser" || !process.type) {
-  const crypto = require("crypto");
-  rng = () => crypto.randomBytes(16);
-} else {
-  rng = () => {
-    const rnds8 = new Uint8Array(16);
-    window.crypto.getRandomValues(rnds8);
-    return rnds8;
-  };
-}
-
-function v4() {
+function v4(rng) {
   const rnds = rng();
 
   // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`

@@ -4,7 +4,7 @@ import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { Dispatch } from "common/types";

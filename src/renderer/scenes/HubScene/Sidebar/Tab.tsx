@@ -16,7 +16,7 @@ import React from "react";
 import { injectIntl, IntlShape } from "react-intl";
 import { SortableElement } from "react-sortable-hoc";
 import { hookWithProps } from "renderer/hocs/hook";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import { size } from "underscore";
 import Item from "renderer/scenes/HubScene/Sidebar/Item";
 

@@ -1,4 +1,4 @@
-import { modals } from "common/modals";
+import modals from "main/modals";
 import { ModalButtonSpec, LocalizedString, Store, Action } from "common/types";
 import {
   asRequestError,

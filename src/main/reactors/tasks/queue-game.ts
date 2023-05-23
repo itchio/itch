@@ -7,7 +7,7 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import { isEmpty, map } from "underscore";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";

@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import styled from "renderer/styles";
 import { ambientWind } from "common/util/navigation";
 import { isSecretClick } from "common/helpers/secret-click";

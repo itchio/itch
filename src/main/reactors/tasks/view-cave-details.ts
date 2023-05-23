@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { modals } from "common/modals";
+import modals from "main/modals";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {

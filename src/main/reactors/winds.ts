@@ -4,7 +4,7 @@ import { normalizeURL, opensInWindow } from "common/constants/windows";
 import env from "main/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
-import { modals } from "common/modals";
+import modals from "main/modals";
 import {
   NativeWindowState,
   PreferencesState,

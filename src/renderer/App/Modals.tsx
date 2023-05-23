@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import * as colors from "common/constants/colors";
 import { specToButton } from "common/helpers/spec-to-button";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import {
   Action,
   Dispatch,

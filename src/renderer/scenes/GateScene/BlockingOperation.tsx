@@ -11,7 +11,7 @@ import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import { ambientWind } from "common/util/navigation";
 
 const BlockingOperationDiv = styled.div`

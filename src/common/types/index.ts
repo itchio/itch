@@ -16,7 +16,7 @@ import {
   Profile,
 } from "common/butlerd/messages";
 import { Endpoint } from "butlerd";
-import { modals } from "common/modals";
+import { modalShape } from "common/modals";
 export interface Store extends ReduxStore<RootState> {}
 
 export interface Dispatch {
@@ -205,7 +205,7 @@ export interface ModalBase {
 
 export interface Modal extends ModalBase {
   /** name of modal widget to render */
-  widget?: keyof typeof modals;
+  widget?: keyof typeof modalShape;
 
   /** parameters to pass to React component */
   widgetParams?: {};

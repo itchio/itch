@@ -9,7 +9,7 @@ import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
 import { hookWithProps } from "renderer/hocs/hook";
-import { modals } from "common/modals";
+import modals from "renderer/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isSecretClick } from "common/helpers/secret-click";
