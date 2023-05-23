@@ -5,6 +5,7 @@ import { electronEnhancer } from "ftl-redux-electron-store";
 import { userAgent } from "main/util/useragent";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
+import { promises } from "fs";
 
 export const url = {
   parse,
@@ -37,4 +38,8 @@ export const paths = {
 
 export const reduxElectronStore = {
   electronEnhancer,
+};
+
+export const promisedFs = {
+  readFile: promises.readFile,
 };

@@ -20,7 +20,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { paths, electron } from "renderer/bridge";
+import { paths, electron, promisedFs } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -160,8 +160,6 @@ class AppLogPage extends React.PureComponent<Props, State> {
   };
 
   doFetch = async () => {
-    const promisedFs = (await import("fs")).promises;
-
     let filePath = this.props.file;
     if (filePath) {
       console.log(`Reading external log`, filePath);
