@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { hookLogging } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
 import {
   DownloadReason,
@@ -47,6 +46,7 @@ import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
 import { recordingLogger } from "common/logger";
+import { butlerd } from "renderer/bridge";
 
 const logger = rendererLogger.child(__filename);
 
@@ -422,7 +422,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             fastQueue: true,
           },
           (convo) => {
-            hookLogging(convo, logger);
+            butlerd.hookLogging(convo, logger);
           }
         );
         logger.info(`Queued!`);
@@ -485,7 +485,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           messages.InstallPlan,
           { gameId, uploadId },
           (convo) => {
-            hookLogging(convo, logger);
+            butlerd.hookLogging(convo, logger);
           }
         );
         this.setState({

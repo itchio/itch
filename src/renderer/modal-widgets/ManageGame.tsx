@@ -1,5 +1,4 @@
 import { actions } from "common/actions";
-import { getCaveSummary } from "common/butlerd/utils";
 import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
@@ -20,6 +19,7 @@ import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import Floater from "renderer/basics/Floater";
+import { butlerd } from "renderer/bridge";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -114,7 +114,7 @@ class ManageGame extends React.PureComponent<Props> {
             <CaveItemList>
               {map(caves, (cave, i) => {
                 const u = cave.upload;
-                const caveSummary = getCaveSummary(cave);
+                const caveSummary = butlerd.getCaveSummary(cave);
 
                 return (
                   <CaveItem key={cave.id}>

@@ -1,5 +1,4 @@
 import { actions } from "common/actions";
-import { getCaveSummary } from "common/butlerd/utils";
 import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
@@ -30,6 +29,7 @@ import { T } from "renderer/t";
 import { ModalWidgetProps } from "common/modals";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
 import Filler from "renderer/basics/Filler";
+import { butlerd } from "renderer/bridge";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -108,7 +108,7 @@ class ManageCave extends React.PureComponent<Props> {
     const { game } = cave;
 
     const u = cave.upload;
-    const caveSummary = getCaveSummary(cave);
+    const caveSummary = butlerd.getCaveSummary(cave);
     return (
       <CaveItem key={cave.id}>
         <div

@@ -1,5 +1,4 @@
 import { actions } from "common/actions";
-import { hookLogging } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
@@ -30,6 +29,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 import { recordingLogger } from "common/logger";
+import { butlerd } from "renderer/bridge";
 
 enum Stage {
   Scanning,
@@ -132,7 +132,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
           messages.InstallLocationsScan,
           { legacyMarketPath: paths.legacyMarketPath() },
           (convo) => {
-            hookLogging(convo, logger);
+            butlerd.hookLogging(convo, logger);
             convo.onNotification(messages.Progress, async ({ progress }) => {
               this.setState({ progress });
             });

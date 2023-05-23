@@ -7,7 +7,7 @@ import { getImageURL, getInjectURL } from "main/util/resources";
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { promises } from "fs";
 import { cpu, graphics, osInfo } from "systeminformation";
-import { call } from "common/butlerd/utils";
+import { call, getCaveSummary, hookLogging } from "common/butlerd/utils";
 
 export const url = {
   parse,
@@ -54,4 +54,6 @@ export const sysinfo = {
 
 export const butlerd = {
   rcall: call,
+  getCaveSummary,
+  hookLogging,
 };
