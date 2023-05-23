@@ -6,6 +6,7 @@ import { userAgent } from "main/util/useragent";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { promises } from "fs";
+import { cpu, graphics, osInfo } from "systeminformation";
 
 export const url = {
   parse,
@@ -42,4 +43,10 @@ export const reduxElectronStore = {
 
 export const promisedFs = {
   readFile: promises.readFile,
+};
+
+export const sysinfo = {
+  cpu,
+  graphics,
+  osInfo,
 };

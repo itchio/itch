@@ -17,6 +17,7 @@ import styled, { css } from "renderer/styles";
 import { IntlShape, injectIntl } from "react-intl";
 import { T } from "renderer/t";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
+import { sysinfo } from "renderer/bridge";
 
 enum ReportStage {
   Filling,
@@ -135,7 +136,6 @@ class ReportIssue extends React.PureComponent<Props, State> {
   componentDidMount() {
     doAsync(async () => {
       try {
-        const sysinfo = await import("systeminformation");
         let output = {
           cpu: "" as any,
           graphics: "" as any,
