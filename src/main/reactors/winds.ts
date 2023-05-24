@@ -14,7 +14,11 @@ import {
 } from "common/types";
 import config from "main/util/config";
 import { partitionForApp } from "common/util/partition-for-user";
-import { getImagePath, getRendererFilePath } from "main/util/resources";
+import {
+  getInjectPath,
+  getImagePath,
+  getRendererFilePath,
+} from "main/util/resources";
 import { Watcher } from "common/util/watcher";
 import {
   app,
@@ -542,12 +546,13 @@ function commonBrowserWindowOpts(
       // Will become the default in a future Electron version.
       // Ensures values returned from `executeJavascript` are "world-safe".
       worldSafeExecuteJavaScript: true,
-      // itch v25's architecture relies on it - some modules need `require()`.
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
       // needed for the web browser part of itch
       webviewTag: true,
       // custom session with `itch://` protocol support
       session: getAppSession(store),
+      preload: getInjectPath("preload"),
     },
   };
 }

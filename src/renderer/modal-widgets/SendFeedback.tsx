@@ -136,59 +136,58 @@ class ReportIssue extends React.PureComponent<Props, State> {
   componentDidMount() {
     doAsync(async () => {
       try {
-        let output = {
-          cpu: "" as any,
-          graphics: "" as any,
-          osInfo: "" as any,
-          broth: "" as any,
-        };
-        try {
-          const input = await sysinfo.cpu();
-          output.cpu = fillShape(input, {
-            manufacturer: true,
-            brand: true,
-            vendor: true,
-            speed: true,
-            cores: true,
-          });
-        } catch (e) {
-          output.cpu = `Could not get info: ${e}`;
-        }
-        try {
-          const input = await sysinfo.graphics();
-          output.graphics = fillShape(input, {
-            controllers: {
-              model: true,
-              vendor: true,
-              vram: true,
-            },
-          });
-        } catch (e) {
-          output.graphics = `Could not get info: ${e}`;
-        }
-        try {
-          const input = await sysinfo.osInfo();
-          output.osInfo = fillShape(input, {
-            platform: true,
-            arch: true,
-            distro: true,
-            release: true,
-            codename: true,
-            logofile: true,
-          });
-        } catch (e) {
-          output.osInfo = `Could not get info: ${e}`;
-        }
-
-        output.broth = fillShape(this.props.brothPackages, {
-          "*": {
-            stage: true,
-            version: true,
-          },
-        });
-        this.setState({
-          system: output,
-        });
+        // let output = {
+        //   cpu: "" as any,
+        //   graphics: "" as any,
+        //   osInfo: "" as any,
+        //   broth: "" as any,
+        // };
+        // try {
+        //   const input = await sysinfo.cpu();
+        //   output.cpu = fillShape(input, {
+        //     manufacturer: true,
+        //     brand: true,
+        //     vendor: true,
+        //     speed: true,
+        //     cores: true,
+        //   });
+        // } catch (e) {
+        //   output.cpu = `Could not get info: ${e}`;
+        // }
+        // try {
+        //   const input = await sysinfo.graphics();
+        //   output.graphics = fillShape(input, {
+        //     controllers: {
+        //       model: true,
+        //       vendor: true,
+        //       vram: true,
+        //     },
+        //   });
+        // } catch (e) {
+        //   output.graphics = `Could not get info: ${e}`;
+        // }
+        // try {
+        //   const input = await sysinfo.osInfo();
+        //   output.osInfo = fillShape(input, {
+        //     platform: true,
+        //     arch: true,
+        //     distro: true,
+        //     release: true,
+        //     codename: true,
+        //     logofile: true,
+        //   });
+        // } catch (e) {
+        //   output.osInfo = `Could not get info: ${e}`;
+        // }
+        // output.broth = fillShape(this.props.brothPackages, {
+        //   "*": {
+        //     stage: true,
+        //     version: true,
+        //   },
+        // });
+        // this.setState({
+        //   system: output,
+        // });
       } catch (e) {
         this.setState({
           system: { state: `Could not gather system information: ${e.stack}` },

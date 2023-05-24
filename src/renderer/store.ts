@@ -1,7 +1,3 @@
-if (process.type === "browser") {
-  throw new Error("renderer store required from main");
-}
-
 import reducer from "common/reducers";
 import { ChromeStore } from "common/types";
 import route from "common/util/route";

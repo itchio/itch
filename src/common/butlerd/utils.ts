@@ -11,6 +11,7 @@ import * as messages from "common/butlerd/messages";
 import { Cave, CaveSummary } from "common/butlerd/messages";
 import { Store, isCancelled, isAborted } from "common/types";
 import { delay } from "main/reactors/delay";
+import { isEqual } from "underscore";
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
@@ -47,7 +48,7 @@ async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
 
   const client = await p;
   const currentEndpoint = store.getState().butlerd.endpoint;
-  if (client.endpoint !== currentEndpoint) {
+  if (!isEqual(client.endpoint, currentEndpoint)) {
     parentLogger.warn(
       `(butlerd) Endpoint changed (${client.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
     );
