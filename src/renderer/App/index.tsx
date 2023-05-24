@@ -4,6 +4,7 @@ import { IntlProvider } from "react-intl";
 import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider } from "renderer/styles";
 import AppContents from "renderer/App/AppContents";
+import { isEqual } from "underscore";
 
 const enableProfiling = process.env.ITCH_ENABLE_PROFILING === "1";
 
@@ -57,8 +58,8 @@ class App extends React.PureComponent<Props, State> {
   ): App["state"] {
     if (
       props.locale !== state.locale ||
-      props.localeMessages !== state.localeMessages ||
-      props.fallbackMessages !== state.fallbackMessages
+      !isEqual(props.localeMessages, state.localeMessages) ||
+      !isEqual(props.fallbackMessages, state.fallbackMessages)
     ) {
       return {
         locale: props.locale,

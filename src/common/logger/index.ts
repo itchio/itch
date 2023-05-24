@@ -30,7 +30,7 @@ export interface LogSink {
 }
 
 export class Logger {
-  private name: string;
+  public name: string;
   public sink: LogSink;
 
   constructor(sink: LogSink, name?: string) {

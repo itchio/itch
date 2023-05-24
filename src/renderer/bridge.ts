@@ -1,61 +1,55 @@
-import { parse } from "url";
-import { stringify } from "querystring";
-import { remote } from "electron";
-import { electronEnhancer } from "ftl-redux-electron-store";
-import { userAgent } from "main/util/useragent";
-import { getImageURL, getInjectURL } from "main/util/resources";
-import { legacyMarketPath, mainLogPath } from "main/util/paths";
-import { promises } from "fs";
-import { cpu, graphics, osInfo } from "systeminformation";
-import { call, getCaveSummary, hookLogging } from "common/butlerd/utils";
-import { createRequest } from "butlerd";
+import { mainWorldSupplement } from "main/inject/inject-preload";
+
+const supplement = (window as unknown) as typeof mainWorldSupplement;
 
 export const url = {
-  parse,
+  parse: supplement.nodeUrl.parse,
+  format: supplement.nodeUrl.format,
 };
 
 export const querystring = {
-  stringify,
+  stringify: supplement.querystring.stringify,
+  parse: supplement.querystring.parse,
 };
 
 export const electron = {
-  app: remote.app,
-  session: remote.session,
-  dialog: remote.dialog,
-  BrowserWindow: remote.BrowserWindow,
+  app: supplement.electron.app,
+  session: supplement.electron.session,
+  dialog: supplement.electron.dialog,
+  BrowserWindow: supplement.electron.BrowserWindow,
 };
 
 export const useragent = {
-  userAgent,
+  userAgent: supplement.useragent.userAgent,
 };
 
 export const resources = {
-  getImageURL,
-  getInjectURL,
+  getImageURL: supplement.resources.getImageURL,
+  getInjectURL: supplement.resources.getInjectURL,
 };
 
 export const paths = {
-  legacyMarketPath,
-  mainLogPath,
+  legacyMarketPath: supplement.paths.legacyMarketPath,
+  mainLogPath: supplement.paths.mainLogPath,
 };
 
 export const reduxElectronStore = {
-  electronEnhancer,
+  electronEnhancer: supplement.reduxElectronStore.electronEnhancer,
 };
 
 export const promisedFs = {
-  readFile: promises.readFile,
+  readFile: supplement.promisedFs.readFile,
 };
 
 export const sysinfo = {
-  cpu,
-  graphics,
-  osInfo,
+  cpu: supplement.sysinfo.cpu,
+  graphics: supplement.sysinfo.graphics,
+  osInfo: supplement.sysinfo.osInfo,
 };
 
 export const butlerd = {
-  rcall: call,
-  getCaveSummary,
-  hookLogging,
-  createRequest,
+  rcall: supplement.butlerd.rcall2,
+  getCaveSummary: supplement.butlerd.getCaveSummary,
+  hookLogging: supplement.butlerd.hookLogging,
+  createRequest: supplement.butlerd.createRequest,
 };

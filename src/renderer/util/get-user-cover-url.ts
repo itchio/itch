@@ -6,7 +6,6 @@ export function getUserCoverURL(user: User): string {
   return stillCoverUrl || coverUrl || getFrogCoverURL(user.id);
 }
 
-console.log(resources);
 const frogs = [
   resources.getImageURL("avatars/frog.svg"),
   resources.getImageURL("avatars/frog-cyan.svg"),

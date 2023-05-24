@@ -179,7 +179,6 @@ class ReportIssue extends React.PureComponent<Props, State> {
         } catch (e) {
           output.osInfo = `Could not get info: ${e}`;
         }
-
         output.broth = fillShape(this.props.brothPackages, {
           "*": {
             stage: true,
