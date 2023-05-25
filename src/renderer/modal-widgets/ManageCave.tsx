@@ -29,7 +29,7 @@ import { T } from "renderer/t";
 import { ModalWidgetProps } from "common/modals";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
 import Filler from "renderer/basics/Filler";
-import { butlerd } from "renderer/bridge";
+import { getCaveSummary } from "common/butlerd/utils";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -108,7 +108,7 @@ class ManageCave extends React.PureComponent<Props> {
     const { game } = cave;
 
     const u = cave.upload;
-    const caveSummary = butlerd.getCaveSummary(cave);
+    const caveSummary = getCaveSummary(cave);
     return (
       <CaveItem key={cave.id}>
         <div

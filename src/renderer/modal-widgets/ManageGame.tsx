@@ -19,7 +19,7 @@ import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import Floater from "renderer/basics/Floater";
-import { butlerd } from "renderer/bridge";
+import { getCaveSummary } from "common/butlerd/utils";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -114,7 +114,7 @@ class ManageGame extends React.PureComponent<Props> {
             <CaveItemList>
               {map(caves, (cave, i) => {
                 const u = cave.upload;
-                const caveSummary = butlerd.getCaveSummary(cave);
+                const caveSummary = getCaveSummary(cave);
 
                 return (
                   <CaveItem key={cave.id}>

@@ -46,7 +46,7 @@ import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
 import { recordingLogger } from "common/logger";
-import { butlerd } from "renderer/bridge";
+import { hookLogging } from "common/butlerd/utils";
 
 const logger = rendererLogger.child(__filename);
 
@@ -422,7 +422,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             fastQueue: true,
           },
           (convo) => {
-            butlerd.hookLogging(convo, logger);
+            hookLogging(convo, logger);
           }
         );
         logger.info(`Queued!`);
@@ -485,7 +485,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           messages.InstallPlan,
           { gameId, uploadId },
           (convo) => {
-            butlerd.hookLogging(convo, logger);
+            hookLogging(convo, logger);
           }
         );
         this.setState({

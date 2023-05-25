@@ -49,7 +49,5 @@ export const sysinfo = {
 
 export const butlerd = {
   rcall: supplement.butlerd.rcall2,
-  getCaveSummary: supplement.butlerd.getCaveSummary,
-  hookLogging: supplement.butlerd.hookLogging,
   createRequest: supplement.butlerd.createRequest,
 };

@@ -29,7 +29,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 import { recordingLogger } from "common/logger";
-import { butlerd } from "renderer/bridge";
+import { hookLogging } from "common/butlerd/utils";
 
 enum Stage {
   Scanning,
@@ -132,7 +132,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
           messages.InstallLocationsScan,
           { legacyMarketPath: paths.legacyMarketPath() },
           (convo) => {
-            butlerd.hookLogging(convo, logger);
+            hookLogging(convo, logger);
             convo.onNotification(messages.Progress, async ({ progress }) => {
               this.setState({ progress });
             });
