@@ -1,6 +1,6 @@
 import { contextBridge, remote } from "electron";
 import { electronEnhancer } from "ftl-redux-electron-store";
-import { call, getCaveSummary, hookLogging } from "common/butlerd/utils";
+import { call } from "common/butlerd/net";
 import { createRequest } from "butlerd";
 import { parse, format } from "url";
 import { userAgent } from "main/util/useragent";
@@ -29,8 +29,6 @@ export const mainWorldSupplement = {
       const rePrototypedRequestCreator = createRequest<any, any>(rc);
       return call(s, rePrototypedLogger, rePrototypedRequestCreator, p, ss);
     },
-    getCaveSummary,
-    hookLogging,
     createRequest,
   },
   useragent: { userAgent },

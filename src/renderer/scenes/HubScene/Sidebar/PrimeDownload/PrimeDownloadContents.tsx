@@ -18,7 +18,7 @@ import { T } from "renderer/t";
 import LastPlayed from "renderer/basics/LastPlayed";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
-import { butlerd } from "renderer/bridge";
+import { getCaveSummary } from "common/butlerd/utils";
 
 const FetchCave = butlerCaller(messages.FetchCave);
 
@@ -191,9 +191,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
     if (result && result.cave) {
       const { cave } = result;
       const { game } = this.props;
-      return (
-        <CompactLastPlayed cave={butlerd.getCaveSummary(cave)} game={game} />
-      );
+      return <CompactLastPlayed cave={getCaveSummary(cave)} game={game} />;
     }
     return null;
   });
