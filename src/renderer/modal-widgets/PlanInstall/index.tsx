@@ -46,7 +46,7 @@ import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
 import { recordingLogger } from "common/logger";
-import { hookLogging } from "common/butlerd/utils";
+import { hookLogging } from "common/helpers/bridge";
 
 const logger = rendererLogger.child(__filename);
 
@@ -410,6 +410,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const logger = recordingLogger(rendererLogger);
       logger.info(`Queuing install for ${game.url}...`);
       try {
+        // investigate
         await rcall(
           messages.InstallQueue,
           {
@@ -421,9 +422,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             queueDownload: true,
             fastQueue: true,
           },
-          (convo) => {
-            hookLogging(convo, logger);
-          }
+          [hookLogging(logger)]
         );
         logger.info(`Queued!`);
         dispatch(actions.downloadQueued({}));
@@ -481,13 +480,10 @@ class PlanInstall extends React.PureComponent<Props, State> {
       try {
         const { gameId } = this.state;
         const logger = recordingLogger(rendererLogger);
-        const res = await rcall(
-          messages.InstallPlan,
-          { gameId, uploadId },
-          (convo) => {
-            hookLogging(convo, logger);
-          }
-        );
+        // investigate
+        const res = await rcall(messages.InstallPlan, { gameId, uploadId }, [
+          hookLogging(logger),
+        ]);
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
