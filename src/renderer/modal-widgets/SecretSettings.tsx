@@ -15,6 +15,7 @@ import styled from "renderer/styles";
 import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
 import { electron, butlerd } from "renderer/bridge";
+import { onRequest } from "common/helpers/bridge";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -203,11 +204,12 @@ class SecretSettings extends React.PureComponent<Props> {
 
   onDoubleTwice = () => {
     doAsync(async () => {
-      await rcall(messages.TestDoubleTwice, { number: 7 }, (client) => {
-        client.onRequest(messages.TestDouble, async ({ number }) => {
+      // investigate
+      await rcall(messages.TestDoubleTwice, { number: 7 }, [
+        onRequest(messages.TestDouble.__method, async ({ number }) => {
           return { number: number * 2 };
-        });
-      });
+        }),
+      ]);
     });
   };
 

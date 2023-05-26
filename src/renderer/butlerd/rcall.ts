@@ -3,6 +3,7 @@ import { SetupFunc } from "common/butlerd/net";
 import store from "renderer/store";
 import { rendererLogger } from "renderer/logger";
 import { butlerd } from "renderer/bridge";
+import { Message } from "common/helpers/bridge";
 
 const logger = rendererLogger.childWithName("rcall");
 
@@ -12,7 +13,7 @@ const logger = rendererLogger.childWithName("rcall");
 export async function rcall<Params, Res>(
   rc: RequestCreator<Params, Res>,
   params: {} & Params,
-  setup?: SetupFunc
+  setups?: Message[]
 ): Promise<Res> {
-  return await butlerd.rcall(store, logger, rc.__method, params, setup);
+  return await butlerd.rcall(store, logger, rc.__method, params, setups);
 }
