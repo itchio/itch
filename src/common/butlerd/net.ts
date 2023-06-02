@@ -1,4 +1,4 @@
-import { Client, RequestCreator, Conversation } from "butlerd";
+import { Client, Endpoint, RequestCreator, Conversation } from "butlerd";
 import { isEqual } from "underscore";
 import { Store, isCancelled, isAborted } from "common/types";
 import {
@@ -12,21 +12,17 @@ import { delay } from "main/reactors/delay";
 
 export type SetupFunc = (convo: Conversation) => void;
 
-type ClientPromise = Promise<Client>;
+var clients: Record<string, Client> = {};
 
-var clientPromises = new WeakMap<Store, ClientPromise>();
-
-async function makeClient(store: Store, parentLogger: Logger): Promise<Client> {
-  const logger = parentLogger.childWithName("butlerd/make-client");
-
+async function getEndpoint(
+  store: Store,
+  parentLogger: Logger
+): Promise<Endpoint> {
+  const logger = parentLogger.childWithName("butlerd/get-endpoint");
   while (true) {
     const { endpoint } = store.getState().butlerd;
     if (endpoint) {
-      const client = new Client(endpoint);
-      client.onWarning((msg) => {
-        logger.warn(`(butlerd) ${msg}`);
-      });
-      return client;
+      return endpoint;
     }
 
     logger.info(`Waiting for butlerd endpoint...`);
@@ -34,25 +30,43 @@ async function makeClient(store: Store, parentLogger: Logger): Promise<Client> {
   }
 }
 
+function makeClient(endpoint: Endpoint, parentLogger: Logger): Client {
+  const logger = parentLogger.childWithName("butlerd/make-client");
+
+  const client = new Client(endpoint);
+  client.onWarning((msg) => {
+    logger.warn(`(butlerd) ${msg}`);
+  });
+  return client;
+}
+
+function makeEndpointKey(endpoint: Endpoint): string {
+  return `${endpoint.tcp.address}:${endpoint.secret}`;
+}
+
 async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
-  let p: ClientPromise;
-  if (clientPromises.has(store)) {
-    p = clientPromises.get(store);
+  let c: Client;
+  const endpoint = await getEndpoint(store, parentLogger);
+  const endpointKey = makeEndpointKey(endpoint);
+  const foundClient = clients[endpointKey];
+  if (foundClient) {
+    console.log("found client!");
+    c = foundClient;
   } else {
-    p = makeClient(store, parentLogger);
-    clientPromises.set(store, p);
+    console.log("making client!");
+    c = makeClient(endpoint, parentLogger);
+    clients[endpointKey] = c;
   }
 
-  const client = await p;
   const currentEndpoint = store.getState().butlerd.endpoint;
-  if (!isEqual(client.endpoint, currentEndpoint)) {
+  if (!isEqual(c.endpoint, currentEndpoint)) {
     parentLogger.warn(
-      `(butlerd) Endpoint changed (${client.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
+      `(butlerd) Endpoint changed (${c.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
     );
-    p = makeClient(store, parentLogger);
-    clientPromises.set(store, p);
+    c = makeClient(endpoint, parentLogger);
+    clients[endpointKey] = c;
   }
-  return p;
+  return c;
 }
 
 export async function call<Params, Res>(
