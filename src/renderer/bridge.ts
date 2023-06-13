@@ -33,10 +33,6 @@ export const paths = {
   mainLogPath: supplement.paths.mainLogPath,
 };
 
-export const reduxElectronStore = {
-  electronEnhancer: supplement.reduxElectronStore.electronEnhancer,
-};
-
 export const promisedFs = {
   readFile: supplement.promisedFs.readFile,
 };

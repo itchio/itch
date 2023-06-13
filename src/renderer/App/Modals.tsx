@@ -588,5 +588,12 @@ interface State {
 }
 
 export default hook((map) => ({
-  modal: map((rs) => ambientWindState(rs).modals[0]),
+  modal: map((rs) => {
+    const s = ambientWindState(rs);
+    if (s) {
+      return s.modals[0];
+    } else {
+      return undefined;
+    }
+  }),
 }))(injectIntl(Modals));

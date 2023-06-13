@@ -149,8 +149,22 @@ interface Props {
 
 export default injectIntl(
   hook((map) => ({
-    maximized: map((rs) => rs.winds[ambientWind()].native.maximized),
-    focused: map((rs) => rs.winds[ambientWind()].native.focused),
+    maximized: map((rs) => {
+      const wind = rs.winds[ambientWind()];
+      if (wind) {
+        return wind.native.maximized;
+      } else {
+        return false;
+      }
+    }),
+    focused: map((rs) => {
+      const wind = rs.winds[ambientWind()];
+      if (wind) {
+        return wind.native.focused;
+      } else {
+        return false;
+      }
+    }),
     ready: map((rs) => !!(rs.setup.done && rs.profile.profile)),
     profile: map((rs) => rs.profile.profile),
   }))(Layout)

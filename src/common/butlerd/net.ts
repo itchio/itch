@@ -46,14 +46,15 @@ function makeEndpointKey(endpoint: Endpoint): string {
 
 async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
   let c: Client;
-  const endpoint = await getEndpoint(store, parentLogger);
+  let endpoint = store.getState().butlerd.endpoint;
+  if (!endpoint) {
+    endpoint = await getEndpoint(store, parentLogger);
+  }
   const endpointKey = makeEndpointKey(endpoint);
   const foundClient = clients[endpointKey];
   if (foundClient) {
-    console.log("found client!");
     c = foundClient;
   } else {
-    console.log("making client!");
     c = makeClient(endpoint, parentLogger);
     clients[endpointKey] = c;
   }
@@ -77,7 +78,6 @@ export async function call<Params, Res>(
   setup?: SetupFunc
 ): Promise<Res> {
   const client = await getClient(store, logger);
-
   try {
     logger.debug(`Calling ${rc({} as any)(client).method}`);
     return await client.call(rc, params, setup);

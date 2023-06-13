@@ -6,10 +6,10 @@ import {
   createStore,
   applyMiddleware,
   compose,
+  AnyAction,
   Middleware,
   MiddlewareAPI,
 } from "redux";
-import { electronEnhancer } from "ftl-redux-electron-store";
 
 import route from "common/util/route";
 import getWatcher from "main/reactors";
@@ -17,8 +17,9 @@ import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { Store } from "common/types";
+import { Store, RootState } from "common/types";
 import { mainLogger } from "main/logger";
+import { syncMain } from "@goosewobbler/electron-redux";
 
 const crashGetter = (store: MiddlewareAPI<any>) => (
   next: (action: any) => any
@@ -64,15 +65,21 @@ if (beChatty) {
 
 let watcher = getWatcher(mainLogger);
 
-const initialState = {} as any;
-const enhancers = [
-  electronEnhancer({
-    postDispatchCallback: (action: any) => {
+const watcherMiddleware = (store: Store) => {
+  return (next: (AnyAction) => RootState) => {
+    return (action: AnyAction) => {
+      console.log("main watcher");
+      console.log(action);
+      const result = next(action);
       route(watcher, store, action);
-    },
-  }),
-  applyMiddleware(...middleware),
-];
+      return result;
+    };
+  };
+};
+middleware.push(watcherMiddleware);
+
+const initialState = {} as any;
+const enhancers = [syncMain, applyMiddleware(...middleware)];
 
 const store = createStore(
   reducer,

@@ -1,5 +1,4 @@
 import { contextBridge, remote } from "electron";
-import { electronEnhancer } from "ftl-redux-electron-store";
 import { call } from "common/butlerd/net";
 import { createRequest, Conversation } from "butlerd";
 import { parse, format } from "url";
@@ -13,6 +12,7 @@ import { Logger } from "common/logger";
 import { Message } from "common/helpers/bridge";
 import { Store } from "common/types";
 import { convertMessage } from "common/helpers/bridge";
+import "@goosewobbler/electron-redux/preload";
 
 export const mainWorldSupplement = {
   nodeUrl: { parse, format },
@@ -22,7 +22,6 @@ export const mainWorldSupplement = {
     dialog: remote.dialog,
     BrowserWindow: remote.BrowserWindow,
   },
-  reduxElectronStore: { electronEnhancer },
   butlerd: {
     rcall2: (
       s: Store,
@@ -65,10 +64,6 @@ export const mainWorldSupplement = {
 };
 
 contextBridge.exposeInMainWorld("electron", mainWorldSupplement.electron);
-contextBridge.exposeInMainWorld(
-  "reduxElectronStore",
-  mainWorldSupplement.reduxElectronStore
-);
 contextBridge.exposeInMainWorld("butlerd", mainWorldSupplement.butlerd);
 contextBridge.exposeInMainWorld("nodeUrl", mainWorldSupplement.nodeUrl);
 contextBridge.exposeInMainWorld("useragent", mainWorldSupplement.useragent);
