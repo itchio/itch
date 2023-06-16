@@ -74,7 +74,14 @@ async function start() {
   };
 
   render(App);
-  store.dispatch(actions.rootWindowReady({}));
+
+  // it isn't a guarantee that this code will run
+  // after the main process starts listening for
+  // this event. Keep sending it so that the main
+  // process is sure to receive it
+  setInterval(() => {
+    store.dispatch(actions.rootWindowReady({}));
+  }, 500);
 
   if (module.hot) {
     module.hot.accept("renderer/App", () => {
