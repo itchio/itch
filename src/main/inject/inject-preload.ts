@@ -1,4 +1,9 @@
-import { contextBridge, remote } from "electron";
+import {
+  contextBridge,
+  remote,
+  BrowserWindow,
+  OpenDialogOptions,
+} from "electron";
 import { call } from "common/butlerd/net";
 import { createRequest, Conversation } from "butlerd";
 import { parse, format } from "url";
@@ -19,8 +24,15 @@ export const mainWorldSupplement = {
   electron: {
     app: remote.app,
     session: remote.session,
-    dialog: remote.dialog,
-    BrowserWindow: remote.BrowserWindow,
+    showOpenDialog: (
+      browserWindow: BrowserWindow,
+      options: OpenDialogOptions
+    ) => {
+      return remote.dialog.showOpenDialog(browserWindow, options);
+    },
+    getFocusedWindow: () => {
+      return remote.BrowserWindow.getFocusedWindow();
+    },
   },
   butlerd: {
     rcall2: (

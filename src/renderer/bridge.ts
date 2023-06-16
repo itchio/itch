@@ -15,8 +15,8 @@ export const querystring = {
 export const electron = {
   app: supplement.electron.app,
   session: supplement.electron.session,
-  dialog: supplement.electron.dialog,
-  BrowserWindow: supplement.electron.BrowserWindow,
+  showOpenDialog: supplement.electron.showOpenDialog,
+  getFocusedWindow: supplement.electron.getFocusedWindow,
 };
 
 export const useragent = {

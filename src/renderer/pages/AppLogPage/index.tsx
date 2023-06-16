@@ -59,13 +59,10 @@ class AppLogPage extends React.PureComponent<Props, State> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.openLogFileRequest, async () => {
       try {
-        const { dialog, BrowserWindow } = electron;
-        const { filePaths } = await dialog.showOpenDialog(
-          BrowserWindow.getFocusedWindow(),
-          {
-            title: "Open log file",
-          }
-        );
+        const { showOpenDialog, getFocusedWindow } = electron;
+        const { filePaths } = await showOpenDialog(getFocusedWindow(), {
+          title: "Open log file",
+        });
         if (filePaths && filePaths.length > 0) {
           const filePath = filePaths[0];
           console.log(`Opening external log`, filePath);

@@ -19,8 +19,10 @@ const watcher = new Watcher(rendererLogger);
 
 const filter = true;
 const middleware: Middleware[] = [];
+const hack = { store: null };
 
-let reduxLoggingEnabled = () => store.getState().status.reduxLoggingEnabled;
+let reduxLoggingEnabled = () =>
+  hack.store.getState().status.reduxLoggingEnabled;
 
 const logger = createLogger({
   predicate: (getState: () => any, action: any) => {
@@ -31,28 +33,21 @@ const logger = createLogger({
 });
 middleware.push(logger);
 
-const watcherMiddleware = (store: Store) => {
-  return (next: (AnyAction) => AnyAction) => {
-    return (action: AnyAction) => {
-      const result = next(action);
-      route(watcher, store, action);
-      return result;
-    };
-  };
-};
-middleware.push(watcherMiddleware);
-
 const enhancers = [syncRenderer, applyMiddleware(...middleware)];
 
 const initialState = {} as any;
-const store = createStore(
-  reducer,
+hack.store = createStore(
+  (state: RootState, action: AnyAction) => {
+    const res = reducer(state, action);
+    route(watcher, hack.store, action);
+    return res;
+  },
   initialState,
   compose(...enhancers)
 ) as ChromeStore;
 
-store.watcher = watcher;
+hack.store.watcher = watcher;
 
-export default store;
+export default hack.store;
 
-(window as any).ReduxStore = store;
+(window as any).ReduxStore = hack.store;

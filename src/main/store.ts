@@ -17,7 +17,7 @@ import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { Store, RootState } from "common/types";
+import { RootState, Store } from "common/types";
 import { mainLogger } from "main/logger";
 import { syncMain } from "@goosewobbler/electron-redux";
 
@@ -65,24 +65,16 @@ if (beChatty) {
 
 let watcher = getWatcher(mainLogger);
 
-const watcherMiddleware = (store: Store) => {
-  return (next: (AnyAction) => RootState) => {
-    return (action: AnyAction) => {
-      console.log("main watcher");
-      console.log(action);
-      const result = next(action);
-      route(watcher, store, action);
-      return result;
-    };
-  };
-};
-middleware.push(watcherMiddleware);
-
 const initialState = {} as any;
 const enhancers = [syncMain, applyMiddleware(...middleware)];
 
-const store = createStore(
-  reducer,
+const hack = { store: null };
+hack.store = createStore(
+  (state: RootState, action: AnyAction) => {
+    const res = reducer(state, action);
+    route(watcher, hack.store, action);
+    return res;
+  },
   initialState,
   compose(...enhancers)
 ) as Store;
@@ -95,4 +87,4 @@ if (module.hot) {
   });
 }
 
-export default store;
+export default hack.store;
