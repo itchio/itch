@@ -4,7 +4,7 @@ import env from "main/env";
 import { elapsed } from "common/format/datetime";
 import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { app, session, protocol, BrowserWindow } from "electron";
+import { app, session, protocol } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
 import { applyProxySettings } from "main/reactors/proxy";
@@ -139,8 +139,11 @@ export default function (watcher: Watcher) {
 
     if (devtoolsPath) {
       try {
-        logger.info(`Adding react devtools from ${devtoolsPath}`);
-        BrowserWindow.addDevToolsExtension(devtoolsPath);
+        logger.info(`Can't load extension from ${devtoolsPath}`);
+        // It's unclear to me which `session` object we need
+        // to use now, in order to load the extension, since
+        // we can no longer load statically from `BrowserWindow`
+        // relevantSession.loadExtension(devtoolsPath);
       } catch (e) {
         logger.error(`While adding react devtools path: ${e.stack}`);
       }

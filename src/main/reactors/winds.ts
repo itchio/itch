@@ -543,7 +543,6 @@ function commonBrowserWindowOpts(
       // In development, the front-end is served by webpack-dev-server
       // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
-      worldSafeExecuteJavaScript: true,
       nodeIntegration: false,
       contextIsolation: true,
       // needed for the web browser part of itch
