@@ -543,8 +543,6 @@ function commonBrowserWindowOpts(
       // In development, the front-end is served by webpack-dev-server
       // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
-      // Will become the default in a future Electron version.
-      // Ensures values returned from `executeJavascript` are "world-safe".
       worldSafeExecuteJavaScript: true,
       nodeIntegration: false,
       contextIsolation: true,
