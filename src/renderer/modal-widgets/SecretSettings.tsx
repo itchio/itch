@@ -150,8 +150,8 @@ class SecretSettings extends React.PureComponent<Props> {
     );
   };
 
-  onGPUFeatureStatus = () => {
-    const data = electron.app.getGPUFeatureStatus();
+  onGPUFeatureStatus = async () => {
+    const data = await electron.getGPUFeatureStatus();
     const { dispatch } = this.props;
     dispatch(
       actions.openModal(

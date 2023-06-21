@@ -3,10 +3,10 @@ import { electron } from "renderer/bridge";
 
 export default {
   ...env,
-  setNodeEnv: () => env.setNodeEnv(electron.app),
-  isCanary: env.isCanary(electron.app),
-  channel: env.channel(electron.app),
-  appName: env.appName(electron.app),
-  development: env.development(electron.app),
-  production: env.production(electron.app),
+  setNodeEnv: () => env.setNodeEnv(electron.getApp()),
+  isCanary: env.isCanary(electron.getApp()),
+  channel: env.channel(electron.getApp()),
+  appName: env.appName(electron.getApp()),
+  development: env.development(electron.getApp()),
+  production: env.production(electron.getApp()),
 };

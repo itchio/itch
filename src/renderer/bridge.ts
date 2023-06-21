@@ -12,12 +12,7 @@ export const querystring = {
   parse: supplement.querystring.parse,
 };
 
-export const electron = {
-  app: supplement.electron.app,
-  session: supplement.electron.session,
-  showOpenDialog: supplement.electron.showOpenDialog,
-  getFocusedWindow: supplement.electron.getFocusedWindow,
-};
+export const electron = supplement.electron;
 
 export const useragent = {
   userAgent: supplement.useragent.userAgent,

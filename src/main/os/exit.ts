@@ -5,7 +5,7 @@ export function exit(exitCode: number) {
     console.log(`this is the magic exit code: ${exitCode}`);
   } else {
     const electron = require("electron");
-    const app = electron.app || electron.remote.app;
+    const app = electron.app;
     app.exit(exitCode);
   }
 }

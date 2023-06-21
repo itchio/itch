@@ -28,15 +28,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
   componentDidMount() {
     const { userId } = this.props;
 
-    // FIXME: surely we can do that without remote ?
-    // more surely: that surely should just be done in metal
-    // and we should read from store or something
-    const ourSession = electron.session.fromPartition(
-      partitionForUser(String(userId)),
-      { cache: true }
-    );
-
-    ourSession.getCacheSize().then((cacheSize) => {
+    electron.getUserCacheSize(userId).then((cacheSize) => {
       this.setState({
         fetchedCacheSize: true,
         cacheSize,

@@ -1,5 +1,6 @@
 import {
   contextBridge,
+  ipcRenderer,
   remote,
   BrowserWindow,
   OpenDialogOptions,
@@ -7,31 +8,61 @@ import {
 import { call } from "common/butlerd/net";
 import { createRequest, Conversation } from "butlerd";
 import { parse, format } from "url";
-import { userAgent } from "main/util/useragent";
 import { cpu, graphics, osInfo } from "systeminformation";
-import { getImageURL, getInjectURL } from "main/util/resources";
 import qs from "querystring";
-import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { promises } from "fs";
 import { Logger } from "common/logger";
 import { Message } from "common/helpers/bridge";
+import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
 import { Store } from "common/types";
 import { convertMessage } from "common/helpers/bridge";
 import "@goosewobbler/electron-redux/preload";
 
+const memo = <A>(fn: () => A): (() => A) => {
+  let found: A | null = null;
+  return () => {
+    if (!found) {
+      found = fn();
+    }
+    return found;
+  };
+};
+
+const emitSyncIpcEvent = <K extends keyof SyncIpcHandlers>(
+  eventName: K,
+  arg: Parameters<SyncIpcHandlers[K]>[0]
+): ReturnType<SyncIpcHandlers[K]> => {
+  return ipcRenderer.sendSync(eventName, arg);
+};
+
+const emitAsyncIpcEvent = <K extends keyof AsyncIpcHandlers>(
+  eventName: K,
+  arg: Parameters<AsyncIpcHandlers[K]>[0]
+): ReturnType<AsyncIpcHandlers[K]> => {
+  return ipcRenderer.invoke(eventName, arg) as ReturnType<AsyncIpcHandlers[K]>;
+};
+
 export const mainWorldSupplement = {
   nodeUrl: { parse, format },
   electron: {
-    app: remote.app,
-    session: remote.session,
-    showOpenDialog: (
-      browserWindow: BrowserWindow,
-      options: OpenDialogOptions
-    ) => {
-      return remote.dialog.showOpenDialog(browserWindow, options);
+    getApp: memo(() => {
+      const res = emitSyncIpcEvent("buildApp", undefined);
+      // functions can't be returned over IPC, so to maintain
+      // the App-like interface, we wrap the name result in
+      // a function
+      return {
+        getName: () => res.name,
+        isPackaged: res.isPackaged,
+      };
+    }),
+    showOpenDialog: (options: OpenDialogOptions) => {
+      return emitAsyncIpcEvent("showOpenDialog", options);
     },
-    getFocusedWindow: () => {
-      return remote.BrowserWindow.getFocusedWindow();
+    getUserCacheSize: (userId: number) => {
+      return emitAsyncIpcEvent("getUserCacheSize", userId);
+    },
+    getGPUFeatureStatus: () => {
+      return emitAsyncIpcEvent("getGPUFeatureStatus", undefined);
     },
   },
   butlerd: {
@@ -64,14 +95,32 @@ export const mainWorldSupplement = {
     },
     createRequest,
   },
-  useragent: { userAgent },
+  useragent: {
+    userAgent: memo(() => {
+      return emitSyncIpcEvent("userAgent", undefined);
+    }),
+  },
   sysinfo: { cpu, graphics, osInfo },
-  resources: { getImageURL, getInjectURL },
+  resources: {
+    getImageURL: (path: string): string => {
+      return emitSyncIpcEvent("getImageURL", path);
+    },
+    getInjectURL: (path: string): string => {
+      return emitSyncIpcEvent("getInjectURL", path);
+    },
+  },
   querystring: {
     parse: qs.parse,
     stringify: qs.stringify,
   },
-  paths: { legacyMarketPath, mainLogPath },
+  paths: {
+    legacyMarketPath: memo((): string => {
+      return emitSyncIpcEvent("legacyMarketPath", undefined);
+    }),
+    mainLogPath: memo((): string => {
+      return emitSyncIpcEvent("mainLogPath", undefined);
+    }),
+  },
   promisedFs: { readFile: promises.readFile },
 };
 

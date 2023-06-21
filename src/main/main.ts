@@ -2,16 +2,51 @@
 
 import env from "main/env";
 
+import { legacyMarketPath, mainLogPath } from "main/util/paths";
+import { getImageURL, getInjectURL } from "main/util/resources";
 import { isItchioURL } from "main/util/url";
+import { userAgent } from "main/util/useragent";
 
 import { actions } from "common/actions";
-import { app, protocol, globalShortcut } from "electron";
+import { partitionForUser } from "common/util/partition-for-user";
+import {
+  app,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  protocol,
+  session,
+  App,
+  BrowserWindow,
+  IpcMainEvent,
+  OpenDialogOptions,
+} from "electron";
 
 import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
+import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
 import { mainLogger } from "main/logger";
 
 const appUserModelId = "com.squirrel.itch.itch";
+
+const registerSync = (
+  syncHandlers: SyncIpcHandlers,
+  asyncHandlers: AsyncIpcHandlers
+): void => {
+  Object.entries(syncHandlers).forEach(([eventName, callback]): void => {
+    ipcMain.on(eventName, (event: IpcMainEvent, arg: any): void => {
+      event.returnValue = callback(arg);
+    });
+  });
+  Object.entries(asyncHandlers).forEach(([eventName, callback]): void => {
+    ipcMain.handle(
+      eventName,
+      (event: IpcMainEvent, arg: any): ReturnType<typeof callback> => {
+        return callback(arg);
+      }
+    );
+  });
+};
 
 // App lifecycle
 
@@ -65,6 +100,44 @@ export function main() {
   let store: Store = require("main/store").default;
 
   let onReady = () => {
+    registerSync(
+      {
+        buildApp: (_x) => {
+          return {
+            name: app.getName(),
+            isPackaged: app.isPackaged,
+          };
+        },
+        userAgent: (_x) => {
+          return userAgent();
+        },
+        getImageURL,
+        getInjectURL,
+        legacyMarketPath,
+        mainLogPath,
+      },
+      {
+        showOpenDialog: async (options: OpenDialogOptions) => {
+          const { filePaths } = await dialog.showOpenDialog(
+            BrowserWindow.getFocusedWindow(),
+            options
+          );
+          return filePaths;
+        },
+        getUserCacheSize: (userId: number) => {
+          const ourSession = session.fromPartition(
+            partitionForUser(String(userId)),
+            { cache: true }
+          );
+
+          return ourSession.getCacheSize();
+        },
+        getGPUFeatureStatus: async (_x) => {
+          return app.getGPUFeatureStatus;
+        },
+      }
+    );
+
     if (!env.integrationTests) {
       const singleInstanceLockAcquired = app.requestSingleInstanceLock();
       if (!singleInstanceLockAcquired) {

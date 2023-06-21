@@ -1,6 +1,10 @@
 import { join } from "path";
 import electron from "electron";
-const app = electron.app || electron.remote.app;
+const app =
+  electron.app ||
+  (() => {
+    throw new Error("fail in paths.ts");
+  })();
 
 import urls from "common/constants/urls";
 import urlParser from "url";

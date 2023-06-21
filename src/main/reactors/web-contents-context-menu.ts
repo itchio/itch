@@ -121,9 +121,12 @@ export function hookWebContentsContextMenu(
     }
 
     if (menuTpl.length > 0) {
-      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(
-        menuTpl as any
-      );
+      const menu = (
+        electron.Menu ||
+        (() => {
+          throw new Error("fail in context-menu.ts");
+        })()
+      ).buildFromTemplate(menuTpl as any);
 
       menu.popup({});
     }

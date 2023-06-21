@@ -1,7 +1,15 @@
 import * as electron from "electron";
 import { NET_PARTITION_NAME } from "common/constants/net";
-const app = electron.app || electron.remote.app;
-const session = electron.session || electron.remote.session;
+const app =
+  electron.app ||
+  (() => {
+    throw new Error("fail in user agent 1.ts");
+  })();
+const session =
+  electron.session ||
+  (() => {
+    throw new Error("fail in user agent 2.ts");
+  })();
 
 let _cachedUserAgent: string;
 export function userAgent() {
