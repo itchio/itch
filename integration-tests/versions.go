@@ -1,4 +1,4 @@
 package main
 
-const electronVersion = "17.4.11"
+const electronVersion = "18.3.15"
 const chromeDriverVersionString = "ChromeDriver 87.0.4280.141"
