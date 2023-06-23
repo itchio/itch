@@ -1,7 +1,6 @@
 import {
   contextBridge,
   ipcRenderer,
-  remote,
   BrowserWindow,
   OpenDialogOptions,
 } from "electron";

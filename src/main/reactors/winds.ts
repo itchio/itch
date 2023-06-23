@@ -537,9 +537,6 @@ function commonBrowserWindowOpts(
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
-      // Will be deprecatd in a future version of electron,
-      // but itch v25's architecture relies on it.
-      enableRemoteModule: true,
       // In development, the front-end is served by webpack-dev-server
       // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
