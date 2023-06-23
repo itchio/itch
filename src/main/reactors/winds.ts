@@ -541,6 +541,7 @@ function commonBrowserWindowOpts(
       // over HTTP, so we can't have websecurity
       webSecurity: env.development ? false : true,
       nodeIntegration: false,
+      sandbox: false,
       contextIsolation: true,
       // needed for the web browser part of itch
       webviewTag: true,

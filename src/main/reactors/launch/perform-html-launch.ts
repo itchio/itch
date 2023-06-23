@@ -65,6 +65,7 @@ export async function performHTMLLaunch(
     webPreferences: {
       // don't let web code control the OS
       nodeIntegration: false,
+      sandbox: false,
       // hooks up keyboard shortcuts, etc.
       preload: noPreload ? null : getInjectPath("game"),
       // stores cookies etc. in persistent session to save progress
