@@ -7,10 +7,12 @@ import {
   ambientWindState,
   ambientTab,
 } from "common/util/navigation";
+import { ITCH_URL_RE } from "common/constants/urls";
 import { transformUrl } from "renderer/util/url";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import { hook, hookWithProps } from "renderer/hocs/hook";
+import store from "renderer/store";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
 import watching, { Watcher } from "renderer/hocs/watching";
@@ -292,7 +294,18 @@ class NavigationBar extends React.PureComponent<Props, State> {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
-      dispatchTabEvolve(this.props, { url, replace: false });
+      const parsedUrl = new URL(url);
+      // If the supplied url is external to itch, then
+      // open in a new external browser window
+      if (
+        parsedUrl.origin.endsWith(".itch.io") ||
+        parsedUrl.origin.endsWith("/itch.io") ||
+        ITCH_URL_RE.test(parsedUrl.origin)
+      ) {
+        dispatchTabEvolve(this.props, { url, replace: false });
+      } else {
+        store.dispatch(actions.openInExternalBrowser({ url: url }));
+      }
       this.setState({ editingAddress: false });
     } else if (e.key === "Escape") {
       e.preventDefault();
