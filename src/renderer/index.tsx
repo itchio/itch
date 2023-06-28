@@ -79,9 +79,13 @@ async function start() {
   // after the main process starts listening for
   // this event. Keep sending it so that the main
   // process is sure to receive it
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     store.dispatch(actions.rootWindowReady({}));
   }, 500);
+
+  store.watcher.on(actions.boot, () => {
+    clearInterval(intervalId);
+  });
 
   if (module.hot) {
     module.hot.accept("renderer/App", () => {
