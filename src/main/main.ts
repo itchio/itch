@@ -179,6 +179,20 @@ export function main() {
       store.dispatch(actions.quit({}));
     });
 
+    app.on("web-contents-created", (_event, contents) => {
+      contents.on("will-navigate", (e, navigationUrl) => {
+        const parsedUrl = new URL(navigationUrl);
+
+        if (
+          !parsedUrl.origin.endsWith(".itch.io") &&
+          !parsedUrl.origin.endsWith("/itch.io")
+        ) {
+          e.preventDefault();
+          store.dispatch(actions.openInExternalBrowser({ url: navigationUrl }));
+        }
+      });
+    });
+
     store.dispatch(actions.preboot({}));
 
     setInterval(() => {
