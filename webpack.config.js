@@ -1,4 +1,4 @@
-const { NamedModulesPlugin } = require("webpack");
+const webpack = require('webpack')
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
@@ -66,7 +66,10 @@ module.exports = (_notSureWhatThatArgumentDoes, env) => {
           template: path.resolve(`./src/index.ejs`),
           minify: false,
         }),
-        new NamedModulesPlugin(),
+        new webpack.ProvidePlugin({
+          process: "process/browser",
+          Buffer: ['buffer', 'Buffer'],
+        }),
       ],
       devServer: {
         hot: true,
