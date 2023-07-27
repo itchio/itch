@@ -37,14 +37,14 @@ async function measure(name, cb) {
  * @returns {boolean} True if we're building a tag
  */
 function hasTag() {
-  return !!process.env.CI_BUILD_TAG;
+  return !!process.env.CI_COMMIT_TAG;
 }
 
 /**
  * @returns {string} A string like v0.1.2, or v9999.0.0-canary
  */
 function getBuildTag() {
-  const v = process.env.CI_BUILD_TAG;
+  const v = process.env.CI_COMMIT_TAG;
   if (!v) {
     return "v9999.0.0-canary";
   }
