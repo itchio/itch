@@ -47,7 +47,7 @@ export default function (watcher: Watcher) {
     const nw = getNativeWindow(rs, wind);
 
     // Replaces single ampersands to allow them to show up in context menus.
-    // See issue #2890
+    // See issue #2890 for context
     template[0].localizedLabel[1].title = template[0].localizedLabel[1].title.replace(
       "&",
       "&&"
