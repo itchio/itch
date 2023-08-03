@@ -46,6 +46,13 @@ export default function (watcher: Watcher) {
     const { wind, template, clientX, clientY } = action.payload;
     const nw = getNativeWindow(rs, wind);
 
+    // Replaces single ampersands to allow them to show up in context menus.
+    // See issue #2890
+    template[0].localizedLabel[1].title = template[0].localizedLabel[1].title.replace(
+      "&",
+      "&&"
+    );
+
     const menu = Menu.buildFromTemplate(convertTemplate(store, template));
     menu.popup({
       window: nw,
