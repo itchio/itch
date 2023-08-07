@@ -47,9 +47,8 @@ function loadURL(wc: WebContents, url: string) {
     parsedUrl.origin.endsWith(".itch.io") ||
     parsedUrl.origin.endsWith("/itch.io")
   ) {
-    return;
+    wc.loadURL(url);
   }
-  wc.loadURL(url);
 }
 
 export default function (watcher: Watcher) {
