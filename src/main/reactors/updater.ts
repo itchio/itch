@@ -10,7 +10,7 @@ import { isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
-const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
+const SKIP_GAME_UPDATES = true;
 
 // 30 minutes * 60 = seconds, * 1000 = millis
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;

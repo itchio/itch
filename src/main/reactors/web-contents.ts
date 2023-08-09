@@ -38,7 +38,17 @@ function loadURL(wc: WebContents, url: string) {
   if (ITCH_URL_RE.test(url)) {
     return;
   }
-  wc.loadURL(url);
+
+  // Because of restrictions elsewhere, this likely only
+  // occurs if the most recent url in a given tab was an
+  // external page back when the app permitted that
+  const parsedUrl = new URL(url);
+  if (
+    parsedUrl.origin.endsWith(".itch.io") ||
+    parsedUrl.origin.endsWith("/itch.io")
+  ) {
+    wc.loadURL(url);
+  }
 }
 
 export default function (watcher: Watcher) {
