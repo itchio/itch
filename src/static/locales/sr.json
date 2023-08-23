@@ -160,6 +160,7 @@
     "preferences.install_locations": "Путање за инсталацију",
     "preferences.behavior": "Понашање",
     "preferences.behavior.close_to_tray": "Задржи програм у системској касети након уклањања прозора",
+    "preferences.behavior.lightMode": "Активирајте светли режим",
     "preferences.language": "Језик",
     "preferences.language.auto": "Језик система ({{language}})",
     "preferences.language.get_involved": "Помози да се {{name}} преведе на твој језик!",

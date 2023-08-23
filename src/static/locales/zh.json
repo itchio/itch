@@ -236,6 +236,7 @@
     "preferences.notifications.ready_notification": "当下载或更新完成后通知我",
     "preferences.notifications": "通知",
     "preferences.behavior.manual_game_updates": "在更新前询问",
+    "preferences.behavior.lightMode": "激活明亮模式",
     "preferences.behavior.open_at_login.causes.no_desktop_file": "未找到 .desktop 文件。如果您不是从系统软件包中安装的，那么这是正常情况。请点击 {{linux_install_page}} 查看详情。",
     "preferences.behavior.open_at_login": "开机启动 itch",
     "preferences.behavior.open_as_hidden": "开机启动 itch 时在后台运行",

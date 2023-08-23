@@ -257,6 +257,7 @@
     "preferences.security.sandbox.description": "itch.ioサンドボックスは、インストールしたゲームに含まれた有害データにより重要なデータが盗まれる事を防止します。完全な安全保障はないですが、itch.ioサンドボックス内でゲームを実行すると、通常よりも遥かに安全です。",
     "preferences.behavior": "動作",
     "preferences.behavior.close_to_tray": "ウィンドウを閉じた際にタスクトレイに隠す",
+    "preferences.behavior.lightMode": "ブライトモードの起動",
     "preferences.advanced": "高度な設定",
     "preferences.advanced.open_app_log": "アプリログを開く",
     "pick_install_upload.title": "{{title}}には複数のダウンロードファイルあり",

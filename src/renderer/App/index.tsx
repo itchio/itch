@@ -3,6 +3,7 @@ const Profiler = require("react").unstable_Profiler;
 import { IntlProvider } from "react-intl";
 import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider } from "renderer/styles";
+import { lightTheme } from "renderer/lightTheme";
 import AppContents from "renderer/App/AppContents";
 import { isEqual } from "underscore";
 
@@ -17,6 +18,7 @@ class App extends React.PureComponent<Props, State> {
       messages: {},
       localeMessages: {},
       fallbackMessages: {},
+      lightMode: false,
     };
   }
 
@@ -41,11 +43,16 @@ class App extends React.PureComponent<Props, State> {
   };
 
   realRender() {
-    const { localeVersion, locale, messages } = this.state;
+    const { localeVersion, locale, messages, lightMode } = this.state;
+    console.log(lightMode);
+    console.log(this.state);
+    console.log(global.ReduxStore.getState());
+    console.log("tizzy");
+    let lm = global.ReduxStore.getState().preferences.lightMode;
 
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={lm ? lightTheme : theme}>
           <AppContents />
         </ThemeProvider>
       </IntlProvider>
@@ -70,6 +77,7 @@ class App extends React.PureComponent<Props, State> {
           ...props.fallbackMessages,
           ...props.localeMessages,
         },
+        lightMode: state.lightMode,
       };
     }
     return null;
@@ -84,6 +92,7 @@ interface Props {
   fallbackMessages: {
     [id: string]: string;
   };
+  lightMode: boolean;
 }
 
 interface State {
@@ -99,6 +108,7 @@ interface State {
   fallbackMessages: {
     [id: string]: string;
   };
+  lightMode: boolean;
 }
 
 const emptyObj = {};
@@ -110,4 +120,5 @@ export default hook((map) => ({
     return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
   }),
   fallbackMessages: map((rs) => rs.i18n.strings.en || emptyObj),
+  lightMode: map((rs) => rs.preferences.lightMode),
 }))(App);

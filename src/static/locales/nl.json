@@ -143,6 +143,7 @@
     "preferences.security.sandbox.title": "itch.io sandbox inschakelen",
     "preferences.security.sandbox.description": "De itch.io sandbox zal proberen te voorkomen dat de gedownloade spellen geen schade verrichten of gevoelige data stelen. Alhoewel het geen complete veiligheid garandeert, is het veel veiliger om spellen in de itch.io sandbox uit te voeren.",
     "preferences.behavior": "Gedrag",
+    "preferences.behavior.lightMode": "Activeer heldere modus",
     "action.name.play": "Nu spelen",
     "action.name.editor": "Editor",
     "action.name.forums": "Forums",

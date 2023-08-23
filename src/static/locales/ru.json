@@ -306,6 +306,7 @@
     "outlinks.manage_collections": "Управление коллекциями",
     "preferences.behavior": "Поведение",
     "preferences.behavior.close_to_tray": "Сворачиваться в системный трей при закрытии окна",
+    "preferences.behavior.lightMode": "Активация яркого режима",
     "outlinks.open_dashboard": "Кабинет разработчика",
     "menu.file.new_tab": "Новая вкладка",
     "preferences.proxy_server_address": "HTTPS прокси",
