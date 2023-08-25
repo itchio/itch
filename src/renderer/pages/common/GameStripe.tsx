@@ -138,11 +138,14 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
         title,
         renderTitleExtras = renderNoop,
       } = this.props;
+      let lColor = global.ReduxStore.getState().preferences.lightMode
+        ? "#272929"
+        : "#fffff0";
       return (
         <>
           <TitleBox>
             <Title>
-              <a id={linkId} href={href}>
+              <a id={linkId} href={href} style={{ color: lColor }}>
                 {T(title)}
               </a>
               {renderTitleExtras()}

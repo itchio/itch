@@ -326,6 +326,10 @@ async function hookWebContents(
   });
 
   wc.on("did-start-loading", () => {
+    let code = `var mainBody = document.getElementsByTagName('body')[0];
+      mainBody.classList.remove('dark_theme');
+    `;
+    wc.executeJavaScript(code);
     setLoading(true);
   });
 

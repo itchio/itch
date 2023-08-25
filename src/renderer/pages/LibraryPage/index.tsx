@@ -24,7 +24,6 @@ class LibraryPage extends React.PureComponent<Props> {
     return (
       <Page>
         <FiltersContainer loading={false} />
-
         <ItemList>
           <OwnedGameStripe
             title={_("sidebar.owned")}

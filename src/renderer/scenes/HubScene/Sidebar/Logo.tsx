@@ -24,8 +24,17 @@ const LogoDiv = styled.div`
 class Logo extends React.PureComponent<Props> {
   render() {
     const { appVersion } = this.props;
+    let lm = global.ReduxStore.getState().preferences.lightMode;
 
-    return (
+    return lm ? (
+      <LogoDiv
+        title={appVersion}
+        className={classNames("logo-div")}
+        onClick={this.onClick}
+      >
+        <img src={require("static/images/logos/app-black.svg").default} />
+      </LogoDiv>
+    ) : (
       <LogoDiv
         title={appVersion}
         className={classNames("logo-div")}

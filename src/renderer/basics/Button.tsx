@@ -8,6 +8,20 @@ const Label = styled.div`
   ${styles.singleLine};
 `;
 
+const buttonBackground = global.ReduxStore.getState().preferences.lightMode
+  ? `
+    hsla(355, 55%, 35%, 1),
+    hsla(355, 55%, 45%, 1)`
+  : `
+    hsla(355, 40%, 21%, 1),
+    hsla(355, 40%, 32%, 1)`;
+const primaryBackground = global.ReduxStore.getState().preferences.lightMode
+  ? `
+    hsla(355, 65%, 47%, 1),
+    hsla(355, 65%, 62%, 1)`
+  : `
+    hsla(355, 50%, 32%, 1),
+    hsla(355, 50%, 48%, 1)`;
 const ButtonDiv = styled.div`
   ${styles.singleLine};
   transition: all 0.2s;
@@ -20,11 +34,7 @@ const ButtonDiv = styled.div`
   border-width: 4px 1px 1px 1px;
   border-radius: 3px;
 
-  background-image: linear-gradient(
-    10deg,
-    hsla(355, 40%, 21%, 1),
-    hsla(355, 40%, 32%, 1)
-  );
+  background-image: linear-gradient(10deg, ${buttonBackground});
   border-color: hsla(355, 40%, 44%, 1);
 
   box-shadow: 0 1px 3px ${(props) => props.theme.inputBoxShadow};
@@ -45,11 +55,7 @@ const ButtonDiv = styled.div`
 
   &.primary {
     font-weight: bold;
-    background-image: linear-gradient(
-      10deg,
-      hsla(355, 50%, 32%, 1),
-      hsla(355, 50%, 48%, 1)
-    );
+    background-image: linear-gradient(10deg, ${primaryBackground});
     border-color: hsla(355, 40%, 52%, 1);
   }
 
