@@ -31,6 +31,21 @@ const HTTPS_RE = /^https:\/\//;
 const HTTP_RE = /^http:\/\//;
 const ITCH_RE = /^itch:\/\//;
 
+const navColors = {
+  BAColor: global.ReduxStore.getState().preferences.lightMode
+    ? "#333333"
+    : "#fdfdfd",
+  addrColor: global.ReduxStore.getState().preferences.lightMode
+    ? "black"
+    : "white",
+  stbColor: global.ReduxStore.getState().preferences.lightMode
+    ? "#333333"
+    : "rgb(138, 175, 115)",
+  fluffColor: global.ReduxStore.getState().preferences.lightMode
+    ? "#464b6c"
+    : "rgb(148, 184, 218)",
+};
+
 const NavigationBarDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -61,7 +76,7 @@ const browserAddressSizing = css`
   line-height: 28px;
   border-radius: 2px;
 `;
-
+/*
 const browserAddressStyle = css`
   ${browserAddressSizing};
   ${styles.singleLine};
@@ -72,6 +87,27 @@ const browserAddressStyle = css`
   padding-right: 12px;
   width: 100%;
   color: #fdfdfd;
+
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
+  }
+`;
+*/
+
+const browserAddressStyle = css`
+  ${browserAddressSizing};
+  ${styles.singleLine};
+  font-size: 14px;
+  text-shadow: 0 0 1px black;
+  padding: 0;
+  padding-left: 8px;
+  padding-right: 12px;
+  width: 100%;
+  color: ${navColors.BAColor};
 
   border: none;
   background: rgba(255, 255, 255, 0.1);
@@ -98,9 +134,18 @@ const AddressInput = styled.input`
   ${browserAddressStyle};
 
   text-shadow: 0 0 1px transparent;
+  color: ${navColors.addrColor};
+`;
+/*
+const AddressInput = styled.input`
+  ${browserAddressStyle};
+
+  text-shadow: 0 0 1px transparent;
   color: white;
 `;
 
+*/
+/*
 const AddressDiv = styled.div`
   ${browserAddressStyle};
 
@@ -110,6 +155,19 @@ const AddressDiv = styled.div`
 
   .fluff-bit {
     color: rgb(148, 184, 218);
+  }
+`;
+*/
+
+const AddressDiv = styled.div`
+  ${browserAddressStyle};
+
+  .security-theater-bit {
+    color: ${navColors.stbColor};
+  }
+
+  .fluff-bit {
+    color: ${navColors.fluffColor};
   }
 `;
 
