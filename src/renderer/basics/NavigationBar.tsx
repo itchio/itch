@@ -209,6 +209,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
     this.state = {
       editingAddress: false,
       url: null,
+      lightMode: false,
     };
   }
 
