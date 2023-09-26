@@ -9,10 +9,6 @@ const appWhiteContour = require("static/images/logos/app-white-contour.svg")
 const appBlackContour = require("static/images/logos/app-black-contour.svg")
   .default;
 
-const logoFile = global.ReduxStore.getState().preferences.lightMode
-  ? appBlackContour
-  : appWhiteContour;
-
 const LogoIndicatorDiv = styled.div`
   pointer-events: none;
 
@@ -50,8 +46,10 @@ class LogoIndicator extends React.PureComponent<Props, State> {
   }
 
   gotEl = (el: HTMLDivElement) => {
-    console.log("tizzius");
-    console.log(global.ReduxStore.getState().preferences.lightMode);
+    const logoFile = global.ReduxStore.getState().preferences.lightMode
+      ? appBlackContour
+      : appWhiteContour;
+
     if (el) {
       new Vivus(el.id, {
         file: logoFile,
