@@ -109,7 +109,6 @@ export default function (watcher: Watcher) {
   watcher.on(actions.tabReloaded, async (store, action) => {
     const { wind, tab } = action.payload;
     withWebContents(store, wind, tab, (wc) => {
-      logger.debug("HELLO THIS IS A TEST 2");
       wc.reload();
     });
   });
@@ -125,7 +124,6 @@ export default function (watcher: Watcher) {
   watcher.on(actions.commandLocation, async (store, action) => {
     const { wind } = action.payload;
     const { tab } = store.getState().winds[wind].navigation;
-    logger.debug("HELLO THIS IS A TEST 3");
     store.dispatch(
       actions.focusLocationBar({
         wind,
@@ -243,7 +241,6 @@ export default function (watcher: Watcher) {
 
     withWebContents(store, wind, tab, (wc) => {
       const url = Space.fromState(rs, wind, tab).url();
-      logger.debug("HELLO THIS IS A TEST 5");
       loadURL(wc, url);
     });
   });
@@ -253,7 +250,6 @@ export default function (watcher: Watcher) {
     if (replace || fromWebContents) {
       return;
     }
-    logger.debug("HELLO THIS IS A TEST 6");
 
     withWebContents(store, wind, tab, async (wc) => {
       const webUrl = wc.getURL();
@@ -320,13 +316,14 @@ async function hookWebContents(
   });
 
   wc.on("did-finish-load", () => {
-    if (global.ReduxStore.getState().preferences.lightMode) {
-      logger.debug("HELLO THIS IS A TEST 3");
+    if (store.getState().preferences.lightMode) {
+      logger.debug("Loading light theme");
       let code = `var mainBody = document.getElementsByTagName('body')[0];
         mainBody.classList.remove('dark_theme');
       `;
       wc.executeJavaScript(code);
     }
+
     store.dispatch(
       actions.analyzePage({
         wind,
