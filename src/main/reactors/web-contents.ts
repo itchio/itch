@@ -320,14 +320,13 @@ async function hookWebContents(
   });
 
   wc.on("did-finish-load", () => {
-    logger.debug("HELLO THIS IS A TEST 3");
-    let code = `var mainBody = document.getElementsByTagName('body')[0];
-      mainBody.classList.remove('dark_theme');
-    `;
-    wc.executeJavaScript(code);
-    //if(global.ReduxStore.getState().preferences.lightMode) {
-    //  wc.executeJavaScript(code);
-    //}
+    if (global.ReduxStore.getState().preferences.lightMode) {
+      logger.debug("HELLO THIS IS A TEST 3");
+      let code = `var mainBody = document.getElementsByTagName('body')[0];
+        mainBody.classList.remove('dark_theme');
+      `;
+      wc.executeJavaScript(code);
+    }
     store.dispatch(
       actions.analyzePage({
         wind,
