@@ -15,6 +15,8 @@ import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
+import { rendererLogger } from "renderer/logger";
+const logger = rendererLogger.child(__filename);
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -58,6 +60,9 @@ class BrowserPage extends React.PureComponent<Props> {
       return null;
     }
 
+    logger.debug("Rendering webview");
+    //use preload!
+
     return (
       <BrowserPageDiv>
         <BrowserBar />
@@ -70,6 +75,7 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
+                preload="./removeDarkTheme.js"
                 useragent={useragent.userAgent()}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
