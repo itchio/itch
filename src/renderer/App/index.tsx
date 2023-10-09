@@ -44,10 +44,6 @@ class App extends React.PureComponent<Props, State> {
 
   realRender() {
     const { localeVersion, locale, messages, lightMode } = this.state;
-    console.log(lightMode);
-    console.log(this.state);
-    console.log(global.ReduxStore.getState());
-    console.log("tizzy");
     let lm = global.ReduxStore.getState().preferences.lightMode;
 
     return (
@@ -77,7 +73,7 @@ class App extends React.PureComponent<Props, State> {
           ...props.fallbackMessages,
           ...props.localeMessages,
         },
-        lightMode: state.lightMode,
+        lightMode: props.lightMode,
       };
     }
     return null;

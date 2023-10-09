@@ -52,18 +52,24 @@ class BrowserPage extends React.PureComponent<Props> {
 
   constructor(props: BrowserPage["props"], context: any) {
     super(props, context);
+    this.state = {
+      lightMode: false,
+    };
   }
 
   render() {
     const { sleepy, disableBrowser, visible, partition } = this.props;
+    const { lightMode } = this.state;
     if (sleepy && !visible) {
       return null;
     }
 
     logger.debug("Rendering webview");
-    //use preload!
+    logger.debug(useragent.userAgent());
 
-    return (
+    let lm = global.ReduxStore.getState().preferences.lightMode;
+
+    return lm ? (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
@@ -75,7 +81,29 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                preload="./removeDarkTheme.js"
+                useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+                //useragent={useragent.userAgent()}
+                enableremotemodule="false"
+                webpreferences="worldSafeExecuteJavaScript"
+              />
+            )}
+          </WebviewShell>
+        </BrowserMain>
+        <BrowserContext />
+      </BrowserPageDiv>
+    ) : (
+      <BrowserPageDiv>
+        <BrowserBar />
+        <BrowserMain>
+          <WebviewShell>
+            {disableBrowser ? (
+              <DisabledBrowser />
+            ) : (
+              <webview
+                src="about:blank"
+                ref={this.gotWebview}
+                partition={partition}
+                //useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
                 useragent={useragent.userAgent()}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
@@ -115,6 +143,18 @@ class BrowserPage extends React.PureComponent<Props> {
   componentWillUnmount() {
     dispatchTabLosingWebContents(this.props);
   }
+
+  static getDerivedStateFromProps(
+    props: BrowserPage["props"],
+    state: BrowserPage["state"]
+  ): BrowserPage["state"] {
+    if (props.lightMode !== state.lightMode) {
+      return {
+        lightMode: props.lightMode,
+      };
+    }
+    return null;
+  }
 }
 
 interface Props extends MeatProps {
@@ -124,6 +164,7 @@ interface Props extends MeatProps {
   url: string;
   sleepy: boolean;
   loading: boolean;
+  lightMode: boolean;
 
   proxy: string;
   proxySource: ProxySource;
@@ -132,11 +173,16 @@ interface Props extends MeatProps {
   partition: string;
 }
 
+interface State {
+  lightMode: boolean;
+}
+
 export default withTab(
   hookWithProps(BrowserPage)((map) => ({
     url: map((rs, props) => ambientTab(rs, props).location.url),
     sleepy: map((rs, props) => ambientTab(rs, props).sleepy),
     loading: map((rs, props) => ambientTab(rs, props).loading),
+    lightMode: map((rs) => rs.preferences.lightMode),
 
     proxy: map((rs) => rs.system.proxy),
     proxySource: map((rs) => rs.system.proxySource),
