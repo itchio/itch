@@ -70,10 +70,6 @@ class BrowserPage extends React.PureComponent<Props> {
     }
 
     //Changes based on the bright mode checkbox
-    //let agentString = lightMode
-    let agentString = lightMode
-      ? "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-      : useragent.userAgent();
 
     return (
       <BrowserPageDiv>
@@ -87,7 +83,11 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                useragent={agentString}
+                useragent={
+                  lightMode
+                    ? "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+                    : useragent.userAgent()
+                }
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
               />
