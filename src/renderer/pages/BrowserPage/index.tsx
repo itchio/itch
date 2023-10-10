@@ -159,11 +159,11 @@ export default withTab(
     url: map((rs, props) => ambientTab(rs, props).location.url),
     sleepy: map((rs, props) => ambientTab(rs, props).sleepy),
     loading: map((rs, props) => ambientTab(rs, props).loading),
-    lightMode: map((rs) => rs.preferences.lightMode),
 
     proxy: map((rs) => rs.system.proxy),
     proxySource: map((rs) => rs.system.proxySource),
     disableBrowser: map((rs) => rs.preferences.disableBrowser),
+    lightMode: map((rs) => rs.preferences.lightMode),
 
     partition: map((rs, props) =>
       partitionForUser(String(rs.profile.profile.id))
