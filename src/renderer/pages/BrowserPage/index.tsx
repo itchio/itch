@@ -55,9 +55,6 @@ class BrowserPage extends React.PureComponent<Props> {
   }
 
   render() {
-    //logger.debug("-------");
-    //logger.debug(this.props);
-    logger.debug("-------");
     const {
       sleepy,
       disableBrowser,
@@ -65,29 +62,48 @@ class BrowserPage extends React.PureComponent<Props> {
       partition,
       lightMode,
     } = this.props;
+
     if (sleepy && !visible) {
       return null;
     }
 
     //Changes based on the bright mode checkbox
+    if (disableBrowser) {
+      return (
+        <BrowserPageDiv>
+          <BrowserBar />
+          <BrowserMain>
+            <WebviewShell>
+              <DisabledBrowser />
+            </WebviewShell>
+          </BrowserMain>
+          <BrowserContext />
+        </BrowserPageDiv>
+      );
+    }
 
     return (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
           <WebviewShell>
-            {disableBrowser ? (
-              <DisabledBrowser />
+            {lightMode ? (
+              <div>
+                <webview
+                  src="about:blank"
+                  ref={this.gotWebview}
+                  partition={partition}
+                  useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+                  enableremotemodule="false"
+                  webpreferences="worldSafeExecuteJavaScript"
+                />
+              </div>
             ) : (
               <webview
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                useragent={
-                  lightMode
-                    ? "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-                    : useragent.userAgent()
-                }
+                useragent={useragent.userAgent()}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
               />
@@ -125,18 +141,6 @@ class BrowserPage extends React.PureComponent<Props> {
 
   componentWillUnmount() {
     dispatchTabLosingWebContents(this.props);
-  }
-
-  static getDerivedStateFromProps(
-    props: BrowserPage["props"],
-    state: BrowserPage["state"]
-  ): BrowserPage["state"] {
-    if (props.lightMode !== state.lightMode) {
-      return {
-        lightMode: props.lightMode,
-      };
-    }
-    return null;
   }
 }
 
