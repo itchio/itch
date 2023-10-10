@@ -64,12 +64,12 @@ class BrowserPage extends React.PureComponent<Props> {
       return null;
     }
 
-    logger.debug("Rendering webview");
-    logger.debug(useragent.userAgent());
+    //Changes based on the bright mode checkbox
+    let agentString = global.ReduxStore.getState().preferences.lightMode
+      ? "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+      : useragent.userAgent();
 
-    let lm = global.ReduxStore.getState().preferences.lightMode;
-
-    return lm ? (
+    return (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
@@ -81,30 +81,7 @@ class BrowserPage extends React.PureComponent<Props> {
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}
-                useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-                //useragent={useragent.userAgent()}
-                enableremotemodule="false"
-                webpreferences="worldSafeExecuteJavaScript"
-              />
-            )}
-          </WebviewShell>
-        </BrowserMain>
-        <BrowserContext />
-      </BrowserPageDiv>
-    ) : (
-      <BrowserPageDiv>
-        <BrowserBar />
-        <BrowserMain>
-          <WebviewShell>
-            {disableBrowser ? (
-              <DisabledBrowser />
-            ) : (
-              <webview
-                src="about:blank"
-                ref={this.gotWebview}
-                partition={partition}
-                //useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-                useragent={useragent.userAgent()}
+                useragent={agentString}
                 enableremotemodule="false"
                 webpreferences="worldSafeExecuteJavaScript"
               />
