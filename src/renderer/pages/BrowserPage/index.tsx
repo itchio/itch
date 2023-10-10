@@ -58,14 +58,20 @@ class BrowserPage extends React.PureComponent<Props> {
     //logger.debug("-------");
     //logger.debug(this.props);
     logger.debug("-------");
-    const { sleepy, disableBrowser, visible, partition } = this.props;
+    const {
+      sleepy,
+      disableBrowser,
+      visible,
+      partition,
+      lightMode,
+    } = this.props;
     if (sleepy && !visible) {
       return null;
     }
 
     //Changes based on the bright mode checkbox
     //let agentString = lightMode
-    let agentString = global.ReduxStore.getState().preferences.lightMode
+    let agentString = lightMode
       ? "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
       : useragent.userAgent();
 
