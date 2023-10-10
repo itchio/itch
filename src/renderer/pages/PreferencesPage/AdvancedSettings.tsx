@@ -50,6 +50,10 @@ class AdvancedSettings extends React.PureComponent<Props> {
             label={T(["preferences.advanced.disable_browser"])}
           />
           <Checkbox
+            name="lightMode"
+            label={T(["preferences.behavior.lightMode"])}
+          />
+          <Checkbox
             name="disableHardwareAcceleration"
             label={T(["preferences.advanced.disable_hardware_acceleration"])}
           />
