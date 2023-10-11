@@ -31,21 +31,6 @@ const HTTPS_RE = /^https:\/\//;
 const HTTP_RE = /^http:\/\//;
 const ITCH_RE = /^itch:\/\//;
 
-const navColors = {
-  BAColor: global.ReduxStore.getState().preferences.lightMode
-    ? "#333333"
-    : "#fdfdfd",
-  addrColor: global.ReduxStore.getState().preferences.lightMode
-    ? "black"
-    : "white",
-  stbColor: global.ReduxStore.getState().preferences.lightMode
-    ? "#333333"
-    : "rgb(138, 175, 115)",
-  fluffColor: global.ReduxStore.getState().preferences.lightMode
-    ? "#464b6c"
-    : "rgb(148, 184, 218)",
-};
-
 const NavigationBarDiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -76,7 +61,7 @@ const browserAddressSizing = css`
   line-height: 28px;
   border-radius: 2px;
 `;
-/*
+
 const browserAddressStyle = css`
   ${browserAddressSizing};
   ${styles.singleLine};
@@ -96,9 +81,8 @@ const browserAddressStyle = css`
     outline: none;
   }
 `;
-*/
 
-const browserAddressStyle = css`
+const lightBrowserAddressStyle = css`
   ${browserAddressSizing};
   ${styles.singleLine};
   font-size: 14px;
@@ -107,7 +91,7 @@ const browserAddressStyle = css`
   padding-left: 8px;
   padding-right: 12px;
   width: 100%;
-  color: ${navColors.BAColor};
+  color: #333333;
 
   border: none;
   background: rgba(255, 255, 255, 0.1);
@@ -134,18 +118,16 @@ const AddressInput = styled.input`
   ${browserAddressStyle};
 
   text-shadow: 0 0 1px transparent;
-  color: ${navColors.addrColor};
-`;
-/*
-const AddressInput = styled.input`
-  ${browserAddressStyle};
-
-  text-shadow: 0 0 1px transparent;
   color: white;
 `;
 
-*/
-/*
+const LightAddressInput = styled.input`
+  ${lightBrowserAddressStyle};
+
+  text-shadow: 0 0 1px transparent;
+  color: black;
+`;
+
 const AddressDiv = styled.div`
   ${browserAddressStyle};
 
@@ -157,17 +139,16 @@ const AddressDiv = styled.div`
     color: rgb(148, 184, 218);
   }
 `;
-*/
 
-const AddressDiv = styled.div`
-  ${browserAddressStyle};
+const LightAddressDiv = styled.div`
+  ${lightBrowserAddressStyle};
 
   .security-theater-bit {
-    color: ${navColors.stbColor};
+    color: #333333;
   }
 
   .fluff-bit {
-    color: ${navColors.fluffColor};
+    color: #464b6c;
   }
 `;
 
@@ -209,6 +190,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
     this.state = {
       editingAddress: false,
       url: null,
+      lightMode: false,
     };
   }
 
@@ -259,7 +241,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   }
 
   renderAddressBar() {
-    const { loading, url } = this.props;
+    const { loading, url, lightMode } = this.props;
 
     if (!this.props.showAddressBar) {
       return null;
@@ -267,6 +249,37 @@ class NavigationBar extends React.PureComponent<Props, State> {
 
     let { editingAddress } = this.state;
 
+    if (lightMode) {
+      return (
+        <>
+          {loading ? (
+            <IconButton icon="cross" onClick={this.stop} />
+          ) : (
+            <IconButton icon="repeat" onClick={this.reload} />
+          )}
+          <AddressWrapper className={classNames({ editing: editingAddress })}>
+            {editingAddress ? (
+              <LightAddressInput
+                className="browser-address"
+                type="search"
+                ref={this.onBrowserAddress as any}
+                defaultValue={url}
+                onKeyDown={this.addressKeyDown}
+                onBlur={this.addressBlur}
+              />
+            ) : (
+              <LightAddressDiv
+                className={classNames("browser-address")}
+                ref={this.onBrowserAddress}
+                onClick={this.startEditingAddress}
+              >
+                {this.renderURL(url)}
+              </LightAddressDiv>
+            )}
+          </AddressWrapper>
+        </>
+      );
+    }
     return (
       <>
         {loading ? (
@@ -403,11 +416,13 @@ interface Props {
   internalPage: string;
   canGoBack: string;
   canGoForward: string;
+  lightMode: boolean;
 }
 
 interface State {
   url: string;
   editingAddress: boolean;
+  lightMode: boolean;
 }
 
 export default withTab(
@@ -418,5 +433,6 @@ export default withTab(
     ),
     canGoBack: map((rs, props) => ambientTab(rs, props).status.canGoBack),
     canGoForward: map((rs, props) => ambientTab(rs, props).status.canGoForward),
+    lightMode: map((rs) => rs.preferences.lightMode),
   }))(NavigationBar)
 );
