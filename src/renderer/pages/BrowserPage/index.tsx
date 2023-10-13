@@ -93,7 +93,7 @@ class BrowserPage extends React.PureComponent<Props> {
                   src="about:blank"
                   ref={this.gotWebview}
                   partition={partition}
-                  useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+                  useragent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.215 Electron/22.3.14 Safari/537.36"
                   enableremotemodule="false"
                   webpreferences="worldSafeExecuteJavaScript"
                 />

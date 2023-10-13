@@ -144,11 +144,11 @@ const LightAddressDiv = styled.div`
   ${lightBrowserAddressStyle};
 
   .security-theater-bit {
-    color: #333333;
+    color: rgb(108, 145, 85);
   }
 
   .fluff-bit {
-    color: #464b6c;
+    color: rgb(118, 154, 188);
   }
 `;
 
@@ -190,7 +190,6 @@ class NavigationBar extends React.PureComponent<Props, State> {
     this.state = {
       editingAddress: false,
       url: null,
-      lightMode: false,
     };
   }
 

@@ -91,7 +91,6 @@ class Sidebar extends React.PureComponent<Props, State> {
     super(props, context);
     this.state = {
       openTabs: props.openTabs,
-      lightMode: props.lightMode,
     };
   }
 
@@ -245,14 +244,12 @@ interface Props {
   openTabs: string[];
   enableTabs: boolean;
   url: string;
-  lightMode: boolean;
 
   dispatch: Dispatch;
 }
 
 interface State {
   openTabs: string[];
-  lightMode: boolean;
 }
 
 export default hook((map) => ({
@@ -261,7 +258,6 @@ export default hook((map) => ({
   tab: map((rs) => ambientNavigation(rs).tab),
   openTabs: map((rs) => ambientNavigation(rs).openTabs),
   enableTabs: map((rs) => rs.preferences.enableTabs),
-  lightMode: map((rs) => rs.preferences.lightMode),
   url: map((rs) => {
     const ws = ambientWindState(rs);
     const ti = ws.tabInstances[ambientNavigation(rs).tab];

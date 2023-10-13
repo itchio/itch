@@ -8,18 +8,11 @@ const Label = styled.div`
   ${styles.singleLine};
 `;
 
-const buttonBackground = global.ReduxStore.getState().preferences.lightMode
-  ? `
-    hsla(355, 55%, 35%, 1),
-    hsla(355, 55%, 45%, 1)`
-  : `
+const buttonBackground = `
     hsla(355, 40%, 21%, 1),
     hsla(355, 40%, 32%, 1)`;
-const primaryBackground = global.ReduxStore.getState().preferences.lightMode
-  ? `
-    hsla(355, 65%, 47%, 1),
-    hsla(355, 65%, 62%, 1)`
-  : `
+
+const primaryBackground = `
     hsla(355, 50%, 32%, 1),
     hsla(355, 50%, 48%, 1)`;
 const ButtonDiv = styled.div`
@@ -40,7 +33,7 @@ const ButtonDiv = styled.div`
   box-shadow: 0 1px 3px ${(props) => props.theme.inputBoxShadow};
   text-shadow: 0px 1px rgba(0, 0, 0, 0.4);
 
-  color: ${(props) => props.theme.baseText};
+  color: #fffff0;
   min-height: 38px;
   min-width: 7em;
 

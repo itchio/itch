@@ -20,17 +20,20 @@ export const FilterGroup = styled.div`
 
 // const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
 // const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%, 37%, 1));`;
-//const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 17%, 1),hsla(355, 43%, 11%, 1))`;
-//const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
-
+const inactiveBg = `linear-gradient(to top, hsla(355, 48%, 38%, 1), hsla(355, 48%, 27%, 1));`;
+const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
+/*
 const inactiveBg = global.ReduxStore.getState().preferences.lightMode
-  ? `linear-gradient(to top, hsla(355, 53%, 43%, 1), hsla(355, 53%, 32%, 1));`
+  ? `linear-gradient(to top, hsla(355, 48%, 38%, 1), hsla(355, 48%, 27%, 1));`
   : `linear-gradient(to top,hsla(355, 43%, 17%, 1),hsla(355, 43%, 11%, 1))`;
 const activeBg = global.ReduxStore.getState().preferences.lightMode
-  ? `linear-gradient(to top, hsla(355, 48%, 38%, 1), hsla(355, 48%, 27%, 1));`
+  ? `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`
   : `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
+  */
 const borderColor = `#843442`;
 const borderRadius = `4px`;
+
+//color: ${(props) => props.theme.baseText};
 
 const optionButtonLike = css`
   display: flex;
@@ -42,7 +45,7 @@ const optionButtonLike = css`
   margin: 0;
   border: 1px solid ${borderColor};
   border-left: none;
-  color: ${(props) => props.theme.baseText};
+  color: #fffff0;
   transition: all 0.4s;
 
   &:first-child {
@@ -60,7 +63,7 @@ const optionButtonLike = css`
 
   &.active {
     background: ${activeBg};
-    color: ${(props) => props.theme.baseText};
+    color: #fffff0;
   }
 
   &:hover {

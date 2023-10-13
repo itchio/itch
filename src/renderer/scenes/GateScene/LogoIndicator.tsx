@@ -46,13 +46,11 @@ class LogoIndicator extends React.PureComponent<Props, State> {
   }
 
   gotEl = (el: HTMLDivElement) => {
-    const logoFile = global.ReduxStore.getState().preferences.lightMode
-      ? appBlackContour
-      : appWhiteContour;
+    const { lightMode } = this.props;
 
     if (el) {
       new Vivus(el.id, {
-        file: logoFile,
+        file: lightMode ? appBlackContour : appWhiteContour,
         type: "delayed",
         start: "manual",
         animTimingFunction: Vivus.EASE_OUT,

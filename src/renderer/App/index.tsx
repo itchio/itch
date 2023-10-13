@@ -43,12 +43,12 @@ class App extends React.PureComponent<Props, State> {
   };
 
   realRender() {
-    const { localeVersion, locale, messages, lightMode } = this.state;
-    let lm = global.ReduxStore.getState().preferences.lightMode;
+    const { localeVersion, locale, messages } = this.state;
+    const { lightMode } = this.props;
 
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
-        <ThemeProvider theme={lm ? lightTheme : theme}>
+        <ThemeProvider theme={lightMode ? lightTheme : theme}>
           <AppContents />
         </ThemeProvider>
       </IntlProvider>
