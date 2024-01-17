@@ -14,11 +14,11 @@ import * as sf from "main/os/sf";
 import { mkdir, readdir } from "main/os/sf";
 import { delay } from "main/reactors/delay";
 import formulas, { FormulaSpec } from "main/broth/formulas";
-import { goarch, goos } from "main/broth/platform";
+import { platformString } from "main/broth/platform";
 import { unzip } from "main/broth/unzip";
 
 const sanityCheckTimeout = 10000;
-const platform = `${goos()}-${goarch()}`;
+const platform = platformString();
 
 const downloadStart = 0.0;
 const downloadWeight = 0.3;

@@ -1,7 +1,7 @@
 import { arch } from "main/os/arch";
 
 /** platform in go format */
-export function goos(): string {
+function goos(): string {
   let result = process.platform;
   if (result === "win32") {
     return "windows";
@@ -10,7 +10,7 @@ export function goos(): string {
 }
 
 /** arch in go format */
-export function goarch() {
+function goarch() {
   let result = arch();
   if (result === "x64") {
     return "amd64";
@@ -19,4 +19,15 @@ export function goarch() {
   } else {
     return "unknown";
   }
+}
+
+export function platformString(): string {
+  const os = goos();
+  let arch: string;
+  if (os === "darwin") {
+    arch = "amd64";
+  } else {
+    arch = goarch();
+  }
+  return `${os}-${arch}`;
 }
