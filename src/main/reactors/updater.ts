@@ -114,7 +114,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.checkForGameUpdate, async (store, action) => {
-    const { caveId } = action.payload;
+    const { caveId, suppressNotification } = action.payload;
     logger.info(`Looking for updates for cave ${caveId}`);
     const { cave } = await mcall(messages.FetchCave, { caveId });
 
@@ -145,7 +145,9 @@ export default function (watcher: Watcher) {
       }
     }
 
-    dispatchUpdateNotification(store, cave, res);
+    if (!suppressNotification) {
+      dispatchUpdateNotification(store, cave, res);
+    }
   });
 
   watcher.on(actions.snoozeCave, async (store, action) => {

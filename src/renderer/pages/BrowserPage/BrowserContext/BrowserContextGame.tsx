@@ -66,6 +66,20 @@ class BrowserContextGame extends React.PureComponent<Props> {
     );
   }
 
+  componentDidMount() {
+    const { status, dispatch } = this.props;
+    if (!status.operation && !status.update && status.cave) {
+      // this logic is inferred from the onClick handler
+      // defined in MainAction
+      dispatch(
+        actions.checkForGameUpdate({
+          caveId: status.cave.id,
+          suppressNotification: true,
+        })
+      );
+    }
+  }
+
   onContextMenu = (ev: React.MouseEvent<any>) => {
     ev.preventDefault();
     const { clientX, clientY } = ev;

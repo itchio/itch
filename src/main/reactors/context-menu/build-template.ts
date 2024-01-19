@@ -127,7 +127,10 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
     if (!busy) {
       updateAndLocalItems.push({
         localizedLabel: ["grid.item.check_for_update"],
-        action: actions.checkForGameUpdate({ caveId: cave.id }),
+        action: actions.checkForGameUpdate({
+          caveId: cave.id,
+          suppressNotification: false,
+        }),
       });
     }
 
