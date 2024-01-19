@@ -25,11 +25,6 @@ export const newTabPrimaryItems = [
 
 export const newTabSecondaryItems = [
   {
-    label: ["new_tab.twitter"],
-    icon: "twitter",
-    url: "https://twitter.com/search?q=itch.io&src=typd",
-  },
-  {
     label: ["new_tab.random"],
     icon: "shuffle",
     url: urls.itchio + "/randomizer",
