@@ -591,5 +591,6 @@
     "send_feedback.consent.redacted": "不发送",
     "send_feedback.consent.include_in_report": "在报告中添加这些信息",
     "send_feedback.send.secret_url": "我们会为您的反馈生成一个特殊的链接。",
-    "send_feedback.send.secret_url.feature_list.delete": "删除反馈"
+    "send_feedback.send.secret_url.feature_list.delete": "删除反馈",
+    "filter_by.games.classification.physical_game": "实体游戏"
 }

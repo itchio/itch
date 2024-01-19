@@ -404,7 +404,7 @@
     "download.outcome.updated": "atualizado para a ultima versão",
     "dashboard.game_stats.downloads": "downloads",
     "dashboard.game_stats.purchases": "compras",
-    "download.ongoing.heal": "Reparando {{title}…",
+    "download.ongoing.heal": "Reparando {{title}}…",
     "collection.item_count": "{{itemCount}} Itens",
     "grid.item.open_file_location.osx": "Mostrar no localizador",
     "grid.item.running.prepare": "Preparando…",
@@ -591,5 +591,6 @@
     "plan_install.select_install_location": "Instalar em",
     "plan_install.disk_space_required": "Espaço em disco necessário",
     "plan_install.disk_space_available": "Espaço em disco disponível",
-    "empty_state.nothing_to_see_here": "Nada para ver aqui"
+    "empty_state.nothing_to_see_here": "Nada para ver aqui",
+    "filter_by.games.classification.physical_game": "Jogos Físicos"
 }

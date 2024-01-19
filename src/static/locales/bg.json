@@ -428,7 +428,7 @@
     "download.ongoing.update": "Обновяване на „{{title}}“…",
     "download.ongoing.reinstall": "Преинсталиране на „{{title}}“…",
     "download.ongoing.revert": "Преминаване към друга версия на „{{title}}“…",
-    "download.ongoing.heal": "Поправка на „{{title}“…",
+    "download.ongoing.heal": "Поправка на „{{title}}“…",
     "prompt.discard_download.action.stop_download": "Спиране на свалянето",
     "prompt.discard_download.action.continue_download": "Продължаване на свалянето",
     "prompt.dangerous_discard_download.message": "Ако спрете свалянето, „{{title}}“ ще остане в неопределено състояние.",
@@ -591,5 +591,6 @@
     "plan_install.disk_space_available": "Свободно дисково пространство",
     "prompt.sla.title": "Лицензионно споразумение",
     "prompt.sla.message": "За да използвате този софтуер, трябва да приемете условията на това лицензионно споразумение:",
-    "prompt.sla.accept": "Приемане"
+    "prompt.sla.accept": "Приемане",
+    "filter_by.games.classification.physical_game": "Физически игри"
 }

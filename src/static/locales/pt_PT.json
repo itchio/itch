@@ -136,7 +136,7 @@
     "docs.how_to_help": "Como posso ajudar?",
     "download.reason.revert": "para mudar para outra versão",
     "download.ongoing.revert": "Mudando {{title}} para outra versão…",
-    "download.ongoing.heal": "Reparando {{title}…",
+    "download.ongoing.heal": "Reparando {{title}}…",
     "download.outcome.installed": "instalado",
     "download.outcome.updated": "actualizado para a versão mais recente",
     "download.outcome.reinstalled": "reinstalado",
@@ -591,5 +591,6 @@
     "plan_install.select_install_location": "Na localização",
     "plan_install.disk_space_required": "Espaço necessário em disco",
     "plan_install.disk_space_available": "Espaço disponível em disco",
-    "empty_state.nothing_to_see_here": "Nada para ver aqui"
+    "empty_state.nothing_to_see_here": "Nada para ver aqui",
+    "filter_by.games.classification.physical_game": "Jogos Físicos"
 }

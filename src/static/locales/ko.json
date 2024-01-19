@@ -3,9 +3,9 @@
     "errors.api.login.password_must_be_provided": "암호를 반드시 입력해야 함",
     "errors.api.login.username_must_be_provided": "아이디는 반드시 입력해야 합니다",
     "grid.item.buy_now": "구매",
-    "grid.item.downloading": "다운로드 중...",
+    "grid.item.downloading": "다운로드 중…",
     "grid.item.install": "설치",
-    "grid.item.installing": "설치 중...",
+    "grid.item.installing": "설치 중…",
     "grid.item.launch": "실행",
     "grid.item.queued": "대기",
     "grid.item.running": "실행 중…",
@@ -179,7 +179,7 @@
     "collections.empty_sub": "게임을 둘러보고 새 모음집에 추가하세요!",
     "desktop.shortcut.comment": "itch.io 게임을 간편하게 설치하고 실행하기",
     "docs.how_to_help": "도움이 필요하신가요?",
-    "download.ongoing.heal": "{{title}} 복구 중…",
+    "download.ongoing.heal": "{{title}} 을(를) 복구 중입니다…",
     "download.outcome.installed": "설치됨",
     "download.outcome.updated": "최신 버전으로 업데이트 됨",
     "download.outcome.reinstalled": "재설치됨",
@@ -591,5 +591,6 @@
     "plan_install.disk_space_available": "사용 가능한 공간",
     "empty_state.nothing_to_see_here": "여기에는 아무것도 없음",
     "prompt.uninstall.reinstall": "다시 설치하기",
-    "prompt.uninstall.uninstall": "지금 제거하기"
+    "prompt.uninstall.uninstall": "지금 제거하기",
+    "filter_by.games.classification.physical_game": "실제 게임"
 }

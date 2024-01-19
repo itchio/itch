@@ -431,7 +431,7 @@
     "preferences.advanced.components": "Komponenty",
     "preferences.behavior.enable_tabs": "Povolit karty",
     "preferences.scan_install_locations.title": "Skenuji...",
-    "preferences.scan_install_locations.message": "Následující položky mohou být importovány: ",
+    "preferences.scan_install_locations.message": "Následující položky mohou být importovány:",
     "preferences.scan_install_locations.items_imported": "{{numImportedItems}} položek bylo úspěšně importováno",
     "preferences.scan_install_locations.import_items": "Importovat {{numItems}} položek",
     "preferences.scan_install_locations.confirm_import": "Potvrdit import",
@@ -591,5 +591,6 @@
     "prompt.discard_download.detail": "Položku {{title}} budete moci znovu kdykoliv nainstalovat, ale stahování se spustí od počátku.",
     "prompt.dangerous_discard_download.detail": "Obnovíme {{title}} na poslední verzi kdykoliv se ji pokusíte použít.",
     "send_feedback.reminders.thanks": "Děkujeme Vám za zaslání zpětné vazby!",
-    "send_feedback.send.sending": "Odesílání…"
+    "send_feedback.send.sending": "Odesílání…",
+    "filter_by.games.classification.physical_game": "Fyzikální hry"
 }

@@ -591,5 +591,6 @@
     "plan_install.computing_space_requirements": "Obliczanie wymagań dotyczących przestrzeni dyskowej",
     "plan_install.select_upload": "Zainstaluj",
     "plan_install.select_install_location": "Do lokacji",
-    "empty_state.nothing_to_see_here": "Nic tu nie ma"
+    "empty_state.nothing_to_see_here": "Nic tu nie ma",
+    "filter_by.games.classification.physical_game": "Gry fizyczne"
 }

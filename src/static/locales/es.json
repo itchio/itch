@@ -591,5 +591,6 @@
     "empty_state.nothing_to_see_here": "Nada que ver aquí",
     "prompt.sla.title": "Acuerdo de licencia de software",
     "prompt.sla.accept": "Aceptar condiciones",
-    "prompt.sla.message": "Para usar este programa debe aceptar las condiciones del acuerdo de licencia de software:"
+    "prompt.sla.message": "Para usar este programa debe aceptar las condiciones del acuerdo de licencia de software:",
+    "filter_by.games.classification.physical_game": "Juegos Físicos"
 }

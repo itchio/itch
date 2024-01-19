@@ -584,5 +584,6 @@
     "prompt.uninstall_error.message_permissions": "Деякі файли {{title}} видалити неможливо. Повторити як адміністратор?",
     "prompt.install_error.message": "Встановлення зірвалось.",
     "setup.window.welcome": "Вітаємо у встановлювачі {{app_name}}! Візьміть собі кави, оберіть місце встановлення та починайте.",
-    "outlinks.open_dashboard": "Кабінет розробника"
+    "outlinks.open_dashboard": "Кабінет розробника",
+    "onboarding.collections.title_mix": "Перемішати & підібрати"
 }

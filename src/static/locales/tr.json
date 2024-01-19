@@ -316,7 +316,7 @@
     "download.ongoing.update": "{{title}} güncelleniyor…",
     "download.ongoing.reinstall": "{{title}} tekrar yükleniyor…",
     "download.ongoing.revert": "{{title}} başka bir sürümle değiştiriliyor…",
-    "download.ongoing.heal": "{{title} onarılıyor…",
+    "download.ongoing.heal": "{{title}} onarılıyor…",
     "download.outcome.installed": "yüklendi",
     "download.outcome.updated": "son sürüme güncellendi",
     "download.outcome.reinstalled": "tekrar yüklendi",
@@ -591,5 +591,6 @@
     "preferences.advanced.disable_browser": "Web tarayıcısını devre dışı bırak",
     "preferences.advanced.disable_hardware_acceleration": "Donanım hızlandırmayı devre dışı bırak (Linux'taki bazı çökme sorunlarını çözer)",
     "empty_state.nothing_to_see_here": "Burada görülecek bir şey yok",
-    "grid.item.uninstall_request": "Kaldırın veya yeniden yükleyin…"
+    "grid.item.uninstall_request": "Kaldırın veya yeniden yükleyin…",
+    "filter_by.games.classification.physical_game": "Fiziksel Oyunlar"
 }
