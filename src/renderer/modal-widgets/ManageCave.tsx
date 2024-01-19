@@ -286,7 +286,10 @@ class ManageCave extends React.PureComponent<Props> {
     dispatch(
       actions.closeModal({
         wind: ambientWind(),
-        action: actions.checkForGameUpdate({ caveId }),
+        action: actions.checkForGameUpdate({
+          caveId,
+          suppressNotification: false,
+        }),
       })
     );
   };
