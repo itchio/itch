@@ -230,6 +230,15 @@ export function userMenu(store: Store): MenuTemplate {
       type: "separator",
     },
     {
+      icon: "download",
+      localizedLabel: ["preferences.advanced.check_game_updates"],
+      id: "user-menu-check-for-updates",
+      action: actions.checkForGameUpdates({}),
+    },
+    {
+      type: "separator",
+    },
+    {
       icon: "bug",
       localizedLabel: ["menu.help.report_issue"],
       action: actions.sendFeedback({}),
