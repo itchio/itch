@@ -34,9 +34,9 @@ function withWebContents<T>(
   return null;
 }
 
-function loadURL(wc: WebContents, url: string) {
+function loadURL(wc: WebContents, url: string): boolean {
   if (ITCH_URL_RE.test(url)) {
-    return;
+    return true;
   }
 
   // Because of restrictions elsewhere, this likely only
@@ -48,7 +48,10 @@ function loadURL(wc: WebContents, url: string) {
     parsedUrl.origin.endsWith("/itch.io")
   ) {
     wc.loadURL(url);
+    return true;
   }
+
+  return false;
 }
 
 export default function (watcher: Watcher) {
@@ -347,7 +350,12 @@ async function hookWebContents(
 
   wc.setWindowOpenHandler(({ url }) => {
     logger.debug(`new-window fired for ${url}`);
-    wc.loadURL(url);
+
+    if (!loadURL(wc, url)) {
+      // url wasn't handled by the current web-contents, open
+      // in external browser
+      store.dispatch(actions.openInExternalBrowser({ url: url }));
+    }
     return { action: "deny" };
   });
 
