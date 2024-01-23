@@ -700,5 +700,7 @@
   "plan_install.disk_space_required": "Disk space required",
   "plan_install.disk_space_available": "Disk space available",
 
-  "empty_state.nothing_to_see_here": "Nothing to see here"
+  "empty_state.nothing_to_see_here": "Nothing to see here",
+
+  "platform.unknown": "May be incompatible with your system"
 }
