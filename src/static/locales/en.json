@@ -700,5 +700,7 @@
   "plan_install.disk_space_required": "Disk space required",
   "plan_install.disk_space_available": "Disk space available",
 
+  "plan_install.no_available_downloads": "No compatible downloads were found",
+
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

@@ -181,7 +181,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       error,
     } = this.state;
 
-    let canInstall = !error && !busy;
+    let canInstall = !error && !busy && uploads && uploads.length > 0;
     let locationOptions = installLocations.map((il) => {
       let val: InstallLocationOption = {
         label: `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`,
@@ -251,6 +251,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
           ? this.renderBusy()
           : error
           ? this.renderError()
+          : uploads && uploads.length == 0
+          ? this.renderNoBuilds()
           : this.renderSizes()}
         <Filler />
         <ModalButtons>
@@ -314,6 +316,16 @@ class PlanInstall extends React.PureComponent<Props, State> {
         <FilterSpacer />
         <Floater />
       </LoadingStateDiv>
+    );
+  }
+
+  renderNoBuilds() {
+    return (
+      <ErrorContainer>
+        <ErrorParagraph>
+          <Icon icon="error" /> {T(_("plan_install.no_available_downloads"))}
+        </ErrorParagraph>
+      </ErrorContainer>
     );
   }
 
