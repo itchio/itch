@@ -100,6 +100,8 @@ class BrowserPage extends React.PureComponent<Props> {
               </div>
             ) : (
               <webview
+                // @ts-ignore (the provided React types want bool, but it really takes a boolean string)
+                allowpopups="true"
                 src="about:blank"
                 ref={this.gotWebview}
                 partition={partition}

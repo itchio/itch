@@ -18,7 +18,7 @@ async function ciDeploy() {
   }
 
   console.log("Grabbing butler");
-  const butlerUrl = `https://broth.itch.ovh/butler/linux-amd64/LATEST/.zip`;
+  const butlerUrl = `https://broth.itch.zone/butler/linux-amd64/LATEST/.zip`;
   $(`curl -L ${butlerUrl} -o butler.zip`);
   $(`unzip butler.zip`);
   $(`./butler --version`);

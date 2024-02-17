@@ -127,7 +127,10 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
     if (!busy) {
       updateAndLocalItems.push({
         localizedLabel: ["grid.item.check_for_update"],
-        action: actions.checkForGameUpdate({ caveId: cave.id }),
+        action: actions.checkForGameUpdate({
+          caveId: cave.id,
+          suppressNotification: false,
+        }),
       });
     }
 
@@ -222,6 +225,15 @@ export function userMenu(store: Store): MenuTemplate {
         url: "itch://preferences",
       }),
       accelerator: "CmdOrCtrl+,",
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "download",
+      localizedLabel: ["preferences.advanced.check_game_updates"],
+      id: "user-menu-check-for-updates",
+      action: actions.checkForGameUpdates({}),
     },
     {
       type: "separator",

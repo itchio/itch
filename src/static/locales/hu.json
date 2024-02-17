@@ -113,5 +113,10 @@
     "collection.item_count": "{{itemCount}} elem",
     "collections.empty": "Jelenleg nincsenek gyűjteményeid",
     "docs.how_to_help": "Hogyan segíthetek?",
-    "download.reason.reinstall": "újratelepítés"
+    "download.reason.reinstall": "újratelepítés",
+    "empty_state.nothing_to_see_here": "Nincs itt semmi látnivaló",
+    "plan_install.select_upload": "Telepítés",
+    "prompt.url_install.credit": "Egy {{classification}} tőle: {{username}}",
+    "prompt.logout_title": "Kijelentkezés",
+    "prompt.no_compatible_version.detail": "Talán még {{classification}} nem kompatibilis ezzel?"
 }

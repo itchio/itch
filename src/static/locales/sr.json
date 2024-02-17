@@ -308,5 +308,18 @@
     "usage_stats.never_played": "Никад играна",
     "usage_stats.never_used": "Никад коришћено",
     "prompt.no_compatible_version.detail": "Можда ова {{classification}} није компатибилна за сада?",
-    "prompt.url_install.credit": "{{classification}} по {{username}}"
+    "prompt.url_install.credit": "{{classification}} по {{username}}",
+    "collection.item_count": "{{itemCount}} ствари",
+    "grid.item.revert_to_version": "Промени на другу верзију...",
+    "grid.item.open_title": "Отвори {{title}}",
+    "grid.item.not_available": "Недоступно",
+    "grid.item.not_compatible": "Није доступно на овој платформи",
+    "grid.item.launch_title": "Покрени {{title}}",
+    "download.outcome.healed": "верификовано и поправљено",
+    "download.outcome.reinstalled": "реинсталирано",
+    "download.ongoing.install": "Инсталирање {{title}}...",
+    "download.outcome.reverted": "промењено на другу верзију",
+    "download.outcome.updated": "ажурирано на најновију верзију",
+    "download.ongoing.revert": "Мењање {{title}} на другу верзију",
+    "grid.item.update": "Ажурирај"
 }
