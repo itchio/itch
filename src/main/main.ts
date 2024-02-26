@@ -74,6 +74,11 @@ export function main() {
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
+
+  // Run the GPU process as a thread in the browser process for linux.
+  if (process.platform === "linux") {
+    app.commandLine.appendSwitch("in-process-gpu");
+  }
   protocol.registerSchemesAsPrivileged([
     {
       scheme: "itch-cave",
