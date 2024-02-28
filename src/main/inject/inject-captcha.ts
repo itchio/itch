@@ -1,9 +1,7 @@
-interface ExtWindow {
-  onCaptcha: (response: string) => void;
-  captchaResponse: string;
-}
-const extWindow: ExtWindow = window as any;
+import { contextBridge } from "electron";
+import { emitSyncIpcEvent } from "common/ipc";
+import "@goosewobbler/electron-redux/preload";
 
-extWindow.onCaptcha = function (response: string) {
-  extWindow.captchaResponse = response;
-};
+contextBridge.exposeInMainWorld("onCaptcha", function (response: string) {
+  emitSyncIpcEvent("onCaptchaResponse", response);
+});

@@ -115,6 +115,12 @@ export function main() {
         getInjectURL,
         legacyMarketPath,
         mainLogPath,
+        onCaptchaResponse: (response) => {
+          if (response) {
+            store.dispatch(actions.closeCaptchaModal({ response }));
+          }
+          return null;
+        },
       },
       {
         showOpenDialog: async (options: OpenDialogOptions) => {

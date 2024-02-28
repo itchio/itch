@@ -12,7 +12,7 @@ import qs from "querystring";
 import { promises } from "fs";
 import { Logger } from "common/logger";
 import { Message } from "common/helpers/bridge";
-import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
+import { emitAsyncIpcEvent, emitSyncIpcEvent } from "common/ipc";
 import { Store } from "common/types";
 import { convertMessage } from "common/helpers/bridge";
 import "@goosewobbler/electron-redux/preload";
@@ -25,20 +25,6 @@ const memo = <A>(fn: () => A): (() => A) => {
     }
     return found;
   };
-};
-
-const emitSyncIpcEvent = <K extends keyof SyncIpcHandlers>(
-  eventName: K,
-  arg: Parameters<SyncIpcHandlers[K]>[0]
-): ReturnType<SyncIpcHandlers[K]> => {
-  return ipcRenderer.sendSync(eventName, arg);
-};
-
-const emitAsyncIpcEvent = <K extends keyof AsyncIpcHandlers>(
-  eventName: K,
-  arg: Parameters<AsyncIpcHandlers[K]>[0]
-): ReturnType<AsyncIpcHandlers[K]> => {
-  return ipcRenderer.invoke(eventName, arg) as ReturnType<AsyncIpcHandlers[K]>;
 };
 
 export const mainWorldSupplement = {
