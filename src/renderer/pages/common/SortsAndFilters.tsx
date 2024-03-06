@@ -18,18 +18,9 @@ export const FilterGroup = styled.div`
   flex-flow: row wrap;
 `;
 
-// const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
-// const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%, 37%, 1));`;
 const inactiveBg = `linear-gradient(to top, hsla(355, 48%, 38%, 1), hsla(355, 48%, 27%, 1));`;
 const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
-/*
-const inactiveBg = global.ReduxStore.getState().preferences.lightMode
-  ? `linear-gradient(to top, hsla(355, 48%, 38%, 1), hsla(355, 48%, 27%, 1));`
-  : `linear-gradient(to top,hsla(355, 43%, 17%, 1),hsla(355, 43%, 11%, 1))`;
-const activeBg = global.ReduxStore.getState().preferences.lightMode
-  ? `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`
-  : `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
-  */
+
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 

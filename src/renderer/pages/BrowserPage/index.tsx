@@ -67,7 +67,6 @@ class BrowserPage extends React.PureComponent<Props> {
       return null;
     }
 
-    //Changes based on the bright mode checkbox
     if (disableBrowser) {
       return (
         <BrowserPageDiv>
@@ -82,6 +81,9 @@ class BrowserPage extends React.PureComponent<Props> {
       );
     }
 
+    //Changes based on the light mode checkbox - itch/kitch need to be removed from user agent
+    //in order to not receive dark themed web content.  webview must also be wrapped in its
+    //own div because otherwise the checkbox will not trigger a rerender.
     return (
       <BrowserPageDiv>
         <BrowserBar />
@@ -93,7 +95,7 @@ class BrowserPage extends React.PureComponent<Props> {
                   src="about:blank"
                   ref={this.gotWebview}
                   partition={partition}
-                  useragent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.215 Electron/22.3.14 Safari/537.36"
+                  useragent="Mozilla AppleWebKit (KHTML, like Gecko) Chrome Electron Safari (KHTML, like Gecko)"
                   enableremotemodule="false"
                   webpreferences="worldSafeExecuteJavaScript"
                 />

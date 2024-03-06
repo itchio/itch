@@ -94,7 +94,7 @@ const lightBrowserAddressStyle = css`
   color: #333333;
 
   border: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(200, 200, 200, 0.7);
   box-shadow: none;
 
   &:focus {
@@ -148,7 +148,7 @@ const LightAddressDiv = styled.div`
   }
 
   .fluff-bit {
-    color: rgb(118, 154, 188);
+    color: rgb(75, 121, 166);
   }
 `;
 

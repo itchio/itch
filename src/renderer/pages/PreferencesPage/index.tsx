@@ -20,6 +20,7 @@ const expTextColor = global.ReduxStore.getState().preferences.lightMode
 const linkTextColor = global.ReduxStore.getState().preferences.lightMode
   ? "#707070"
   : "#ececec";
+
 const PreferencesContentDiv = styled.div`
   overflow-y: auto;
   padding: 0px 20px 30px 20px;
