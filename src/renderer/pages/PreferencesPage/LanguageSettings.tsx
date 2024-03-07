@@ -24,7 +24,7 @@ const LanguageSelect = styled(SimpleSelect)`
 
 class LanguageSettings extends React.PureComponent<Props> {
   render() {
-    const { dispatch, locales, lang, sniffedLang } = this.props;
+    const { dispatch, locales, lang, sniffedLang, lightMode } = this.props;
 
     let autoLang: BaseOptionType = {
       label: ["preferences.language.auto", { language: sniffedLang }],
@@ -63,12 +63,21 @@ class LanguageSettings extends React.PureComponent<Props> {
           </Label>
         </div>
 
-        <p className="explanation flex">
-          {T(["preferences.language.get_involved", { name: "itch" }])}{" "}
-          <a href={translateUrl}>
-            <img className="weblate-badge" src={translationBadgeUrl} />
-          </a>
-        </p>
+        {lightMode ? (
+          <p className="explanation flex" style={{ color: "#2d2d2d" }}>
+            {T(["preferences.language.get_involved", { name: "itch" }])}{" "}
+            <a href={translateUrl} style={{ color: "#707070" }}>
+              <img className="weblate-badge" src={translationBadgeUrl} />
+            </a>
+          </p>
+        ) : (
+          <p className="explanation flex">
+            {T(["preferences.language.get_involved", { name: "itch" }])}{" "}
+            <a href={translateUrl}>
+              <img className="weblate-badge" src={translationBadgeUrl} />
+            </a>
+          </p>
+        )}
       </>
     );
   }
@@ -99,6 +108,7 @@ interface Props {
   lang: string;
   sniffedLang: string;
   downloading: RootState["i18n"]["downloading"];
+  lightMode: boolean;
 }
 
 export default hook((map) => ({
@@ -106,4 +116,5 @@ export default hook((map) => ({
   lang: map((rs) => rs.i18n.lang),
   sniffedLang: map((rs) => rs.system.sniffedLanguage),
   downloading: map((rs) => rs.i18n.downloading),
+  lightMode: map((rs) => rs.preferences.lightMode),
 }))(LanguageSettings);

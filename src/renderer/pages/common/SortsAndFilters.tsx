@@ -24,8 +24,6 @@ const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%,
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 
-//color: ${(props) => props.theme.baseText};
-
 const optionButtonLike = css`
   display: flex;
   flex-flow: row;

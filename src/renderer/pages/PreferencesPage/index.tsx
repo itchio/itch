@@ -14,13 +14,6 @@ const PreferencesDiv = styled.div`
   ${styles.meat};
 `;
 
-const expTextColor = global.ReduxStore.getState().preferences.lightMode
-  ? "#575757"
-  : "#b9b9b9";
-const linkTextColor = global.ReduxStore.getState().preferences.lightMode
-  ? "#707070"
-  : "#ececec";
-
 const PreferencesContentDiv = styled.div`
   overflow-y: auto;
   padding: 0px 20px 30px 20px;
@@ -78,7 +71,7 @@ const PreferencesContentDiv = styled.div`
     padding: 0 15px;
     margin: 15px 0 0 0;
 
-    color: ${expTextColor};
+    color: #b9b9b9;
     font-size: 14px;
     max-width: 500px;
     border-radius: $explanation-border-radius;
@@ -102,7 +95,7 @@ const PreferencesContentDiv = styled.div`
     a,
     .link {
       text-decoration: underline;
-      color: ${linkTextColor};
+      color: #ececec;
 
       &:hover {
         cursor: pointer;
