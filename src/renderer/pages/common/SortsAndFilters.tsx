@@ -34,7 +34,7 @@ const optionButtonLike = css`
   margin: 0;
   border: 1px solid ${borderColor};
   border-left: none;
-  color: #fffff0;
+  color: ${(props) => props.theme.baseText};
   transition: all 0.4s;
 
   &:first-child {
