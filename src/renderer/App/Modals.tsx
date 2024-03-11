@@ -276,6 +276,7 @@ const ButtonsDiv = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 20px;
+  background-color: ${(props) => props.theme.breadBackground};
 
   & > * {
     margin-left: 8px;
