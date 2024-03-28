@@ -320,6 +320,7 @@
     "sandbox.setup.linux.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo petos vian pasvorton. Tio estas necesa nur la unuan fojon, kiam oni uzas aŭ ĝisdatigas la sablujon, kaj itch ne memoros vian pasvorton.",
     "preferences.behavior": "Konduto",
     "preferences.behavior.close_to_tray": "Konservi la aplikaĵon en la taskopleto post fermo de la fenestro",
+    "preferences.behavior.lightMode": "Aktivigu helan reĝimon",
     "grid.criterion.search": "Serĉado…",
     "grid.filters.options.compatible": "Kongruaj",
     "grid.filters.options.installed": "Instalitaj",

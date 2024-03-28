@@ -292,6 +292,7 @@
     "sandbox.setup.linux.detail": "Después de hacer clic en 'Seguir', se te pedirá tu contraseña. Esto sólo es necesario la primera vez que se inicie el aislamiento de procesos de itch, y tu contraseña nunca será vista o guardada por itch.",
     "preferences.behavior": "Comportamiento",
     "preferences.behavior.close_to_tray": "Mantener la aplicación en la bandeja de sistema cuando se cierre la ventana",
+    "preferences.behavior.lightMode": "Activar modo luminoso",
     "preferences.advanced": "Avanzado",
     "preferences.advanced.open_app_log": "Abrir registro de la aplicación",
     "pick_install_upload.title": "Múltiples descargas están disponibles para {{title}}",

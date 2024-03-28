@@ -307,6 +307,7 @@
     "preferences.security.sandbox.description": "Piaskownica itch.io próbuje uniemożliwić pobranym grom wyrządzanie szkód lub kradzież ważnych danych. Mimo że nie gwarantuje to całkowitej ochrony, uruchamianie gier w piaskownicy jest znacznie bezpieczniejsze.",
     "preferences.behavior": "Zachowanie aplikacji",
     "preferences.behavior.close_to_tray": "Pozostaw aplikację w pasku zadań po zamknięciu okna",
+    "preferences.behavior.lightMode": "Aktywacja trybu jasnego",
     "preferences.behavior.manual_game_updates": "Zapytaj przed aktualizacją",
     "preferences.notifications": "Powiadomienia",
     "preferences.notifications.ready_notification": "Powiadom mnie gdy instalacja lub aktualizacja zostanie zakończona",

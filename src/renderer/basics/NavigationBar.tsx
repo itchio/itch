@@ -82,6 +82,26 @@ const browserAddressStyle = css`
   }
 `;
 
+const lightBrowserAddressStyle = css`
+  ${browserAddressSizing};
+  ${styles.singleLine};
+  font-size: 14px;
+  text-shadow: 0 0 1px black;
+  padding: 0;
+  padding-left: 8px;
+  padding-right: 12px;
+  width: 100%;
+  color: #333333;
+
+  border: none;
+  background: rgba(200, 200, 200, 0.7);
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
+  }
+`;
+
 const AddressWrapper = styled.div`
   ${browserAddressSizing};
   margin: 0 6px;
@@ -101,6 +121,13 @@ const AddressInput = styled.input`
   color: white;
 `;
 
+const LightAddressInput = styled.input`
+  ${lightBrowserAddressStyle};
+
+  text-shadow: 0 0 1px transparent;
+  color: black;
+`;
+
 const AddressDiv = styled.div`
   ${browserAddressStyle};
 
@@ -110,6 +137,18 @@ const AddressDiv = styled.div`
 
   .fluff-bit {
     color: rgb(148, 184, 218);
+  }
+`;
+
+const LightAddressDiv = styled.div`
+  ${lightBrowserAddressStyle};
+
+  .security-theater-bit {
+    color: rgb(108, 145, 85);
+  }
+
+  .fluff-bit {
+    color: rgb(75, 121, 166);
   }
 `;
 
@@ -201,7 +240,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   }
 
   renderAddressBar() {
-    const { loading, url } = this.props;
+    const { loading, url, lightMode } = this.props;
 
     if (!this.props.showAddressBar) {
       return null;
@@ -209,6 +248,37 @@ class NavigationBar extends React.PureComponent<Props, State> {
 
     let { editingAddress } = this.state;
 
+    if (lightMode) {
+      return (
+        <>
+          {loading ? (
+            <IconButton icon="cross" onClick={this.stop} />
+          ) : (
+            <IconButton icon="repeat" onClick={this.reload} />
+          )}
+          <AddressWrapper className={classNames({ editing: editingAddress })}>
+            {editingAddress ? (
+              <LightAddressInput
+                className="browser-address"
+                type="search"
+                ref={this.onBrowserAddress as any}
+                defaultValue={url}
+                onKeyDown={this.addressKeyDown}
+                onBlur={this.addressBlur}
+              />
+            ) : (
+              <LightAddressDiv
+                className={classNames("browser-address")}
+                ref={this.onBrowserAddress}
+                onClick={this.startEditingAddress}
+              >
+                {this.renderURL(url)}
+              </LightAddressDiv>
+            )}
+          </AddressWrapper>
+        </>
+      );
+    }
     return (
       <>
         {loading ? (
@@ -345,11 +415,13 @@ interface Props {
   internalPage: string;
   canGoBack: string;
   canGoForward: string;
+  lightMode: boolean;
 }
 
 interface State {
   url: string;
   editingAddress: boolean;
+  lightMode: boolean;
 }
 
 export default withTab(
@@ -360,5 +432,6 @@ export default withTab(
     ),
     canGoBack: map((rs, props) => ambientTab(rs, props).status.canGoBack),
     canGoForward: map((rs, props) => ambientTab(rs, props).status.canGoForward),
+    lightMode: map((rs) => rs.preferences.lightMode),
   }))(NavigationBar)
 );

@@ -1,5 +1,10 @@
 import { css, theme } from "renderer/styles";
+import { lightTheme } from "renderer/lightTheme";
 import env from "renderer/env";
+
+const currentTheme = global.ReduxStore.getState().preferences.lightMode
+  ? lightTheme
+  : theme;
 
 const testDisables = () => {
   if (!env.integrationTests) {
@@ -33,7 +38,7 @@ export default css`
     user-select: none;
 
     font-family: LatoWeb, sans-serif;
-    color: ${theme.baseText};
+    color: ${currentTheme.baseText};
   }
 
   img.emojione {
@@ -46,10 +51,10 @@ export default css`
   }
 
   a {
-    color: ${theme.accent};
+    color: ${currentTheme.accent};
 
     &[href^="itch:"] {
-      color: ${theme.baseText};
+      color: ${currentTheme.baseText};
       text-decoration: none;
 
       &:hover {

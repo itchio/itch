@@ -296,6 +296,7 @@
     "outlinks.manage_collections": "Gérer mes collections",
     "preferences.behavior": "Comportement",
     "preferences.behavior.close_to_tray": "Maintenir l'application en tâche de fond à la fermeture de la fenêtre",
+    "preferences.behavior.lightMode": "Activer le mode lumineux",
     "pick_install_upload.title": "Plusieurs téléchargements sont disponibles pour {{title}}",
     "pick_install_upload.message": "Quel fichier souhaitez-vous télécharger pour {{title}} ?",
     "pick_install_upload.detail": "Nous vous redemanderons dès que de nouveaux téléchargements seront disponibles.",

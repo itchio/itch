@@ -12,9 +12,59 @@ import { T } from "renderer/t";
 
 class AdvancedSettings extends React.PureComponent<Props> {
   render() {
-    const { system, dispatch } = this.props;
+    const { system, dispatch, lightMode } = this.props;
 
-    return (
+    return lightMode ? (
+      <>
+        <h2 id="preferences-advanced-section">{T(["preferences.advanced"])}</h2>
+        <div className="explanation advanced-form" style={{ color: "#2d2d2d" }}>
+          <BrothComponents />
+          <div className="section">
+            <Icon icon="security" /> {formatPlatform(system.platform)}{" "}
+            {formatArch(system.arch)}
+          </div>
+          <div className="section">
+            <ProxySettings />
+          </div>
+          <div className="section">
+            <span
+              className="link"
+              onClick={this.openAppLog}
+              style={{ color: "#707070" }}
+            >
+              {T(["preferences.advanced.open_app_log"])}
+            </span>
+          </div>
+          <div className="section">
+            <span
+              className="link"
+              onClick={this.checkForGameUpdates}
+              style={{ color: "#707070" }}
+            >
+              {T(["preferences.advanced.check_game_updates"])}
+            </span>
+          </div>
+          <div className="section">
+            <span
+              id="clear-browsing-data-link"
+              className="link"
+              onClick={this.clearBrowsingData}
+              style={{ color: "#707070" }}
+            >
+              {T(["preferences.advanced.clear_browsing_data"])}
+            </span>
+          </div>
+          <Checkbox
+            name="disableBrowser"
+            label={T(["preferences.advanced.disable_browser"])}
+          />
+          <Checkbox
+            name="disableHardwareAcceleration"
+            label={T(["preferences.advanced.disable_hardware_acceleration"])}
+          />
+        </div>
+      </>
+    ) : (
       <>
         <h2 id="preferences-advanced-section">{T(["preferences.advanced"])}</h2>
         <div className="explanation advanced-form">
@@ -86,8 +136,10 @@ interface Props {
   dispatch: Dispatch;
 
   system: SystemState;
+  lightMode: boolean;
 }
 
 export default hook((map) => ({
   system: map((rs) => rs.system),
+  lightMode: map((rs) => rs.preferences.lightMode),
 }))(AdvancedSettings);

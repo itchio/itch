@@ -530,6 +530,13 @@ function getIconPath(): string {
 function commonBrowserWindowOpts(
   store: Store
 ): Partial<BrowserWindowConstructorOptions> {
+  logger.debug("---");
+  logger.debug("---");
+  logger.debug("---");
+  logger.debug("Common browser window opts");
+  logger.debug("---");
+  logger.debug("---");
+  logger.debug("---");
   return {
     icon: getIconPath(),
     autoHideMenuBar: true,

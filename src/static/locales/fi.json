@@ -235,6 +235,7 @@
     "preferences.install_location.make_default_short": "Aseta oletukseksi",
     "preferences.behavior": "Käyttäytyminen",
     "preferences.behavior.close_to_tray": "Suljettaessa ohjelma pidä se käynnissä palkissa",
+    "preferences.behavior.lightMode": "Aktivoi kirkas tila",
     "preferences.behavior.open_at_login": "Käynnistä itch tietokoneen kanssa",
     "preferences.behavior.open_as_hidden": "Avaa itch käynnistäessä piilotettuna",
     "preferences.behavior.open_at_login.error": "Automaattisen käynnistyksen asetuksia ei voitu asettaa koska: {{cause}}",

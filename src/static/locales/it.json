@@ -198,6 +198,7 @@
     "preferences.install_location.make_default_short": "Imposta predefinito",
     "preferences.behavior": "Comportamento",
     "preferences.behavior.close_to_tray": "Tieni aperta l'app quando chiudi la finestra",
+    "preferences.behavior.lightMode": "Attivare la modalità luminosa",
     "preferences.language.auto": "Lingua del sistema ({{language}})",
     "preferences.advanced": "Avanzate",
     "preferences.advanced.open_app_log": "Apri log dell'app",
