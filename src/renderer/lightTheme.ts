@@ -80,6 +80,8 @@ export const colors = {
 
   ternaryText: baseColors.zambezi,
 
+  descText: lighten(0.3, "#a0a0a0"),
+
   breadBackground,
   breadBoxShadow: "#171717",
 
