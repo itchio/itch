@@ -81,7 +81,7 @@ export const colors = {
 
   ternaryText: baseColors.zambezi,
 
-  descText: secondaryText,
+  descText: lighten(0.1, baseColors.silverChalice),
 
   breadBackground,
   breadBoxShadow: "#171717",
