@@ -110,7 +110,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.4",
     "electron": "^22.3.27",
-    "electron-notarize": "^1.0.0",
+    "@electron/notarize": "^2.3.2",
     "electron-packager": "^15.2.0",
     "file-loader": "^6.2.0",
     "happypack": "^5.0.1",
