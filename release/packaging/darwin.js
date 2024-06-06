@@ -66,6 +66,7 @@ async function sign(cx, packageDir) {
         appPath: appBundle,
         appleId: "leafot@gmail.com",
         appleIdPassword: process.env.APPLE_ID_PASSWORD || "",
+        teamId: process.env.APPLE_TEAM_ID || "",
       });
     });
 
