@@ -10,6 +10,27 @@ const WEBGAME_PROTOCOL = "itch-cave";
 
 const logger = mainLogger.child(__filename);
 
+async function* iterateStream(stream) {
+  for await (const chunk of stream) {
+    yield chunk;
+  }
+}
+
+// derived from
+// https://nextjs.org/docs/app/building-your-application/routing/route-handlers#streaming
+function iteratorToStream(iterator) {
+  return new ReadableStream({
+    async pull(controller) {
+      const { value, done } = await iterator.next()
+      if (done) {
+        controller.close()
+      } else {
+        controller.enqueue(value)
+      }
+    },
+  })
+}
+
 export async function registerItchCaveProtocol(
   gameSession: Session,
   fileRoot: string
@@ -19,9 +40,9 @@ export async function registerItchCaveProtocol(
   }
   registeredSessions.add(gameSession);
 
-  let registered = gameSession.protocol.registerStreamProtocol(
+  gameSession.protocol.handle(
     WEBGAME_PROTOCOL,
-    (request, callback) => {
+    (request) => {
       const urlPath = url.parse(request.url).pathname;
       const decodedPath = decodeURI(urlPath);
       const rootlessPath = decodedPath.replace(/^\//, "");
@@ -38,11 +59,10 @@ export async function registerItchCaveProtocol(
         if (contentType) {
           headers["content-type"] = contentType;
         }
-        var stream = createReadStream(filePath);
-        callback({
+        var stream = iteratorToStream(iterateStream(createReadStream(filePath)));
+        return new Response(stream, {
           headers,
-          statusCode: 200,
-          data: stream,
+          status: 200,
         });
       } catch (e) {
         logger.warn(`while serving ${request.url}, got ${e.stack}`);
@@ -56,17 +76,15 @@ export async function registerItchCaveProtocol(
             break;
         }
 
-        callback({
+        return new Response(null, {
           headers: {},
-          statusCode,
-          data: null,
+          status: statusCode,
         });
-        return;
       }
     }
   );
 
-  if (!registered) {
+  if (!gameSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL)) {
     throw new Error(`could not register custom protocol ${WEBGAME_PROTOCOL}`);
   }
 }
