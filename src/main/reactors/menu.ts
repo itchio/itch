@@ -338,7 +338,7 @@ function computeMenuTemplate(
 
     edit: {
       localizedLabel: ["menu.edit.edit"],
-      visible: false,
+      visible: true,
       submenu: [
         {
           localizedLabel: ["menu.edit.cut"],
