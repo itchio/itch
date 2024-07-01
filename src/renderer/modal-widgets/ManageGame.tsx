@@ -86,6 +86,8 @@ const FileSize = styled.div`
 const ManageGameDiv = styled(ModalWidgetDiv)`
   min-width: 600px;
   min-height: 300px;
+  background-color: ${(props) => props.theme.breadBackground};
+  color: ${(props) => props.theme.baseText};
 `;
 
 class ManageGame extends React.PureComponent<Props> {

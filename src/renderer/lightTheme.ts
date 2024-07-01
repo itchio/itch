@@ -1,41 +1,39 @@
 import { lighten } from "polished";
 
-// colors
-
 export const baseColors = {
-  codGray: "#151515",
-  darkMineShaft: "#2e2b2c",
-  lightMineShaft: "#383434",
-  zambezi: "#5d5757",
-  silverChalice: "#a0a0a0",
-  swissCoffee: "#dad2d2",
-  ivory: "#fffff0",
+  codGray: "#f7f7f7",
+  darkMineShaft: "#d9d9d9",
+  lightMineShaft: "#e9e9e9",
+  zambezi: "#4e4545",
+  silverChalice: "#161616",
+  swissCoffee: "#746d6d",
+  ivory: "#272929",
 
-  flushMahogany: "#d14343",
-  mintJulep: "#efeebf",
-  gossip: "#b9e8a1",
+  flushMahogany: "#f97b7b",
+  mintJulep: "#c1c252",
+  gossip: "#74a46c",
 
-  shamrock: "#24c091",
+  shamrock: "#13916d",
   amber: "#ffc200",
-  heliotrope: "#c17dff",
+  heliotrope: "#7c409a",
 
-  carnation: "#fa5c5c",
-  vividTangerine: "#ff8080",
+  carnation: "#bb2525",
+  vividTangerine: "#cc4b4a",
 };
 
 export const uiColors = {
-  background: "#1d1d1d",
+  background: "#a5a5a5",
 
-  border: "#404040",
-  borderFocused: "#676767",
+  border: "#8b8d8d",
+  borderFocused: "#c5c5c6",
 
   // FIXME: no pure blacks
-  textShadow: "#000000",
-  boxShadow: "#1b1919",
+  textShadow: "#b9b9ba",
+  boxShadow: "#989898",
 };
 
-const breadBackground = `#141414`;
-const itemBackground = "#1e1e1e";
+const breadBackground = `#f4f4f4`;
+const itemBackground = "#eedbdb";
 
 export const colors = {
   accent: baseColors.carnation,
@@ -60,7 +58,7 @@ export const colors = {
   inputBackground: uiColors.background,
   inputFocusedBackground: lighten(0.1, uiColors.background),
   inputSelectedBackground: lighten(0.2, uiColors.background),
-  inputText: "#d4cece",
+  inputText: "#3e3f3f",
   inputPlaceholder: baseColors.silverChalice,
 
   inputBorder: uiColors.border,
@@ -70,7 +68,8 @@ export const colors = {
   inputBoxShadow: uiColors.boxShadow,
   inputBoxShadowFocused: "#1b1919",
 
-  sidebarBackground: breadBackground,
+  sidebarBackground: "#e9e9e9",
+
   sidebarBorder: lighten(0.03, breadBackground),
   sidebarEntryFocusedBackground: lighten(0.05, breadBackground),
 
@@ -81,7 +80,7 @@ export const colors = {
 
   ternaryText: baseColors.zambezi,
 
-  descText: lighten(0.1, baseColors.silverChalice),
+  descText: lighten(0.3, "#a0a0a0"),
 
   breadBackground,
   breadBoxShadow: "#171717",
@@ -127,7 +126,7 @@ export const widths = {
   gridItem: "235px",
 };
 
-export const theme = {
+export const lightTheme = {
   ...colors,
   baseColors,
   fontSizes,
@@ -135,19 +134,17 @@ export const theme = {
   widths,
 };
 
-export type Theme = typeof theme;
-
 import * as sc from "styled-components";
 import { ThemedStyledComponentsModule } from "styled-components";
 const {
-  default: styled,
+  default: lstyled,
   css,
   keyframes,
   createGlobalStyle,
   ThemeProvider,
 } = sc as ThemedStyledComponentsModule<Theme>;
 
-export default styled;
+export default lstyled;
 export { css, keyframes, createGlobalStyle, ThemeProvider };
 
 // animations

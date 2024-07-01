@@ -282,6 +282,7 @@
     "preferences.behavior": "행동",
     "preferences.behavior.enable_tabs": "탭 활성화",
     "preferences.behavior.close_to_tray": "창을 닫아도 트레이에 앱 표시하기",
+    "preferences.behavior.lightMode": "밝은 모드 활성화",
     "preferences.behavior.open_at_login": "컴퓨터가 켜질 때 itch 실행",
     "preferences.behavior.open_at_login.causes.no_desktop_file": ".desktop 파일을 찾을 수 없습니다. 이것은 시스템 패키지에서 설정하지 않았을 때 일어나는 현상입니다. 자세한 정보는 {{linux_install_page}}을(를) 확인하세요.",
     "preferences.language.auto": "시스템 언어 {{language}}",

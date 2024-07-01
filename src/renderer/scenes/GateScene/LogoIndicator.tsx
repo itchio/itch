@@ -6,6 +6,9 @@ import Vivus from "vivus";
 const appWhiteContour = require("static/images/logos/app-white-contour.svg")
   .default;
 
+const appBlackContour = require("static/images/logos/app-black-contour.svg")
+  .default;
+
 const LogoIndicatorDiv = styled.div`
   pointer-events: none;
 
@@ -27,17 +30,27 @@ const LogoIndicatorDiv = styled.div`
   }
 `;
 
-class LogoIndicator extends React.PureComponent<Props> {
+class LogoIndicator extends React.PureComponent<Props, State> {
   vivus: Vivus;
+
+  constructor(props: LogoIndicator["props"], context: any) {
+    super(props, context);
+    this.state = {
+      progress: 0,
+      lightMode: false,
+    };
+  }
 
   render() {
     return <LogoIndicatorDiv id="logo-indicator-div" ref={this.gotEl} />;
   }
 
   gotEl = (el: HTMLDivElement) => {
+    const { lightMode } = this.props;
+
     if (el) {
       new Vivus(el.id, {
-        file: appWhiteContour,
+        file: lightMode ? appBlackContour : appWhiteContour,
         type: "delayed",
         start: "manual",
         animTimingFunction: Vivus.EASE_OUT,
@@ -62,6 +75,12 @@ class LogoIndicator extends React.PureComponent<Props> {
 
 interface Props {
   progress: number;
+  lightMode: boolean;
+}
+
+interface State {
+  progress: number;
+  lightMode: boolean;
 }
 
 export default hook((map) => ({
@@ -77,4 +96,5 @@ export default hook((map) => ({
       }
     }
   }),
+  lightMode: map((rs) => rs.preferences.lightMode),
 }))(LogoIndicator);

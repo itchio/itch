@@ -34,5 +34,5 @@ export const TitleSpacer = styled.div`
 `;
 
 export const Desc = styled.div`
-  color: ${(props) => props.theme.secondaryText};
+  color: ${(props) => props.theme.descText};
 `;

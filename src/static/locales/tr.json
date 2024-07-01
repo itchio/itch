@@ -160,6 +160,7 @@
     "preferences.install_locations": "Kurulum lokasyonları",
     "preferences.behavior": "Davranış",
     "preferences.behavior.close_to_tray": "Pencere kapatıldığında programı açık tut",
+    "preferences.behavior.lightMode": "Parlak modu etkinleştirin",
     "preferences.language": "Dil",
     "preferences.language.auto": "Sistem dili ({{language}})",
     "preferences.language.get_involved": "{{name}}'i dilinize çevirmeye yardımcı olun!",

@@ -179,6 +179,7 @@
     "outlinks.manage_collections": "Управление на колекциите",
     "preferences.install_location.is_default_short": "По подразбиране",
     "preferences.behavior": "Поведение",
+    "preferences.behavior.lightMode": "Активиране на ярък режим",
     "preferences.advanced.open_app_log": "Отваряне на журнала на приложението",
     "pick_install_upload.title": "Налични са няколко възможности за сваляне на „{{title}}“",
     "pick_install_upload.message": "Кой от файловете на „{{title}}“ искате да свалите?",

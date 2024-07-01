@@ -221,6 +221,7 @@
     "preferences.install_location.is_default_short": "Standard",
     "preferences.install_location.make_default_short": "Gjør til standard",
     "preferences.behavior": "Oppførsel",
+    "preferences.behavior.lightMode": "Aktivere lyssterk modus",
     "preferences.advanced": "Avansert",
     "preferences.advanced.open_app_log": "Åpne applikasjonslogg",
     "pick_update_upload.message": "Hvilken fil vil du oppdatere til for {{title}}?",

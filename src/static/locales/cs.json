@@ -246,6 +246,7 @@
     "preferences.install_location.make_default_short": "Nastavit výchozí",
     "preferences.behavior": "Chování",
     "preferences.behavior.close_to_tray": "Při zavření okna nechat aplikaci v oznamovací oblasti",
+    "preferences.behavior.lightMode": "Aktivace jasného režimu",
     "preferences.behavior.open_at_login": "Spustit itch při spuštění počítače",
     "preferences.behavior.open_as_hidden": "Spustit itch se skrytým oknem",
     "preferences.behavior.open_at_login.error": "Předvolby automatického spuštění nemohly být uloženy: {{cause}}",

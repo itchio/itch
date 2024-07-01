@@ -284,6 +284,7 @@
     "preferences.behavior": "Поведінка",
     "preferences.behavior.enable_tabs": "Ввімкнути вкладки",
     "preferences.behavior.close_to_tray": "Тримати застосунок в фоновому режимі при закритті вікна",
+    "preferences.behavior.lightMode": "Увімкнути яскравий режим",
     "preferences.behavior.open_at_login": "Запускати itch при ввімкненні комп'ютера",
     "preferences.behavior.open_as_hidden": "На старті ОС запускати itch у фоновому режимі",
     "preferences.behavior.open_at_login.error": "Налаштування автозапуску не можуть бути прийняті: {{cause}}",
