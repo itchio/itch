@@ -58,13 +58,15 @@ async function sign(cx, packageDir) {
   } else {
     console.log("Notarizing...");
     await measure("electron-notarize", async () => {
-      require("debug").enable("electron-notarize");
-      const { notarize } = require("electron-notarize");
+      require("debug").enable("@electron/notarize");
+      const { notarize } = require("@electron/notarize");
       await notarize({
+
         appBundleId: appBundleId(),
         appPath: appBundle,
         appleId: "leafot@gmail.com",
         appleIdPassword: process.env.APPLE_ID_PASSWORD || "",
+        teamId: process.env.APPLE_TEAM_ID || "",
       });
     });
 
