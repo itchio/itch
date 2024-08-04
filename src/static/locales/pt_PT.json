@@ -318,6 +318,7 @@
     "preferences.scan_install_locations.title": "A procurar...",
     "preferences.behavior": "Comportamento",
     "preferences.behavior.enable_tabs": "Ativar separadores",
+    "preferences.behavior.lightMode": "Ativar o modo brilhante",
     "preferences.behavior.close_to_tray": "Manter a aplicação na barra de tarefas ao fechar a janela",
     "preferences.behavior.open_at_login": "Executar o itch ao iniciar o computador",
     "preferences.behavior.open_as_hidden": "Iniciar o itch em modo oculto durante a inicialização do sistema",

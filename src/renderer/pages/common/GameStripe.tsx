@@ -81,6 +81,7 @@ interface GenericProps<Params, Item> {
 
   sequence: number;
   linkId?: string; // useful for integration tests
+  lightMode: boolean;
 }
 
 const stripeLimit = 12;
@@ -137,12 +138,18 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
         href,
         title,
         renderTitleExtras = renderNoop,
+        lightMode,
       } = this.props;
+
       return (
         <>
           <TitleBox>
             <Title>
-              <a id={linkId} href={href}>
+              <a
+                id={linkId}
+                href={href}
+                style={{ color: lightMode ? "#272929" : "#fffff0" }}
+              >
                 {T(title)}
               </a>
               {renderTitleExtras()}
@@ -216,6 +223,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
   let result = withTab(
     hookWithProps(Stripe)((map) => ({
       sequence: map((rs, props) => ambientTab(rs, props).sequence),
+      lightMode: map((rs) => rs.preferences.lightMode),
     }))(Stripe)
   );
   type ResultType = typeof result;

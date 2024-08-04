@@ -303,6 +303,7 @@
     "preferences.scan_install_locations.no_items_found": "لم يتم إيجاد عناصر إضافية في موقع التثبيت",
     "preferences.scan_install_locations.title": "جار الفحص....",
     "preferences.behavior": "الأداء",
+    "preferences.behavior.lightMode": "قم بتنشيط الوضع الساطع",
     "preferences.behavior.enable_tabs": "تفعيل النوافذ",
     "preferences.behavior.close_to_tray": "أبقي التطبيق في الخلفية حينما تغلق النافذة",
     "preferences.behavior.open_at_login": "تشغيل itch حين بدء تشغيل الحاسب",

@@ -15,6 +15,8 @@ import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
+import { rendererLogger } from "renderer/logger";
+const logger = rendererLogger.child(__filename);
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -53,18 +55,51 @@ class BrowserPage extends React.PureComponent<Props> {
   }
 
   render() {
-    const { sleepy, disableBrowser, visible, partition } = this.props;
+    const {
+      sleepy,
+      disableBrowser,
+      visible,
+      partition,
+      lightMode,
+    } = this.props;
+
     if (sleepy && !visible) {
       return null;
     }
 
+    if (disableBrowser) {
+      return (
+        <BrowserPageDiv>
+          <BrowserBar />
+          <BrowserMain>
+            <WebviewShell>
+              <DisabledBrowser />
+            </WebviewShell>
+          </BrowserMain>
+          <BrowserContext />
+        </BrowserPageDiv>
+      );
+    }
+
+    //Changes based on the light mode checkbox - itch/kitch need to be removed from user agent
+    //in order to not receive dark themed web content.  webview must also be wrapped in its
+    //own div because otherwise the checkbox will not trigger a rerender.
     return (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
           <WebviewShell>
-            {disableBrowser ? (
-              <DisabledBrowser />
+            {lightMode ? (
+              <div>
+                <webview
+                  src="about:blank"
+                  ref={this.gotWebview}
+                  partition={partition}
+                  useragent="Mozilla AppleWebKit (KHTML, like Gecko) Chrome Electron Safari (KHTML, like Gecko)"
+                  enableremotemodule="false"
+                  webpreferences="worldSafeExecuteJavaScript"
+                />
+              </div>
             ) : (
               <webview
                 // @ts-ignore (the provided React types want bool, but it really takes a boolean string)
@@ -124,6 +159,7 @@ interface Props extends MeatProps {
   proxy: string;
   proxySource: ProxySource;
   disableBrowser: boolean;
+  lightMode: boolean;
 
   partition: string;
 }
@@ -137,6 +173,7 @@ export default withTab(
     proxy: map((rs) => rs.system.proxy),
     proxySource: map((rs) => rs.system.proxySource),
     disableBrowser: map((rs) => rs.preferences.disableBrowser),
+    lightMode: map((rs) => rs.preferences.lightMode),
 
     partition: map((rs, props) =>
       partitionForUser(String(rs.profile.profile.id))

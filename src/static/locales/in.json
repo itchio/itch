@@ -216,6 +216,7 @@
     "preferences.install_location.make_default_short": "Jadikan default",
     "preferences.behavior": "Perilaku",
     "preferences.behavior.close_to_tray": "Jaga aplikasi pada tray saat menutup jendela",
+    "preferences.behavior.lightMode": "Mengaktifkan mode terang",
     "preferences.behavior.open_at_login": "Jalankan itch saat komputer saya menyala",
     "preferences.behavior.open_as_hidden": "Buka itch tersembunyi saat startup",
     "preferences.behavior.open_at_login.error": "Pengaturan mulai-otomatis tidak dapat diterapkan: {{cause}}",

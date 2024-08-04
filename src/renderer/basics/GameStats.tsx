@@ -24,7 +24,7 @@ const GameStatsDiv = styled.div`
   }
 
   label {
-    color: #fff;
+    color: ${(props) => props.theme.baseText};
 
     .nice-ago {
       color: ${(props) => props.theme.secondaryText}; // sigh

@@ -286,6 +286,7 @@
     "preferences.install_location.is_default_short": "Standard",
     "preferences.install_location.make_default_short": "Als Standard einstellen",
     "preferences.behavior": "Verhalten",
+    "preferences.behavior.lightMode": "Aktivieren des Helligkeitsmodus",
     "preferences.behavior.close_to_tray": "Anwendung weiter im Infobereich anzeigen, wenn das Fenster geschlossen wird",
     "preferences.advanced": "Erweitert",
     "preferences.proxy_server_address": "HTTPS Proxy",
