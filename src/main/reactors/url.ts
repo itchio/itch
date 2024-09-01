@@ -103,6 +103,17 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
       await queueInstall(store, game, uploadId);
     });
     return true;
+  } else if (parsedURL.hostname === "launch") {
+    doAsync(async () => {
+      const queryParams = querystring.parse(parsedURL.query);
+      const caveId = queryParams["cave_id"] as string;
+      const gameId = parseInt(queryParams["game_id"] as string, 10);
+      logger.info(`Should launch game because of URL: ${url}`);
+      //TODO: game wants more but I think the only other property queueGame cares about is title
+      //      and that's only for debug messages
+      store.dispatch(actions.queueGame({ game: { id: gameId }, caveId }));
+    });
+    return true;
   }
 
   store.dispatch(actions.navigate({ wind: "root", url }));
