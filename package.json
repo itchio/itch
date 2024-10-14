@@ -2,7 +2,7 @@
   "name": "kitch",
   "productName": "kitch",
   "desktopName": "kitch",
-  "version": "26.1.9",
+  "version": "26.2.1-canary",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",
@@ -111,7 +111,7 @@
     "css-loader": "^5.2.4",
     "electron": "^22.3.27",
     "@electron/notarize": "^2.3.2",
-    "electron-packager": "^15.2.0",
+    "electron-packager": "^17.1.2",
     "file-loader": "^6.2.0",
     "happypack": "^5.0.1",
     "html-webpack-plugin": "^5.5.3",
