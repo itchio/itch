@@ -301,6 +301,7 @@
   "preferences.behavior": "Behavior",
   "preferences.behavior.enable_tabs": "Enable tabs",
   "preferences.behavior.close_to_tray": "Keep app in tray when closing window",
+  "preferences.behavior.lightMode": "Turn on light mode",
   "preferences.behavior.open_at_login": "Run itch when my computer starts",
   "preferences.behavior.open_as_hidden": "Open itch as hidden on startup",
   "preferences.behavior.open_at_login.error":

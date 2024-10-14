@@ -231,6 +231,7 @@
     "preferences.advanced.open_app_log": "Deschide jurnalul",
     "grid.item.review": "Scrie o recenzie",
     "preferences.behavior.close_to_tray": "Pune aplicaţia în fundal când închizi fereastra",
+    "preferences.behavior.lightMode": "Activați modul luminos",
     "pick_install_upload.title": "Sunt disponibile mai multe fişiere pentru {{title}}",
     "pick_install_upload.message": "Pe care fişier vrei să-l descarci pentru {{title}}?",
     "pick_install_upload.detail": "O să te întrebăm din nou când devin disponibile fişiere noi.",

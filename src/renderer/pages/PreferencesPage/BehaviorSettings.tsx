@@ -2,12 +2,15 @@ import React from "react";
 
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import OpenAtLoginErrorMessage from "renderer/pages/PreferencesPage/OpenAtLoginErrorMessage";
+import { hook } from "renderer/hocs/hook";
 
 import { T } from "renderer/t";
 import urls from "common/constants/urls";
 
 class BehaviorSettings extends React.PureComponent<Props> {
   render() {
+    const { lightMode } = this.props;
+
     return (
       <>
         <h2>{T(["preferences.security"])}</h2>
@@ -18,13 +21,27 @@ class BehaviorSettings extends React.PureComponent<Props> {
           />
         </div>
 
-        <p className="explanation">
-          {T(["preferences.security.sandbox.description"])}{" "}
-          <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
-        </p>
+        {lightMode ? (
+          <p className="explanation" style={{ color: "#2d2d2d" }}>
+            {T(["preferences.security.sandbox.description"])}{" "}
+            <a href={urls.sandboxDocs} style={{ color: "#707070" }}>
+              {T(["docs.learn_more"])}
+            </a>
+          </p>
+        ) : (
+          <p className="explanation">
+            {T(["preferences.security.sandbox.description"])}{" "}
+            <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
+          </p>
+        )}
 
         <h2>{T(["preferences.behavior"])}</h2>
         <div className="behavior-form">
+          <Checkbox
+            name="lightMode"
+            label={T(["preferences.behavior.lightMode"])}
+          />
+
           <Checkbox
             name="enableTabs"
             label={T(["preferences.behavior.enable_tabs"])}
@@ -70,6 +87,10 @@ class BehaviorSettings extends React.PureComponent<Props> {
   }
 }
 
-export default BehaviorSettings;
+interface Props {
+  lightMode: boolean;
+}
 
-interface Props {}
+export default hook((map) => ({
+  lightMode: map((rs) => rs.preferences.lightMode),
+}))(BehaviorSettings);

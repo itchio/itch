@@ -104,6 +104,7 @@ class ManageCave extends React.PureComponent<Props> {
   }
 
   renderCave(): JSX.Element {
+    const { dispatch, lightMode } = this.props;
     const { cave } = this.props.modal.widgetParams;
     const { game } = cave;
 
@@ -303,9 +304,13 @@ class ManageCave extends React.PureComponent<Props> {
 
 interface Props extends ModalWidgetProps<ManageCaveParams, ManageCaveResponse> {
   dispatch: Dispatch;
+
+  lightMode: boolean;
 }
 
-export default hook()(ManageCave);
+export default hook((map) => ({
+  lightMode: map((rs) => rs.preferences.lightMode),
+}))(ManageCave);
 
 function formatUpload(upload: Upload): JSX.Element {
   return (

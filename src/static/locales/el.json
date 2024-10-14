@@ -315,6 +315,7 @@
     "preferences.notifications.ready_notification": "Ειδοποίησε με όταν μια λήψη έχει εγκατασταθεί ή ενημερωθεί",
     "preferences.notifications": "Ειδοποιήσεις",
     "preferences.behavior.prevent_display_sleep": "Αποτροπή σβήσιμο οθόνης κατά την αναπαραγωγή παιχνιδιών",
+    "preferences.behavior.lightMode": "Ενεργοποίηση φωτεινής λειτουργίας",
     "preferences.behavior.open_as_hidden": "Άνοιγμα itch ως κρυμμένο στην εκκίνηση",
     "preferences.behavior.open_at_login": "Τρέξε το itch όταν ανοίγει ο υπολογιστής μου",
     "preferences.behavior": "Συμπεριφορά",

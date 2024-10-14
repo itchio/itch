@@ -22,10 +22,27 @@ const LogoDiv = styled.div`
 `;
 
 class Logo extends React.PureComponent<Props> {
+  constructor(props: Logo["props"], context: any) {
+    super(props, context);
+    this.state = {
+      progress: 0,
+      lightMode: false,
+    };
+  }
+
   render() {
     const { appVersion } = this.props;
+    let lm = global.ReduxStore.getState().preferences.lightMode;
 
-    return (
+    return lm ? (
+      <LogoDiv
+        title={appVersion}
+        className={classNames("logo-div")}
+        onClick={this.onClick}
+      >
+        <img src={require("static/images/logos/app-black.svg").default} />
+      </LogoDiv>
+    ) : (
       <LogoDiv
         title={appVersion}
         className={classNames("logo-div")}
@@ -65,11 +82,17 @@ class Logo extends React.PureComponent<Props> {
   };
 }
 
+interface State {
+  lightMode: boolean;
+}
+
 interface Props {
   dispatch: Dispatch;
   appVersion: string;
+  lightMode: boolean;
 }
 
 export default hook((map) => ({
   appVersion: map((rs) => rs.system.appVersion),
+  lightMode: map((rs) => rs.preferences.lightMode),
 }))(Logo);

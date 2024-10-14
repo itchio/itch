@@ -34,10 +34,15 @@ import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { filter, isEmpty, map } from "underscore";
 import { isSecretClick } from "common/helpers/secret-click";
+import { lightTheme } from "renderer/lightTheme";
 
 const HoverCover = Hoverable(Cover);
 
 type Flavor = "normal" | "big";
+
+let lColor = global.ReduxStore.getState().preferences.lightMode
+  ? lightTheme.colors.ivory
+  : styles.colors.ivory;
 
 const ModalPortalDiv = styled.div`
   position: fixed;
@@ -149,10 +154,10 @@ const ModalsDiv = styled.div`
       }
 
       a {
-        color: darken($ivory, 5%);
+        color: darken(${lColor}, 5%);
 
         &:hover {
-          color: $ivory;
+          color: ${lColor};
           cursor: pointer;
         }
       }
@@ -271,6 +276,7 @@ const ButtonsDiv = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 20px;
+  background-color: ${(props) => props.theme.breadBackground};
 
   & > * {
     margin-left: 8px;

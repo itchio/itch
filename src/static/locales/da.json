@@ -395,6 +395,7 @@
     "preferences.scan_install_locations.no_items_found": "Ingen yderligere genstande fundet i installationslokationer",
     "preferences.scan_install_locations.title": "Scanner...",
     "preferences.behavior.enable_tabs": "Aktiver faneblade",
+    "preferences.behavior.lightMode": "Aktivér lys tilstand",
     "preferences.behavior.close_to_tray": "Behold appen i proceslinjen når vinduet lukkes",
     "preferences.behavior.open_at_login": "Start itch når min computer tænder",
     "preferences.behavior.open_as_hidden": "Åbn itch skjult ved opstart",

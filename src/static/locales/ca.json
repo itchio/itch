@@ -307,6 +307,7 @@
     "preferences.scan_install_locations.no_items_found": "No s’han trobat elements addicionals a les ubicacions d’instal·lació",
     "preferences.scan_install_locations.title": "S’està cercant...",
     "preferences.behavior": "Comportament",
+    "preferences.behavior.lightMode": "Activa el mode brillant",
     "preferences.behavior.enable_tabs": "Activa les pestanyes",
     "preferences.behavior.close_to_tray": "Mantingues l’aplicació a la safata en tancar la finestra",
     "preferences.behavior.open_at_login": "Executa l’itch en engegar ’ordinador",

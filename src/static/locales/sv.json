@@ -195,6 +195,7 @@
     "menu.help.about": "Om",
     "menu.view.view": "Visa",
     "preferences.behavior.close_to_tray": "Behåll programmet i aktivitetsfältet när fönstret stängs",
+    "preferences.behavior.lightMode": "Aktivera ljusläge",
     "preferences.advanced": "Avancerat",
     "preferences.advanced.open_app_log": "Öppna logg",
     "pick_install_upload.title": "Flera nedladdningar finns tillgängliga för {{title}}",

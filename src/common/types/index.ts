@@ -450,6 +450,9 @@ export interface PreferencesState {
   /** when closing window, keep running in tray */
   closeToTray: boolean;
 
+  /** toggle light mode on or off */
+  lightMode: boolean;
+
   /** notify when a download has been installed or updated */
   readyNotification: boolean;
 
