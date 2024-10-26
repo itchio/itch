@@ -4,6 +4,7 @@
 config.json
 npm-debug.log
 /.cache
+/.vscode
 
 # build artifacts
 /*.dmg
