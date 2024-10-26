@@ -397,7 +397,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
     });
 
     doAsync(async () => {
-      const daleURL = "https://dale.itch.zone";
+      const daleURL = "https://dale.itch.ovh";
       const { system, includeSystemInfo, message } = this.state;
       const { log } = this.props.modal.widgetParams;
       try {
