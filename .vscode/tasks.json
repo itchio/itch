@@ -1,30 +1,69 @@
 {
-  "version": "0.1.0",
+  "version": "2.0.0",
   "tasks": [
     {
-      "taskName": "Watch all source files",
+      "label": "Watch all source files",
+      "type": "shell",
       "command": "node_modules/.bin/tsc",
-      "windows": {
-        "command": "node_modules\\.bin\\tsc"
+      "args": [
+        "-w",
+        "-p",
+        ".",
+        "--noEmit",
+        "--skipLibCheck"
+      ],
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch",
+      "group": {
+        "_id": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Watch all tests",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "test",
+        "--",
+        "-w"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "itch-test",
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}"
+        ],
+        "pattern": {
+          "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
       },
-      "isShellCommand": true,
-      "args": ["-w", "-p", ".", "--noEmit", "--skipLibCheck"],
-      "showOutput": "silent",
-      "isBackground": true,
-      "isBuildCommand": true,
-      "problemMatcher": "$tsc-watch"
+      "group": {
+        "_id": "test",
+        "isDefault": false
+      }
     },
     {
-      "taskName": "Watch all tests",
+      "label": "Run single test",
+      "type": "shell",
       "command": "npm",
-      "isShellCommand": true,
-      "args": ["test", "--", "-w"],
-      "showOutput": "silent",
-      "isBackground": true,
-      "isTestCommand": true,
+      "args": [
+        "test",
+        "--",
+        "-t",
+        "${file}"
+      ],
       "problemMatcher": {
         "owner": "itch-test",
-        "fileLocation": ["relative", "${workspaceRoot}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}"
+        ],
         "pattern": {
           "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
           "file": 1,
@@ -32,36 +71,26 @@
           "column": 3,
           "message": 4
         }
+      },
+      "group": {
+        "_id": "test",
+        "isDefault": false
       }
     },
     {
-      "taskName": "Run single test",
+      "label": "react-lint",
+      "type": "shell",
       "command": "npm",
-      "isShellCommand": true,
-      "args": ["test", "--", "-t", "${file}"],
-      "showOutput": "silent",
-      "isTestCommand": true,
-      "problemMatcher": {
-        "owner": "itch-test",
-        "fileLocation": ["relative", "${workspaceRoot}"],
-        "pattern": {
-          "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "message": 4
-        }
-      }
-    },
-    {
-      "taskName": "react-lint",
-      "command": "npm",
-      "isShellCommand": true,
-      "args": ["run", "react-lint"],
-      "showOutput": "never",
+      "args": [
+        "run",
+        "react-lint"
+      ],
       "problemMatcher": {
         "owner": "react-lint",
-        "fileLocation": ["relative", "${workspaceRoot}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}"
+        ],
         "pattern": {
           "regexp": "\\s([^(]+)\\s\\(([0-9]+),([0-9]+)\\): (.+)$",
           "file": 1,

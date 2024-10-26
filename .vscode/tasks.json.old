@@ -1,0 +1,76 @@
+{
+  "version": "0.1.0",
+  "tasks": [
+    {
+      "taskName": "Watch all source files",
+      "command": "node_modules/.bin/tsc",
+      "windows": {
+        "command": "node_modules\\.bin\\tsc"
+      },
+      "isShellCommand": true,
+      "args": ["-w", "-p", ".", "--noEmit", "--skipLibCheck"],
+      "showOutput": "silent",
+      "isBackground": true,
+      "isBuildCommand": true,
+      "problemMatcher": "$tsc-watch"
+    },
+    {
+      "taskName": "Watch all tests",
+      "command": "npm",
+      "isShellCommand": true,
+      "args": ["test", "--", "-w"],
+      "showOutput": "silent",
+      "isBackground": true,
+      "isTestCommand": true,
+      "problemMatcher": {
+        "owner": "itch-test",
+        "fileLocation": ["relative", "${workspaceRoot}"],
+        "pattern": {
+          "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "taskName": "Run single test",
+      "command": "npm",
+      "isShellCommand": true,
+      "args": ["test", "--", "-t", "${file}"],
+      "showOutput": "silent",
+      "isTestCommand": true,
+      "problemMatcher": {
+        "owner": "itch-test",
+        "fileLocation": ["relative", "${workspaceRoot}"],
+        "pattern": {
+          "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "taskName": "react-lint",
+      "command": "npm",
+      "isShellCommand": true,
+      "args": ["run", "react-lint"],
+      "showOutput": "never",
+      "problemMatcher": {
+        "owner": "react-lint",
+        "fileLocation": ["relative", "${workspaceRoot}"],
+        "pattern": {
+          "regexp": "\\s([^(]+)\\s\\(([0-9]+),([0-9]+)\\): (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        },
+        "severity": "warning"
+      }
+    }
+  ]
+}
