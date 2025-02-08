@@ -128,7 +128,7 @@ export async function performHTMLLaunch(
 
   win.webContents.setWindowOpenHandler(({ url }) => {
     let u = new URL(url);
-    if (u.protocol == "http" || u.protocol == "https") {
+    if (u.protocol == "http:" || u.protocol == "https:") {
       shell.openExternal(url);
     } else {
       logger.warn(`Prevented opening external URL: ${url}`);
