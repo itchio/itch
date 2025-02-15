@@ -18,14 +18,12 @@ import {
 const WidgetDiv = styled.div`
   position: relative;
   height: 100%;
-  padding: 20px;
+  margin: 20px;
+  padding: 10px;
+  background-color: black;
 
   webview {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    bottom: 0px;
-    right: 0px;
+    height: 700px;
   }
 
   &.loading {

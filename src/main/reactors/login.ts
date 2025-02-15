@@ -66,7 +66,7 @@ export default function (watcher: Watcher) {
                   widgetParams: {
                     url: recaptchaUrl || urls.itchio + "/captcha",
                   },
-                  fullscreen: true,
+                  fullscreen: false,
                 })
               );
 
