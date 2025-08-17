@@ -1,8 +1,8 @@
-import * as CRC32 from "crc-32";
+import { crc32 } from "crc";
 
 function generatePreliminaryId(exe: string, appname: string) {
   const key = exe + appname;
-  const top = BigInt(CRC32.str(key)) | BigInt(0x80000000);
+  const top = BigInt(crc32(key)) | BigInt(0x80000000);
   return (BigInt(top) << BigInt(32)) | BigInt(0x02000000);
 }
 
