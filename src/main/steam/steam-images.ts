@@ -25,6 +25,32 @@ export async function downloadImage(
   });
 }
 
+export async function removeImages(
+  configDir: string,
+  shortAppId: string
+): Promise<void> {
+  const gridDir = join(configDir, "grid");
+  const imageId = shortAppId;
+
+  const imagesToRemove = [
+    join(gridDir, `${imageId}p.jpg`),
+    join(gridDir, `${imageId}.jpg`),
+    join(gridDir, `${imageId}_hero.jpg`),
+    join(gridDir, `${imageId}_icon.png`),
+    join(gridDir, `${imageId}_icon.jpg`),
+  ];
+
+  for (const imagePath of imagesToRemove) {
+    if (require("fs").existsSync(imagePath)) {
+      try {
+        require("fs").unlinkSync(imagePath);
+      } catch (error) {
+        // Ignore errors when removing images
+      }
+    }
+  }
+}
+
 export async function setupSteamImages(
   configDir: string,
   appId: string,
@@ -37,7 +63,7 @@ export async function setupSteamImages(
     require("fs").mkdirSync(gridDir, { recursive: true });
   }
 
-  // Use otherGridAppID (shortAppId) for image files like the working implementation
+  // Use shortAppId directly for image filenames to match shortcut ID
   const imageId = shortAppId;
 
   // Get file extension from URL

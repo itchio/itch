@@ -14,6 +14,42 @@ export interface SteamGameInfo {
   art_logo?: string;
 }
 
+export async function removeGameFromSteam(
+  store: Store,
+  game: Game
+): Promise<boolean> {
+  const prefs = store.getState().preferences;
+
+  if (!prefs.addGamesToSteam) {
+    return false;
+  }
+
+  logger.info(`Attempting to remove ${game.title} from Steam`);
+
+  const gameInfo: SteamGameInfo = {
+    title: game.title,
+    app_name: game.id.toString(),
+    runner: "itch",
+    art_cover: game.coverUrl,
+    art_square: game.stillCoverUrl,
+  };
+
+  try {
+    const { removeNonSteamGame } = await import("./steam-shortcuts");
+    const success = await removeNonSteamGame({ gameInfo });
+    if (success) {
+      logger.info(`Successfully removed ${game.title} from Steam`);
+    } else {
+      logger.warn(`Failed to remove ${game.title} from Steam`);
+    }
+    return success;
+  } catch (error) {
+    logger.error(`Error removing ${game.title} from Steam:`);
+    logger.error(error);
+    return false;
+  }
+}
+
 export async function addGameToSteam(
   store: Store,
   game: Game

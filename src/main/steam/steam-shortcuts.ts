@@ -21,12 +21,8 @@ import {
   generateShortAppId,
 } from "./steam-helper";
 import { getSteamPath } from "./steam-path";
-import { setupSteamImages } from "./steam-images";
-
-interface ShortcutsResult {
-  success: boolean;
-  errors: string[];
-}
+import { setupSteamImages, removeImages } from "./steam-images";
+import { ShortcutEntry, ShortcutObject } from "steam-shortcut-editor";
 
 function checkSteamUserDataDir(
   steamUserdataDir: string
@@ -74,7 +70,7 @@ function writeShortcutFile(file: string, object: any): string | undefined {
   const buffer = steamShortcutEditor.writeBuffer(object);
   try {
     writeFileSync(file, buffer);
-    return;
+    return undefined;
   } catch (error) {
     return `${error}`;
   }
@@ -89,6 +85,65 @@ function getAppName(object: ShortcutEntry): string {
 function checkIfAlreadyAdded(object: Partial<ShortcutObject>, title: string) {
   const shortcuts = object.shortcuts ?? [];
   return shortcuts.findIndex((entry) => getAppName(entry) === title);
+}
+
+export async function removeNonSteamGame(props: {
+  gameInfo: SteamGameInfo;
+}): Promise<boolean> {
+  if (!steamShortcutEditor) {
+    throw new Error("steam-shortcut-editor not available");
+  }
+
+  const steamPath = await getSteamPath();
+  if (!steamPath) {
+    throw new Error("Steam installation not found");
+  }
+
+  const users = readdirSync(join(steamPath, "userdata"));
+
+  for (const user of users) {
+    const configDir = join(steamPath, "userdata", user, "config");
+    const shortcutsFile = join(configDir, "shortcuts.vdf");
+
+    if (!existsSync(shortcutsFile)) {
+      continue;
+    }
+
+    try {
+      const content = readShortcutFile(shortcutsFile);
+      if (!content.shortcuts) {
+        continue;
+      }
+
+      // Find and remove the game
+      const originalLength = content.shortcuts.length;
+      content.shortcuts = content.shortcuts.filter(
+        (shortcut: any) => shortcut.AppName !== props.gameInfo.title
+      );
+
+      if (content.shortcuts.length < originalLength) {
+        const error = writeShortcutFile(shortcutsFile, content);
+        if (error) {
+          throw new Error(error);
+        }
+
+        // Remove images
+        const appId = generateAppId(
+          `"${app.getPath("exe")}"`,
+          props.gameInfo.title
+        );
+        const shortAppId = generateShortAppId(
+          `"${app.getPath("exe")}"`,
+          props.gameInfo.title
+        );
+        await removeImages(configDir, shortAppId);
+      }
+    } catch (error) {
+      throw new Error(`Error processing user ${user}: ${error}`);
+    }
+  }
+
+  return true;
 }
 
 export async function addNonSteamGame(props: {
