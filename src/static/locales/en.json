@@ -310,6 +310,8 @@
   "preferences.behavior.manual_game_updates": "Ask before updating anything",
   "preferences.behavior.prevent_display_sleep":
     "Prevent display sleep while playing",
+  "preferences.behavior.add_games_to_steam":
+    "Add games to Steam automatically",
   "preferences.notifications": "Notifications",
   "preferences.notifications.ready_notification":
     "Notify me when a download has been installed or updated",

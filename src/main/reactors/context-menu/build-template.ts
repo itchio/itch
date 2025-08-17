@@ -272,5 +272,5 @@ export function userMenu(store: Store): MenuTemplate {
 function escapeForContextMenu(label: string) {
   // In a context menu, '&[^&]' will be interpreted as a shortcut
   // definition. Escaping requires a second ampersand
-  return label.replaceAll("&", "&&");
+  return label.replace("&", "&&");
 }

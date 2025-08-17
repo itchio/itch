@@ -8,6 +8,7 @@ import { performUninstall } from "main/reactors/downloads/perform-uninstall";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";
 import { mcall } from "main/butlerd/mcall";
+import { removeGameFromSteam } from "main/steam";
 
 const logger = mainLogger.child(__filename);
 
@@ -41,6 +42,14 @@ export default function (watcher: Watcher) {
           });
         });
         logger.info(`Uninstall successful`);
+
+        // Remove game from Steam after successful uninstall
+        try {
+          await removeGameFromSteam(store, cave.game);
+          logger.info(`Removed ${cave.game.title} from Steam`);
+        } catch (error) {
+          logger.warn(`Failed to remove game from Steam: ${error}`);
+        }
 
         store.dispatch(actions.uninstallEnded({}));
       },

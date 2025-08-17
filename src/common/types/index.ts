@@ -494,6 +494,9 @@ export interface PreferencesState {
 
   /** whether or not we've already imported appdata as an install location */
   importedOldInstallLocations: boolean;
+
+  /** whether games should be added to steam automatically */
+  addGamesToSteam: boolean;
 }
 
 export interface Task {

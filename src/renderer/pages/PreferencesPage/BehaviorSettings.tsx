@@ -56,6 +56,11 @@ class BehaviorSettings extends React.PureComponent<Props> {
             name="preventDisplaySleep"
             label={T(["preferences.behavior.prevent_display_sleep"])}
           />
+
+          <Checkbox
+            name="addGamesToSteam"
+            label={T(["preferences.behavior.add_games_to_steam"])}
+          />
         </div>
 
         <h2>{T(["preferences.notifications"])}</h2>

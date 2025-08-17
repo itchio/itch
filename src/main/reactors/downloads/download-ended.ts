@@ -2,6 +2,7 @@ import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
 import { urlForGame } from "common/util/navigation";
+import { addGameToSteam } from "main/steam";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
@@ -56,6 +57,18 @@ export default function (watcher: Watcher) {
             }),
           })
         );
+      }
+    }
+
+    // Add game to Steam if the option is enabled and this is an install
+    if (download.reason === "install") {
+      console.log("Download ended for install, checking Steam integration...");
+      try {
+        const result = await addGameToSteam(store, download.game);
+        console.log("Steam integration result:", result);
+      } catch (error) {
+        console.error("Failed to add game to Steam:", error);
+        console.error("Error stack:", error.stack);
       }
     }
   });
