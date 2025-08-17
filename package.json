@@ -66,6 +66,7 @@
     "shell-quote": "^1.7.2",
     "source-map-support": "^0.5.19",
     "split2": "^3.2.2",
+    "steam-shortcut-editor": "^3.1.3",
     "styled-components": "^5.2.1",
     "systeminformation": "^5.21.7",
     "term-color": "^1.0.1",
@@ -196,7 +197,8 @@
       "split2",
       "log-rotate",
       "butlerd",
-      "querystring"
+      "querystring",
+      "steam-shortcut-editor"
     ],
     "renderer": {
       "webpackConfig": "custom.webpack.additions.js"
