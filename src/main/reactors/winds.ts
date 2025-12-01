@@ -695,7 +695,12 @@ function hookNativeWindow(
         );
 
         const i18n = store.getState().i18n;
-        // notification removed
+        store.dispatch(
+          actions.notify({
+            title: t(i18n, ["notification.see_you_soon.title"]),
+            body: t(i18n, ["notification.see_you_soon.message"]),
+          })
+        );
       }
     } else {
       store.dispatch(actions.windClosed({ wind }));

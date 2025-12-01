@@ -30,6 +30,7 @@ import queueLaunch from "main/reactors/queue-launch";
 import updater from "main/reactors/updater";
 import gameUpdates from "main/reactors/game-updates";
 import webContents from "main/reactors/web-contents";
+import notifications from "main/reactors/notifications";
 import clipboard from "main/reactors/clipboard";
 import silentLocationScan from "main/reactors/silent-location-scan";
 
@@ -70,6 +71,7 @@ export default function getWatcher(logger: Logger) {
   updater(watcher);
   gameUpdates(watcher);
   webContents(watcher);
+  notifications(watcher);
   clipboard(watcher);
   silentLocationScan(watcher);
 

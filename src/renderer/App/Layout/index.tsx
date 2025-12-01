@@ -10,10 +10,17 @@ import { hook } from "renderer/hocs/hook";
 import { ProfileProvider } from "renderer/hocs/withProfile";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
+import Loadable from "react-loadable";
 import { injectIntl, IntlShape } from "react-intl";
 
-import GateScene from "renderer/scenes/GateScene";
-import HubScene from "renderer/scenes/HubScene";
+const GateScene = Loadable({
+  loader: () => import("renderer/scenes/GateScene"),
+  loading: () => null,
+});
+const HubScene = Loadable({
+  loader: () => import("renderer/scenes/HubScene"),
+  loading: () => null,
+});
 
 const ReactHint = ReactHintFactory(React);
 

@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === "production") {
     throw new Error(`Sorry, this app does not support window.eval().`);
   };
 } else {
+  require("react-hot-loader/patch");
   require("bluebird").config({
     longStackTraces: true,
   });
@@ -22,6 +23,16 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import store from "renderer/store";
+
+let AppContainer: React.ComponentClass<{}>;
+if (env.development) {
+  try {
+    const rhl = require("react-hot-loader");
+    AppContainer = rhl.AppContainer;
+  } catch (e) {
+    console.error(`Could not enable react-hot-loader:`, e);
+  }
+}
 
 import App from "renderer/App";
 import { actions } from "common/actions";
@@ -35,7 +46,15 @@ function render(RealApp: typeof App) {
   appNode = document.querySelector("#app");
 
   let rootComponent: JSX.Element;
-  rootComponent = <RealApp />;
+  if (AppContainer) {
+    rootComponent = (
+      <AppContainer>
+        <RealApp />
+      </AppContainer>
+    );
+  } else {
+    rootComponent = <RealApp />;
+  }
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
 
@@ -67,6 +86,13 @@ async function start() {
   store.watcher.on(actions.boot, () => {
     clearInterval(intervalId);
   });
+
+  if (module.hot) {
+    module.hot.accept("renderer/App", () => {
+      const NextApp = require("renderer/App").default;
+      render(NextApp);
+    });
+  }
 }
 
 start();
