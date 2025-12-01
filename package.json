@@ -97,6 +97,7 @@
     "@types/vivus": "^0.4.3",
     "@types/which": "^1.3.2",
     "@types/yauzl": "^2.9.1",
+    "cross-env": "^10.1.0",
     "electron": "^22.3.27",
     "electron-packager": "^17.1.2",
     "esbuild": "^0.27.0",
@@ -109,7 +110,7 @@
   },
   "scripts": {
     "start": "node develop.mjs",
-    "compile": "node build.mjs",
+    "compile": "cross-env NODE_ENV=production node build.mjs",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",

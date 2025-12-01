@@ -1,9 +1,14 @@
 import * as esbuild from "esbuild";
 import fs from "fs";
 
-process.env.NODE_ENV ||= "production";
-
 import { mainConfig, rendererConfig } from "./esbuild.config.mjs";
+
+// Disable metafile for tagged release builds
+const isReleaseBuild = !!process.env.CI_COMMIT_TAG;
+if (isReleaseBuild) {
+  mainConfig.metafile = false;
+  rendererConfig.metafile = false;
+}
 
 // Clean dist directories
 fs.rmSync("dist/main", { recursive: true, force: true });
@@ -11,12 +16,18 @@ fs.rmSync("dist/renderer", { recursive: true, force: true });
 
 // Build main process
 console.log("Building main process...");
-await esbuild.build(mainConfig);
+const mainResult = await esbuild.build(mainConfig);
+if (mainResult.metafile) {
+  fs.writeFileSync("dist/main/metafile.json", JSON.stringify(mainResult.metafile));
+}
 console.log("Main built!");
 
 // Build renderer process
 console.log("Building renderer process...");
-await esbuild.build(rendererConfig);
+const rendererResult = await esbuild.build(rendererConfig);
+if (rendererResult.metafile) {
+  fs.writeFileSync("dist/renderer/metafile.json", JSON.stringify(rendererResult.metafile));
+}
 console.log("Renderer built!");
 
 // Copy and process HTML
