@@ -129,7 +129,7 @@ export class Space {
   }
 
   urlWithParams(newParams: { [key: string]: any }): string {
-    const params = new URLSearchParams(this._query);
+    const params = new URLSearchParams(this._query as Record<string, string>);
     for (const k of Object.keys(newParams)) {
       const v = newParams[k];
       if (v) {
