@@ -1,6 +1,10 @@
 import classNames from "classnames";
 import { Profile } from "common/butlerd/messages";
-import { DATE_FORMAT, formatDate } from "common/format/datetime";
+import {
+  DATE_FORMAT,
+  formatDate,
+  formatExactDuration,
+} from "common/format/datetime";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import ReactHintFactory from "react-hint";
@@ -115,6 +119,8 @@ class Layout extends React.PureComponent<Props> {
           rh = TString(intl, obj);
         } else if (obj.hasOwnProperty("date")) {
           rh = formatDate(new Date(obj.date), intl.locale, DATE_FORMAT);
+        } else if (obj.hasOwnProperty("duration")) {
+          rh = formatExactDuration(obj.duration);
         } else {
           rh = obj;
         }

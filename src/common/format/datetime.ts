@@ -116,3 +116,25 @@ export const DAY_MONTH_FORMAT: DateFormat = {
 export function elapsed(t1: number, t2: number) {
   return (t2 - t1).toFixed(2) + "ms";
 }
+
+/**
+ * Format a duration in seconds as an exact time string (e.g., "1h 23m 45s")
+ */
+export function formatExactDuration(secs: number): string {
+  const hours = Math.floor(secs / 3600);
+  const minutes = Math.floor((secs % 3600) / 60);
+  const seconds = Math.floor(secs % 60);
+
+  const parts: string[] = [];
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (seconds > 0 || parts.length === 0) {
+    parts.push(`${seconds}s`);
+  }
+
+  return parts.join(" ");
+}
