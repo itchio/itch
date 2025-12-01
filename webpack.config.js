@@ -1,6 +1,5 @@
 const webpack = require('webpack')
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -106,24 +105,17 @@ function getCommonConfig(type, env) {
       rules: [
         {
           test: /\.tsx?$/,
-          exclude: "/node_modules/",
-          use: [{ loader: "happypack/loader?id=ts" }],
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: "ts-loader",
+              options: { transpileOnly: true },
+            },
+          ],
         },
       ],
     },
-    plugins: [
-      new HappyPack({
-        id: "ts",
-        threads: 4,
-        loaders: [
-          {
-            path: "ts-loader",
-            query: { happyPackMode: true },
-          },
-        ],
-        verbose: false,
-      }),
-    ],
+    plugins: [],
     optimization: {
       minimize: false,
       minimizer: [],

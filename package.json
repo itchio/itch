@@ -113,7 +113,6 @@
     "@electron/notarize": "^2.3.2",
     "electron-packager": "^17.1.2",
     "file-loader": "^6.2.0",
-    "happypack": "^5.0.1",
     "html-webpack-plugin": "^5.5.3",
     "husky": "^7.0.4",
     "lint-staged": "^10.5.3",
