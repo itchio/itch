@@ -6,8 +6,6 @@ import {
 } from "common/types";
 import { actions } from "common/actions";
 import { ambientWind } from "common/util/navigation";
-import * as urlParser from "url";
-import * as querystring from "querystring";
 
 interface TabProps {
   dispatch: Dispatch;
@@ -157,17 +155,14 @@ export function dispatchOpenTabForwardHistory(
 }
 
 export function urlWithParams(url: string, params: QueryParams): string {
-  const parsed = urlParser.parse(url);
-  let finalParams = querystring.parse(parsed.query);
+  const parsed = new URL(url);
   for (const k of Object.keys(params)) {
     const v = params[k];
     if (!v) {
-      delete finalParams[k];
+      parsed.searchParams.delete(k);
     } else {
-      finalParams[k] = v;
+      parsed.searchParams.set(k, v);
     }
   }
-  const query = querystring.stringify(finalParams);
-  parsed.search = query ? `?${query}` : "";
-  return urlParser.format(parsed);
+  return parsed.toString();
 }

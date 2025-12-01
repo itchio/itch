@@ -1,4 +1,3 @@
-import { parse } from "url";
 import { mainLogger } from "main/logger";
 const COLLECTION_URL_RE = /^\/c\/([0-9]+)/;
 const DOWNLOAD_URL_RE = /^.*\/download\/[a-zA-Z0-9]*$/;
@@ -12,7 +11,7 @@ export interface WellKnownUrlResult {
 
 export function parseWellKnownUrl(url: string): WellKnownUrlResult {
   try {
-    const u = parse(url);
+    const u = new URL(url);
     if (u.hostname === "itch.io") {
       const collMatches = COLLECTION_URL_RE.exec(u.pathname);
       if (collMatches) {

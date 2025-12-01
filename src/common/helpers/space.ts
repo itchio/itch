@@ -9,9 +9,6 @@ import {
   Subtract,
 } from "common/types";
 
-import nodeURL, { format } from "url";
-import querystring from "querystring";
-
 import { currentPage, ambientWind } from "common/util/navigation";
 import { actions } from "common/actions";
 
@@ -36,7 +33,7 @@ export class Space {
   private _hostname: string;
   private _pathname: string;
   private _pathElements: string[];
-  private _query: querystring.ParsedUrlQuery;
+  private _query: URLSearchParams;
 
   constructor(tab: string, instanceIn: TabInstance) {
     this.tab = tab;
@@ -58,11 +55,11 @@ export class Space {
 
     if (url) {
       try {
-        const parsed = nodeURL.parse(url);
+        const parsed = new URL(url);
         this._protocol = parsed.protocol;
         this._hostname = parsed.hostname;
         this._pathname = parsed.pathname;
-        this._query = querystring.parse(parsed.query);
+        this._query = parsed.searchParams;
         if (parsed.pathname) {
           this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
         }
@@ -129,7 +126,7 @@ export class Space {
   }
 
   urlWithParams(newParams: { [key: string]: any }): string {
-    const params = new URLSearchParams(this._query as Record<string, string>);
+    const params = new URLSearchParams(this._query);
     for (const k of Object.keys(newParams)) {
       const v = newParams[k];
       if (v) {
@@ -138,24 +135,16 @@ export class Space {
         params.delete(k);
       }
     }
-    const queryString = params.toString();
-    return format({
-      protocol: this._protocol,
-      hostname: this._hostname,
-      pathname: this._pathname,
-      slashes: true,
-      search: queryString == "" ? null : `?${queryString}`,
-    });
+    const url = new URL(
+      `${this._protocol}//${this._hostname}${this._pathname}`
+    );
+    url.search = params.toString();
+    return url.toString();
   }
 
   queryParam(name: string): string {
     if (this._query) {
-      const value = this._query[name];
-      if (Array.isArray(value)) {
-        return value[0];
-      } else {
-        return value;
-      }
+      return this._query.get(name);
     }
     return null;
   }
@@ -205,8 +194,8 @@ export class Space {
     return null;
   }
 
-  query(): querystring.ParsedUrlQuery {
-    return this._query || eo;
+  query(): URLSearchParams {
+    return this._query || new URLSearchParams();
   }
 
   page(): TabPage {

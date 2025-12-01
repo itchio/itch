@@ -9,8 +9,6 @@ import {
   Action,
 } from "common/types";
 import { omit, size } from "underscore";
-import * as urlParser from "url";
-import * as querystring from "querystring";
 import equal from "react-fast-compare";
 import { internalPageToIcon } from "common/helpers/space";
 
@@ -48,19 +46,13 @@ export function trimHistory(ti: TabInstance): TabInstance {
 }
 
 function urlToLocation(url: string): TabInstanceLocation {
-  const parsedUrl = urlParser.parse(url);
+  const parsedUrl = new URL(url);
   const protocol = parsedUrl.protocol;
   const pathname = parsedUrl.pathname;
   const hostname = parsedUrl.hostname;
   const query: QueryParams = {};
-  const parsedQuery = querystring.parse(parsedUrl.query);
-  for (const k of Object.keys(parsedQuery)) {
-    const v = parsedQuery[k];
-    if (Array.isArray(v)) {
-      query[k] = v[0];
-    } else {
-      query[k] = v;
-    }
+  for (const [k, v] of parsedUrl.searchParams.entries()) {
+    query[k] = v;
   }
 
   let pathElements: string[] = [];

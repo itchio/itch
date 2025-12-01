@@ -7,7 +7,6 @@ import { mainLogger } from "main/logger";
 import { handleItchioUrl } from "main/reactors/url";
 import { doAsync } from "renderer/helpers/doAsync";
 import * as _ from "underscore";
-import urlParser from "url";
 import { getResponseHeader } from "common/util/net";
 
 const logger = mainLogger.child(__filename);
@@ -35,8 +34,7 @@ export function registerItchProtocol(store: Store, ses: Session) {
       const { url } = details;
       let handled = false;
       try {
-        const parsedURL = urlParser.parse(url);
-        if (parsedURL.protocol === "itch:") {
+        if (new URL(url).protocol === "itch:") {
           handled = handleItchioUrl(store, url);
         }
       } catch (e) {

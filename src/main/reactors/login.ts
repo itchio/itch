@@ -9,7 +9,6 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import modals from "main/modals";
-import urlParser from "url";
 import { promisedModal } from "main/reactors/modals";
 import { restoreTabs, saveTabs } from "main/reactors/tab-save";
 import { registerItchProtocol } from "main/net/register-itch-protocol";
@@ -174,7 +173,7 @@ async function setCookie(profile: Profile, cookie: { [key: string]: string }) {
   for (const name of Object.keys(cookie)) {
     const value = cookie[name];
     const epoch = Date.now() * 0.001;
-    const parsed = urlParser.parse(urls.itchio);
+    const parsed = new URL(urls.itchio);
     const opts = {
       name,
       value: encodeURIComponent(value),

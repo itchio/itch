@@ -1,5 +1,4 @@
-/* node's standard url module */
-import { parse } from "url";
+/* node's standard url module - re-exported for legacy usage */
 import env from "main/env";
 export * from "url";
 
@@ -28,7 +27,7 @@ export function isItchioURL(s: string): boolean {
       return false;
     }
 
-    const { protocol } = parse(s);
+    const { protocol } = new URL(s);
     for (const handledProtocol of handledProtocols) {
       if (protocol === handledProtocol) {
         return true;
