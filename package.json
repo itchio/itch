@@ -109,7 +109,7 @@
   },
   "scripts": {
     "start": "node develop.mjs",
-    "compile": "NODE_ENV=production node build.mjs",
+    "compile": "node build.mjs",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",

@@ -1,5 +1,8 @@
 import * as esbuild from "esbuild";
 import fs from "fs";
+
+process.env.NODE_ENV ||= "production";
+
 import { mainConfig, rendererConfig } from "./esbuild.config.mjs";
 
 // Clean dist directories
