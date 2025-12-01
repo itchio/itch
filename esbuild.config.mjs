@@ -30,7 +30,7 @@ export const mainConfig = {
   format: "cjs",
   sourcemap: true,
   minify: isProduction,
-  metafile: !isProduction,
+  metafile: true,
   external: ["electron", "original-fs"],
   alias: aliases,
   define: {
@@ -62,7 +62,7 @@ export const rendererConfig = {
   globalName: "LIB",
   sourcemap: true,
   minify: isProduction,
-  metafile: !isProduction,
+  metafile: true,
   external: ["systeminformation"],
   alias: browserAliases,
   loader: {
