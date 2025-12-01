@@ -2,14 +2,8 @@
 //------------------------------------------------------------------
 // Dependencies
 
-var Stream = require('readable-stream')
-  , util   = require('util');
-  
-
-//------------------------------------------------------------------
-// Exports
-
-module.exports = ReadableStream;
+import Stream from "readable-stream";
+import util from "util";
 
 
 //------------------------------------------------------------------
@@ -17,16 +11,18 @@ module.exports = ReadableStream;
 
 util.inherits(ReadableStream, Stream.Readable);
 
-function ReadableStream (data) {
+function ReadableStream(data) {
   Stream.Readable.call(this);
   this._data = data;
 }
 
-ReadableStream.prototype._read = function(n) {
+ReadableStream.prototype._read = function (n) {
   this.push(this._data);
-  this._data = '';
+  this._data = "";
 };
 
-ReadableStream.prototype.append = function(data) {
+ReadableStream.prototype.append = function (data) {
   this.push(data);
 };
+
+export default ReadableStream;

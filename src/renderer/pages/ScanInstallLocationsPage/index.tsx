@@ -99,7 +99,7 @@ const SectionDiv = styled.div`
   justify-content: center;
 `;
 
-const parentLogger = rendererLogger.child(__filename);
+const parentLogger = rendererLogger.child("ScanInstallLocationsPage");
 
 class ScanInstallLocations extends React.PureComponent<Props, State> {
   resolve: (val?: any) => void;

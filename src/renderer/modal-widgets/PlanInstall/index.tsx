@@ -48,7 +48,7 @@ import { findWhere } from "underscore";
 import { recordingLogger } from "common/logger";
 import { hookLogging } from "common/helpers/bridge";
 
-const logger = rendererLogger.child(__filename);
+const logger = rendererLogger.child("PlanInstall");
 
 const DiskSpaceIcon = styled(Icon)`
   margin-left: 8px;

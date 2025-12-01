@@ -498,21 +498,11 @@ interface AppURLParams extends ParsedUrlQueryInput {
 }
 
 function makeAppURL(params: AppURLParams): string {
-  let urlObject: UrlObject;
-  if (env.development) {
-    urlObject = {
-      pathname: "/",
-      protocol: "http",
-      hostname: "localhost",
-      port: process.env.ELECTRON_WEBPACK_WDS_PORT,
-    };
-  } else {
-    urlObject = {
-      pathname: getRendererFilePath("index.html"),
-      protocol: "file",
-      slashes: true,
-    };
-  }
+  let urlObject: UrlObject = {
+    pathname: getRendererFilePath("index.html"),
+    protocol: "file",
+    slashes: true,
+  };
   urlObject.search = stringify(params);
 
   return formatUrl(urlObject);

@@ -1,7 +1,6 @@
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import Loadable from "react-loadable";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -16,82 +15,25 @@ import { actions } from "common/actions";
 import modals from "renderer/modals";
 import { formatError } from "common/format/errors";
 
-const CrashyPage = Loadable({
-  loader: () => import("renderer/pages/CrashyPage"),
-  loading: () => null,
-});
-const CavePage = Loadable({
-  loader: () => import("renderer/pages/CavePage"),
-  loading: () => null,
-});
-const GamePage = Loadable({
-  loader: () => import("renderer/pages/GamePage"),
-  loading: () => null,
-});
-const InstallPage = Loadable({
-  loader: () => import("renderer/pages/InstallPage"),
-  loading: () => null,
-});
-const FeaturedPage = Loadable({
-  loader: () => import("renderer/pages/FeaturedPage"),
-  loading: () => null,
-});
-const LibraryPage = Loadable({
-  loader: () => import("renderer/pages/LibraryPage"),
-  loading: () => null,
-});
-const OwnedPage = Loadable({
-  loader: () => import("renderer/pages/LibraryPage/OwnedPage"),
-  loading: () => null,
-});
-const InstalledPage = Loadable({
-  loader: () => import("renderer/pages/LibraryPage/InstalledPage"),
-  loading: () => null,
-});
-const LocationsPage = Loadable({
-  loader: () => import("renderer/pages/LocationsPage"),
-  loading: () => null,
-});
-const LocationPage = Loadable({
-  loader: () => import("renderer/pages/LocationPage"),
-  loading: () => null,
-});
-const BrowserPage = Loadable({
-  loader: () => import("renderer/pages/BrowserPage"),
-  loading: () => null,
-});
-const NewTabPage = Loadable({
-  loader: () => import("renderer/pages/NewTabPage"),
-  loading: () => null,
-});
-const CollectionPage = Loadable({
-  loader: () => import("renderer/pages/CollectionPage"),
-  loading: () => null,
-});
-const CollectionsPage = Loadable({
-  loader: () => import("renderer/pages/CollectionsPage"),
-  loading: () => null,
-});
-const AppLogPage = Loadable({
-  loader: () => import("renderer/pages/AppLogPage"),
-  loading: () => null,
-});
-const DashboardPage = Loadable({
-  loader: () => import("renderer/pages/DashboardPage"),
-  loading: () => null,
-});
-const DownloadsPage = Loadable({
-  loader: () => import("renderer/pages/DownloadsPage"),
-  loading: () => null,
-});
-const PreferencesPage = Loadable({
-  loader: () => import("renderer/pages/PreferencesPage"),
-  loading: () => null,
-});
-const ScanInstallLocationsPage = Loadable({
-  loader: () => import("renderer/pages/ScanInstallLocationsPage"),
-  loading: () => null,
-});
+import CrashyPage from "renderer/pages/CrashyPage";
+import CavePage from "renderer/pages/CavePage";
+import GamePage from "renderer/pages/GamePage";
+import InstallPage from "renderer/pages/InstallPage";
+import FeaturedPage from "renderer/pages/FeaturedPage";
+import LibraryPage from "renderer/pages/LibraryPage";
+import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
+import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
+import LocationsPage from "renderer/pages/LocationsPage";
+import LocationPage from "renderer/pages/LocationPage";
+import BrowserPage from "renderer/pages/BrowserPage";
+import NewTabPage from "renderer/pages/NewTabPage";
+import CollectionPage from "renderer/pages/CollectionPage";
+import CollectionsPage from "renderer/pages/CollectionsPage";
+import AppLogPage from "renderer/pages/AppLogPage";
+import DashboardPage from "renderer/pages/DashboardPage";
+import DownloadsPage from "renderer/pages/DownloadsPage";
+import PreferencesPage from "renderer/pages/PreferencesPage";
+import ScanInstallLocationsPage from "renderer/pages/ScanInstallLocationsPage";
 
 const ErrorDiv = styled.div`
   display: block;

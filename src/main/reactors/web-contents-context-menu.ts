@@ -3,7 +3,7 @@ import electron from "electron";
 import { actions } from "common/actions";
 import { Store } from "common/types";
 
-import IntlMessageFormat from "intl-messageformat";
+import { IntlMessageFormat } from "intl-messageformat";
 import env from "main/env";
 import { _ } from "renderer/t";
 import { t } from "common/format/t";

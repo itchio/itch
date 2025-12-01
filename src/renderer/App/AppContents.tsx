@@ -1,8 +1,8 @@
-import "!style-loader!css-loader!../fonts/icomoon/style.css";
-import "!style-loader!css-loader!../fonts/lato/latofonts-custom.css";
-import "!style-loader!css-loader!react-hint/css/index.css";
-import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
-import "!style-loader!css-loader!react-tabs/style/react-tabs.css";
+import "../fonts/icomoon/style.css";
+import "../fonts/lato/latofonts-custom.css";
+import "react-hint/css/index.css";
+import "react-json-inspector/json-inspector.css";
+import "react-tabs/style/react-tabs.css";
 import { Dispatch } from "common/types";
 import React from "react";
 import Layout from "renderer/App/Layout";

@@ -36,7 +36,7 @@ export function getLocalesConfigPath(): string {
 type InjectName = "itchio" | "game" | "captcha" | "preload";
 
 export function getInjectPath(name: InjectName) {
-  return join(absoluteMainDistPath, `inject-${name}.bundle.js`);
+  return join(absoluteMainDistPath, `inject-${name}.bundle.cjs`);
 }
 
 export function getInjectURL(name: InjectName) {

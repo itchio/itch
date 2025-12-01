@@ -1,4 +1,4 @@
-import IntlMessageFormat from "intl-messageformat";
+import { IntlMessageFormat } from "intl-messageformat";
 
 import { I18nState, LocalizedString } from "common/types";
 

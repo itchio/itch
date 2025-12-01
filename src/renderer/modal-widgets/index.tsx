@@ -1,59 +1,19 @@
 import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
 
-import Loadable from "react-loadable";
-const ClearBrowsingData = Loadable({
-  loader: () => import("renderer/modal-widgets/ClearBrowsingData"),
-  loading: () => null,
-});
-const SwitchVersionCave = Loadable({
-  loader: () => import("renderer/modal-widgets/SwitchVersionCave"),
-  loading: () => null,
-});
-const ExploreJson = Loadable({
-  loader: () => import("renderer/modal-widgets/ExploreJson"),
-  loading: () => null,
-});
-const ManageCave = Loadable({
-  loader: () => import("renderer/modal-widgets/ManageCave"),
-  loading: () => null,
-});
-const ManageGame = Loadable({
-  loader: () => import("renderer/modal-widgets/ManageGame"),
-  loading: () => null,
-});
-const PlanInstall = Loadable({
-  loader: () => import("renderer/modal-widgets/PlanInstall"),
-  loading: () => null,
-});
-const PrereqsState = Loadable({
-  loader: () => import("renderer/modal-widgets/PrereqsState"),
-  loading: () => null,
-});
-const RecaptchaInput = Loadable({
-  loader: () => import("renderer/modal-widgets/RecaptchaInput"),
-  loading: () => null,
-});
-const SendFeedback = Loadable({
-  loader: () => import("renderer/modal-widgets/SendFeedback"),
-  loading: () => null,
-});
-const SecretSettings = Loadable({
-  loader: () => import("renderer/modal-widgets/SecretSettings"),
-  loading: () => null,
-});
-const ShowError = Loadable({
-  loader: () => import("renderer/modal-widgets/ShowError"),
-  loading: () => null,
-});
-const TwoFactorInput = Loadable({
-  loader: () => import("renderer/modal-widgets/TwoFactorInput"),
-  loading: () => null,
-});
-const ConfirmQuit = Loadable({
-  loader: () => import("renderer/modal-widgets/ConfirmQuit"),
-  loading: () => null,
-});
+import ClearBrowsingData from "renderer/modal-widgets/ClearBrowsingData";
+import SwitchVersionCave from "renderer/modal-widgets/SwitchVersionCave";
+import ExploreJson from "renderer/modal-widgets/ExploreJson";
+import ManageCave from "renderer/modal-widgets/ManageCave";
+import ManageGame from "renderer/modal-widgets/ManageGame";
+import PlanInstall from "renderer/modal-widgets/PlanInstall";
+import PrereqsState from "renderer/modal-widgets/PrereqsState";
+import RecaptchaInput from "renderer/modal-widgets/RecaptchaInput";
+import SendFeedback from "renderer/modal-widgets/SendFeedback";
+import SecretSettings from "renderer/modal-widgets/SecretSettings";
+import ShowError from "renderer/modal-widgets/ShowError";
+import TwoFactorInput from "renderer/modal-widgets/TwoFactorInput";
+import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
 
 type ModalRegistry = typeof modals;
 

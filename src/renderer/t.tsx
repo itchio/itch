@@ -1,4 +1,4 @@
-import IntlMessageFormat from "intl-messageformat";
+import { IntlMessageFormat } from "intl-messageformat";
 import React from "react";
 import { FormattedMessage, IntlShape } from "react-intl";
 import { LocalizedString } from "common/types";

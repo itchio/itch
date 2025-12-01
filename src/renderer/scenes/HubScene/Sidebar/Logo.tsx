@@ -7,6 +7,7 @@ import modals from "renderer/modals";
 import styled from "renderer/styles";
 import { ambientWind } from "common/util/navigation";
 import { isSecretClick } from "common/helpers/secret-click";
+import appWhiteLogo from "static/images/logos/app-white.svg";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -31,7 +32,7 @@ class Logo extends React.PureComponent<Props> {
         className={classNames("logo-div")}
         onClick={this.onClick}
       >
-        <img src={require("static/images/logos/app-white.svg").default} />
+        <img src={appWhiteLogo} />
       </LogoDiv>
     );
   }

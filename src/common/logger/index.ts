@@ -55,6 +55,10 @@ export class Logger {
   }
 
   child(filename: string): Logger {
+    if (!filename || !filename.includes("/")) {
+      // If it's just a name (not a path), use it directly
+      return this.childWithName(filename || "unknown");
+    }
     let tokens = filename.split(/[\/\\]/);
     tokens = tokens.slice(1);
     tokens[0] = tokens[0].substring(0, 1);

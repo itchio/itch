@@ -79,12 +79,4 @@ hack.store = createStore(
   compose(...enhancers)
 ) as Store;
 
-if (module.hot) {
-  module.hot.accept("main/reactors", () => {
-    console.warn(`Refreshing reactors...`);
-    const _getWatcher = require("main/reactors").default;
-    watcher = _getWatcher();
-  });
-}
-
 export default hack.store;

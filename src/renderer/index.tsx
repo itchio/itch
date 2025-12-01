@@ -11,11 +11,6 @@ if (process.env.NODE_ENV === "production") {
   (window as any).eval = global.eval = function () {
     throw new Error(`Sorry, this app does not support window.eval().`);
   };
-} else {
-  require("react-hot-loader/patch");
-  require("bluebird").config({
-    longStackTraces: true,
-  });
 }
 
 import React from "react";
@@ -23,16 +18,6 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import store from "renderer/store";
-
-let AppContainer: React.ComponentClass<{}>;
-if (env.development) {
-  try {
-    const rhl = require("react-hot-loader");
-    AppContainer = rhl.AppContainer;
-  } catch (e) {
-    console.error(`Could not enable react-hot-loader:`, e);
-  }
-}
 
 import App from "renderer/App";
 import { actions } from "common/actions";
@@ -45,17 +30,12 @@ function render(RealApp: typeof App) {
   document.querySelector("body")!.classList.remove("loading");
   appNode = document.querySelector("#app");
 
-  let rootComponent: JSX.Element;
-  if (AppContainer) {
-    rootComponent = (
-      <AppContainer>
-        <RealApp />
-      </AppContainer>
-    );
-  } else {
-    rootComponent = <RealApp />;
-  }
-  ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
+  ReactDOM.render(
+    <Provider store={store}>
+      <RealApp />
+    </Provider>,
+    appNode
+  );
 }
 
 window.addEventListener("beforeunload", () => {
@@ -73,6 +53,26 @@ async function start() {
     role: String(opts.role) as any,
   };
 
+  // Wait for electron-redux to sync state from main process
+  await new Promise<void>((resolve) => {
+    const checkState = () => {
+      const state = store.getState();
+      if (state.winds && Object.keys(state.winds).length > 0) {
+        resolve();
+      }
+    };
+    checkState();
+    const unsubscribe = store.subscribe(() => {
+      checkState();
+      if (
+        store.getState().winds &&
+        Object.keys(store.getState().winds).length > 0
+      ) {
+        unsubscribe();
+      }
+    });
+  });
+
   render(App);
 
   // it isn't a guarantee that this code will run
@@ -86,13 +86,6 @@ async function start() {
   store.watcher.on(actions.boot, () => {
     clearInterval(intervalId);
   });
-
-  if (module.hot) {
-    module.hot.accept("renderer/App", () => {
-      const NextApp = require("renderer/App").default;
-      render(NextApp);
-    });
-  }
 }
 
 start();
