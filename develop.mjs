@@ -19,12 +19,18 @@ async function main() {
 
   console.log("Building main process...");
   const mainCtx = await esbuild.context(mainConfig);
-  await mainCtx.rebuild();
+  const mainResult = await mainCtx.rebuild();
+  if (mainResult.metafile) {
+    fs.writeFileSync("dist/main/metafile.json", JSON.stringify(mainResult.metafile));
+  }
   console.log("Main built!");
 
   console.log("Building renderer process...");
   const rendererCtx = await esbuild.context(rendererConfig);
-  await rendererCtx.rebuild();
+  const rendererResult = await rendererCtx.rebuild();
+  if (rendererResult.metafile) {
+    fs.writeFileSync("dist/renderer/metafile.json", JSON.stringify(rendererResult.metafile));
+  }
 
   // Copy HTML for development (no CSP)
   fs.copyFileSync("src/index.html", "dist/renderer/index.html");

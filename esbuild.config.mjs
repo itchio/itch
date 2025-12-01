@@ -29,7 +29,8 @@ export const mainConfig = {
   outExtension: { ".js": ".bundle.cjs" },
   format: "cjs",
   sourcemap: true,
-  minify: false,
+  minify: isProduction,
+  metafile: !isProduction,
   external: ["electron", "original-fs"],
   alias: aliases,
   define: {
@@ -60,7 +61,8 @@ export const rendererConfig = {
   format: "iife",
   globalName: "LIB",
   sourcemap: true,
-  minify: false,
+  minify: isProduction,
+  metafile: !isProduction,
   external: ["systeminformation"],
   alias: browserAliases,
   loader: {
