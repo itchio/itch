@@ -1,20 +1,19 @@
 //@ts-check
-"use strict";
 
-const { $, header } = require("@itchio/bob");
-const {
+import { $, header } from "@itchio/bob";
+import {
   measure,
   getAppName,
   getBuildVersion,
   appBundleId,
-} = require("../common");
-const ospath = require("path");
-const fs = require("fs");
-const { toUnixPath } = require("./context");
-const electronPackager = require("electron-packager");
+} from "../common.js";
+import ospath from "path";
+import fs from "fs";
+import { toUnixPath } from "./context.js";
+import electronPackager from "electron-packager";
 
-/** @param {import("./context").Context} cx */
-async function doPackage(cx) {
+/** @param {import("./context.js").Context} cx */
+export async function doPackage(cx) {
   header("Packaging as a portable Electron application");
 
   const appName = getAppName();
@@ -58,7 +57,7 @@ async function doPackage(cx) {
 }
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  * @returns {Partial<import("electron-packager").Options>}
  */
 function getElectronOptions(cx) {
@@ -84,7 +83,7 @@ function getElectronOptions(cx) {
 }
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  * @returns {Partial<import("electron-packager").Options>}
  */
 function windowsOptions(cx) {
@@ -106,7 +105,7 @@ function windowsOptions(cx) {
 }
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  * @returns {Partial<import("electron-packager").Options>}
  */
 function darwinOptions(cx) {
@@ -142,7 +141,7 @@ function darwinOptions(cx) {
 }
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  */
 async function sign(cx) {
   const artifactDir = cx.artifactDir;
@@ -155,15 +154,13 @@ async function sign(cx) {
 
   if (cx.os === "windows") {
     console.log("Signing Windows executable...");
-    const windows = require("./windows");
+    const windows = await import("./windows.js");
     await windows.sign(cx, artifactDir);
   } else if (cx.os === "darwin") {
     console.log("Signing macOS app bundle...");
-    const darwin = require("./darwin");
+    const darwin = await import("./darwin.js");
     await darwin.sign(cx, artifactDir);
   } else {
     console.log("We don't sign Linux executables.");
   }
 }
-
-module.exports = { doPackage };

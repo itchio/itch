@@ -1,16 +1,15 @@
 //@ts-check
-"use strict";
 
-const { $ } = require("@itchio/bob");
-const { hasTag, measure, appBundleId } = require("../common");
-const fs = require("fs");
-const ospath = require("path");
+import { $ } from "@itchio/bob";
+import { hasTag, measure, appBundleId } from "../common.js";
+import fs from "fs";
+import ospath from "path";
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  * @param {string} packageDir
  */
-async function sign(cx, packageDir) {
+export async function sign(cx, packageDir) {
   console.log("Preparing to sign Application bundle...");
 
   // enable debug namespaces
@@ -34,9 +33,10 @@ async function sign(cx, packageDir) {
 
   console.log("Signing Application bundle...");
   await measure("electron-osx-sign", async () => {
-    require("debug").enable("electron-osx-sign");
-    const sign = require("electron-osx-sign").signAsync;
-    await sign({
+    const debug = await import("debug");
+    debug.default.enable("electron-osx-sign");
+    const electronOsxSign = await import("electron-osx-sign");
+    await electronOsxSign.signAsync({
       app: appBundle,
       hardenedRuntime: true,
       entitlements: entitlementsPath,
@@ -58,10 +58,10 @@ async function sign(cx, packageDir) {
   } else {
     console.log("Notarizing...");
     await measure("electron-notarize", async () => {
-      require("debug").enable("@electron/notarize");
-      const { notarize } = require("@electron/notarize");
+      const debug = await import("debug");
+      debug.default.enable("@electron/notarize");
+      const { notarize } = await import("@electron/notarize");
       await notarize({
-
         appBundleId: appBundleId(),
         appPath: appBundle,
         appleId: "leafot@gmail.com",
@@ -74,10 +74,6 @@ async function sign(cx, packageDir) {
     $(`codesign --test-requirement="=notarized" -vvvv ${appBundle}`);
   }
 }
-
-module.exports = {
-  sign,
-};
 
 function entitlements() {
   return `

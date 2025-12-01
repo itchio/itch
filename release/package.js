@@ -1,8 +1,7 @@
 //@ts-check
-"use strict";
 
-const { doPackage } = require("./packaging/do-package");
-const { parseContext } = require("./packaging/context");
+import { doPackage } from "./packaging/do-package.js";
+import { parseContext } from "./packaging/context.js";
 
 async function main() {
   const cx = await parseContext();

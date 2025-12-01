@@ -1,13 +1,12 @@
 //@ts-check
-"use strict";
 
-const { $, cd } = require("@itchio/bob");
-const ospath = require("path");
+import { $, cd } from "@itchio/bob";
+import ospath from "path";
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  */
-async function test(cx) {
+export async function test(cx) {
   await cd("integration-tests", async () => {
     $(`go build -o runner -v`);
   });
@@ -34,6 +33,4 @@ async function test(cx) {
     $(`./integration-tests/runner`);
   }
 }
-
-module.exports = { test };
 

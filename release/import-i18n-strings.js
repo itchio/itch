@@ -1,8 +1,7 @@
 //@ts-check
-"use strict";
 
-const { lstatSync } = require("fs");
-const { $ } = require("@itchio/bob");
+import { lstatSync } from "fs";
+import { $ } from "@itchio/bob";
 
 async function importStrings() {
   let src = `../itch-i18n/locales`;

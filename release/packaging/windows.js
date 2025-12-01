@@ -1,16 +1,15 @@
 //@ts-check
-"use strict";
 
-const { $ } = require("@itchio/bob");
-const fs = require("fs");
-const ospath = require("path");
-const { toUnixPath } = require("./context");
+import { $ } from "@itchio/bob";
+import fs from "fs";
+import ospath from "path";
+import { toUnixPath } from "./context.js";
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  * @param {string} packageDir
  */
-async function sign(cx, packageDir) {
+export async function sign(cx, packageDir) {
   if (!fs.existsSync(packageDir)) {
     throw new Error(`windows.sign: packageDir should exist: (${packageDir})`);
   }
@@ -30,6 +29,4 @@ async function sign(cx, packageDir) {
 
   $(`${signtoolPath} sign ${signParams} "${exePath}"`);
 }
-
-module.exports = { sign };
 

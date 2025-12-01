@@ -1,8 +1,7 @@
 //@ts-check
-"use strict";
 
-const { build } = require("./packaging/build");
-const { parseContext } = require("./packaging/context");
+import { build } from "./packaging/build.js";
+import { parseContext } from "./packaging/context.js";
 
 async function main() {
   const cx = await parseContext();

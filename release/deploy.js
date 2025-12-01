@@ -1,10 +1,9 @@
 //@ts-check
-"use strict";
 
-const fs = require("fs");
-const { $ } = require("@itchio/bob");
-const { getAppName, getBuildVersion } = require("./common");
-const ospath = require("path");
+import fs from "fs";
+import { $ } from "@itchio/bob";
+import { getAppName, getBuildVersion } from "./common.js";
+import ospath from "path";
 
 async function ciDeploy() {
   const dirs = fs.readdirSync("./artifacts");

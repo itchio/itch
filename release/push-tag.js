@@ -1,9 +1,11 @@
 //@ts-check
-"use strict";
 
-const { $, prompt, confirm } = require("@itchio/bob");
-const { readFileSync, writeFileSync } = require("fs");
-const { resolve } = require("path");
+import { $, prompt, confirm } from "@itchio/bob";
+import { readFileSync, writeFileSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function pushTag() {
   const pkgPath = resolve(__dirname, "..", "package.json");

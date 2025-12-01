@@ -1,17 +1,16 @@
 //@ts-check
-"use strict";
 
-const { chalk } = require("@itchio/bob");
+import { chalk } from "@itchio/bob";
 
 /** @type {{[key: string]: {}}} */
-let OSES = {
+export const OSES = {
   windows: {},
   darwin: {},
   linux: {},
 };
 
 /** @type {{[key: string]: {electronArch: "ia32" | "x64"}}} */
-let ARCHES = {
+export const ARCHES = {
   "386": {
     electronArch: "ia32",
   },
@@ -24,7 +23,7 @@ let ARCHES = {
  * @param {any} name
  * @param {() => any} cb
  */
-async function measure(name, cb) {
+export async function measure(name, cb) {
   const start = Date.now();
   const ret = await cb();
   const end = Date.now();
@@ -36,14 +35,14 @@ async function measure(name, cb) {
 /**
  * @returns {boolean} True if we're building a tag
  */
-function hasTag() {
+export function hasTag() {
   return !!process.env.CI_COMMIT_TAG;
 }
 
 /**
  * @returns {string} A string like v0.1.2, or v9999.0.0-canary
  */
-function getBuildTag() {
+export function getBuildTag() {
   const v = process.env.CI_COMMIT_TAG;
   if (!v) {
     return "v9999.0.0-canary";
@@ -52,12 +51,12 @@ function getBuildTag() {
 }
 
 /** @returns {string} A string like 0.1.2 */
-function getBuildVersion() {
+export function getBuildVersion() {
   return getBuildTag().replace(/^v/, "").replace(/-.+$/, "");
 }
 
 /** @returns {string} The app's name (itch or kitch) */
-function getAppName() {
+export function getAppName() {
   if (/-canary$/.test(getBuildTag())) {
     return "kitch";
   } else {
@@ -66,7 +65,7 @@ function getAppName() {
 }
 
 /** @returns {string} Returns canary or stable */
-function getChannelName() {
+export function getChannelName() {
   if (/-canary$/.test(getBuildTag())) {
     return "canary";
   } else {
@@ -77,18 +76,6 @@ function getChannelName() {
 /**
  * @returns {string} The macOS app bundle ID for itch or kitch
  */
-function appBundleId() {
+export function appBundleId() {
   return `io.${getAppName()}.mac`;
 }
-
-module.exports = {
-  OSES,
-  ARCHES,
-  measure,
-  hasTag,
-  getBuildTag,
-  getBuildVersion,
-  getAppName,
-  getChannelName,
-  appBundleId,
-};

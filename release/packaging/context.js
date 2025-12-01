@@ -1,10 +1,9 @@
 //@ts-check
-"use strict";
 
-const { readFileSync } = require("fs");
-const { OSES, ARCHES, getAppName, getBuildVersion } = require("../common");
-const ospath = require("path");
-const { chalk } = require("@itchio/bob");
+import { readFileSync } from "fs";
+import { OSES, ARCHES, getAppName, getBuildVersion } from "../common.js";
+import ospath from "path";
+import { chalk } from "@itchio/bob";
 
 /**
  * @typedef Context
@@ -28,7 +27,7 @@ const { chalk } = require("@itchio/bob");
 /**
  * @returns {Promise<Context>}
  */
-async function parseContext() {
+export async function parseContext() {
   let args = process.argv;
   let os = undefined;
   let arch = undefined;
@@ -132,15 +131,10 @@ async function parseContext() {
  * @param {string} s A (potentially) windows-style path
  * @returns {string} A windows-style path
  */
-function toUnixPath(s) {
+export function toUnixPath(s) {
   if (process.platform === "win32") {
     return s.replace(/\\/g, "/");
   } else {
     return s;
   }
 }
-
-module.exports = {
-  parseContext,
-  toUnixPath,
-};

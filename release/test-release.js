@@ -1,7 +1,6 @@
 //@ts-check
-"use strict";
 
-const { $ } = require("@itchio/bob");
+import { $ } from "@itchio/bob";
 
 async function main() {
   console.log("Wiping build/");

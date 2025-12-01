@@ -1,14 +1,13 @@
 //@ts-check
-"use strict";
 
-const { readFileSync, writeFileSync } = require("fs");
-const { $, cd, header } = require("@itchio/bob");
-const { getAppName, getBuildVersion, measure } = require("../common");
+import { readFileSync, writeFileSync } from "fs";
+import { $, cd, header } from "@itchio/bob";
+import { getAppName, getBuildVersion, measure } from "../common.js";
 
 /**
- * @param {import("./context").Context} cx
+ * @param {import("./context.js").Context} cx
  */
-async function build(cx) {
+export async function build(cx) {
   header("Transpiling and bundling TypeScript, CSS, etc.");
 
   console.log("Wiping prefix/");
@@ -16,7 +15,7 @@ async function build(cx) {
   $("mkdir -p prefix");
 
   console.log("Compiling sources");
-  await measure("webpack invocation", async () => {
+  await measure("esbuild bundle", async () => {
     $("npm run compile");
   });
 
@@ -47,5 +46,3 @@ async function build(cx) {
     $(`npm install --no-save --legacy-peer-deps ${externals.join(" ")}`);
   });
 }
-
-module.exports = { build };
