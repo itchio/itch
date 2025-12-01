@@ -121,6 +121,10 @@ export function elapsed(t1: number, t2: number) {
  * Format a duration in seconds as an exact time string (e.g., "1h 23m 45s")
  */
 export function formatExactDuration(secs: number): string {
+  if (secs < 0) {
+    return "0s";
+  }
+
   const hours = Math.floor(secs / 3600);
   const minutes = Math.floor((secs % 3600) / 60);
   const seconds = Math.floor(secs % 60);
