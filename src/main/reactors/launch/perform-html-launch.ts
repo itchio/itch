@@ -148,7 +148,7 @@ export async function performHTMLLaunch(
   win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
 
   logger.info(`Waiting for window to close or context to be aborted...`);
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve) => {
     win.on("closed", () => {
       resolve();
     });

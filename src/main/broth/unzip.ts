@@ -92,7 +92,7 @@ export async function unzip(opts: UnzipOpts) {
      *
      ***************************************************************************/
     src.pipe(progressStream).pipe(dst);
-    await new Promise((_resolve, _reject) => {
+    await new Promise<void>((_resolve, _reject) => {
       let timeout = setTimeout(() => {
         logger.warn(
           `Extracting a single entry took more than 10 seconds, something's wrong`
@@ -139,7 +139,7 @@ export async function unzip(opts: UnzipOpts) {
     }
   };
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     zipfile.on("entry", (entry: yauzl.Entry) => {
       logger.debug(`→ ${entry.fileName}`);
       if (DIR_RE.test(entry.fileName)) {

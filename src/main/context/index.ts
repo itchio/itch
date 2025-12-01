@@ -23,12 +23,12 @@ export class MinimalContext {
   private emitter: EventEmitter = new EventEmitter();
   private stoppers: Stopper[] = [];
   private dead = false;
-  private cancelPromise: Promise<{}>;
+  private cancelPromise: Promise<void>;
   private resolveCancelPromise: () => void = null;
   private taskId: string = null;
 
   constructor() {
-    this.cancelPromise = new Promise((resolve, reject) => {
+    this.cancelPromise = new Promise<void>((resolve) => {
       this.resolveCancelPromise = resolve;
     });
   }
