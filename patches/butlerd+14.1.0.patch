@@ -1,0 +1,17 @@
+diff --git a/node_modules/butlerd/lib/instance.js b/node_modules/butlerd/lib/instance.js
+index eb3abfd..95c1c32 100644
+--- a/node_modules/butlerd/lib/instance.js
++++ b/node_modules/butlerd/lib/instance.js
+@@ -28,10 +28,10 @@ class Instance {
+         this._endpointPromise = new Promise((resolve, reject) => {
+             let timeout = setTimeout(() => {
+                 if (this.process) {
+-                    log(`one timeout`);
++                    log(`timed out waiting for butlerd to listen (PID ${this.process.pid})`);
+                 }
+                 else {
+-                    log(`spawned butler, PID ${this.process.pid}`);
++                    log(`timed out waiting for butlerd to listen (process not yet spawned)`);
+                 }
+                 reject(new Error("timed out waiting for butlerd to listen"));
+             }, endpointTimeout);
