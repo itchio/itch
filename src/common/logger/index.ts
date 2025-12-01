@@ -1,4 +1,4 @@
-import memory from "../../vendor/memory_streams";
+import { WritableMemoryStream } from "common/memory-streams";
 
 const levelNumbers = {
   silent: 100,
@@ -110,12 +110,12 @@ export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
 };
 
 export class RecordingLogger extends Logger {
-  public memlog: memory.WritableStream;
+  public memlog: WritableMemoryStream;
   closed = false;
 
   constructor(parent: Logger, name?: string) {
     super(parent.sink, name); // boo! down with constructors
-    this.memlog = new memory.WritableStream();
+    this.memlog = new WritableMemoryStream();
     this.sink = multiSink(parent.sink, streamSink(this.memlog));
   }
 

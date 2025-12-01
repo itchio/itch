@@ -8,7 +8,6 @@ import { request } from "main/net/request";
 import { ProgressInfo } from "common/types";
 import { WriteStream, createWriteStream } from "fs";
 import { delay } from "main/reactors/delay";
-import { isArray } from "util";
 
 interface HTTPError extends Error {
   httpStatusCode: number;
@@ -73,7 +72,7 @@ export async function downloadToFile(
           }
 
           let contentLengthHeader: any = res.headers["content-length"];
-          if (isArray(contentLengthHeader)) {
+          if (Array.isArray(contentLengthHeader)) {
             contentLengthHeader = contentLengthHeader[0];
           }
           if (contentLengthHeader) {
