@@ -1,6 +1,38 @@
 import React from "react";
 import { FormattedRelativeTime } from "react-intl";
-import { selectUnit } from "@formatjs/intl-utils";
+
+type Unit = "second" | "minute" | "hour" | "day" | "week" | "month" | "year";
+
+function selectUnit(date: Date): { value: number; unit: Unit } {
+  const seconds = Math.round((date.getTime() - Date.now()) / 1000);
+  const absSeconds = Math.abs(seconds);
+
+  if (absSeconds < 60) {
+    return { value: seconds, unit: "second" };
+  }
+  const minutes = Math.round(seconds / 60);
+  if (Math.abs(minutes) < 60) {
+    return { value: minutes, unit: "minute" };
+  }
+  const hours = Math.round(seconds / 3600);
+  if (Math.abs(hours) < 24) {
+    return { value: hours, unit: "hour" };
+  }
+  const days = Math.round(seconds / 86400);
+  if (Math.abs(days) < 7) {
+    return { value: days, unit: "day" };
+  }
+  const weeks = Math.round(seconds / 604800);
+  if (Math.abs(weeks) < 4) {
+    return { value: weeks, unit: "week" };
+  }
+  const months = Math.round(seconds / 2629800); // ~30.44 days
+  if (Math.abs(months) < 12) {
+    return { value: months, unit: "month" };
+  }
+  const years = Math.round(seconds / 31557600); // ~365.25 days
+  return { value: years, unit: "year" };
+}
 
 class TimeAgo extends React.PureComponent<Props> {
   render() {

@@ -26,6 +26,7 @@ import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
 import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
 import { mainLogger } from "main/logger";
+import { stopForwarding } from "@goosewobbler/electron-redux";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -203,7 +204,8 @@ export function main() {
 
     setInterval(() => {
       try {
-        store.dispatch(actions.tick({}));
+        // Use stopForwarding to prevent tick from being synced to renderers
+        store.dispatch(stopForwarding(actions.tick({})));
       } catch (e) {
         mainLogger.error(`While dispatching tick: ${e.stack}`);
       }

@@ -9,7 +9,6 @@ import {
   Subtract,
 } from "common/types";
 
-import { URLSearchParams } from "whatwg-url";
 import nodeURL, { format } from "url";
 import querystring from "querystring";
 

@@ -33,7 +33,7 @@ export function getLocalesConfigPath(): string {
   return getPath(resourcePath);
 }
 
-type InjectName = "itchio" | "game" | "captcha" | "preload";
+type InjectName = "game" | "captcha" | "preload";
 
 export function getInjectPath(name: InjectName) {
   return join(absoluteMainDistPath, `inject-${name}.bundle.cjs`);

@@ -1,7 +1,14 @@
 import urls from "common/constants/urls";
 import marked from "marked-extra";
-import { emojify } from "node-emoji";
 import React from "react";
+
+// We used to import `emojify` from the `node-emoji` package to convert
+// :shortcode: style emoji in markdown, but our locale files only use `:date:`.
+// This minimal implementation only supports `:date:` - future translations
+// should use emoji characters directly (e.g. 📅) instead of shortcodes.
+const emojify = (text: string): string => {
+  return text.replace(/:date:/g, "📅");
+};
 
 class Markdown extends React.PureComponent<Props> {
   render() {
