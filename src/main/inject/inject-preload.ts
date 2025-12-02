@@ -5,7 +5,7 @@ import {
   OpenDialogOptions,
 } from "electron";
 import { call } from "common/butlerd/net";
-import { createRequest, Conversation } from "butlerd";
+import { createRequest, Conversation } from "@itchio/butlerd";
 import { parse, format } from "url";
 import { cpu, graphics, osInfo } from "systeminformation";
 import qs from "querystring";

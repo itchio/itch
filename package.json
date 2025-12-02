@@ -29,7 +29,7 @@
     "array-move": "^3.0.1",
     "btoa": "^1.2.1",
     "buffer": "^6.0.3",
-    "butlerd": "^14.1.0",
+    "@itchio/butlerd": "^15.0.0",
     "classnames": "^2.2.6",
     "crc-32": "^1.2.0",
     "events": "^3.3.0",

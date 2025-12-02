@@ -6,7 +6,7 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { Phase, state } from "main/reactors/downloads/driver-persistent-state";
-import { Conversation } from "butlerd";
+import { Conversation } from "@itchio/butlerd";
 
 const logger = mainLogger.child(__filename);
 

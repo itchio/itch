@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { devNull, Logger } from "common/logger";
 import { Watcher } from "common/util/watcher";
 import React from "react";

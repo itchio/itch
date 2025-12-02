@@ -1,6 +1,6 @@
 import { asRequestError } from "common/butlerd/errors";
 import { LocalizedString } from "common/types";
-import { RequestError } from "butlerd";
+import { RequestError } from "@itchio/butlerd";
 import { Download, InstallPlanInfo } from "common/butlerd/messages";
 import { first } from "underscore";
 

@@ -1,4 +1,4 @@
-import { RequestError } from "butlerd";
+import { RequestError } from "@itchio/butlerd";
 import * as messages from "common/butlerd/messages";
 
 type ItchErrorCode = "ITCH_ECANCELLED" | "ITCH_ERETRY";

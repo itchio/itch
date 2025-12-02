@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { actions, ActionCreator } from "common/actions";
 import * as messages from "common/butlerd/messages";
 

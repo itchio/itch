@@ -1,4 +1,9 @@
-import { Client, Endpoint, RequestCreator, Conversation } from "butlerd";
+import {
+  Client,
+  Endpoint,
+  RequestCreator,
+  Conversation,
+} from "@itchio/butlerd";
 import { isEqual } from "underscore";
 import { Store, isCancelled, isAborted } from "common/types";
 import {

@@ -1,4 +1,4 @@
-import { Instance } from "butlerd";
+import { Instance } from "@itchio/butlerd";
 import { butlerDbPath } from "main/util/paths";
 import urls from "common/constants/urls";
 import ospath from "path";

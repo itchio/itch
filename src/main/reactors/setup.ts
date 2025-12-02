@@ -1,4 +1,4 @@
-import { Client, Instance } from "butlerd";
+import { Client, Instance } from "@itchio/butlerd";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { makeButlerInstance } from "main/butlerd/make-butler-instance";

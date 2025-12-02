@@ -15,7 +15,7 @@ import {
   Platform,
   Profile,
 } from "common/butlerd/messages";
-import { Endpoint } from "butlerd";
+import { Endpoint } from "@itchio/butlerd";
 import { modalShape } from "common/modals";
 export interface Store extends ReduxStore<RootState> {}
 

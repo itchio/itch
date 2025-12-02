@@ -14,7 +14,7 @@ import { promisedModal } from "main/reactors/modals";
 import { performHTMLLaunch } from "main/reactors/launch/perform-html-launch";
 import { pickManifestAction } from "main/reactors/launch/pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
-import { Conversation } from "butlerd";
+import { Conversation } from "@itchio/butlerd";
 
 export async function performLaunch(
   ctx: Context,

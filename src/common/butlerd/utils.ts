@@ -1,4 +1,4 @@
-import { Client, RequestCreator, Conversation } from "butlerd";
+import { Client, RequestCreator, Conversation } from "@itchio/butlerd";
 import { Logger } from "common/logger";
 import { MinimalContext } from "main/context";
 import * as messages from "common/butlerd/messages";

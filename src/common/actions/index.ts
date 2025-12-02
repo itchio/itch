@@ -1,4 +1,4 @@
-import { Endpoint } from "butlerd";
+import { Endpoint } from "@itchio/butlerd";
 import {
   Cave,
   CleanDownloadsEntry,

@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { SetupFunc } from "common/butlerd/net";
 import store from "renderer/store";
 import { rendererLogger } from "renderer/logger";

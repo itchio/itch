@@ -1,6 +1,6 @@
 import { Logger } from "common/logger";
 import * as utils from "common/butlerd/utils";
-import { createRequest, createNotification } from "butlerd/lib/support";
+import { createRequest, createNotification } from "@itchio/butlerd/lib/support";
 
 export type Message =
   | { type: "HOOK_LOGGING"; logger: Logger }

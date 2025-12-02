@@ -1,4 +1,4 @@
-import { RequestError } from "butlerd";
+import { RequestError } from "@itchio/butlerd";
 import { levels, LogEntry } from "common/logger";
 import { formatDate, DATE_FORMAT } from "common/format/datetime";
 

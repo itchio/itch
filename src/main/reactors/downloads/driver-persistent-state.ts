@@ -1,5 +1,5 @@
 import { mainLogger } from "main/logger";
-import { Conversation } from "butlerd";
+import { Conversation } from "@itchio/butlerd";
 
 const logger = mainLogger.child(__filename);
 
