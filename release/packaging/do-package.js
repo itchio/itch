@@ -10,7 +10,7 @@ import {
 import ospath from "path";
 import fs from "fs";
 import { toUnixPath } from "./context.js";
-import electronPackager from "electron-packager";
+import electronPackager from "@electron/packager";
 
 /** @param {import("./context.js").Context} cx */
 export async function doPackage(cx) {
@@ -25,7 +25,7 @@ export async function doPackage(cx) {
   }
 
   /**
-   * @type {import("electron-packager").Options}
+   * @type {import("@electron/packager").Options}
    */
   let electronOptions = {
     dir: "prefix",
@@ -58,7 +58,7 @@ export async function doPackage(cx) {
 
 /**
  * @param {import("./context.js").Context} cx
- * @returns {Partial<import("electron-packager").Options>}
+ * @returns {Partial<import("@electron/packager").Options>}
  */
 function getElectronOptions(cx) {
   if (cx.os === "windows") {
@@ -84,11 +84,11 @@ function getElectronOptions(cx) {
 
 /**
  * @param {import("./context.js").Context} cx
- * @returns {Partial<import("electron-packager").Options>}
+ * @returns {Partial<import("@electron/packager").Options>}
  */
 function windowsOptions(cx) {
   /**
-   * @type {Partial<import("electron-packager").Options>}
+   * @type {Partial<import("@electron/packager").Options>}
    */
   const options = {
     platform: "win32",
@@ -106,11 +106,11 @@ function windowsOptions(cx) {
 
 /**
  * @param {import("./context.js").Context} cx
- * @returns {Partial<import("electron-packager").Options>}
+ * @returns {Partial<import("@electron/packager").Options>}
  */
 function darwinOptions(cx) {
   /**
-   * @type {Partial<import("electron-packager").Options>}
+   * @type {Partial<import("@electron/packager").Options>}
    */
   const options = {
     platform: "darwin",
