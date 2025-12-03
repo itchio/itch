@@ -27,6 +27,22 @@ If you'd like to develop the app instead, read the [Getting Started][developing]
 
 [developing]: https://itch.io/docs/itch/developing/getting-started.html
 
+## Development Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start the app in development mode (watches for changes and rebuilds)
+npm start
+
+# Type check the project
+npm run ts-check
+
+# Build assets
+npm run compile
+```
+
 ## About itch-setup
 
 [itch-setup](https://github.com/itchio/itch-setup) is the installer program for the itch app.
@@ -53,7 +69,5 @@ itch is released under the MIT License, see the [LICENSE][] file for details.
 Here are some other apps people have started:
 
 ### Android
-* [Mitch](https://sr.ht/~gardenapple/mitch)
+* [Mitch](https://gardenapple.itch.io/mitch)
 
-### iOS
-* [Cantaloupe](https://github.com/khwang/cantaloupe)
