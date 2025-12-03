@@ -708,7 +708,12 @@ function hookNativeWindow(
         if (input.key === "Enter") {
           store.dispatch(actions.commandOk({ wind }));
         } else if (input.key === "Escape") {
-          store.dispatch(actions.commandBack({ wind }));
+          // Check if a modal is open - if so, let the native dialog handle Escape
+          const windState = store.getState().winds[wind];
+          const hasModal = windState?.modals?.length > 0;
+          if (!hasModal) {
+            store.dispatch(actions.commandBack({ wind }));
+          }
         }
       }
     }

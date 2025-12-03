@@ -39,30 +39,37 @@ const HoverCover = Hoverable(Cover);
 
 type Flavor = "normal" | "big";
 
-const ModalPortalDiv = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(7, 4, 4, 0.74);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 200;
-  animation: ${styles.animations.fadeIn} 0.2s;
+const ModalDialog = styled.dialog`
+  /* Reset default dialog styles */
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  color: inherit;
+
+  /* Backdrop styling */
+  &::backdrop {
+    background-color: rgba(7, 4, 4, 0.74);
+    animation: ${styles.animations.fadeIn} 0.2s;
+  }
+
+  /* Dialog animation */
+  &[open] {
+    animation: ${styles.animations.fadeIn} 0.2s;
+  }
 
   .content {
     min-width: 600px;
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 90vw;
+    max-height: 90vh;
     overflow-y: auto;
 
     &.fullscreen {
-      min-width: 100%;
-      max-width: 100%;
-      min-height: 100%;
-      max-height: 100%;
+      min-width: 100vw;
+      max-width: 100vw;
+      min-height: 100vh;
+      max-height: 100vh;
       position: relative;
 
       .modal-div {
@@ -78,7 +85,6 @@ const ModalPortalDiv = styled.div`
     ${styles.windowBorder};
     background-color: ${colors.codGray};
     box-shadow: 0 0 32px black;
-    z-index: 200;
   }
 `;
 
@@ -291,11 +297,40 @@ const BigButtonsDiv = styled.div`
 
 @watching
 class Modals extends React.PureComponent<Props, State> {
+  dialogRef = React.createRef<HTMLDialogElement>();
+
   constructor(props: Modals["props"], context: any) {
     super(props, context);
     this.state = {
       widgetPayload: null,
     };
+  }
+
+  componentDidMount() {
+    this.syncDialogState();
+    this.dialogRef.current?.addEventListener("cancel", this.onDialogCancel);
+    this.dialogRef.current?.addEventListener("close", this.onDialogClose);
+  }
+
+  componentWillUnmount() {
+    this.dialogRef.current?.removeEventListener("cancel", this.onDialogCancel);
+    this.dialogRef.current?.removeEventListener("close", this.onDialogClose);
+  }
+
+  componentDidUpdate() {
+    this.syncDialogState();
+  }
+
+  syncDialogState() {
+    const { modal } = this.props;
+    const dialog = this.dialogRef.current;
+    if (!dialog) return;
+
+    if (modal && !dialog.open) {
+      dialog.showModal();
+    } else if (!modal && dialog.open) {
+      dialog.close();
+    }
   }
 
   subscribe(watcher: Watcher) {
@@ -325,20 +360,33 @@ class Modals extends React.PureComponent<Props, State> {
     });
   }
 
+  onDialogCancel = (e: Event) => {
+    const { modal } = this.props;
+    if (modal?.unclosable) {
+      e.preventDefault();
+    }
+  };
+
+  onDialogClose = () => {
+    const { modal, dispatch } = this.props;
+    if (modal) {
+      dispatch(actions.closeModal({ wind: ambientWind() }));
+    }
+  };
+
   render() {
     const { modal } = this.props;
-    if (!modal) {
-      return null;
-    }
 
     return (
-      <ModalPortalDiv>
-        <div
-          className={classNames("content", { fullscreen: modal.fullscreen })}
-        >
-          {this.renderContent()}
-        </div>
-      </ModalPortalDiv>
+      <ModalDialog ref={this.dialogRef}>
+        {modal && (
+          <div
+            className={classNames("content", { fullscreen: modal.fullscreen })}
+          >
+            {this.renderContent()}
+          </div>
+        )}
+      </ModalDialog>
     );
   }
 
