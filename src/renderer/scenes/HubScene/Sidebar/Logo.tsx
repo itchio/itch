@@ -4,12 +4,14 @@ import { Dispatch } from "common/types";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
 import modals from "renderer/modals";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { ambientWind } from "common/util/navigation";
 import { isSecretClick } from "common/helpers/secret-click";
 import appWhiteLogo from "static/images/logos/app-white.svg";
 
-const LogoDiv = styled.div`
+const LogoButton = styled.button`
+  ${styles.resetButton};
+
   text-align: center;
   cursor: pointer;
 
@@ -27,13 +29,14 @@ class Logo extends React.PureComponent<Props> {
     const { appVersion } = this.props;
 
     return (
-      <LogoDiv
+      <LogoButton
+        type="button"
         title={appVersion}
         className={classNames("logo-div")}
         onClick={this.onClick}
       >
         <img src={appWhiteLogo} />
-      </LogoDiv>
+      </LogoButton>
     );
   }
 

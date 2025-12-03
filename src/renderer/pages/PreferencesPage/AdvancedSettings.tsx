@@ -8,7 +8,15 @@ import { hook } from "renderer/hocs/hook";
 import BrothComponents from "renderer/pages/PreferencesPage/BrothComponents";
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import ProxySettings from "renderer/pages/PreferencesPage/ProxySettings";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
+
+const LinkButton = styled.button`
+  ${styles.resetButton};
+  text-decoration: underline;
+  color: #ececec;
+  cursor: pointer;
+`;
 
 class AdvancedSettings extends React.PureComponent<Props> {
   render() {
@@ -27,23 +35,23 @@ class AdvancedSettings extends React.PureComponent<Props> {
             <ProxySettings />
           </div>
           <div className="section">
-            <span className="link" onClick={this.openAppLog}>
+            <LinkButton type="button" onClick={this.openAppLog}>
               {T(["preferences.advanced.open_app_log"])}
-            </span>
+            </LinkButton>
           </div>
           <div className="section">
-            <span className="link" onClick={this.checkForGameUpdates}>
+            <LinkButton type="button" onClick={this.checkForGameUpdates}>
               {T(["preferences.advanced.check_game_updates"])}
-            </span>
+            </LinkButton>
           </div>
           <div className="section">
-            <span
+            <LinkButton
+              type="button"
               id="clear-browsing-data-link"
-              className="link"
               onClick={this.clearBrowsingData}
             >
               {T(["preferences.advanced.clear_browsing_data"])}
-            </span>
+            </LinkButton>
           </div>
           <Checkbox
             name="disableBrowser"

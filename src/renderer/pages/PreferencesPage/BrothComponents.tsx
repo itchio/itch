@@ -4,7 +4,15 @@ import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
 import BrothComponent from "renderer/pages/PreferencesPage/BrothComponent";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
+
+const CheckUpdatesButton = styled.button`
+  ${styles.resetButton};
+  margin-left: 10px;
+  border-bottom: 1px solid;
+  cursor: pointer;
+`;
 
 class BrothComponents extends React.Component<Props> {
   render() {
@@ -13,16 +21,9 @@ class BrothComponents extends React.Component<Props> {
     return (
       <div className="section">
         <Icon icon="list" /> {T(["preferences.advanced.components"])}
-        <span
-          className="button"
-          onClick={this.checkForUpdates}
-          style={{
-            marginLeft: "10px",
-            borderBottom: "1px solid",
-          }}
-        >
+        <CheckUpdatesButton type="button" onClick={this.checkForUpdates}>
           {T(["menu.help.check_for_update"])}
-        </span>
+        </CheckUpdatesButton>
         {packageNames.map((name) => (
           <BrothComponent name={name} />
         ))}
