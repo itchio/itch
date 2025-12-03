@@ -25,7 +25,11 @@ export function userAgent() {
 let _cachedButlerUserAgent: string;
 export function butlerUserAgent() {
   if (!_cachedButlerUserAgent) {
-    _cachedButlerUserAgent = `itch/${app.getVersion()} (${process.platform})`;
+    let platformInfo = process.platform;
+    if (process.platform === "darwin") {
+      platformInfo = `${process.platform}; ${process.arch}`;
+    }
+    _cachedButlerUserAgent = `itch/${app.getVersion()} (${platformInfo})`;
   }
   return _cachedButlerUserAgent;
 }
