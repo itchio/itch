@@ -17,7 +17,7 @@ class Link extends React.PureComponent<Props> {
     const { label, children, ...restProps } = this.props;
 
     return (
-      <LinkButton {...restProps}>
+      <LinkButton type="button" {...restProps}>
         {label}
         {children}
       </LinkButton>

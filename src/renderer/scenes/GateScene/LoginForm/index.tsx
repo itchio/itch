@@ -63,7 +63,7 @@ class LoginForm extends React.PureComponent<Props, State> {
     const { passwordShown } = this.state;
 
     return (
-      <LoginFormDiv>
+      <>
         <Form onSubmit={this.handleSubmit}>
           {this.renderError()}
           <label>
@@ -74,12 +74,17 @@ class LoginForm extends React.PureComponent<Props, State> {
               type="text"
               defaultValue={lastUsername}
               autoFocus={!lastUsername}
-              onKeyDown={this.handleKeyDown}
             />
           </label>
           <label>
             {T(["login.field.password"])}
             <PasswordContainer>
+              <input
+                id="login-password"
+                ref={this.gotPasswordField}
+                type={passwordShown ? "text" : "password"}
+                autoFocus={!!lastUsername}
+              />
               <RevealButton
                 onMouseDown={this.togglePasswordReveal}
                 icon={passwordShown ? "visibility" : "visibility_off"}
@@ -91,22 +96,15 @@ class LoginForm extends React.PureComponent<Props, State> {
                 className={classNames({ passwordShown })}
                 hintPosition="top"
               />
-              <input
-                id="login-password"
-                ref={this.gotPasswordField}
-                type={passwordShown ? "text" : "password"}
-                autoFocus={!!lastUsername}
-                onKeyDown={this.handleKeyDown}
-              />
             </PasswordContainer>
           </label>
           <Button
             id="login-button"
             className="login-button"
+            type="submit"
             fat
             primary
             label={T(["login.action.login"])}
-            onClick={this.handleSubmit}
           />
         </Form>
 
@@ -127,7 +125,7 @@ class LoginForm extends React.PureComponent<Props, State> {
             onClick={showSaved}
           />
         </Links>
-      </LoginFormDiv>
+      </>
     );
   }
 
@@ -174,7 +172,9 @@ class LoginForm extends React.PureComponent<Props, State> {
   password: HTMLInputElement | null = null;
   gotPasswordField = (el: HTMLInputElement) => (this.password = el);
 
-  handleSubmit = () => {
+  handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     const { username, password } = this;
     if (!username || !password) {
       return;
@@ -187,12 +187,6 @@ class LoginForm extends React.PureComponent<Props, State> {
         password: password.value,
       })
     );
-  };
-
-  handleKeyDown = (e: React.KeyboardEvent<any>) => {
-    if (e.key === "Enter") {
-      this.handleSubmit();
-    }
   };
 }
 
@@ -228,8 +222,6 @@ const Form = styled.form`
     margin: 1em 0;
   }
 `;
-
-const LoginFormDiv = styled.div``;
 
 // props
 

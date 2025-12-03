@@ -88,6 +88,7 @@ class RowButton extends React.PureComponent<Props, any> {
 
     return (
       <RowButtonStyled
+        type="button"
         onClick={onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"

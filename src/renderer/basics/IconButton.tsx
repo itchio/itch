@@ -72,6 +72,7 @@ class IconButton extends React.PureComponent<Props> {
 
     return (
       <IconButtonStyled
+        type="button"
         className={classNames(className, {
           disabled,
           big,

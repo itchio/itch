@@ -99,3 +99,13 @@ document.addEventListener("drop", (event) => {
     });
   }
 });
+
+// Catch unhandled form submissions that would navigate away from the app
+document.addEventListener("submit", (event) => {
+  console.error(
+    "Unhandled form submission intercepted. This likely indicates a button " +
+      'inside a form is missing type="button". Form:',
+    event.target
+  );
+  event.preventDefault();
+});
