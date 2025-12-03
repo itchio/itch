@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { Dispatch, LocalizedString } from "common/types";
 import { ambientPage, ambientTab } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";

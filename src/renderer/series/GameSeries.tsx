@@ -6,7 +6,7 @@ import {
   FetchRes,
   RecordComponentProps,
 } from "renderer/series/Series";
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";

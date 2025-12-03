@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import { Dispatch, LocalizedString } from "common/types";

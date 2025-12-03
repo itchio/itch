@@ -1,4 +1,4 @@
-import { RequestCreator } from "butlerd";
+import { RequestCreator } from "@itchio/butlerd";
 import { Collection } from "common/butlerd/messages";
 import React from "react";
 import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
@@ -27,9 +27,7 @@ export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
   const Series = makeSeries<Params, Res, Record, ExtraProps>(rc);
   type Props = CollectionSeriesProps<Params, Item>;
 
-  class CollectionRecordComponent extends GenericCollectionRecordComponent<
-    Item
-  > {}
+  class CollectionRecordComponent extends GenericCollectionRecordComponent<Item> {}
 
   class CollectionSeries extends React.PureComponent<Props> {
     selector: (props: Props) => GenericExtraProps<Item>;
