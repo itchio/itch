@@ -12,11 +12,11 @@ goal is not to replace the itch.io website.
 
 ## Screenshots
 
-![](https://cloud.githubusercontent.com/assets/7998310/16583085/7702c448-42b3-11e6-949a-c5b45e906807.png)
+![](https://static.itch.io/images/app/collections@1x.png)
 
-![](https://cloud.githubusercontent.com/assets/7998310/16583086/770c632c-42b3-11e6-80e3-6173b2151cfe.png)
+![](https://static.itch.io/images/app/gamepage@1x.png)
 
-![](https://cloud.githubusercontent.com/assets/7998310/16583088/771717ea-42b3-11e6-8081-6192b329d21c.png)
+![](https://static.itch.io/images/app/install@1x.png)
 
 ## Downloads
 
