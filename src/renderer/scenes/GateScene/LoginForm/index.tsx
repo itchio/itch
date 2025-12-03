@@ -55,12 +55,45 @@ class LoginForm extends React.PureComponent<Props, State> {
     super(props, context);
     this.state = {
       passwordShown: false,
+      showLegacy: false,
     };
   }
 
   render() {
     const { dispatch, showSaved, lastUsername } = this.props;
-    const { passwordShown } = this.state;
+    const { passwordShown, showLegacy } = this.state;
+
+    if (!showLegacy) {
+      return (
+        <>
+          <Form>
+            {this.renderError()}
+            <Button
+              id="oauth-login-button"
+              className="login-button"
+              onClick={this.initiateOAuth}
+              fat
+              primary
+              label={T(["Log in with itch.io"])}
+              icon="itchio"
+            />
+          </Form>
+
+          <Links>
+            <Link
+              label={T(["Log in with password"])}
+              onClick={() => this.setState({ showLegacy: true })}
+            />
+            <span>{" · "}</span>
+            <Link
+              key="show-saved-logins"
+              label={T(["login.action.show_saved_logins"])}
+              onClick={showSaved}
+            />
+          </Links>
+        </>
+      );
+    }
 
     return (
       <>
@@ -110,6 +143,11 @@ class LoginForm extends React.PureComponent<Props, State> {
 
         <Links>
           <Link
+            label={T(["Go back"])}
+            onClick={() => this.setState({ showLegacy: false })}
+          />
+          <span>{" · "}</span>
+          <Link
             label={T(["login.action.register"])}
             onClick={this.openRegisterPage}
           />
@@ -128,6 +166,11 @@ class LoginForm extends React.PureComponent<Props, State> {
       </>
     );
   }
+
+  initiateOAuth = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.initiateOAuthLogin({}));
+  };
 
   openRegisterPage = () => {
     const { dispatch } = this.props;
@@ -235,6 +278,7 @@ interface Props {
 
 interface State {
   passwordShown: boolean;
+  showLegacy: boolean;
 }
 
 export default hook((map) => ({
