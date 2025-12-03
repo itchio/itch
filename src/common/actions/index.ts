@@ -227,6 +227,14 @@ export const actions = wireActions({
     /** the 2FA totp code entered by user */
     totpCode?: string;
   }>(),
+  initiateOAuthLogin: action<{}>(),
+  handleOAuthCallback: action<{
+    /** The access token extracted from the URL */
+    accessToken: string;
+
+    /** The state parameter returned by the server */
+    state: string;
+  }>(),
   useSavedLogin: action<{
     profile: Profile;
   }>(),

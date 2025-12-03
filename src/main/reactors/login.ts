@@ -15,11 +15,67 @@ import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { session } from "electron";
 import { elapsed } from "common/format/datetime";
 import { withTimeout } from "common/helpers/with-timeout";
+import { v4 as uuidv4 } from "uuid";
 
 const logger = mainLogger.child(__filename);
 const LOGIN_TIMEOUT = 5 * 1000; // 5 seconds
 
+// State to store the random token for OAuth verification
+let oauthState: string | null = null;
+
+const OAUTH_CLIENT_ID = "85252daf268d27fbefac93e1ac462bfd";
+const OAUTH_REDIRECT_URI = "itchio://oauth/callback";
+const OAUTH_SCOPE = "itch";
+
 export default function (watcher: Watcher) {
+  watcher.on(actions.initiateOAuthLogin, async (store, action) => {
+    logger.info("Initiating OAuth login...");
+    oauthState = uuidv4();
+
+    const params = new URLSearchParams();
+    params.append("client_id", OAUTH_CLIENT_ID);
+    params.append("scope", OAUTH_SCOPE);
+    params.append("redirect_uri", OAUTH_REDIRECT_URI);
+    params.append("state", oauthState);
+    params.append("response_type", "token"); // Implicit flow
+
+    const loginUrl = `${urls.itchio}/user/oauth?${params.toString()}`;
+    logger.info(`Opening OAuth URL: ${loginUrl}`);
+    store.dispatch(actions.openInExternalBrowser({ url: loginUrl }));
+  });
+
+  watcher.on(actions.handleOAuthCallback, async (store, action) => {
+    const { accessToken, state } = action.payload;
+    logger.info("Handling OAuth callback...");
+
+    if (state !== oauthState) {
+      logger.error(`OAuth state mismatch! Expected ${oauthState}, got ${state}`);
+      store.dispatch(actions.loginFailed({ username: "OAuth", error: new Error("Security check failed (state mismatch). Please try again.") }));
+      return;
+    }
+
+    // clear state after use
+    oauthState = null;
+
+    logger.info("OAuth state verified. Attempting login with access token...");
+    store.dispatch(actions.attemptLogin({}));
+
+    try {
+      const { profile } = await withTimeout(
+        "OAuth login",
+        LOGIN_TIMEOUT,
+        mcall(messages.ProfileLoginWithAPIKey, {
+          apiKey: accessToken,
+        })
+      );
+      logger.debug(`ProfileLoginWithAPIKey call succeeded`);
+      await loginSucceeded(store, profile);
+    } catch (e) {
+      logger.error(`OAuth login failed: ${e.stack}`);
+      store.dispatch(actions.loginFailed({ username: "OAuth", error: e }));
+    }
+  });
+
   watcher.on(actions.loginWithPassword, async (store, action) => {
     const { username, password } = action.payload;
 

@@ -34,6 +34,21 @@ export default function (watcher: Watcher) {
   watcher.on(actions.handleItchioURI, async (store, action) => {
     const { uri } = action.payload;
 
+    const parsed = urlParser.parse(uri);
+    // itchio://oauth/callback
+    if (parsed.hostname === "oauth" && parsed.pathname === "/callback") {
+      const hash = parsed.hash || "";
+      const matches = /access_token=([^&]+)/.exec(hash);
+      const stateMatches = /state=([^&]+)/.exec(hash);
+
+      if (matches && stateMatches) {
+        const accessToken = matches[1];
+        const state = stateMatches[1];
+        store.dispatch(actions.handleOAuthCallback({ accessToken, state }));
+        return;
+      }
+    }
+
     const { profile } = store.getState().profile;
     if (profile) {
       handleItchioUrl(store, uri);
