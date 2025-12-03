@@ -143,10 +143,11 @@ const {
   keyframes,
   createGlobalStyle,
   ThemeProvider,
+  StyleSheetManager,
 } = sc as ThemedStyledComponentsModule<Theme>;
 
 export default styled;
-export { css, keyframes, createGlobalStyle, ThemeProvider };
+export { css, keyframes, createGlobalStyle, ThemeProvider, StyleSheetManager };
 
 // animations
 

@@ -2,7 +2,7 @@ import React from "react";
 const Profiler = require("react").unstable_Profiler;
 import { IntlProvider } from "react-intl";
 import { hook } from "renderer/hocs/hook";
-import { theme, ThemeProvider } from "renderer/styles";
+import { theme, ThemeProvider, StyleSheetManager } from "renderer/styles";
 import AppContents from "renderer/App/AppContents";
 import { isEqual } from "underscore";
 
@@ -45,9 +45,11 @@ class App extends React.PureComponent<Props, State> {
 
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
-        <ThemeProvider theme={theme}>
-          <AppContents />
-        </ThemeProvider>
+        <StyleSheetManager disableVendorPrefixes>
+          <ThemeProvider theme={theme}>
+            <AppContents />
+          </ThemeProvider>
+        </StyleSheetManager>
       </IntlProvider>
     );
   }
