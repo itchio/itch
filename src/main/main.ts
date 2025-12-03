@@ -187,6 +187,17 @@ export function main() {
     });
 
     app.on("web-contents-created", (_event, contents) => {
+      mainLogger.info(
+        `web-contents-created: id=${
+          contents.id
+        } type=${contents.getType()} url=${contents.getURL()}`
+      );
+
+      // navigation protection to prevent non itchio links from opening in the app browser
+      if (contents.getType() === "window") {
+        return;
+      } // no checks on main window
+
       contents.on("will-navigate", (e, navigationUrl) => {
         const parsedUrl = new URL(navigationUrl);
 
