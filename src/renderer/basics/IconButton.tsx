@@ -5,11 +5,7 @@ import styled, * as styles from "renderer/styles";
 import Icon from "renderer/basics/Icon";
 
 const IconButtonStyled = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: inherit;
+  ${styles.resetButton};
 
   &:not(.disabled) {
     ${styles.clickable};

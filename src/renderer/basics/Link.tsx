@@ -2,10 +2,7 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 
 const LinkButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
+  ${styles.resetButton};
 
   ${styles.secondaryLink};
 

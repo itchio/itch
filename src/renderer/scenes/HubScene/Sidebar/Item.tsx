@@ -24,12 +24,8 @@ const ItemHeading = styled.div`
 `;
 
 const ItemButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
+  ${styles.resetButton};
   text-align: left;
-  color: inherit;
   width: 100%;
 
   background: ${(props) => props.theme.sidebarBackground};

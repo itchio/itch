@@ -428,3 +428,12 @@ export const windowBorder = css`
   border: 1px solid ${(props) => props.theme.windowBorder};
   border-radius: 2px;
 `;
+
+export const resetButton = css`
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+`;

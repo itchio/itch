@@ -8,7 +8,8 @@ const Label = styled.div`
   ${styles.singleLine};
 `;
 
-const ButtonDiv = styled.div`
+const ButtonStyled = styled.button`
+  ${styles.resetButton};
   ${styles.singleLine};
   transition: all 0.2s;
 
@@ -116,7 +117,7 @@ class Button extends React.PureComponent<Props, any> {
     } = this.props;
 
     return (
-      <ButtonDiv
+      <ButtonStyled
         onClick={disabled ? null : onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
@@ -136,14 +137,14 @@ class Button extends React.PureComponent<Props, any> {
         {icon && label ? " " : null}
         {label ? <Label>{label}</Label> : null}
         {this.props.children}
-      </ButtonDiv>
+      </ButtonStyled>
     );
   }
 }
 
 interface Props {
   className?: string;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   primary?: boolean;
   hint?: LocalizedString;
   icon?: string;

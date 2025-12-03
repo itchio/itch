@@ -84,7 +84,7 @@ interface Props {
   smallText?: LocalizedString;
   buttonIcon?: string;
   buttonText?: LocalizedString;
-  buttonAction?: React.MouseEventHandler<HTMLDivElement>;
+  buttonAction?: React.MouseEventHandler<HTMLButtonElement>;
   componentAction?: JSX.Element;
   className?: string;
 }

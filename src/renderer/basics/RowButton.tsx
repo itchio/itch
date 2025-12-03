@@ -13,9 +13,7 @@ const Label = styled.div`
 `;
 
 const RowButtonStyled = styled.button`
-  background: none;
-  border: none;
-  font: inherit;
+  ${styles.resetButton};
   text-align: left;
 
   ${styles.singleLine};

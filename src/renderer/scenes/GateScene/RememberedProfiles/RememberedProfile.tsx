@@ -98,14 +98,9 @@ const RememberedProfileRow = styled.div`
 `;
 
 const RememberedProfileButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
+  ${styles.resetButton};
   text-align: left;
-  color: inherit;
   width: 100%;
-  cursor: pointer;
 
   display: flex;
   flex-direction: row;
