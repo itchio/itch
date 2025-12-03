@@ -8,8 +8,10 @@ interface Props {
 }
 
 /**
- * Renders a human-friendly (and localized) duration
+ * Renders a human-friendly (and localized) duration with exact time on hover
  */
 export default ({ secs }: Props) => (
-  <FormattedMessage {...formatDurationAsMessage(secs)} />
+  <span data-rh={JSON.stringify({ duration: secs })}>
+    <FormattedMessage {...formatDurationAsMessage(secs)} />
+  </span>
 );
