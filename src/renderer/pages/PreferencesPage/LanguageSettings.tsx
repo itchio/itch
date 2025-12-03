@@ -32,7 +32,7 @@ class LanguageSettings extends React.PureComponent<Props> {
     };
     const options: BaseOptionType[] = [autoLang, ...locales];
 
-    let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
+    let translateUrl = `${urls.itchTranslationPlatform}/projects/itchio/itch`;
     const english = /^en/.test(lang);
     if (!english && lang !== "__") {
       translateUrl += `/${lang}`;
