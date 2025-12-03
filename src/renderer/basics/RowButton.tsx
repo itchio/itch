@@ -12,7 +12,12 @@ const Label = styled.div`
   ${styles.singleLine};
 `;
 
-const RowButtonDiv = styled.div`
+const RowButtonStyled = styled.button`
+  background: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+
   ${styles.singleLine};
 
   font-size: ${(props) => props.theme.fontSizes.baseText};
@@ -84,7 +89,7 @@ class RowButton extends React.PureComponent<Props, any> {
     }
 
     return (
-      <RowButtonDiv
+      <RowButtonStyled
         onClick={onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
@@ -100,14 +105,14 @@ class RowButton extends React.PureComponent<Props, any> {
         {iconComponent && label ? " " : null}
         {label ? <Label>{label}</Label> : null}
         {this.props.children}
-      </RowButtonDiv>
+      </RowButtonStyled>
     );
   }
 }
 
 interface Props {
   className?: string;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   hint?: string;
   icon?: string;
   iconComponent?: JSX.Element;

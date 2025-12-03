@@ -18,30 +18,24 @@ class RememberedProfile extends React.PureComponent<Props> {
     const coverUrl = getUserCoverURL(user);
 
     return (
-      <RememberedProfileDiv
-        className="remembered-profile"
-        onClick={this.useThisProfile}
-      >
-        <img className="avatar" src={coverUrl} />
-        <div className="rest">
-          <p className="username">{displayName || username}</p>
-          <p className="last-connected">
-            {T(["login.remembered_session.last_connected"])}{" "}
-            <TimeAgo date={profile.lastConnected} />
-          </p>
-        </div>
-        <div className="filler" />
-        <span
+      <RememberedProfileRow className="remembered-profile">
+        <RememberedProfileButton onClick={this.useThisProfile}>
+          <img className="avatar" src={coverUrl} />
+          <div className="rest">
+            <p className="username">{displayName || username}</p>
+            <p className="last-connected">
+              {T(["login.remembered_session.last_connected"])}{" "}
+              <TimeAgo date={profile.lastConnected} />
+            </p>
+          </div>
+        </RememberedProfileButton>
+        <ForgetButton
+          icon="cross"
           data-rh-at="left"
           data-rh={JSON.stringify(["prompt.forget_session.action"])}
-        >
-          <IconButton
-            icon="cross"
-            className="forget-profile"
-            onClick={this.onForget}
-          />
-        </span>
-      </RememberedProfileDiv>
+          onClick={this.onForget}
+        />
+      </RememberedProfileRow>
     );
   }
 
@@ -50,7 +44,7 @@ class RememberedProfile extends React.PureComponent<Props> {
     dispatch(actions.useSavedLogin({ profile }));
   };
 
-  onForget = (e: React.MouseEvent<HTMLElement>) => {
+  onForget = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     const { profile, dispatch } = this.props;
     const { username } = profile.user;
@@ -85,27 +79,44 @@ interface Props {
 
 export default hook()(RememberedProfile);
 
-const RememberedProfileDiv = styled.div`
+const RememberedProfileRow = styled.div`
   ${styles.boxy};
+  position: relative;
   flex-shrink: 0;
   min-width: 380px;
   border-radius: 2px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   margin: 8px 4px;
+  box-shadow: 0 0 4px ${(props) => props.theme.sidebarBackground};
 
-  .avatar {
-    filter: grayscale(100%);
-
-    width: 64px;
-    height: 64px;
-    border-radius: 2px;
-    margin-right: 4px;
+  &:hover {
+    box-shadow: 0 0 8px ${(props) => props.theme.sidebarBackground};
   }
 
   &:hover .avatar {
     filter: grayscale(0%);
+  }
+`;
+
+const RememberedProfileButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .avatar {
+    filter: grayscale(100%);
+    width: 64px;
+    height: 64px;
+    border-radius: 2px;
+    margin-right: 4px;
   }
 
   p {
@@ -114,10 +125,6 @@ const RememberedProfileDiv = styled.div`
 
   .rest {
     padding: 6px 8px;
-  }
-
-  .filler {
-    flex-grow: 8;
   }
 
   .username {
@@ -132,14 +139,14 @@ const RememberedProfileDiv = styled.div`
     font-size: 14px;
   }
 
-  box-shadow: 0 0 4px ${(props) => props.theme.sidebarBackground};
-
-  &:hover {
-    box-shadow: 0 0 8px ${(props) => props.theme.sidebarBackground};
-    cursor: pointer;
-  }
-
   &:active {
     -webkit-filter: brightness(70%);
   }
+`;
+
+const ForgetButton = styled(IconButton)`
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 `;

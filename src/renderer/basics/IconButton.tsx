@@ -4,7 +4,13 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 import Icon from "renderer/basics/Icon";
 
-const IconButtonDiv = styled.div`
+const IconButtonStyled = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+
   &:not(.disabled) {
     ${styles.clickable};
   }
@@ -69,7 +75,7 @@ class IconButton extends React.PureComponent<Props> {
     } = this.props;
 
     return (
-      <IconButtonDiv
+      <IconButtonStyled
         className={classNames(className, {
           disabled,
           big,
@@ -82,7 +88,7 @@ class IconButton extends React.PureComponent<Props> {
         {...restProps}
       >
         {typeof icon === "string" ? <Icon icon={icon} /> : icon}
-      </IconButtonDiv>
+      </IconButtonStyled>
     );
   }
 }
@@ -95,9 +101,9 @@ interface Props {
   hint?: LocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
-  onClick?: React.MouseEventHandler<HTMLElement>;
-  onMouseDown?: React.MouseEventHandler<HTMLElement>;
-  onContextMenu?: React.MouseEventHandler<HTMLElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onMouseDown?: React.MouseEventHandler<HTMLButtonElement>;
+  onContextMenu?: React.MouseEventHandler<HTMLButtonElement>;
   big?: boolean;
   huge?: boolean;
   enormous?: boolean;

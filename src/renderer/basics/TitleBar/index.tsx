@@ -128,14 +128,24 @@ class TitleBar extends React.PureComponent<Props> {
       <>
         {secondary ? null : (
           <>
-            <WindowButton icon="minus" onClick={this.minimizeClick} />
+            <WindowButton
+              icon="minus"
+              onClick={this.minimizeClick}
+              aria-label="Minimize"
+            />
             <WindowButton
               icon={maximized ? "window-restore" : "window-maximize"}
               onClick={this.maximizeRestoreClick}
+              aria-label={maximized ? "Restore" : "Maximize"}
             />
           </>
         )}
-        <WindowButton className="exit" icon="cross" onClick={this.closeClick} />
+        <WindowButton
+          className="exit"
+          icon="cross"
+          onClick={this.closeClick}
+          aria-label="Close"
+        />
       </>
     );
   }

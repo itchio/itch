@@ -23,7 +23,15 @@ const ItemHeading = styled.div`
   padding: 0.2em 0;
 `;
 
-const ItemSection = styled.section`
+const ItemButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+
   background: ${(props) => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;
@@ -170,7 +178,7 @@ class Item extends React.PureComponent<Props> {
     };
 
     return (
-      <ItemSection
+      <ItemButton
         className={classNames({ active })}
         data-rh-at="right"
         data-rh={sublabel ? JSON.stringify(sublabel) : null}
@@ -202,7 +210,7 @@ class Item extends React.PureComponent<Props> {
             <UnshrinkableIconButton icon="cross" onClick={this.onCloseClick} />
           ) : null}
         </Row>
-      </ItemSection>
+      </ItemButton>
     );
   }
 }

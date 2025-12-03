@@ -1,7 +1,12 @@
 import React from "react";
 import styled, * as styles from "renderer/styles";
 
-const LinkSpan = styled.span`
+const LinkButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+
   ${styles.secondaryLink};
 
   transition: color 0.4s;
@@ -15,10 +20,10 @@ class Link extends React.PureComponent<Props> {
     const { label, children, ...restProps } = this.props;
 
     return (
-      <LinkSpan {...restProps}>
+      <LinkButton {...restProps}>
         {label}
         {children}
-      </LinkSpan>
+      </LinkButton>
     );
   }
 }
@@ -26,8 +31,8 @@ class Link extends React.PureComponent<Props> {
 export default Link;
 
 class Props {
-  onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
-  onContextMenu?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
+  onClick?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
+  onContextMenu?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
   label?: JSX.Element | string;
   children?: string | JSX.Element | (string | JSX.Element)[];
   className?: string;
