@@ -8,7 +8,9 @@ import { hook } from "renderer/hocs/hook";
 import styled, * as styles from "renderer/styles";
 import { getUserCoverURL } from "renderer/util/get-user-cover-url";
 
-const UserMenuDiv = styled.div`
+const UserMenuButton = styled.button`
+  ${styles.resetButton};
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -58,11 +60,15 @@ class UserMenu extends React.PureComponent<Props> {
     const coverUrl = getUserCoverURL(me);
 
     return (
-      <UserMenuDiv className="user-menu" onMouseDown={this.openMenu}>
+      <UserMenuButton
+        type="button"
+        className="user-menu"
+        onMouseDown={this.openMenu}
+      >
         <img src={coverUrl} />
         <span>{displayName || username}</span>
         <Filler />
-      </UserMenuDiv>
+      </UserMenuButton>
     );
   }
 

@@ -97,8 +97,34 @@ class StandardGameCover extends React.PureComponent<Props> {
       className,
       children,
       showGifMarker = true,
+      disableLink = false,
       ...restProps
     } = this.props;
+
+    let coverContent: JSX.Element | null = null;
+
+    if (game) {
+      coverContent = (
+        <>
+          <GameCover game={game} showGifMarker={!showInfo && showGifMarker} />
+          <StandardSaleRibbon game={game} />
+          {showInfo ? (
+            <CoverInfo className="cover-hover">
+              <DarkBox>
+                <DarkTitle>{game.title}</DarkTitle>
+                <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
+                <Filler />
+                <PlatformIcons target={game} />
+              </DarkBox>
+            </CoverInfo>
+          ) : null}
+        </>
+      );
+
+      if (!disableLink) {
+        coverContent = <a href={urlForGame(game.id)}>{coverContent}</a>;
+      }
+    }
 
     return (
       <CoverBox
@@ -106,29 +132,7 @@ class StandardGameCover extends React.PureComponent<Props> {
         className={classNames(className, { showInfo })}
         onContextMenu={this.onContextMenu}
       >
-        {game ? (
-          <>
-            <a href={urlForGame(game.id)}>
-              <GameCover
-                game={game}
-                showGifMarker={!showInfo && showGifMarker}
-              />
-              <StandardSaleRibbon game={game} />
-              {showInfo ? (
-                <>
-                  <CoverInfo className="cover-hover">
-                    <DarkBox>
-                      <DarkTitle>{game.title}</DarkTitle>
-                      <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
-                      <Filler />
-                      <PlatformIcons target={game} />
-                    </DarkBox>
-                  </CoverInfo>
-                </>
-              ) : null}
-            </a>
-          </>
-        ) : null}
+        {coverContent}
         {children}
       </CoverBox>
     );
@@ -159,6 +163,7 @@ interface Props {
   showInfo?: boolean;
   className?: string;
   showGifMarker?: boolean;
+  disableLink?: boolean;
   children?: JSX.Element | JSX.Element[];
 }
 

@@ -7,13 +7,12 @@ import { ambientWind } from "common/util/navigation";
 import React from "react";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
-import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import { GameTitle } from "renderer/scenes/HubScene/Sidebar/PrimeDownload/GameTitle";
-import styled, { clickable } from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import LastPlayed from "renderer/basics/LastPlayed";
 import butlerCaller from "renderer/hocs/butlerCaller";
@@ -52,11 +51,11 @@ const GameCover = styled(StandardGameCover)`
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 `;
 
-const PrimeDownloadDiv = styled.div`
-  ${clickable};
+const PrimeDownloadButton = styled.button`
+  ${styles.resetButton};
+  ${styles.clickable};
 
   margin: 20px auto;
-  padding-bottom: 1em;
 
   display: flex;
   flex-direction: column;
@@ -92,11 +91,12 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
   render() {
     const { game } = this.props;
     return (
-      <PrimeDownloadDiv
+      <PrimeDownloadButton
+        type="button"
         onClick={this.onMainClick}
         onContextMenu={this.onContextMenu}
       >
-        <GameCover game={game} showGifMarker={false}>
+        <GameCover game={game} showGifMarker={false} disableLink>
           <Overlay>
             <TitleBlock>
               <GameTitle title={game.title} />
@@ -104,7 +104,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
             {this.renderProgress()}
           </Overlay>
         </GameCover>
-      </PrimeDownloadDiv>
+      </PrimeDownloadButton>
     );
   }
 
@@ -166,7 +166,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
       <>
         <ProgressContainer>
           {caveId ? (
-            <IconButton icon="play2" enormous />
+            <EnormousIcon icon="play2" />
           ) : (
             <LoadingCircle progress={progress.progress} huge />
           )}
