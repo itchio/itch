@@ -113,11 +113,13 @@ class Button extends React.PureComponent<Props, any> {
       disabled,
       translucent,
       onClick,
+      type = "button",
       ...restProps
     } = this.props;
 
     return (
       <ButtonStyled
+        type={type}
         onClick={disabled ? null : onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
@@ -155,6 +157,7 @@ interface Props {
   disabled?: boolean;
   id?: string;
   translucent?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 export default Button;
