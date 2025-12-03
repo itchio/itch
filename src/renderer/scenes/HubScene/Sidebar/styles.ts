@@ -25,9 +25,9 @@ export const SidebarSection = styled.div`
 
     display: flex;
     align-items: center;
+    gap: 0.6em;
 
     .icon {
-      padding-right: 0.6em;
       font-size: 140%;
     }
   }
