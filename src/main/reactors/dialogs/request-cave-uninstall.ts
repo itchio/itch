@@ -18,7 +18,7 @@ export default function (watcher: Watcher) {
       actions.openModal(
         modals.naked.make({
           wind: "root",
-          title: "",
+          title: ["prompt.uninstall.title"],
           message: ["prompt.uninstall.message", { title }],
           buttons: [
             {

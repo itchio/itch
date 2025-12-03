@@ -488,6 +488,7 @@
   "prompt.uninstall.cancel": "Cancel",
   "prompt.uninstall.message": "Are you sure you want to uninstall {{title}}?",
   "prompt.uninstall.reinstall": "Re-install",
+  "prompt.uninstall.title": "Confirm uninstall",
   "prompt.uninstall.uninstall": "Uninstall now",
   "prompt.url_install.credit": "A {{classification}} by {{username}}",
   "prompt.url_install.message": "Do you want to install {{title}}?",
