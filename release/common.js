@@ -36,7 +36,7 @@ export async function measure(name, cb) {
  * @returns {boolean} True if we're building a tag
  */
 export function hasTag() {
-  return !!process.env.CI_COMMIT_TAG || !!process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag';
+  return !!process.env.CI_COMMIT_TAG || (!!process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag');
 }
 
 /**

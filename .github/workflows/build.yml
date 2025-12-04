@@ -101,6 +101,7 @@ jobs:
 
     - name: Create archives
       run: |
+        set -e
         cd artifacts
         for dir in */; do
           dirname=$(basename "$dir")
