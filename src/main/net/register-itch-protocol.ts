@@ -20,15 +20,9 @@ export function registerItchProtocol(store: Store, ses: Session) {
     logger.debug(
       `Registering itch: protocol for session with user agent ${ses.getUserAgent()}`
     );
-    let wasRegistered = ses.protocol.registerStringProtocol(
-      "itch",
-      (_req, cb) => {
-        cb("");
-      }
-    );
-    if (!wasRegistered) {
-      logger.error(`Could not register itch protocol`);
-    }
+    ses.protocol.handle("itch", () => {
+      return new Response("");
+    });
 
     ses.webRequest.onBeforeRequest((details, callback) => {
       const { url } = details;
