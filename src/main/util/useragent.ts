@@ -25,7 +25,7 @@ export function userAgent() {
 let _cachedButlerUserAgent: string;
 export function butlerUserAgent() {
   if (!_cachedButlerUserAgent) {
-    let platformInfo = process.platform;
+    let platformInfo: string = process.platform;
     if (process.platform === "darwin") {
       platformInfo = `${process.platform}; ${process.arch}`;
     }
