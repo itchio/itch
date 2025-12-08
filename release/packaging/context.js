@@ -12,7 +12,7 @@ import { chalk } from "@itchio/bob";
  *  appVersion: string,
  *  os: string,
  *  arch: string,
- *  archInfo: {electronArch: "ia32" | "x64"},
+ *  archInfo: {electronArch: "ia32" | "x64" | "arm64"},
  *  shouldSign: boolean,
  *  projectDir: string,
  *  artifactDir: string,

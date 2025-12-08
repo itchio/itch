@@ -75,16 +75,24 @@ jobs:
       run: |
         npm run ts-check
 
-    - name: Build and package
+    - name: Build and package (x64)
       run: |
         node release/package-all.js --os darwin --arch amd64
+
+    - name: Build and package (arm64)
+      run: |
+        node release/package-all.js --os darwin --arch arm64
+
+    - name: Create universal binary
+      run: |
+        node release/make-universal.js
 
     - name: Upload artifact
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: darwin-amd64-artifact
-        path: artifacts/darwin-amd64/
+        name: darwin-universal-artifact
+        path: artifacts/darwin-universal/
 
   release:
     if: startsWith(github.ref, 'refs/tags/')

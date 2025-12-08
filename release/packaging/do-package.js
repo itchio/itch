@@ -67,7 +67,7 @@ function getElectronOptions(cx) {
       arch: cx.archInfo.electronArch,
     };
   }
-  if (cx.os === "darwin" && cx.arch === "amd64") {
+  if (cx.os === "darwin" && (cx.arch === "amd64" || cx.arch === "arm64")) {
     return {
       ...darwinOptions(cx),
       arch: cx.archInfo.electronArch,
@@ -114,7 +114,6 @@ function darwinOptions(cx) {
    */
   const options = {
     platform: "darwin",
-    arch: "x64",
     icon: ospath.join(cx.iconsPath, "itch.icns"),
     appBundleId: appBundleId(),
     appCategoryType: "public.app-category.games",
