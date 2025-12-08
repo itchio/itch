@@ -10,7 +10,12 @@ async function main() {
 
   await build(cx);
   await doPackage(cx);
-  await test(cx);
+
+  if (process.env.SKIP_TESTS) {
+    console.log("Skipping integration tests (SKIP_TESTS is set)");
+  } else {
+    await test(cx);
+  }
 }
 
 main().catch((e) => {
