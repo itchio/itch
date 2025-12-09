@@ -11,7 +11,6 @@ import styled, * as styles from "renderer/styles";
 import { Dispatch } from "common/types";
 import { T } from "renderer/t";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { findDOMNode } from "react-dom";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -86,6 +85,8 @@ const ShortText = styled.span`
 
 @watching
 class GameSearchResult extends React.PureComponent<Props> {
+  private divRef = React.createRef<HTMLDivElement>();
+
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandOk, async (store, action) => {
       if (this.props.chosen && this.props.active && !this.props.loading) {
@@ -96,11 +97,8 @@ class GameSearchResult extends React.PureComponent<Props> {
   }
 
   componentDidUpdate() {
-    if (this.props.chosen) {
-      const node = findDOMNode(this);
-      if (node) {
-        (node as any).scrollIntoViewIfNeeded();
-      }
+    if (this.props.chosen && this.divRef.current) {
+      this.divRef.current.scrollIntoView({ block: "nearest" });
     }
   }
 
@@ -114,6 +112,7 @@ class GameSearchResult extends React.PureComponent<Props> {
 
     return (
       <GameSearchResultDiv
+        ref={this.divRef}
         className={resultClasses}
         onMouseDown={this.onClick}
         onMouseEnter={this.onEnter}

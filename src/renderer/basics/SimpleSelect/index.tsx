@@ -147,8 +147,8 @@ const keyboardFocusTimeout = 250;
 export default class SimpleSelect<
   OptionType extends BaseOptionType
 > extends React.PureComponent<Props<OptionType>, State<OptionType>> {
-  constructor(props: Props<OptionType>, context: any) {
-    super(props, context);
+  constructor(props: Props<OptionType>) {
+    super(props);
     this.state = {
       open: false,
       focusedValue: first(props.options),

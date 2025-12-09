@@ -109,8 +109,8 @@ const levelOptions = [
 const linesPerPage = 250;
 
 class Log extends React.PureComponent<Props, State> {
-  constructor(props: Log["props"], context: any) {
-    super(props, context);
+  constructor(props: Log["props"]) {
+    super(props);
     this.state = {
       level: reverseLevels["info"],
       maxLines: linesPerPage,

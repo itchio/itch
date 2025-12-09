@@ -19,8 +19,8 @@ const CoverDiv = styled.div`
 `;
 
 class Cover extends React.PureComponent<Props, State> {
-  constructor(props: Cover["props"], context: any) {
-    super(props, context);
+  constructor(props: Cover["props"]) {
+    super(props);
     this.state = { loading: false, error: false };
   }
 

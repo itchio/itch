@@ -150,6 +150,7 @@ interface Props {
   id?: string;
   translucent?: boolean;
   type?: "button" | "submit" | "reset";
+  children?: React.ReactNode;
 }
 
 export default Button;
