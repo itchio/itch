@@ -30,7 +30,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: linux-amd64-artifact
+        name: kitch-${{ github.ref_name }}-linux-amd64
         path: artifacts/linux-amd64/
 
   build-windows:
@@ -55,7 +55,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: windows-amd64-artifact
+        name: kitch-${{ github.ref_name }}-windows-amd64
         path: artifacts/windows-amd64/
 
   build-macos:
@@ -87,12 +87,26 @@ jobs:
       run: |
         node release/make-universal.js
 
-    - name: Upload artifact
+    - name: Upload universal artifact
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: darwin-universal-artifact
+        name: kitch-${{ github.ref_name }}-darwin-universal
         path: artifacts/darwin-universal/
+
+    - name: Upload x64 artifact
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: kitch-${{ github.ref_name }}-darwin-amd64
+        path: artifacts/darwin-amd64/
+
+    - name: Upload arm64 artifact
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: kitch-${{ github.ref_name }}-darwin-arm64
+        path: artifacts/darwin-arm64/
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
