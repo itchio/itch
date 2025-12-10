@@ -28,6 +28,62 @@ export function formatDurationAsMessage(secs: number): FormattedDuration {
   }
 }
 
+export function formatPreciseDurationAsMessage(
+  secs: number
+): FormattedDuration {
+  const totalMinutes = Math.floor(secs / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const seconds = Math.floor(secs % 60);
+
+  if (hours === 0 && minutes === 0) {
+    return {
+      id: "duration.precise.seconds_only",
+      values: { seconds: seconds.toFixed() },
+    };
+  }
+
+  if (hours === 0) {
+    return {
+      id:
+        minutes === 1
+          ? "duration.precise.minute_only"
+          : "duration.precise.minutes_only",
+      values: { minutes: minutes.toFixed() },
+    };
+  }
+
+  if (minutes === 0) {
+    return {
+      id:
+        hours === 1
+          ? "duration.precise.hour_only"
+          : "duration.precise.hours_only",
+      values: { hours: hours.toFixed() },
+    };
+  }
+
+  // Both hours and minutes
+  if (hours === 1 && minutes === 1) {
+    return { id: "duration.precise.hour_minute" };
+  } else if (hours === 1) {
+    return {
+      id: "duration.precise.hour_minutes",
+      values: { minutes: minutes.toFixed() },
+    };
+  } else if (minutes === 1) {
+    return {
+      id: "duration.precise.hours_minute",
+      values: { hours: hours.toFixed() },
+    };
+  } else {
+    return {
+      id: "duration.precise.hours_minutes",
+      values: { hours: hours.toFixed(), minutes: minutes.toFixed() },
+    };
+  }
+}
+
 export interface DateFormat {
   key: number;
   options: Intl.DateTimeFormatOptions;
