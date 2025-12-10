@@ -105,7 +105,7 @@
     "prompt.uninstall.message": "¿Está seguro que desea desinstalar {{title}}?",
     "prompt.uninstall.reinstall": "Reinstalar",
     "prompt.uninstall.uninstall": "Desinstalar ahora",
-    "prompt.url_install.credit": "Una {{classification}} de {{username}}",
+    "prompt.url_install.credit": "Una {{classification}} por {{username}}",
     "prompt.url_install.message": "¿Quieres instalar {{title}}?",
     "prompt.url_install.title": "Necesita instalación",
     "sidebar.broken": "Fuera de servicio",

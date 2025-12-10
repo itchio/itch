@@ -591,5 +591,6 @@
     "prompt.show_error.generic_message": "Io fuŝis",
     "prompt.sla.title": "Interkonsento pri uzado",
     "prompt.sla.message": "Por uzi ĉi tion programon, vi devas akcepti la kondiĉojn de la jenan interkonsenton pri uzado:",
-    "prompt.sla.accept": "Akcepti"
+    "prompt.sla.accept": "Akcepti",
+    "filter_by.games.classification.physical_game": "Fizikaj ludoj"
 }

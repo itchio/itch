@@ -90,5 +90,9 @@
     "download.started": "Đã bắt đầu",
     "collection.empty": "Không có trò chơi nào trong bộ sưu tập này",
     "grid.item.install_title": "Cài đặt {{title}}",
-    "grid.item.developer": "Nhà phát triển"
+    "grid.item.developer": "Nhà phát triển",
+    "collection.item_count": "{{itemCount}} vật phẩm",
+    "grid.item.update": "Cập nhật",
+    "grid.item.open_debug_log": "Xem nhật kí hệ thống...",
+    "prompt.logout_title": "Đăng xuất"
 }

@@ -120,7 +120,7 @@
     "download.started": "Dimulai",
     "download.reason.update": "untuk memutakhirkan ke versi terakhir",
     "download.reason.reinstall": "untuk menginstall kembali",
-    "download.reason.revert": "untuk kembali ke versi lebih awal",
+    "download.reason.revert": "untuk beralih ke versi lain",
     "download.reason.heal": "untuk verifikasi dan memulihkan",
     "duration.hour": "satu jam",
     "duration.hours": "{{x}} jam",
@@ -392,7 +392,7 @@
     "download.ongoing.heal": "Memperbaiki {{title}}...",
     "collections.empty": "Saat ini anda tidak memiliki koleksi",
     "collection.item_count": "{{itemCount}} item",
-    "download.ongoing.update": "Memperbarui{{title}}...",
+    "download.ongoing.update": "Memperbarui {{title}}…",
     "collection.summary": "Koleksi dari {{itemCount}} item",
     "download.ongoing.install": "Memasang {{title}}...",
     "collections.empty_sub": "Telusuri beberapa permainan dan tambahkan ke koleksi baru!",
@@ -449,5 +449,11 @@
     "preferences.install_location.empty": "Kosong",
     "login.action.hide_password": "Sembunyikan kata sandi",
     "login.action.reveal_password": "Tampilkan kata sandi",
-    "browser.open_devtools": "Buka alat pengembang"
+    "browser.open_devtools": "Buka alat pengembang",
+    "preferences.scan_install_locations.confirm_import": "Konfirmasi impor",
+    "preferences.install_location.free_of_total": "{{freeSize}} tersisa dari {{totalSize}}",
+    "preferences.install_location.disk_usage": "Penggunaan disk",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} item telah berhasil diimpor",
+    "preferences.scan_install_locations.import_items": "Memasukan {{numItems}} item",
+    "preferences.scan_install_locations.title": "Memindai..."
 }

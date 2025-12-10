@@ -399,7 +399,7 @@
     "table.column.published": "Vydáno",
     "collection_grid.item.updated_at": "Poslední aktualizace {{time_ago}}",
     "download.ongoing.revert": "Přepínání {{title}} na jinou verzi…",
-    "download.ongoing.heal": "Oprava {{title}…",
+    "download.ongoing.heal": "Oprava {{title}}…",
     "download.outcome.installed": "nainstalováno",
     "download.outcome.updated": "aktualizován na nejnovější verzi",
     "download.outcome.reinstalled": "přeinstalovat",

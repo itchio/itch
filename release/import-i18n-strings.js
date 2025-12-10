@@ -13,8 +13,8 @@ async function importStrings() {
   }
   let dst = `./src/static/locales`;
 
-  $(`rm -rf ${dst}`);
-  $(`cp -rfv ${src} ${dst}`);
+  $(`rm -rf '${dst}'`, {silent: false});
+  $(`cp -rfv '${src}' '${dst}'`, {silent: false});
 }
 
 importStrings();

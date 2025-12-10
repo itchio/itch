@@ -482,5 +482,8 @@
     "search.placeholder": "بحث",
     "search.empty.no_results": "لم يتم العثور على نتائج",
     "sidebar.explore": "استكشف",
-    "status.available": "يتوفر اصدار جديد من اتش الآن!"
+    "status.available": "يتوفر اصدار جديد من اتش الآن!",
+    "sidebar.itchio": "بوابتك لعالم الالعاب المستقلة",
+    "prompt.uninstall_error.action_permissions": "حذف كمسؤول",
+    "sidebar.owned_subtitle": "أشياء أشتريتها او ثبتها"
 }

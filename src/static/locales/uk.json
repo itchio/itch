@@ -585,5 +585,6 @@
     "prompt.install_error.message": "Встановлення зірвалось.",
     "setup.window.welcome": "Вітаємо у встановлювачі {{app_name}}! Візьміть собі кави, оберіть місце встановлення та починайте.",
     "outlinks.open_dashboard": "Кабінет розробника",
-    "onboarding.collections.title_mix": "Перемішати & підібрати"
+    "onboarding.collections.title_mix": "Перемішати & підібрати",
+    "sandbox.setup.windows.detail": "Після натискання кнопки \"Продовжити\" може з'явитися вікно з проханням надати дозвіл. Це додасть обліковий запис користувача `itch-player`, щоб захистити ваші ігри від решти системи."
 }
