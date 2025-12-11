@@ -1,6 +1,14 @@
 import React from "react";
 import styled, * as styles from "renderer/styles";
 
+interface Props {
+  onClick?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
+  onContextMenu?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
+  label?: JSX.Element | string;
+  children?: string | JSX.Element | (string | JSX.Element)[];
+  className?: string;
+}
+
 const LinkButton = styled.button`
   ${styles.resetButton};
 
@@ -12,25 +20,15 @@ const LinkButton = styled.button`
   text-overflow: ellipsis;
 `;
 
-class Link extends React.PureComponent<Props> {
-  render() {
-    const { label, children, ...restProps } = this.props;
+const Link: React.FC<Props> = (props) => {
+  const { label, children, ...restProps } = props;
 
-    return (
-      <LinkButton type="button" {...restProps}>
-        {label}
-        {children}
-      </LinkButton>
-    );
-  }
-}
+  return (
+    <LinkButton type="button" {...restProps}>
+      {label}
+      {children}
+    </LinkButton>
+  );
+};
 
-export default Link;
-
-class Props {
-  onClick?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
-  onContextMenu?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
-  label?: JSX.Element | string;
-  children?: string | JSX.Element | (string | JSX.Element)[];
-  className?: string;
-}
+export default React.memo(Link);

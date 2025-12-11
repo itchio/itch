@@ -1,5 +1,12 @@
+import classNames from "classnames";
 import React from "react";
 import { FormattedRelativeTime } from "react-intl";
+
+interface Props {
+  date: Date | string;
+  className?: string;
+  before?: string | JSX.Element;
+}
 
 type Unit = "second" | "minute" | "hour" | "day" | "week" | "month" | "year";
 
@@ -34,58 +41,47 @@ function selectUnit(date: Date): { value: number; unit: Unit } {
   return { value: years, unit: "year" };
 }
 
-class TimeAgo extends React.PureComponent<Props> {
-  render() {
-    const { className, before } = this.props;
-    let { date } = this.props;
+const TimeAgo = (props: Props) => {
+  const { className, before, date } = props;
 
-    let dateObject = typeof date === "string" ? new Date(date) : date;
-    if (!dateObject) {
-      return null;
-    }
-
-    if (!dateObject.getTime || isNaN(dateObject.getTime())) {
-      console.warn("TimeAgo was passed an invalid date: ", this.props.date);
-      return null;
-    }
-
-    const { value, unit } = selectUnit(dateObject);
-    let extra = {
-      updateIntervalInSeconds: undefined,
-    };
-    switch (unit) {
-      case "second":
-        extra.updateIntervalInSeconds = 1;
-        break;
-      case "minute":
-        extra.updateIntervalInSeconds = 60;
-        break;
-      case "hour":
-        extra.updateIntervalInSeconds = 60 * 60;
-        break;
-    }
-
-    return (
-      <span
-        className={`time-ago ${className}`}
-        data-rh={JSON.stringify({ date: dateObject.toISOString() })}
-      >
-        {before ? <>{before} </> : null}
-        <FormattedRelativeTime
-          value={value}
-          unit={unit}
-          style="long"
-          {...extra}
-        />
-      </span>
-    );
+  const dateObject = typeof date === "string" ? new Date(date) : date;
+  if (!dateObject) {
+    return null;
   }
-}
 
-export default TimeAgo;
+  if (!dateObject.getTime || isNaN(dateObject.getTime())) {
+    console.warn("TimeAgo was passed an invalid date: ", props.date);
+    return null;
+  }
 
-interface Props {
-  date: Date | string;
-  className?: string;
-  before?: string | JSX.Element;
-}
+  const { value, unit } = selectUnit(dateObject);
+  const extra: { updateIntervalInSeconds?: number } = {};
+  switch (unit) {
+    case "second":
+      extra.updateIntervalInSeconds = 1;
+      break;
+    case "minute":
+      extra.updateIntervalInSeconds = 60;
+      break;
+    case "hour":
+      extra.updateIntervalInSeconds = 60 * 60;
+      break;
+  }
+
+  return (
+    <span
+      className={classNames("time-ago", className)}
+      data-rh={JSON.stringify({ date: dateObject.toISOString() })}
+    >
+      {before ? <>{before} </> : null}
+      <FormattedRelativeTime
+        value={value}
+        unit={unit}
+        style="long"
+        {...extra}
+      />
+    </span>
+  );
+};
+
+export default React.memo(TimeAgo);
