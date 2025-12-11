@@ -80,6 +80,11 @@ class BrothComponent extends React.PureComponent<Props> {
       return "∅";
     }
 
+    // Show full version for local dev builds
+    if (v.startsWith("head")) {
+      return v;
+    }
+
     if (/[a-z0-9]/.test(v)) {
       return v.substr(0, 7);
     }

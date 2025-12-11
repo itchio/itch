@@ -41,6 +41,9 @@ npm run ts-check
 
 # Build assets
 npm run compile
+
+# Use a local/development version of butler instead of the bundled one
+BROTH_USE_LOCAL=butler npm start
 ```
 
 ## About itch-setup
