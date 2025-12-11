@@ -11,7 +11,9 @@ import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
-const GameStatsDiv = styled.div`
+const GameStatsDiv = styled.div.withConfig({
+  displayName: "GameStatsDiv",
+})`
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -81,59 +83,57 @@ const GameStats = ({ game, status }: Props) => {
     // TODO: break down into components, or functions at the very least
     return (
       <GameStatsDiv>
-        <div className="total-playtime">
-          <GameTitle>{game.title}</GameTitle>
-          <div className="total-playtime--line game-summary">
-            {T([`usage_stats.description.${classification}`])}
-            {showPlatforms ? (
-              <span>
-                {" "}
-                {T([
-                  "usage_stats.description.platforms",
-                  {
-                    platforms: (
-                      <SpacedPlatformIcons
-                        className="total-playtime--platforms"
-                        target={game}
-                      />
-                    ),
-                  },
-                ])}
-              </span>
-            ) : null}
-          </div>
-          <div className="total-playtime--line">
-            {downloadKey
-              ? T([
-                  "usage_stats.description.bought_time_ago",
-                  {
-                    time_ago: <TimeAgo date={downloadKey.createdAt} />,
-                  },
-                ])
-              : minPrice > 0
-              ? T([
-                  "usage_stats.description.price",
-                  {
-                    price: sale ? (
-                      <span>
-                        <label key="original-price" className="original-price">
-                          {formatPrice(currency, minPrice)}
-                        </label>
-                        <label key="discounted-price">
-                          {" "}
-                          {formatPrice(
-                            currency,
-                            minPrice * (1 - sale.rate / 100)
-                          )}
-                        </label>
-                      </span>
-                    ) : (
-                      <label>{formatPrice(currency, minPrice)}</label>
-                    ),
-                  },
-                ])
-              : T(["usage_stats.description.free_download"])}
-          </div>
+        <GameTitle>{game.title}</GameTitle>
+        <div className="total-playtime--line game-summary">
+          {T([`usage_stats.description.${classification}`])}
+          {showPlatforms ? (
+            <span>
+              {" "}
+              {T([
+                "usage_stats.description.platforms",
+                {
+                  platforms: (
+                    <SpacedPlatformIcons
+                      className="total-playtime--platforms"
+                      target={game}
+                    />
+                  ),
+                },
+              ])}
+            </span>
+          ) : null}
+        </div>
+        <div className="total-playtime--line">
+          {downloadKey
+            ? T([
+                "usage_stats.description.bought_time_ago",
+                {
+                  time_ago: <TimeAgo date={downloadKey.createdAt} />,
+                },
+              ])
+            : minPrice > 0
+            ? T([
+                "usage_stats.description.price",
+                {
+                  price: sale ? (
+                    <span>
+                      <label key="original-price" className="original-price">
+                        {formatPrice(currency, minPrice)}
+                      </label>
+                      <label key="discounted-price">
+                        {" "}
+                        {formatPrice(
+                          currency,
+                          minPrice * (1 - sale.rate / 100)
+                        )}
+                      </label>
+                    </span>
+                  ) : (
+                    <label>{formatPrice(currency, minPrice)}</label>
+                  ),
+                },
+              ])
+            : T(["usage_stats.description.free_download"])}
         </div>
       </GameStatsDiv>
     );

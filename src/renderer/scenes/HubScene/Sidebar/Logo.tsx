@@ -9,7 +9,9 @@ import { ambientWind } from "common/util/navigation";
 import { isSecretClick } from "common/helpers/secret-click";
 import appWhiteLogo from "static/images/logos/app-white.svg";
 
-const LogoButton = styled.button`
+const LogoButton = styled.button.withConfig({
+  displayName: "LogoButton",
+})`
   ${styles.resetButton};
 
   text-align: center;
@@ -24,25 +26,14 @@ const LogoButton = styled.button`
   }
 `;
 
-class Logo extends React.PureComponent<Props> {
-  render() {
-    const { appVersion } = this.props;
+interface Props {
+  dispatch: Dispatch;
+  appVersion: string;
+}
 
-    return (
-      <LogoButton
-        type="button"
-        title={appVersion}
-        className={classNames("logo-div")}
-        onClick={this.onClick}
-      >
-        <img src={appWhiteLogo} />
-      </LogoButton>
-    );
-  }
-
-  onClick = (e: React.MouseEvent<any>) => {
+const Logo = ({ dispatch, appVersion }: Props) => {
+  const onClick = (e: React.MouseEvent<any>) => {
     if (isSecretClick(e)) {
-      const { dispatch } = this.props;
       dispatch(
         actions.openModal(
           modals.secretSettings.make({
@@ -57,7 +48,6 @@ class Logo extends React.PureComponent<Props> {
     }
 
     if (e.button === 0) {
-      const { dispatch } = this.props;
       dispatch(
         actions.openUserMenu({
           wind: ambientWind(),
@@ -67,12 +57,18 @@ class Logo extends React.PureComponent<Props> {
       );
     }
   };
-}
 
-interface Props {
-  dispatch: Dispatch;
-  appVersion: string;
-}
+  return (
+    <LogoButton
+      type="button"
+      title={appVersion}
+      className={classNames("logo-div")}
+      onClick={onClick}
+    >
+      <img src={appWhiteLogo} />
+    </LogoButton>
+  );
+};
 
 export default hook((map) => ({
   appVersion: map((rs) => rs.system.appVersion),

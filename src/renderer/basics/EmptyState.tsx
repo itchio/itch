@@ -41,43 +41,6 @@ const EmptyStateContainer = styled.div`
   overflow: hidden;
 `;
 
-class EmptyState extends React.PureComponent<Props> {
-  render() {
-    const {
-      bigText,
-      smallText,
-      icon,
-      buttonIcon,
-      buttonText,
-      buttonAction,
-      componentAction,
-      className,
-    } = this.props;
-
-    return (
-      <EmptyStateContainer>
-        <EmptyStateDiv className={className}>
-          <Icon icon={icon} className="leader" />
-          <h1>{T(bigText)}</h1>
-          {smallText ? <h2>{T(smallText)}</h2> : null}
-          {componentAction}
-          {buttonAction ? (
-            <>
-              <ButtonContainer>
-                <Button icon={buttonIcon} primary onClick={buttonAction}>
-                  {T(buttonText)}
-                </Button>
-              </ButtonContainer>
-            </>
-          ) : null}
-        </EmptyStateDiv>
-      </EmptyStateContainer>
-    );
-  }
-}
-
-export default EmptyState;
-
 interface Props {
   bigText: LocalizedString;
   icon: string;
@@ -88,3 +51,34 @@ interface Props {
   componentAction?: JSX.Element;
   className?: string;
 }
+
+const EmptyState = ({
+  bigText,
+  smallText,
+  icon,
+  buttonIcon,
+  buttonText,
+  buttonAction,
+  componentAction,
+  className,
+}: Props) => {
+  return (
+    <EmptyStateContainer>
+      <EmptyStateDiv className={className}>
+        <Icon icon={icon} className="leader" />
+        <h1>{T(bigText)}</h1>
+        {smallText ? <h2>{T(smallText)}</h2> : null}
+        {componentAction}
+        {buttonAction ? (
+          <ButtonContainer>
+            <Button icon={buttonIcon} primary onClick={buttonAction}>
+              {T(buttonText)}
+            </Button>
+          </ButtonContainer>
+        ) : null}
+      </EmptyStateDiv>
+    </EmptyStateContainer>
+  );
+};
+
+export default React.memo(EmptyState);

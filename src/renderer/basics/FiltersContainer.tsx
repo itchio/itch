@@ -33,27 +33,25 @@ export const FiltersContainerDiv = styled.section`
   }
 `;
 
-class FiltersContainer extends React.PureComponent<Props> {
-  render() {
-    const { loading, children, className } = this.props;
-    return (
-      <FiltersContainerDiv className={classNames(className, { loading })}>
-        <NavigationBar
-          loading={loading}
-          showAddressBar={!this.props.hideAddressBar}
-        />
-        {children}
-      </FiltersContainerDiv>
-    );
-  }
-}
-
 interface Props {
   loading: boolean;
-
   children?: JSX.Element | JSX.Element[];
   className?: string;
   hideAddressBar?: boolean;
 }
 
-export default FiltersContainer;
+const FiltersContainer = ({
+  loading,
+  children,
+  className,
+  hideAddressBar,
+}: Props) => {
+  return (
+    <FiltersContainerDiv className={classNames(className, { loading })}>
+      <NavigationBar loading={loading} showAddressBar={!hideAddressBar} />
+      {children}
+    </FiltersContainerDiv>
+  );
+};
+
+export default React.memo(FiltersContainer);
