@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { Dispatch } from "common/types";
 import React from "react";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import modals from "renderer/modals";
 import styled, * as styles from "renderer/styles";
 import { ambientWind } from "common/util/navigation";
@@ -26,12 +25,10 @@ const LogoButton = styled.button.withConfig({
   }
 `;
 
-interface Props {
-  dispatch: Dispatch;
-  appVersion: string;
-}
+const Logo = () => {
+  const dispatch = useAppDispatch();
+  const appVersion = useAppSelector((rs) => rs.system.appVersion);
 
-const Logo = ({ dispatch, appVersion }: Props) => {
   const onClick = (e: React.MouseEvent<any>) => {
     if (isSecretClick(e)) {
       dispatch(
@@ -70,6 +67,4 @@ const Logo = ({ dispatch, appVersion }: Props) => {
   );
 };
 
-export default hook((map) => ({
-  appVersion: map((rs) => rs.system.appVersion),
-}))(Logo);
+export default React.memo(Logo);
