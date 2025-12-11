@@ -1,12 +1,13 @@
 import { actions } from "common/actions";
-import { Dispatch } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
-const Container = styled.div`
+const Container = styled.div.withConfig({
+  displayName: "NewVersionAvailable-Container",
+})`
   align-self: stretch;
   font-weight: bold;
   padding: 0 0.5em;
@@ -15,6 +16,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 0.4em;
   border-radius: 2px;
 
   &:hover {
@@ -23,42 +25,27 @@ const Container = styled.div`
   }
 `;
 
-const Spacer = styled.div`
-  height: 1px;
-  width: 0.4em;
-`;
-
-class NewVersionAvailable extends React.PureComponent<Props> {
-  render() {
-    const { available } = this.props;
-    if (!available) {
-      return null;
-    }
-
-    return (
-      <Container onClick={this.onClick}>
-        <Icon icon="install" />
-        <Spacer />
-        {T(["prompt.self_update_ready.short"])}
-      </Container>
-    );
-  }
-
-  onClick = () => {
-    const { dispatch } = this.props;
-    dispatch(actions.relaunchRequest({}));
-  };
-}
-
-interface Props {
-  dispatch: Dispatch;
-
-  available: boolean;
-}
-
-export default hook((map) => ({
-  available: map((rs) => {
+const NewVersionAvailable = () => {
+  const dispatch = useAppDispatch();
+  const available = useAppSelector((rs) => {
     const pkg = rs.broth.packages[rs.system.appName];
     return pkg && pkg.stage === "need-restart";
-  }),
-}))(NewVersionAvailable);
+  });
+
+  if (!available) {
+    return null;
+  }
+
+  const onClick = () => {
+    dispatch(actions.relaunchRequest({}));
+  };
+
+  return (
+    <Container onClick={onClick}>
+      <Icon icon="install" />
+      {T(["prompt.self_update_ready.short"])}
+    </Container>
+  );
+};
+
+export default React.memo(NewVersionAvailable);
