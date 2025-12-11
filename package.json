@@ -111,6 +111,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
+    "sync-butler": "cd ../butler && go run ./butlerd/generous ts ../itch/src/common/butlerd/messages.ts",
     "start": "node develop.mjs",
     "compile": "cross-env NODE_ENV=production node build.mjs",
     "integration-tests": "node release/test.js --detect-osarch",
