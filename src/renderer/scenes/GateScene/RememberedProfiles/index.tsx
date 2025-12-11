@@ -11,11 +11,14 @@ import { T } from "renderer/t";
 import { map } from "underscore";
 import RememberedProfile from "renderer/scenes/GateScene/RememberedProfiles/RememberedProfile";
 
-const RememberedProfilesDiv = styled.div`
+const RememberedProfilesDiv = styled.div.withConfig({
+  displayName: "RememberedProfilesDiv",
+})`
   animation: fade-in 0.2s;
 
   display: flex;
   flex-direction: column;
+  gap: 12px;
   align-items: center;
   overflow-y: auto;
 `;

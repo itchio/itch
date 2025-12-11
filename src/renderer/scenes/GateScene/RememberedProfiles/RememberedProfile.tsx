@@ -3,51 +3,28 @@ import { Profile } from "common/butlerd/messages";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch } from "renderer/hooks/redux";
 import modals from "renderer/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { Dispatch } from "common/types";
 import { getUserCoverURL } from "renderer/util/get-user-cover-url";
 
-class RememberedProfile extends React.PureComponent<Props> {
-  render() {
-    const { profile } = this.props;
-    const { user } = profile;
-    const { username, displayName } = user;
-    const coverUrl = getUserCoverURL(user);
+interface Props {
+  profile: Profile;
+}
 
-    return (
-      <RememberedProfileRow className="remembered-profile">
-        <RememberedProfileButton onClick={this.useThisProfile}>
-          <img className="avatar" src={coverUrl} />
-          <div className="rest">
-            <p className="username">{displayName || username}</p>
-            <p className="last-connected">
-              {T(["login.remembered_session.last_connected"])}{" "}
-              <TimeAgo date={profile.lastConnected} />
-            </p>
-          </div>
-        </RememberedProfileButton>
-        <ForgetButton
-          icon="cross"
-          data-rh-at="left"
-          data-rh={JSON.stringify(["prompt.forget_session.action"])}
-          onClick={this.onForget}
-        />
-      </RememberedProfileRow>
-    );
-  }
+const RememberedProfile = ({ profile }: Props) => {
+  const dispatch = useAppDispatch();
+  const { user } = profile;
+  const { username, displayName } = user;
+  const coverUrl = getUserCoverURL(user);
 
-  useThisProfile = () => {
-    const { dispatch, profile } = this.props;
+  const useThisProfile = () => {
     dispatch(actions.useSavedLogin({ profile }));
   };
 
-  onForget = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onForget = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { profile, dispatch } = this.props;
-    const { username } = profile.user;
 
     dispatch(
       actions.openModal(
@@ -70,14 +47,30 @@ class RememberedProfile extends React.PureComponent<Props> {
       )
     );
   };
-}
 
-interface Props {
-  profile: Profile;
-  dispatch: Dispatch;
-}
+  return (
+    <RememberedProfileRow className="remembered-profile">
+      <RememberedProfileButton onClick={useThisProfile}>
+        <img className="avatar" src={coverUrl} />
+        <div className="rest">
+          <p className="username">{displayName || username}</p>
+          <p className="last-connected">
+            {T(["login.remembered_session.last_connected"])}{" "}
+            <TimeAgo date={profile.lastConnected} />
+          </p>
+        </div>
+      </RememberedProfileButton>
+      <ForgetButton
+        icon="cross"
+        data-rh-at="left"
+        data-rh={JSON.stringify(["prompt.forget_session.action"])}
+        onClick={onForget}
+      />
+    </RememberedProfileRow>
+  );
+};
 
-export default hook()(RememberedProfile);
+export default React.memo(RememberedProfile);
 
 const RememberedProfileRow = styled.div`
   ${styles.boxy};
@@ -85,8 +78,9 @@ const RememberedProfileRow = styled.div`
   flex-shrink: 0;
   min-width: 380px;
   border-radius: 2px;
-  margin: 8px 4px;
   box-shadow: 0 0 4px ${(props) => props.theme.sidebarBackground};
+  display: flex;
+  align-items: center;
 
   &:hover {
     box-shadow: 0 0 8px ${(props) => props.theme.sidebarBackground};
@@ -103,15 +97,16 @@ const RememberedProfileButton = styled.button`
   width: 100%;
 
   display: flex;
+  gap: 12px;
   flex-direction: row;
   align-items: center;
 
   .avatar {
+    display: block;
     filter: grayscale(100%);
     width: 64px;
     height: 64px;
     border-radius: 2px;
-    margin-right: 4px;
   }
 
   p {
@@ -119,14 +114,15 @@ const RememberedProfileButton = styled.button`
   }
 
   .rest {
-    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .username {
     color: ${(props) => props.theme.baseText};
     font-size: ${(props) => props.theme.fontSizes.huge};
     font-weight: bold;
-    padding: 4px 0;
   }
 
   .last-connected {
@@ -135,13 +131,8 @@ const RememberedProfileButton = styled.button`
   }
 
   &:active {
-    -webkit-filter: brightness(70%);
+    filter: brightness(70%);
   }
 `;
 
-const ForgetButton = styled(IconButton)`
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-`;
+const ForgetButton = styled(IconButton)``;
