@@ -95,47 +95,6 @@ const ButtonStyled = styled.button`
   }
 `;
 
-class Button extends React.PureComponent<Props, any> {
-  render() {
-    const {
-      className,
-      primary,
-      fat,
-      icon,
-      iconComponent,
-      label,
-      hint,
-      wide,
-      disabled,
-      translucent,
-      onClick,
-      type = "button",
-      ...restProps
-    } = this.props;
-
-    return (
-      <ButtonStyled
-        type={type}
-        onClick={disabled ? null : onClick}
-        data-rh={hint ? JSON.stringify(hint) : null}
-        data-rh-at="top"
-        className={classNames(className, {
-          primary,
-          wide,
-          fat,
-          disabled,
-          translucent,
-        })}
-        {...restProps}
-      >
-        {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-        {label ? <Label>{label}</Label> : null}
-        {this.props.children}
-      </ButtonStyled>
-    );
-  }
-}
-
 interface Props {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -153,4 +112,42 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export default Button;
+const Button = ({
+  className,
+  primary,
+  fat,
+  icon,
+  iconComponent,
+  label,
+  hint,
+  wide,
+  disabled,
+  translucent,
+  onClick,
+  type = "button",
+  children,
+  ...restProps
+}: Props) => {
+  return (
+    <ButtonStyled
+      type={type}
+      onClick={disabled ? undefined : onClick}
+      data-rh={hint ? JSON.stringify(hint) : null}
+      data-rh-at="top"
+      className={classNames(className, {
+        primary,
+        wide,
+        fat,
+        disabled,
+        translucent,
+      })}
+      {...restProps}
+    >
+      {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
+      {label ? <Label>{label}</Label> : null}
+      {children}
+    </ButtonStyled>
+  );
+};
+
+export default React.memo(Button);

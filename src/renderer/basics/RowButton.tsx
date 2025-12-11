@@ -69,46 +69,6 @@ const Spacer = styled.div`
   }
 `;
 
-class RowButton extends React.PureComponent<Props, any> {
-  render() {
-    let {
-      className,
-      icon,
-      iconComponent,
-      label,
-      hint,
-      onClick,
-      ink = true,
-      ...restProps
-    } = this.props;
-
-    if (!iconComponent && icon) {
-      iconComponent = <LargeIcon icon={icon} />;
-    }
-
-    return (
-      <RowButtonStyled
-        type="button"
-        onClick={onClick}
-        data-rh={hint ? JSON.stringify(hint) : null}
-        data-rh-at="top"
-        className={classNames(className)}
-        {...restProps}
-      >
-        {iconComponent ? (
-          <>
-            {iconComponent}
-            <Spacer className="large" />
-          </>
-        ) : null}
-        {iconComponent && label ? " " : null}
-        {label ? <Label>{label}</Label> : null}
-        {this.props.children}
-      </RowButtonStyled>
-    );
-  }
-}
-
 interface Props {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -117,10 +77,45 @@ interface Props {
   iconComponent?: JSX.Element;
   label?: JSX.Element | string;
   id?: string;
-  ink?: boolean;
+  children?: React.ReactNode;
 }
 
-export default RowButton;
+const RowButton = ({
+  className,
+  icon,
+  iconComponent: iconComponentProp,
+  label,
+  hint,
+  onClick,
+  children,
+  ...restProps
+}: Props) => {
+  const iconComponent =
+    iconComponentProp ?? (icon ? <LargeIcon icon={icon} /> : null);
+
+  return (
+    <RowButtonStyled
+      type="button"
+      onClick={onClick}
+      data-rh={hint ? JSON.stringify(hint) : null}
+      data-rh-at="top"
+      className={classNames(className)}
+      {...restProps}
+    >
+      {iconComponent ? (
+        <>
+          {iconComponent}
+          <Spacer className="large" />
+        </>
+      ) : null}
+      {iconComponent && label ? " " : null}
+      {label ? <Label>{label}</Label> : null}
+      {children}
+    </RowButtonStyled>
+  );
+};
+
+export default React.memo(RowButton);
 
 const TagDiv = styled.div`
   color: ${(props) => props.theme.secondaryText};
@@ -147,8 +142,10 @@ export const BigButtonRow = styled.div`
   margin: 0.3em 0.1em;
 `;
 
-export class Tag extends React.PureComponent<{}, {}> {
-  render() {
-    return <TagDiv>{this.props.children}</TagDiv>;
-  }
+interface TagProps {
+  children?: React.ReactNode;
 }
+
+export const Tag = React.memo(({ children }: TagProps) => {
+  return <TagDiv>{children}</TagDiv>;
+});

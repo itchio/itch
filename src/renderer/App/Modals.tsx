@@ -510,7 +510,6 @@ class Modals extends React.PureComponent<Props, State> {
           return (
             <RowButton
               id={id}
-              ink={false}
               className={className}
               key={index}
               icon={icon}

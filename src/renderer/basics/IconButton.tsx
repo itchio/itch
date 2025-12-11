@@ -55,41 +55,6 @@ const IconButtonStyled = styled.button`
   }
 `;
 
-class IconButton extends React.PureComponent<Props> {
-  render() {
-    const {
-      className,
-      big,
-      huge,
-      enormous,
-      emphasized,
-      disabled,
-      icon,
-      hint,
-      hintPosition = "top",
-      ...restProps
-    } = this.props;
-
-    return (
-      <IconButtonStyled
-        type="button"
-        className={classNames(className, {
-          disabled,
-          big,
-          huge,
-          enormous,
-          emphasized,
-        })}
-        data-rh={hint ? JSON.stringify(hint) : null}
-        data-rh-at={hintPosition}
-        {...restProps}
-      >
-        {typeof icon === "string" ? <Icon icon={icon} /> : icon}
-      </IconButtonStyled>
-    );
-  }
-}
-
 interface Props {
   icon: string | JSX.Element;
   disabled?: boolean;
@@ -107,4 +72,35 @@ interface Props {
   emphasized?: boolean;
 }
 
-export default IconButton;
+const IconButton = ({
+  className,
+  big,
+  huge,
+  enormous,
+  emphasized,
+  disabled,
+  icon,
+  hint,
+  hintPosition = "top",
+  ...restProps
+}: Props) => {
+  return (
+    <IconButtonStyled
+      type="button"
+      className={classNames(className, {
+        disabled,
+        big,
+        huge,
+        enormous,
+        emphasized,
+      })}
+      data-rh={hint ? JSON.stringify(hint) : null}
+      data-rh-at={hintPosition}
+      {...restProps}
+    >
+      {typeof icon === "string" ? <Icon icon={icon} /> : icon}
+    </IconButtonStyled>
+  );
+};
+
+export default React.memo(IconButton);

@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "renderer/styles";
 
+interface Props {
+  label?: string | JSX.Element | JSX.Element[];
+}
+
 const GifMarkerSpan = styled.span`
   position: absolute;
   top: 5px;
@@ -17,15 +21,8 @@ const GifMarkerSpan = styled.span`
   transition: all 0.2s;
 `;
 
-class GifMarker extends React.PureComponent<Props> {
-  render() {
-    const { label = "GIF" } = this.props;
-    return <GifMarkerSpan>{label}</GifMarkerSpan>;
-  }
-}
+const GifMarker = ({ label = "GIF" }: Props) => {
+  return <GifMarkerSpan>{label}</GifMarkerSpan>;
+};
 
-interface Props {
-  label?: string | JSX.Element | JSX.Element[];
-}
-
-export default GifMarker;
+export default React.memo(GifMarker);
