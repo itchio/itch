@@ -215,6 +215,25 @@ export const ProfileLoginWithAPIKey = createRequest<
 >("Profile.LoginWithAPIKey");
 
 /**
+ * Result for Profile.LoginWithOAuthCode
+ */
+export interface ProfileLoginWithOAuthCodeResult {
+  /** Information for the new profile, now remembered */
+  profile: Profile;
+  /** Profile cookie for website */
+  cookie: { [key: string]: string };
+}
+
+/**
+ * Add a new profile by exchanging an OAuth authorization code.
+ * Used by the itch.io desktop app for OAuth login flow with PKCE.
+ */
+export const ProfileLoginWithOAuthCode = createRequest<
+  ProfileLoginWithOAuthCodeParams,
+  ProfileLoginWithOAuthCodeResult
+>("Profile.LoginWithOAuthCode");
+
+/**
  * Result for Profile.RequestCaptcha
  */
 export interface ProfileRequestCaptchaResult {
@@ -2743,6 +2762,20 @@ export interface ProfileLoginWithPasswordParams {
 export interface ProfileLoginWithAPIKeyParams {
   /** The API token to use */
   apiKey: string;
+}
+
+/**
+ * Params for Profile.LoginWithOAuthCode
+ */
+export interface ProfileLoginWithOAuthCodeParams {
+  /** The authorization code from OAuth redirect */
+  code: string;
+  /** The PKCE code verifier (the original random string used to generate code_challenge) */
+  codeVerifier: string;
+  /** The redirect URI that was used in the authorization request */
+  redirectUri: string;
+  /** The OAuth client ID used in the authorization request */
+  clientId: string;
 }
 
 /**
