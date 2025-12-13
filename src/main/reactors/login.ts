@@ -16,28 +16,106 @@ import { session } from "electron";
 import { elapsed } from "common/format/datetime";
 import { withTimeout } from "common/helpers/with-timeout";
 import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 
 const logger = mainLogger.child(__filename);
 const LOGIN_TIMEOUT = 5 * 1000; // 5 seconds
 
-// State to store the random token for OAuth verification
+// State for OAuth PKCE flow
 let oauthState: string | null = null;
+let codeVerifier: string | null = null;
 
 const OAUTH_CLIENT_ID = "85252daf268d27fbefac93e1ac462bfd";
-const OAUTH_REDIRECT_URI = "itchio://oauth/callback";
+const OAUTH_REDIRECT_URI = "itch://oauth-callback";
 const OAUTH_SCOPE = "itch";
+
+// PKCE helper functions
+function base64UrlEncode(buffer: Buffer): string {
+  return buffer
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function generateCodeVerifier(): string {
+  return base64UrlEncode(crypto.randomBytes(32));
+}
+
+function generateCodeChallenge(verifier: string): string {
+  const hash = crypto.createHash("sha256").update(verifier).digest();
+  return base64UrlEncode(hash);
+}
+
+async function exchangeOAuthCode(store: Store, code: string): Promise<boolean> {
+  if (!codeVerifier) {
+    logger.error("No code verifier available for OAuth exchange");
+    store.dispatch(
+      actions.loginFailed({
+        username: "OAuth",
+        error: new Error(
+          "OAuth flow error (missing verifier). Please restart the login process."
+        ),
+      })
+    );
+    return false;
+  }
+
+  // Store verifier locally and clear state
+  const verifier = codeVerifier;
+  oauthState = null;
+  codeVerifier = null;
+
+  store.dispatch(actions.attemptLogin({}));
+
+  try {
+    const { profile, cookie } = await withTimeout(
+      "OAuth code exchange",
+      LOGIN_TIMEOUT,
+      mcall(messages.ProfileLoginWithOAuthCode, {
+        code,
+        codeVerifier: verifier,
+        redirectUri: OAUTH_REDIRECT_URI,
+        clientId: OAUTH_CLIENT_ID,
+      })
+    );
+    logger.debug(`OAuth code exchange succeeded`);
+
+    if (cookie) {
+      try {
+        logger.info(`Setting cookies...`);
+        await setCookie(profile, cookie);
+      } catch (e) {
+        logger.error(`Could not set cookie: ${e.stack}`);
+      }
+    }
+
+    await loginSucceeded(store, profile);
+    return true;
+  } catch (e) {
+    logger.error(`OAuth code exchange failed: ${e.stack}`);
+    store.dispatch(actions.loginFailed({ username: "OAuth", error: e }));
+    return false;
+  }
+}
 
 export default function (watcher: Watcher) {
   watcher.on(actions.initiateOAuthLogin, async (store, action) => {
-    logger.info("Initiating OAuth login...");
+    logger.info("Initiating OAuth login with PKCE...");
+
+    // Generate PKCE credentials
     oauthState = uuidv4();
+    codeVerifier = generateCodeVerifier();
+    const codeChallenge = generateCodeChallenge(codeVerifier);
 
     const params = new URLSearchParams();
     params.append("client_id", OAUTH_CLIENT_ID);
     params.append("scope", OAUTH_SCOPE);
     params.append("redirect_uri", OAUTH_REDIRECT_URI);
     params.append("state", oauthState);
-    params.append("response_type", "token"); // Implicit flow
+    params.append("response_type", "code");
+    params.append("code_challenge", codeChallenge);
+    params.append("code_challenge_method", "S256");
 
     const loginUrl = `${urls.itchio}/user/oauth?${params.toString()}`;
     logger.info(`Opening OAuth URL: ${loginUrl}`);
@@ -45,7 +123,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.handleOAuthCallback, async (store, action) => {
-    const { accessToken, state } = action.payload;
+    const { code, state } = action.payload;
     logger.info("Handling OAuth callback...");
 
     if (state !== oauthState) {
@@ -63,26 +141,14 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    // clear state after use
-    oauthState = null;
+    logger.info("OAuth state verified. Exchanging code for profile...");
+    await exchangeOAuthCode(store, code);
+  });
 
-    logger.info("OAuth state verified. Attempting login with access token...");
-    store.dispatch(actions.attemptLogin({}));
-
-    try {
-      const { profile } = await withTimeout(
-        "OAuth login",
-        LOGIN_TIMEOUT,
-        mcall(messages.ProfileLoginWithAPIKey, {
-          apiKey: accessToken,
-        })
-      );
-      logger.debug(`ProfileLoginWithAPIKey call succeeded`);
-      await loginSucceeded(store, profile);
-    } catch (e) {
-      logger.error(`OAuth login failed: ${e.stack}`);
-      store.dispatch(actions.loginFailed({ username: "OAuth", error: e }));
-    }
+  watcher.on(actions.submitOAuthCode, async (store, action) => {
+    const { code } = action.payload;
+    logger.info("Manual OAuth code entry...");
+    await exchangeOAuthCode(store, code);
   });
 
   watcher.on(actions.loginWithPassword, async (store, action) => {

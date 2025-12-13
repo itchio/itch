@@ -34,19 +34,38 @@ export default function (watcher: Watcher) {
   watcher.on(actions.handleItchioURI, async (store, action) => {
     const { uri } = action.payload;
 
-    const parsed = urlParser.parse(uri);
-    // itchio://oauth/callback
-    if (parsed.hostname === "oauth" && parsed.pathname === "/callback") {
-      const hash = parsed.hash || "";
-      const matches = /access_token=([^&]+)/.exec(hash);
-      const stateMatches = /state=([^&]+)/.exec(hash);
+    const parsed = urlParser.parse(uri, true);
+    // itch://oauth-callback?code=...&state=...
+    if (parsed.hostname === "oauth-callback") {
+      const { code, state, error, error_description } = parsed.query;
 
-      if (matches && stateMatches) {
-        const accessToken = matches[1];
-        const state = stateMatches[1];
-        store.dispatch(actions.handleOAuthCallback({ accessToken, state }));
+      if (error) {
+        logger.error(`OAuth error: ${error} - ${error_description}`);
+        store.dispatch(
+          actions.loginFailed({
+            username: "OAuth",
+            error: new Error(
+              error_description
+                ? String(error_description)
+                : `OAuth error: ${error}`
+            ),
+          })
+        );
         return;
       }
+
+      if (code && state) {
+        store.dispatch(
+          actions.handleOAuthCallback({
+            code: String(code),
+            state: String(state),
+          })
+        );
+        return;
+      }
+
+      logger.error(`OAuth callback missing code or state: ${uri}`);
+      return;
     }
 
     const { profile } = store.getState().profile;

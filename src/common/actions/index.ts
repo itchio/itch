@@ -229,11 +229,15 @@ export const actions = wireActions({
   }>(),
   initiateOAuthLogin: action<{}>(),
   handleOAuthCallback: action<{
-    /** The access token extracted from the URL */
-    accessToken: string;
+    /** The authorization code extracted from the URL */
+    code: string;
 
     /** The state parameter returned by the server */
     state: string;
+  }>(),
+  submitOAuthCode: action<{
+    /** The authorization code manually pasted by the user */
+    code: string;
   }>(),
   useSavedLogin: action<{
     profile: Profile;

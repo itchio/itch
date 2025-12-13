@@ -50,23 +50,47 @@ const RevealButton = styled(IconButton)`
   }
 `;
 
+const ManualCodeSection = styled.div`
+  margin-top: 1.5em;
+  text-align: center;
+
+  p {
+    margin: 0.5em 0;
+    color: ${(props) => props.theme.secondaryText};
+  }
+
+  p.hint {
+    font-size: 90%;
+    color: ${(props) => props.theme.ternaryText};
+  }
+
+  input {
+    ${styles.heavyInput};
+    font-size: ${(props) => props.theme.fontSizes.large};
+    width: 380px;
+    margin-top: 0.5em;
+  }
+`;
+
 class LoginForm extends React.PureComponent<Props, State> {
   constructor(props: Props, context: any) {
     super(props, context);
     this.state = {
       passwordShown: false,
       showLegacy: false,
+      oauthPending: false,
+      manualCode: "",
     };
   }
 
   render() {
     const { dispatch, showSaved, lastUsername } = this.props;
-    const { passwordShown, showLegacy } = this.state;
+    const { passwordShown, showLegacy, oauthPending, manualCode } = this.state;
 
     if (!showLegacy) {
       return (
         <>
-          <Form>
+          <Form onSubmit={this.handleManualCodeSubmit}>
             {this.renderError()}
             <Button
               id="oauth-login-button"
@@ -77,13 +101,43 @@ class LoginForm extends React.PureComponent<Props, State> {
               label={T(["Log in with itch.io"])}
               icon="itchio"
             />
+            {oauthPending && (
+              <ManualCodeSection>
+                <p>{T(["A browser window has opened for login."])}</p>
+                <p className="hint">
+                  {T([
+                    "If the link didn't work, paste the authorization code below:",
+                  ])}
+                </p>
+                <input
+                  id="manual-code"
+                  type="text"
+                  value={manualCode}
+                  onChange={this.handleManualCodeChange}
+                  autoFocus
+                />
+                <Button
+                  id="manual-code-submit"
+                  className="login-button"
+                  type="submit"
+                  fat
+                  primary
+                  disabled={!manualCode.trim()}
+                  label={T(["login.action.login"])}
+                />
+              </ManualCodeSection>
+            )}
           </Form>
 
           <Links>
-            <Link
-              label={T(["Log in with password"])}
-              onClick={() => this.setState({ showLegacy: true })}
-            />
+            {oauthPending ? (
+              <Link label={T(["Cancel"])} onClick={this.cancelOAuth} />
+            ) : (
+              <Link
+                label={T(["Log in with password"])}
+                onClick={() => this.setState({ showLegacy: true })}
+              />
+            )}
             <span>{" · "}</span>
             <Link
               key="show-saved-logins"
@@ -169,7 +223,26 @@ class LoginForm extends React.PureComponent<Props, State> {
 
   initiateOAuth = () => {
     const { dispatch } = this.props;
+    this.setState({ oauthPending: true, manualCode: "" });
     dispatch(actions.initiateOAuthLogin({}));
+  };
+
+  handleManualCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ manualCode: e.target.value });
+  };
+
+  handleManualCodeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { manualCode } = this.state;
+    if (!manualCode.trim()) {
+      return;
+    }
+    const { dispatch } = this.props;
+    dispatch(actions.submitOAuthCode({ code: manualCode.trim() }));
+  };
+
+  cancelOAuth = () => {
+    this.setState({ oauthPending: false, manualCode: "" });
   };
 
   openRegisterPage = () => {
@@ -279,6 +352,8 @@ interface Props {
 interface State {
   passwordShown: boolean;
   showLegacy: boolean;
+  oauthPending: boolean;
+  manualCode: string;
 }
 
 export default hook((map) => ({
