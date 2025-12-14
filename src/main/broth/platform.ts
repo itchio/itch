@@ -16,6 +16,8 @@ function goarch() {
     return "amd64";
   } else if (result === "ia32") {
     return "386";
+  } else if (result === "arm64") {
+    return "arm64";
   } else {
     return "unknown";
   }
