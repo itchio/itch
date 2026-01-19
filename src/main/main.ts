@@ -101,6 +101,8 @@ export function main() {
   let store: Store = require("main/store").default;
 
   let onReady = () => {
+    app.userAgentFallback = userAgent();
+
     registerSync(
       {
         buildApp: (_x) => {
