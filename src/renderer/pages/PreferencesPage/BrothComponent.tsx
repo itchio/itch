@@ -1,4 +1,5 @@
 import { PackageState } from "common/types";
+import urls from "common/constants/urls";
 import React from "react";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
@@ -11,24 +12,126 @@ const BrothComponentDiv = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const Spacer = styled.div`
   width: 8px;
 `;
 
-class BrothComponent extends React.PureComponent<Props> {
+const ComponentDetails = styled.div`
+  margin-left: 32px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #b9b9b9;
+
+  .detail-row {
+    display: flex;
+    margin: 4px 0;
+  }
+
+  .detail-label {
+    width: 100px;
+    flex-shrink: 0;
+    color: #888;
+  }
+
+  .detail-value {
+    font-family: monospace;
+    user-select: text;
+    word-break: break-all;
+  }
+`;
+
+interface State {
+  expanded: boolean;
+}
+
+class BrothComponent extends React.PureComponent<Props, State> {
+  state: State = {
+    expanded: false,
+  };
+
+  toggleExpanded = () => {
+    this.setState((state) => ({ expanded: !state.expanded }));
+  };
+
   render() {
     const { name, pkg } = this.props;
+    const { expanded } = this.state;
 
     return (
-      <BrothComponentDiv className="section component">
-        {this.renderIcon()}
-        <Spacer />
-        {name} @ {this.formatPackageVersion(pkg.version)}
-        <Spacer />
-        {this.renderProgress()}
-      </BrothComponentDiv>
+      <div>
+        <BrothComponentDiv
+          className="section component"
+          onClick={this.toggleExpanded}
+        >
+          <Icon
+            icon="triangle-right"
+            className={`turner ${expanded ? "turned" : ""}`}
+          />
+          <Spacer />
+          {this.renderIcon()}
+          <Spacer />
+          {name} @ {this.formatPackageVersion(pkg.version)}
+          <Spacer />
+          {this.renderProgress()}
+        </BrothComponentDiv>
+        {expanded && this.renderDetails()}
+      </div>
+    );
+  }
+
+  renderDetails() {
+    const { name, pkg } = this.props;
+
+    const executablePath = pkg.versionPrefix
+      ? `${pkg.versionPrefix}${
+          pkg.versionPrefix.endsWith("/") ? "" : "/"
+        }${name}`
+      : "N/A";
+    const installDir = pkg.versionPrefix || "N/A";
+    const fullVersion = pkg.version || "N/A";
+    const sourceUrl = pkg.channel
+      ? `${urls.brothRepo}/${name}/${pkg.channel}`
+      : null;
+
+    return (
+      <ComponentDetails>
+        <div className="detail-row">
+          <span className="detail-label">Executable:</span>
+          <span className="detail-value">{executablePath}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Version:</span>
+          <span className="detail-value">{fullVersion}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Directory:</span>
+          <span className="detail-value">{installDir}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Stage:</span>
+          <span className="detail-value">{pkg.stage}</span>
+        </div>
+        {pkg.stage === "need-restart" && pkg.availableVersion && (
+          <div className="detail-row">
+            <span className="detail-label">Pending:</span>
+            <span className="detail-value">{pkg.availableVersion}</span>
+          </div>
+        )}
+        {sourceUrl && (
+          <div className="detail-row">
+            <span className="detail-label">Source:</span>
+            <span className="detail-value">{sourceUrl}</span>
+          </div>
+        )}
+      </ComponentDetails>
     );
   }
 

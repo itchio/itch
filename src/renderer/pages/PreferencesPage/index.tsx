@@ -73,7 +73,6 @@ const PreferencesContentDiv = styled.div`
 
     color: #b9b9b9;
     font-size: 14px;
-    max-width: 500px;
     border-radius: $explanation-border-radius;
     line-height: 1.6;
 

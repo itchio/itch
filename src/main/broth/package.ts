@@ -222,6 +222,7 @@ export class Package implements PackageLike {
         name: this.name,
         version,
         versionPrefix: dirname(executablePath),
+        channel: this.channel,
       })
     );
   }
@@ -241,6 +242,7 @@ export class Package implements PackageLike {
           name: this.name,
           version: version,
           versionPrefix: newVersionPrefix,
+          channel: this.channel,
         })
       );
     }

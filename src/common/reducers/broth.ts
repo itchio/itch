@@ -21,7 +21,7 @@ export default reducer<BrothState>(initialState, (on) => {
   });
 
   on(actions.packageGotVersionPrefix, (state, action) => {
-    const { name, version, versionPrefix } = action.payload;
+    const { name, version, versionPrefix, channel } = action.payload;
 
     let oldPackage = state.packages[name];
     if (oldPackage) {
@@ -33,6 +33,7 @@ export default reducer<BrothState>(initialState, (on) => {
             ...oldPackage,
             version,
             versionPrefix,
+            ...(channel && { channel }),
           },
         },
       };

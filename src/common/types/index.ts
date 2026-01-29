@@ -99,6 +99,7 @@ export interface PackageState {
   stage: "assess" | "download" | "install" | "idle" | "need-restart";
   version?: string;
   versionPrefix?: string;
+  channel?: string;
   progressInfo?: ProgressInfo;
   availableVersion?: string;
 }

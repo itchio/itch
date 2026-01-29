@@ -173,6 +173,7 @@ export const actions = wireActions({
     name: string;
     version: string;
     versionPrefix: string;
+    channel?: string;
   }>(),
   packageStage: action<{
     name: string;
