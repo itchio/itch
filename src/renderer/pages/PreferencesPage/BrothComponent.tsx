@@ -7,12 +7,20 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hookWithProps } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 
-const BrothComponentDiv = styled.div`
+const BrothComponentButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
 
   &:hover {
     opacity: 0.9;
@@ -67,7 +75,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
 
     return (
       <div>
-        <BrothComponentDiv
+        <BrothComponentButton
           className="section component"
           onClick={this.toggleExpanded}
         >
@@ -81,7 +89,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
           {name} @ {this.formatPackageVersion(pkg.version)}
           <Spacer />
           {this.renderProgress()}
-        </BrothComponentDiv>
+        </BrothComponentButton>
         {expanded && this.renderDetails()}
       </div>
     );
