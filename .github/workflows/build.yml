@@ -33,7 +33,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: kitch-${{ github.ref_name }}-linux-amd64
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-linux-amd64
         path: artifacts/linux-amd64/
 
   build-windows:
@@ -55,10 +55,63 @@ jobs:
         node release/package-all.js --os windows --arch amd64
 
     - name: Upload artifact
-      if: startsWith(github.ref, 'refs/tags/')
+      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: kitch-${{ github.ref_name }}-windows-amd64
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-windows-amd64
+        path: artifacts/windows-amd64/
+
+    - name: Upload unsigned artifact
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-amd64-unsigned
+        path: artifacts/windows-amd64/
+
+  sign-windows:
+    needs: [build-windows]
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    environment: signing-windows
+
+    steps:
+    - name: Download unsigned artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-amd64-unsigned
+        path: artifacts/windows-amd64/
+
+    - name: Sign with Azure Code Signing
+      uses: azure/artifact-signing-action@v1
+      with:
+        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        endpoint: https://wus2.codesigning.azure.net
+        signing-account-name: itchio
+        certificate-profile-name: itchio
+        files: ${{ github.workspace }}/artifacts/windows-amd64/*.exe
+        file-digest: SHA256
+        timestamp-rfc3161: http://timestamp.acs.microsoft.com
+        timestamp-digest: SHA256
+
+    - name: Verify signature
+      shell: pwsh
+      run: |
+        $exeFiles = Get-ChildItem -Path "artifacts/windows-amd64/*.exe"
+        foreach ($file in $exeFiles) {
+          $sig = Get-AuthenticodeSignature -FilePath $file.FullName
+          if ($sig.Status -ne "Valid") {
+            Write-Error "Signature verification failed for $($file.Name): $($sig.Status)"
+            exit 1
+          }
+          Write-Host "Signature verified for $($file.Name)"
+        }
+
+    - name: Upload signed artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-windows-amd64
         path: artifacts/windows-amd64/
 
   build-macos-x64:
@@ -146,26 +199,26 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: kitch-${{ github.ref_name }}-darwin-universal
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-universal
         path: artifacts/darwin-universal/
 
     - name: Upload x64 artifact
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: kitch-${{ github.ref_name }}-darwin-amd64
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-amd64
         path: artifacts/darwin-amd64/
 
     - name: Upload arm64 artifact
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: kitch-${{ github.ref_name }}-darwin-arm64
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-arm64
         path: artifacts/darwin-arm64/
 
   release:
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-linux, build-windows, build-macos-universal]
+    if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/')
+    needs: [build-linux, sign-windows, build-macos-universal]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -175,6 +228,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: artifacts
+        pattern: ?itch-*
 
     - name: Create archives
       run: |
@@ -195,7 +249,7 @@ jobs:
 
   deploy:
     if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/')
-    needs: [build-linux, build-windows, build-macos-universal]
+    needs: [build-linux, sign-windows, build-macos-universal]
     runs-on: ubuntu-latest
     environment: butler-publish
 
@@ -209,6 +263,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: artifacts
+        pattern: ?itch-*
 
     - name: Deploy to itch.io
       env:
