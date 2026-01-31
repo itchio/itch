@@ -216,7 +216,7 @@ jobs:
         name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-arm64
         path: artifacts/darwin-arm64/
 
-  release:
+  create-github-release:
     if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/')
     needs: [build-linux, sign-windows, build-macos-universal]
     runs-on: ubuntu-latest
@@ -247,7 +247,7 @@ jobs:
         draft: false
         prerelease: ${{ contains(github.ref_name, 'canary') }}
 
-  deploy:
+  publish-to-itchio:
     if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/')
     needs: [build-linux, sign-windows, build-macos-universal]
     runs-on: ubuntu-latest
