@@ -1,3 +1,5 @@
+# DEPRECATED: We are migrating to GitHub Actions (.github/workflows/build.yml).
+# This file is kept for reference only and is no longer in use.
 
 stages:
   - package

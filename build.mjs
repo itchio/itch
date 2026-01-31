@@ -4,7 +4,7 @@ import fs from "fs";
 import { mainConfig, rendererConfig } from "./esbuild.config.mjs";
 
 // Disable metafile for tagged release builds
-const isReleaseBuild = !!process.env.CI_COMMIT_TAG;
+const isReleaseBuild = process.env.GITHUB_REF_TYPE === 'tag';
 if (isReleaseBuild) {
   mainConfig.metafile = false;
   rendererConfig.metafile = false;

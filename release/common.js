@@ -39,21 +39,17 @@ export async function measure(name, cb) {
  * @returns {boolean} True if we're building a tag
  */
 export function hasTag() {
-  return !!process.env.CI_COMMIT_TAG || (!!process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag');
+  return process.env.GITHUB_REF_TYPE === 'tag';
 }
 
 /**
  * @returns {string} A string like v0.1.2, or v9999.0.0-canary
  */
 export function getBuildTag() {
-  let v = process.env.CI_COMMIT_TAG;
-  if (!v && process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME) {
-    v = process.env.GITHUB_REF_NAME;
+  if (process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME) {
+    return process.env.GITHUB_REF_NAME;
   }
-  if (!v) {
-    return "v9999.0.0-canary";
-  }
-  return v;
+  return "v9999.0.0-canary";
 }
 
 /** @returns {string} A string like 0.1.2 */
