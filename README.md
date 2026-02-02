@@ -46,20 +46,101 @@ npm run compile
 BROTH_USE_LOCAL=butler npm start
 ```
 
-## About itch-setup
+## App Architecture
 
-[itch-setup](https://github.com/itchio/itch-setup) is the installer program for the itch app.
+The itch desktop app consists of three components working together:
 
-It's a Go executable that runs on Windows, macOS and Linux, and downloads the latest
-version of the app directly from <https://itch.io>.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    itch (Electron App)                      │
+│  ┌─────────────────────┐    ┌────────────────────────────┐  │
+│  │   Main Process      │    │   Renderer Process         │  │
+│  │   (Node.js)         │◄──►│   (React)                  │  │
+│  │                     │    │                            │  │
+│  │ • State (Redux)     │    │ • UI components            │  │
+│  │ • Reactors          │    │ • User interactions        │  │
+│  │ • Process mgmt      │    │ • State display            │  │
+│  └──────────┬──────────┘    └────────────────────────────┘  │
+└─────────────┼───────────────────────────────────────────────┘
+              │ TCP/RPC
+              ▼
+┌─────────────────────────────┐   ┌───────────────────────────┐
+│         butler              │   │       itch-setup          │
+│       (Go daemon)           │   │     (Go executable)       │
+│                             │   │                           │
+│ • Game downloads/installs   │   │ • App installation        │
+│ • Launch management         │   │ • Self-updates            │
+│ • SQLite database           │   │                           │
+└─────────────────────────────┘   └───────────────────────────┘
+              ▲                              ▲
+              └──────── broth.itch.zone ─────┘
+                    (binary distribution)
+```
 
-Although itch-setup is normally served from <https://itch.io/app>, the canonical
-source to download it (e.g. for packaging purposes), is the following download server:
+### itch (This Repository)
 
-  * <https://broth.itch.zone/>
+An Electron app with a multi-process architecture:
 
-broth is maintained by itch.io employees, and serves various packages related to the
-itch app.
+- **Main Process**: Handles state management (Redux), business logic, and coordination with butler/itch-setup. Uses a "reactor" pattern to handle side effects from Redux actions.
+- **Renderer Process**: React-based UI with state synchronized from the main process via electron-redux.
+
+### butler
+
+A Go daemon ([itchio/butler](https://github.com/itchio/butler)) that handles all game operations:
+
+- Downloads, installs, updates, and launches games
+- Maintains a SQLite database for installation data
+- Communicates with itch via TCP-based RPC
+- Spawned as a child process, tied to itch's lifecycle
+
+### itch-setup
+
+A Go executable ([itchio/itch-setup](https://github.com/itchio/itch-setup)) for installation and updates:
+
+- Handles initial app installation on all platforms
+- Manages self-update checks and restarts
+
+### Version Management (broth)
+
+The itch app automatically manages butler and itch-setup versions through the
+"broth" system. Broth is a service we run that proxies over the itch.io API to
+provide fixed download URLs for binaries & assets related to the itch app.
+
+**Remote Distribution:**
+- Binaries are hosted at `https://broth.itch.zone/{package}/{platform}/{version}`
+- Platform format: `{os}-{arch}` (e.g., `linux-amd64`, `darwin-arm64`, `windows-386`)
+
+**Local Storage** (eg. `~/.config/itch/broth/` on Linux):
+```
+broth/
+├── butler/
+│   ├── versions/{version-hash}/butler    # Extracted binary
+│   ├── downloads/                        # Temporary during download
+│   └── .chosen-version                   # Currently active version
+└── itch-setup/
+    └── [same structure]
+```
+
+**Version Selection:**
+- Uses semver constraints defined in `src/main/broth/formulas.ts`:
+  - butler: `^15.20.0`
+  - itch-setup: `^1.8.0`
+- Fetches `/versions` endpoint and picks the newest version satisfying the constraint
+- Canary builds use `-head` channels with no constraints (always latest)
+
+**Upgrade Flow:**
+1. On startup, validates `.chosen-version` against installed marker
+2. If app version changed since last run, checks for new component versions
+3. Downloads zip, extracts with CRC32 verification, runs sanity check
+4. Updates `.chosen-version` and cleans up old versions
+
+**Development Override:**
+```bash
+# Use locally-built butler instead of managed version
+BROTH_USE_LOCAL=butler npm start
+```
+
+Key source files: `src/main/broth/package.ts`, `src/main/broth/formulas.ts`, `src/main/broth/manager.ts`
 
 ## License
 
