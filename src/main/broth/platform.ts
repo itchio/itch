@@ -16,6 +16,8 @@ function goarch() {
     return "amd64";
   } else if (result === "ia32") {
     return "386";
+  } else if (result === "arm64") {
+    return "arm64";
   } else {
     return "unknown";
   }
@@ -23,11 +25,6 @@ function goarch() {
 
 export function platformString(): string {
   const os = goos();
-  let arch: string;
-  if (os === "darwin") {
-    arch = "amd64";
-  } else {
-    arch = goarch();
-  }
+  const arch = goarch();
   return `${os}-${arch}`;
 }
