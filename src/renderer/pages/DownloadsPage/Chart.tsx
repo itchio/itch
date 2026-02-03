@@ -1,6 +1,6 @@
 import React from "react";
+import ContainerDimensions from "renderer/basics/ContainerDimensions";
 import styled from "renderer/styles";
-import ContainerDimensions from "react-container-dimensions";
 
 const ChartWrapper = styled.div`
   position: absolute;
