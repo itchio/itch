@@ -8,6 +8,8 @@ on:
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    env:
+      ITCH_TEST_ACCOUNT_API_KEY: ${{ secrets.ITCH_TEST_ACCOUNT_API_KEY }}
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v6
@@ -22,9 +24,5 @@ jobs:
       run: npm ci
     - name: Type check
       run: npm run ts-check
-    - name: Build and package
+    - name: Build, package, and run integration tests
       run: node release/package-all.js --os linux --arch amd64
-    - name: Run integration tests
-      env:
-        ITCH_TEST_ACCOUNT_API_KEY: ${{ secrets.ITCH_TEST_ACCOUNT_API_KEY }}
-      run: npm run integration-tests
