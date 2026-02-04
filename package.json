@@ -77,6 +77,7 @@
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
+    "@electron/osx-sign": "^2.3.0",
     "@electron/packager": "^18.4.4",
     "@itchio/bob": "^2.1.0",
     "@types/classnames": "^2.2.11",
