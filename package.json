@@ -113,6 +113,7 @@
     "sync-butler": "cd ../butler && go run ./butlerd/generous ts ../itch/src/common/butlerd/messages.ts",
     "start": "node develop.mjs",
     "compile": "cross-env NODE_ENV=production node build.mjs",
+    "clean": "rimraf artifacts dist prefix build .chromedriver *.log.txt",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",
