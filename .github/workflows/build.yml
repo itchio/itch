@@ -33,7 +33,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-linux-amd64
+        name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-linux-amd64
         path: artifacts/linux-amd64/
 
   build-windows:
@@ -104,7 +104,7 @@ jobs:
     - name: Upload signed artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-windows-amd64
+        name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-windows-amd64
         path: artifacts/windows-amd64/
 
   build-macos-x64:
@@ -210,7 +210,7 @@ jobs:
     - name: Sign apps
       run: |
         SIGN_KEY="Developer ID Application: itch corp. (AK2D34UDP2)"
-        APP_NAME="${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}"
+        APP_NAME="${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}"
 
         for ARCH in darwin-amd64 darwin-arm64; do
           APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
@@ -227,7 +227,7 @@ jobs:
         APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       run: |
-        APP_NAME="${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}"
+        APP_NAME="${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}"
 
         for ARCH in darwin-amd64 darwin-arm64; do
           APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
@@ -274,13 +274,13 @@ jobs:
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-amd64
+        name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-amd64
         path: artifacts/darwin-amd64/
 
     - name: Upload signed arm64 artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-arm64
+        name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-arm64
         path: artifacts/darwin-arm64/
 
   create-github-release:
