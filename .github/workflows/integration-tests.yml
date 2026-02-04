@@ -1,0 +1,30 @@
+name: "integration-tests"
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v6
+      with:
+        go-version: '^1.22.1'
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    - name: Install xvfb
+      run: sudo apt-get update && sudo apt-get install -y xvfb
+    - name: Install dependencies
+      run: npm ci
+    - name: Type check
+      run: npm run ts-check
+    - name: Build and package
+      run: node release/package-all.js --os linux --arch amd64
+    - name: Run integration tests
+      env:
+        ITCH_TEST_ACCOUNT_API_KEY: ${{ secrets.ITCH_TEST_ACCOUNT_API_KEY }}
+      run: npm run integration-tests
