@@ -134,6 +134,7 @@ class LoginForm extends React.PureComponent<Props, State> {
               <Link label={T(["Cancel"])} onClick={this.cancelOAuth} />
             ) : (
               <Link
+                id="show-password-login"
                 label={T(["Log in with password"])}
                 onClick={() => this.setState({ showLegacy: true })}
               />

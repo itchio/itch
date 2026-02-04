@@ -2,6 +2,7 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 
 interface Props {
+  id?: string;
   onClick?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
   onContextMenu?: React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
   label?: JSX.Element | string;
