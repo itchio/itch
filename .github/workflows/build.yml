@@ -30,7 +30,7 @@ jobs:
         node release/package-all.js --os linux --arch amd64
 
     - name: Upload artifact
-      if: startsWith(github.ref, 'refs/tags/')
+      if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-linux-amd64
@@ -53,13 +53,6 @@ jobs:
     - name: Build and package
       run: |
         node release/package-all.js --os windows --arch amd64
-
-    - name: Upload artifact
-      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-windows-amd64
-        path: artifacts/windows-amd64/
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
@@ -135,13 +128,6 @@ jobs:
       run: |
         node release/package-all.js --os darwin --arch amd64
 
-    - name: Upload artifact
-      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-amd64
-        path: artifacts/darwin-amd64/
-
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
@@ -169,13 +155,6 @@ jobs:
     - name: Build and package (arm64)
       run: |
         node release/package-all.js --os darwin --arch arm64
-
-    - name: Upload artifact
-      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-arm64
-        path: artifacts/darwin-arm64/
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
