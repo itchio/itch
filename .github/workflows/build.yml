@@ -216,7 +216,30 @@ jobs:
           APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
           if [ -d "$APP_PATH" ]; then
             echo "Signing $APP_PATH..."
-            codesign --deep --force --verbose --options runtime --sign "$SIGN_KEY" "$APP_PATH"
+
+            # Sign frameworks and dylibs first (inside-out signing for Electron apps)
+            # Find and sign all .dylib files
+            find "$APP_PATH/Contents/Frameworks" -name "*.dylib" -exec \
+              codesign --force --verbose --options runtime --sign "$SIGN_KEY" {} \;
+
+            # Sign all .framework bundles (sign the versioned content, not the symlinks)
+            find "$APP_PATH/Contents/Frameworks" -name "*.framework" -type d | while read -r framework; do
+              if [ -d "$framework/Versions/A" ]; then
+                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$framework/Versions/A"
+              else
+                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$framework"
+              fi
+            done
+
+            # Sign helper apps
+            find "$APP_PATH/Contents" -name "*.app" -type d | while read -r helper; do
+              if [ "$helper" != "$APP_PATH" ]; then
+                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$helper"
+              fi
+            done
+
+            # Sign the main app
+            codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$APP_PATH"
             codesign --verify -vvvv "$APP_PATH"
           fi
         done
