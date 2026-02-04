@@ -135,10 +135,18 @@ jobs:
       run: |
         node release/package-all.js --os darwin --arch amd64
 
-    - name: Upload x64 build
+    - name: Upload artifact
+      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: macos-x64-build
+        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-amd64
+        path: artifacts/darwin-amd64/
+
+    - name: Upload unsigned artifact
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: darwin-amd64-unsigned
         path: artifacts/darwin-amd64/
 
   build-macos-arm64:
@@ -162,75 +170,14 @@ jobs:
       run: |
         node release/package-all.js --os darwin --arch arm64
 
-    - name: Upload arm64 build
-      uses: actions/upload-artifact@v4
-      with:
-        name: macos-arm64-build
-        path: artifacts/darwin-arm64/
-
-  build-macos-universal:
-    runs-on: macos-latest
-    needs: [build-macos-x64, build-macos-arm64]
-
-    steps:
-    - uses: actions/checkout@master
-
-    - name: Install dependencies
-      run: |
-        npm ci
-
-    - name: Download x64 build
-      uses: actions/download-artifact@v4
-      with:
-        name: macos-x64-build
-        path: artifacts/darwin-amd64/
-
-    - name: Download arm64 build
-      uses: actions/download-artifact@v4
-      with:
-        name: macos-arm64-build
-        path: artifacts/darwin-arm64/
-
-    - name: Create universal binary
-      run: |
-        node release/make-universal.js
-
-    - name: Upload universal artifact
-      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-universal
-        path: artifacts/darwin-universal/
-
-    - name: Upload x64 artifact
-      if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-amd64
-        path: artifacts/darwin-amd64/
-
-    - name: Upload arm64 artifact
+    - name: Upload artifact
       if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-arm64
         path: artifacts/darwin-arm64/
 
-    - name: Upload unsigned universal artifact
-      if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: darwin-universal-unsigned
-        path: artifacts/darwin-universal/
-
-    - name: Upload unsigned x64 artifact
-      if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: darwin-amd64-unsigned
-        path: artifacts/darwin-amd64/
-
-    - name: Upload unsigned arm64 artifact
+    - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
@@ -238,18 +185,12 @@ jobs:
         path: artifacts/darwin-arm64/
 
   sign-macos:
-    needs: [build-macos-universal]
+    needs: [build-macos-x64, build-macos-arm64]
     if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     environment: signing-macos
 
     steps:
-    - name: Download unsigned universal artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: darwin-universal-unsigned
-        path: artifacts/darwin-universal/
-
     - name: Download unsigned x64 artifact
       uses: actions/download-artifact@v4
       with:
@@ -292,7 +233,7 @@ jobs:
         SIGN_KEY="Developer ID Application: itch corp. (AK2D34UDP2)"
         APP_NAME="${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}"
 
-        for ARCH in darwin-universal darwin-amd64 darwin-arm64; do
+        for ARCH in darwin-amd64 darwin-arm64; do
           APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
           if [ -d "$APP_PATH" ]; then
             echo "Signing $APP_PATH..."
@@ -309,7 +250,7 @@ jobs:
       run: |
         APP_NAME="${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}"
 
-        for ARCH in darwin-universal darwin-amd64 darwin-arm64; do
+        for ARCH in darwin-amd64 darwin-arm64; do
           APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
           if [ -d "$APP_PATH" ]; then
             echo "Notarizing $APP_PATH..."
@@ -350,12 +291,6 @@ jobs:
             rm "$ZIP_PATH"
           fi
         done
-
-    - name: Upload signed universal artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ contains(github.ref_name, '-canary') && 'kitch' || 'itch' }}-${{ github.ref_name }}-darwin-universal
-        path: artifacts/darwin-universal/
 
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
