@@ -170,6 +170,8 @@ jobs:
     environment: signing-macos
 
     steps:
+    - uses: actions/checkout@master
+
     - name: Download unsigned x64 artifact
       uses: actions/download-artifact@v4
       with:
@@ -181,6 +183,9 @@ jobs:
       with:
         name: darwin-arm64-unsigned
         path: artifacts/darwin-arm64/
+
+    - name: Install dependencies
+      run: npm ci
 
     - name: Import signing certificate
       env:
@@ -207,92 +212,14 @@ jobs:
         # Allow codesign to access the keychain
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
-    - name: Sign apps
-      run: |
-        SIGN_KEY="Developer ID Application: itch corp. (AK2D34UDP2)"
-        APP_NAME="${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}"
-
-        for ARCH in darwin-amd64 darwin-arm64; do
-          APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
-          if [ -d "$APP_PATH" ]; then
-            echo "Signing $APP_PATH..."
-
-            # Sign frameworks and dylibs first (inside-out signing for Electron apps)
-            # Find and sign all .dylib files
-            find "$APP_PATH/Contents/Frameworks" -name "*.dylib" -exec \
-              codesign --force --verbose --options runtime --sign "$SIGN_KEY" {} \;
-
-            # Sign all .framework bundles (sign the versioned content, not the symlinks)
-            find "$APP_PATH/Contents/Frameworks" -name "*.framework" -type d | while read -r framework; do
-              if [ -d "$framework/Versions/A" ]; then
-                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$framework/Versions/A"
-              else
-                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$framework"
-              fi
-            done
-
-            # Sign helper apps
-            find "$APP_PATH/Contents" -name "*.app" -type d | while read -r helper; do
-              if [ "$helper" != "$APP_PATH" ]; then
-                codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$helper"
-              fi
-            done
-
-            # Sign the main app
-            codesign --force --verbose --options runtime --sign "$SIGN_KEY" "$APP_PATH"
-            codesign --verify -vvvv "$APP_PATH"
-          fi
-        done
-
-    - name: Notarize apps
+    - name: Sign and notarize apps
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       run: |
-        APP_NAME="${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}"
-
-        for ARCH in darwin-amd64 darwin-arm64; do
-          APP_PATH="artifacts/${ARCH}/${APP_NAME}.app"
-          if [ -d "$APP_PATH" ]; then
-            echo "Notarizing $APP_PATH..."
-
-            # Create a zip for notarization
-            ZIP_PATH="${APP_PATH}.zip"
-            ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
-
-            # Submit for notarization and capture output
-            NOTARY_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
-              --apple-id "$APPLE_ID" \
-              --password "$APPLE_APP_SPECIFIC_PASSWORD" \
-              --team-id "$APPLE_TEAM_ID" \
-              --wait 2>&1)
-
-            echo "$NOTARY_OUTPUT"
-
-            # Check if notarization was successful
-            if echo "$NOTARY_OUTPUT" | grep -q "status: Accepted"; then
-              echo "Notarization successful for ${ARCH}"
-              # Staple the notarization ticket to the app
-              xcrun stapler staple "$APP_PATH"
-            else
-              echo "Notarization failed for ${ARCH}"
-              # Get the submission ID and fetch the log
-              SUBMISSION_ID=$(echo "$NOTARY_OUTPUT" | grep "id:" | head -1 | awk '{print $2}')
-              if [ -n "$SUBMISSION_ID" ]; then
-                echo "Fetching notarization log..."
-                xcrun notarytool log "$SUBMISSION_ID" \
-                  --apple-id "$APPLE_ID" \
-                  --password "$APPLE_APP_SPECIFIC_PASSWORD" \
-                  --team-id "$APPLE_TEAM_ID" || true
-              fi
-              exit 1
-            fi
-
-            # Clean up zip
-            rm "$ZIP_PATH"
-          fi
-        done
+        node release/sign-macos.js --arch amd64
+        node release/sign-macos.js --arch arm64
 
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
