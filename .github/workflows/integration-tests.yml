@@ -26,3 +26,11 @@ jobs:
       run: npm run ts-check
     - name: Build, package, and run integration tests
       run: node release/package-all.js --os linux --arch amd64
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: integration-test-screenshots
+        path: integration-tests/screenshots/
+        if-no-files-found: ignore
+        retention-days: 1
