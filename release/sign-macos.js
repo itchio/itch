@@ -17,7 +17,7 @@
 import { readFileSync } from "fs";
 import fs from "fs";
 import ospath from "path";
-import { getAppName, appBundleId, measure, hasTag, ARCHES } from "./common.js";
+import { getAppName, measure, hasTag, ARCHES } from "./common.js";
 
 async function main() {
   const args = process.argv;
@@ -84,8 +84,8 @@ async function signApp(appBundle, electronVersion) {
   await measure("@electron/osx-sign", async () => {
     const debug = await import("debug");
     debug.default.enable("@electron/osx-sign");
-    const { signAsync } = await import("@electron/osx-sign");
-    await signAsync({
+    const { sign } = await import("@electron/osx-sign");
+    await sign({
       app: appBundle,
       hardenedRuntime: true,
       entitlements: entitlementsPath,
@@ -131,7 +131,6 @@ async function notarizeApp(appBundle) {
     debug.default.enable("@electron/notarize");
     const { notarize } = await import("@electron/notarize");
     await notarize({
-      appBundleId: appBundleId(),
       appPath: appBundle,
       appleId: appleId,
       appleIdPassword: appleIdPassword,
