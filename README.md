@@ -142,6 +142,46 @@ BROTH_USE_LOCAL=butler npm start
 
 Key source files: `src/main/broth/package.ts`, `src/main/broth/formulas.ts`, `src/main/broth/manager.ts`
 
+## Integration Tests
+
+The project includes integration tests that use ChromeDriver to control the Electron app and test user flows like logging in, installing games, and navigating the UI.
+
+### Requirements
+
+- **Go**: The test runner is written in Go and must be compiled before running
+- **Desktop environment**: Tests require a display (on Linux CI, `xvfb` is used)
+- **itch.io API key**: Tests authenticate using an API key from a specific test account
+
+### ChromeDriver Version
+
+The integration tests download a specific ChromeDriver version that must match the Electron version used by the app. If you update the Electron version in `package.json`, you must also update `integration-tests/versions.go` to match:
+
+```go
+const electronVersion = "25.9.8"  // Must match package.json electron version
+const chromeDriverVersionString = "ChromeDriver 114.0.5735.289"  // Chrome version for that Electron
+```
+
+To find the correct Chrome version for an Electron release, check the [Electron Releases](https://releases.electronjs.org/) page.
+
+### Running the Tests
+
+```bash
+# Set the API key for the test account (itch-test-account)
+export ITCH_TEST_ACCOUNT_API_KEY="your-api-key"
+
+# Run integration tests against a packaged build
+npm run integration-tests
+
+# Run against the development version (faster iteration, no packaging step)
+node release/test.js --test-dev
+
+# Run fresh (clear cached chromedriver and test artifacts)
+rm -rf integration-tests/.chromedriver integration-tests/tmp integration-tests/screenshots
+node release/test.js --test-dev
+```
+
+The `--test-dev` flag runs tests against the development version of the app instead of requiring a packaged production build. This is useful for faster iteration during development.
+
 ## License
 
 itch is released under the MIT License, see the [LICENSE][] file for details.
