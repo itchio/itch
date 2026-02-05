@@ -4,7 +4,6 @@ import path from "path";
 import { ReadFileOpts, WriteFileOpts } from "common/types/sf";
 
 import { EventEmitter } from "events";
-import rimraf from "rimraf";
 
 /**
  * Returns true if file exists, false if ENOENT, throws if other error
@@ -100,15 +99,7 @@ export async function lstat(file: string): Promise<Stats> {
  * `rm -rf`
  */
 export async function wipe(dir: string): Promise<void> {
-  return await new Promise((resolve, reject) => {
-    rimraf(dir, {}, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  await fs.rm(dir, { recursive: true, force: true });
 }
 
 export async function unlink(file: string): Promise<void> {
