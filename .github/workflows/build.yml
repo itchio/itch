@@ -137,12 +137,18 @@ jobs:
       run: |
         node release/package-all.js --os darwin --arch amd64
 
+    - name: Create tarball to preserve symlinks
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        cd artifacts/darwin-amd64
+        tar -cvf ../darwin-amd64.tar .
+
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: darwin-amd64-unsigned
-        path: artifacts/darwin-amd64/
+        path: artifacts/darwin-amd64.tar
 
   build-macos-arm64:
     runs-on: macos-latest
@@ -168,12 +174,18 @@ jobs:
       run: |
         node release/package-all.js --os darwin --arch arm64
 
+    - name: Create tarball to preserve symlinks
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        cd artifacts/darwin-arm64
+        tar -cvf ../darwin-arm64.tar .
+
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: darwin-arm64-unsigned
-        path: artifacts/darwin-arm64/
+        path: artifacts/darwin-arm64.tar
 
   sign-macos:
     needs: [build-macos-x64, build-macos-arm64]
@@ -191,13 +203,19 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: darwin-amd64-unsigned
-        path: artifacts/darwin-amd64/
+        path: artifacts/
 
     - name: Download unsigned arm64 artifact
       uses: actions/download-artifact@v4
       with:
         name: darwin-arm64-unsigned
-        path: artifacts/darwin-arm64/
+        path: artifacts/
+
+    - name: Extract tarballs (preserves symlinks)
+      run: |
+        mkdir -p artifacts/darwin-amd64 artifacts/darwin-arm64
+        tar -xvf artifacts/darwin-amd64.tar -C artifacts/darwin-amd64
+        tar -xvf artifacts/darwin-arm64.tar -C artifacts/darwin-arm64
 
     - name: Install dependencies
       run: npm ci
@@ -236,17 +254,22 @@ jobs:
         node release/sign-macos.js --arch amd64
         node release/sign-macos.js --arch arm64
 
+    - name: Create signed tarballs (preserves symlinks)
+      run: |
+        cd artifacts/darwin-amd64 && tar -cvf ../darwin-amd64-signed.tar . && cd ..
+        cd artifacts/darwin-arm64 && tar -cvf ../darwin-arm64-signed.tar . && cd ..
+
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-amd64
-        path: artifacts/darwin-amd64/
+        path: artifacts/darwin-amd64-signed.tar
 
     - name: Upload signed arm64 artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-arm64
-        path: artifacts/darwin-arm64/
+        path: artifacts/darwin-arm64-signed.tar
 
   create-github-release:
     if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/')
@@ -268,7 +291,14 @@ jobs:
         cd artifacts
         for dir in */; do
           dirname=$(basename "$dir")
-          tar -czf "${dirname}.tar.gz" -C "$dir" .
+          # Check if this is a macOS artifact (contains a .tar file)
+          if ls "$dir"/*.tar 1> /dev/null 2>&1; then
+            # For macOS: compress the existing tar (preserves symlinks)
+            gzip -c "$dir"/*.tar > "${dirname}.tar.gz"
+          else
+            # For other platforms: create tar.gz from directory contents
+            tar -czf "${dirname}.tar.gz" -C "$dir" .
+          fi
         done
         ls -lh *.tar.gz
 
@@ -299,6 +329,16 @@ jobs:
       with:
         path: artifacts
         pattern: ?itch-*
+
+    - name: Extract macOS tarballs
+      run: |
+        cd artifacts
+        for dir in *darwin*; do
+          if [ -d "$dir" ] && ls "$dir"/*.tar 1> /dev/null 2>&1; then
+            tar -xvf "$dir"/*.tar -C "$dir"
+            rm "$dir"/*.tar
+          fi
+        done
 
     - name: Deploy to itch.io
       env:
