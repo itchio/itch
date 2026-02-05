@@ -32,12 +32,18 @@ jobs:
       run: |
         node release/package-all.js --os linux --arch amd64
 
+    - name: Create tarball to preserve permissions
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        cd artifacts/linux-amd64
+        tar -cf ../linux-amd64.tar .
+
     - name: Upload artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-linux-amd64
-        path: artifacts/linux-amd64/
+        path: artifacts/linux-amd64.tar
 
   build-windows:
     runs-on: windows-latest
@@ -291,12 +297,11 @@ jobs:
         cd artifacts
         for dir in */; do
           dirname=$(basename "$dir")
-          # Check if this is a macOS artifact (contains a .tar file)
           if ls "$dir"/*.tar 1> /dev/null 2>&1; then
-            # For macOS: compress the existing tar (preserves symlinks)
+            # Compress existing tar (preserves permissions and symlinks)
             gzip -c "$dir"/*.tar > "${dirname}.tar.gz"
           else
-            # For other platforms: create tar.gz from directory contents
+            # For platforms without a pre-built tar (e.g. Windows)
             tar -czf "${dirname}.tar.gz" -C "$dir" .
           fi
         done
@@ -330,11 +335,11 @@ jobs:
         path: artifacts
         pattern: ?itch-*
 
-    - name: Extract macOS tarballs
+    - name: Extract tarballs (preserves permissions and symlinks)
       run: |
         cd artifacts
-        for dir in *darwin*; do
-          if [ -d "$dir" ] && ls "$dir"/*.tar 1> /dev/null 2>&1; then
+        for dir in */; do
+          if ls "$dir"/*.tar 1> /dev/null 2>&1; then
             tar -xf "$dir"/*.tar -C "$dir"
             rm "$dir"/*.tar
           fi
