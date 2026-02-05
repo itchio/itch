@@ -32,17 +32,9 @@ export async function build(cx) {
     pkg[field] = getAppName();
   }
   pkg.version = getBuildVersion();
+  delete pkg.dependencies;
+  delete pkg.devDependencies;
   const pkgContents = JSON.stringify(pkg, null, 2);
   writeFileSync(`prefix/package.json`, pkgContents, { encoding: "utf-8" });
 
-  console.log("Installing required externals");
-  const externals = [
-    "source-map-support", "systeminformation"
-  ];
-  await cd("prefix", async function () {
-    // TODO: legacy-peer-deps is used here due to react-json-inspector having
-    // dependencies set incorrectly locked to old version of react. In the future we should remove it
-    // this flag was added for npm 7 support
-    $(`npm install --no-save --legacy-peer-deps ${externals.join(" ")}`);
-  });
 }
