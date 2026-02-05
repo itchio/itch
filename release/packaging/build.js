@@ -1,7 +1,7 @@
 //@ts-check
 
 import { readFileSync, writeFileSync } from "fs";
-import { $, cd, header } from "@itchio/bob";
+import { $, header } from "@itchio/bob";
 import { getAppName, getBuildVersion, measure } from "../common.js";
 
 /**
@@ -36,5 +36,4 @@ export async function build(cx) {
   delete pkg.devDependencies;
   const pkgContents = JSON.stringify(pkg, null, 2);
   writeFileSync(`prefix/package.json`, pkgContents, { encoding: "utf-8" });
-
 }
