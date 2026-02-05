@@ -256,8 +256,8 @@ jobs:
 
     - name: Create signed tarballs (preserves symlinks)
       run: |
-        cd artifacts/darwin-amd64 && tar -cvf ../darwin-amd64-signed.tar . && cd ..
-        cd artifacts/darwin-arm64 && tar -cvf ../darwin-arm64-signed.tar . && cd ..
+        tar -cvf artifacts/darwin-amd64-signed.tar -C artifacts/darwin-amd64 .
+        tar -cvf artifacts/darwin-arm64-signed.tar -C artifacts/darwin-arm64 .
 
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
