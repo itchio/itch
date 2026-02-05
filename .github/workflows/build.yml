@@ -16,6 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
 
     - name: Install dependencies
       run: |
@@ -41,6 +44,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
 
     - name: Install dependencies
       run: |
@@ -112,6 +118,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
     - uses: actions/setup-go@v6
       with:
         go-version: '^1.22.1'
@@ -140,6 +149,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
     - uses: actions/setup-go@v6
       with:
         go-version: '^1.22.1'
@@ -171,6 +183,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
 
     - name: Download unsigned x64 artifact
       uses: actions/download-artifact@v4
@@ -272,6 +287,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '22'
 
     - name: Install dependencies
       run: npm ci
