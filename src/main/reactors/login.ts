@@ -17,6 +17,7 @@ import { elapsed } from "common/format/datetime";
 import { withTimeout } from "common/helpers/with-timeout";
 import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";
+import env from "main/env";
 
 const logger = mainLogger.child(__filename);
 const LOGIN_TIMEOUT = 5 * 1000; // 5 seconds
@@ -116,6 +117,9 @@ export default function (watcher: Watcher) {
     params.append("response_type", "code");
     params.append("code_challenge", codeChallenge);
     params.append("code_challenge_method", "S256");
+    if (env.appName !== "itch") {
+      params.append("app_name", env.appName);
+    }
 
     const loginUrl = `${urls.itchio}/user/oauth?${params.toString()}`;
     logger.info(`Opening OAuth URL: ${loginUrl}`);
