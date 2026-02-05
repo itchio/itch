@@ -141,7 +141,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
         cd artifacts/darwin-amd64
-        tar -cvf ../darwin-amd64.tar .
+        tar -cf ../darwin-amd64.tar .
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
@@ -178,7 +178,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
         cd artifacts/darwin-arm64
-        tar -cvf ../darwin-arm64.tar .
+        tar -cf ../darwin-arm64.tar .
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
@@ -214,8 +214,8 @@ jobs:
     - name: Extract tarballs (preserves symlinks)
       run: |
         mkdir -p artifacts/darwin-amd64 artifacts/darwin-arm64
-        tar -xvf artifacts/darwin-amd64.tar -C artifacts/darwin-amd64
-        tar -xvf artifacts/darwin-arm64.tar -C artifacts/darwin-arm64
+        tar -xf artifacts/darwin-amd64.tar -C artifacts/darwin-amd64
+        tar -xf artifacts/darwin-arm64.tar -C artifacts/darwin-arm64
 
     - name: Install dependencies
       run: npm ci
@@ -256,8 +256,8 @@ jobs:
 
     - name: Create signed tarballs (preserves symlinks)
       run: |
-        tar -cvf artifacts/darwin-amd64-signed.tar -C artifacts/darwin-amd64 .
-        tar -cvf artifacts/darwin-arm64-signed.tar -C artifacts/darwin-arm64 .
+        tar -cf artifacts/darwin-amd64-signed.tar -C artifacts/darwin-amd64 .
+        tar -cf artifacts/darwin-arm64-signed.tar -C artifacts/darwin-arm64 .
 
     - name: Upload signed x64 artifact
       uses: actions/upload-artifact@v4
@@ -335,7 +335,7 @@ jobs:
         cd artifacts
         for dir in *darwin*; do
           if [ -d "$dir" ] && ls "$dir"/*.tar 1> /dev/null 2>&1; then
-            tar -xvf "$dir"/*.tar -C "$dir"
+            tar -xf "$dir"/*.tar -C "$dir"
             rm "$dir"/*.tar
           fi
         done
