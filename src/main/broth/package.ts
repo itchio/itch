@@ -4,9 +4,11 @@ import { Logger } from "common/logger";
 import { PackageState, ProgressInfo, Store } from "common/types";
 import { MinimalContext } from "main/context";
 import spawn from "main/os/spawn";
+import { execFile } from "child_process";
 import { dirname, join } from "path";
 import querystring from "querystring";
 import * as semver from "semver";
+import { promisify } from "util";
 import which from "which";
 import { downloadToFileWithRetry } from "main/net/download";
 import { request } from "main/net/request/metal-request";
@@ -17,6 +19,7 @@ import formulas, { FormulaSpec } from "main/broth/formulas";
 import { platformString } from "main/broth/platform";
 import { unzip } from "main/broth/unzip";
 
+const execFileAsync = promisify(execFile);
 const sanityCheckTimeout = 10000;
 const platform = platformString();
 
@@ -450,11 +453,42 @@ export class Package implements PackageLike {
     return presentVersions;
   }
 
+  private async isBinaryNativeArch(
+    logger: Logger,
+    versionPrefix: string
+  ): Promise<boolean> {
+    if (process.platform !== "darwin" || process.arch !== "arm64") {
+      return true;
+    }
+
+    const binaryPath = join(versionPrefix, this.name);
+    try {
+      const { stdout } = await execFileAsync("/usr/bin/file", [binaryPath]);
+      logger.debug(`Architecture check for ${this.name}: ${stdout.trim()}`);
+
+      if (!stdout.includes("arm64")) {
+        logger.info(
+          `${this.name} binary is not arm64-native, will re-download`
+        );
+        return false;
+      }
+      return true;
+    } catch (e) {
+      logger.warn(`Could not check architecture of ${this.name}: ${e.message}`);
+      return true;
+    }
+  }
+
   async isVersionValid(logger: Logger, v: Version): Promise<boolean> {
     const ctx = new MinimalContext();
     const { formula } = this;
     const { sanityCheck } = formula;
     const versionPrefix = this.getVersionPrefix(v);
+
+    if (!(await this.isBinaryNativeArch(logger, versionPrefix))) {
+      return false;
+    }
+
     try {
       let t1 = Date.now();
       await Promise.race([
