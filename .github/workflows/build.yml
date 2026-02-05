@@ -340,6 +340,36 @@ jobs:
           fi
         done
 
+    - name: Verify macOS bundle structure
+      run: |
+        # The auto-updater expects Contents/ at the archive root, not app.app/Contents/
+        # Butler push on a .app directory achieves this, but let's verify the structure
+        for dir in artifacts/*darwin*; do
+          if [ -d "$dir" ]; then
+            app_bundle=$(find "$dir" -maxdepth 1 -name "*.app" -type d | head -1)
+            if [ -z "$app_bundle" ]; then
+              echo "ERROR: No .app bundle found in $dir"
+              exit 1
+            fi
+
+            # Verify expected structure exists
+            if [ ! -f "$app_bundle/Contents/Info.plist" ]; then
+              echo "ERROR: Missing Contents/Info.plist in $app_bundle"
+              exit 1
+            fi
+            if [ ! -d "$app_bundle/Contents/MacOS" ]; then
+              echo "ERROR: Missing Contents/MacOS in $app_bundle"
+              exit 1
+            fi
+            if [ ! -d "$app_bundle/Contents/Frameworks" ]; then
+              echo "ERROR: Missing Contents/Frameworks in $app_bundle"
+              exit 1
+            fi
+
+            echo "OK: $app_bundle has correct bundle structure"
+          fi
+        done
+
     - name: Deploy to itch.io
       env:
         BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
