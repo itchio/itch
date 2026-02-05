@@ -10,14 +10,12 @@
  *   APPLE_ID - Apple ID email for notarization
  *   APPLE_APP_SPECIFIC_PASSWORD - App-specific password for notarization
  *   APPLE_TEAM_ID - Apple Developer Team ID
- *   GITHUB_REF_TYPE - 'tag' or 'branch'
- *   GITHUB_REF_NAME - Tag or branch name
  */
 
 import { readFileSync } from "fs";
 import fs from "fs";
 import ospath from "path";
-import { getAppName, measure, hasTag, ARCHES } from "./common.js";
+import { getAppName, measure, ARCHES } from "./common.js";
 
 async function main() {
   const args = process.argv;
@@ -54,10 +52,7 @@ async function main() {
 
   console.log(`Electron version: ${electronVersion}`);
 
-  // Sign the app
   await signApp(appBundle, electronVersion);
-
-  // Notarize if this is a tag build
   await notarizeApp(appBundle);
 }
 
@@ -67,14 +62,6 @@ async function main() {
  */
 async function signApp(appBundle, electronVersion) {
   console.log("Preparing to sign Application bundle...");
-
-  // Enable debug namespaces
-  const namespaces = [
-    "@electron/osx-sign",
-    "electron-osx-sign",
-    "electron-osx-sign:warn",
-  ];
-  process.env.DEBUG = namespaces.join(",");
 
   console.log("Writing entitlements file");
   const entitlementsPath = ospath.join(".", "entitlements.plist");
@@ -105,16 +92,6 @@ async function signApp(appBundle, electronVersion) {
  * @param {string} appBundle
  */
 async function notarizeApp(appBundle) {
-  if (process.env.SKIP_NOTARIZE) {
-    console.log(`$SKIP_NOTARIZE is set, skipping notarization...`);
-    return;
-  }
-
-  if (!hasTag()) {
-    console.log(`Not a tag build, skipping notarization...`);
-    return;
-  }
-
   const appleId = process.env.APPLE_ID;
   const appleIdPassword = process.env.APPLE_APP_SPECIFIC_PASSWORD;
   const teamId = process.env.APPLE_TEAM_ID;
@@ -138,8 +115,11 @@ async function notarizeApp(appBundle) {
     });
   });
 
-  console.log("Testing notarized requirement...");
+  console.log("Stapling notarization ticket...");
   const { $ } = await import("@itchio/bob");
+  $(`xcrun stapler staple "${appBundle}"`);
+
+  console.log("Verifying notarization...");
   $(`codesign --test-requirement="=notarized" -vvvv "${appBundle}"`);
 }
 
