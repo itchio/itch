@@ -10,7 +10,7 @@ import {
 import ospath from "path";
 import fs from "fs";
 import { toUnixPath } from "./context.js";
-import electronPackager from "@electron/packager";
+import { packager as electronPackager } from "@electron/packager";
 
 /** @param {import("./context.js").Context} cx */
 export async function doPackage(cx) {
