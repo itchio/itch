@@ -142,6 +142,26 @@ BROTH_USE_LOCAL=butler npm start
 
 Key source files: `src/main/broth/package.ts`, `src/main/broth/formulas.ts`, `src/main/broth/manager.ts`
 
+## kitch vs. itch
+
+The codebase supports two app variants: **itch** (stable) and **kitch** (canary). They can be installed side-by-side and are distinguished by the git tag used at build time — a tag ending in `-canary` (e.g. `v0.1.2-canary`) produces kitch, anything else produces itch. The development version of the app (started with `npm start`) will run in kitch mode.
+
+### How the variant is determined
+
+- **At build time**: `release/common.js` inspects the git tag. A `-canary` suffix selects kitch; otherwise itch. The `name` field in `package.json` is `"kitch"` by default, so **local development always runs as kitch**. During production packaging, the name is overwritten to `"itch"` for non-canary builds.
+- **At runtime**: `src/main/env.ts` calls `app.getName()` (which returns the `name` from `package.json`) to set `env.isCanary`, `env.appName`, and `env.channel`.
+
+### Key differences
+
+| Area | itch (stable) | kitch (canary) |
+|------|--------------|----------------|
+| URL protocols | `itchio://`, `itch://` (production only) | `kitchio://`, `kitch://` |
+| Broth channels | Regular (e.g. `darwin-amd64`) | `-head` suffix (e.g. `darwin-amd64-head`) |
+| Semver constraints | butler `^15.20.0`, itch-setup `^1.8.0` | None (always latest) |
+| macOS bundle ID | `io.itch.mac` | `io.kitch.mac` |
+| Tray/window icons | `src/static/images/tray/itch.png`, `src/static/images/window/itch/` | `src/static/images/tray/kitch.png`, `src/static/images/window/kitch/` |
+| Binary/artifact name | `itch` | `kitch` |
+
 ## Integration Tests
 
 The project includes integration tests that use ChromeDriver to control the Electron app and test user flows like logging in, installing games, and navigating the UI.
