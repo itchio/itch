@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import urlParser from "url";
-import { webFrame } from "electron";
+import { contextBridge } from "electron";
 
 declare function atob(b64: string): string;
 
@@ -12,11 +12,6 @@ interface Itch {
   env: Env;
   args: string[];
 }
-
-type ExtendedGlobal = typeof global & {
-  Itch: Itch;
-};
-const extendedGlobal = global as ExtendedGlobal;
 
 (function () {
   try {
@@ -42,9 +37,10 @@ const extendedGlobal = global as ExtendedGlobal;
     const jsonSource = atob(
       Array.isArray(itchObjectBase64) ? itchObjectBase64[0] : itchObjectBase64
     );
-    extendedGlobal.Itch = JSON.parse(jsonSource);
+    const Itch: Itch = JSON.parse(jsonSource);
+    contextBridge.exposeInMainWorld("Itch", Itch);
     console.log("Loaded itch environment!");
-    console.dir(extendedGlobal.Itch);
+    console.dir(Itch);
   } catch (e) {
     console.error("While loading itch environment: ", e);
   } finally {
