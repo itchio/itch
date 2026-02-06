@@ -73,8 +73,6 @@ class BrowserPage extends React.PureComponent<Props> {
                 ref={this.gotWebview}
                 partition={partition}
                 useragent={useragent.userAgent()}
-                enableremotemodule="false"
-                webpreferences="worldSafeExecuteJavaScript"
               />
             )}
           </WebviewShell>

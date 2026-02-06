@@ -55,7 +55,7 @@ export const rendererConfig = {
   },
   bundle: true,
   platform: "browser",
-  target: "chrome108", // Match Electron 22's Chromium version
+  target: "chrome120", // Match Electron 28's Chromium version
   outdir: "dist/renderer",
   outExtension: { ".js": ".bundle.js" },
   format: "iife",

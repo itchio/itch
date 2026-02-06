@@ -43,7 +43,7 @@ export default function (watcher: Watcher) {
           // for all origins
           origin: null,
           // look chromium just clear everything thanks
-          quotas: ["temporary", "persistent", "syncable"],
+          quotas: ["temporary", "syncable"],
         })
       );
     }
