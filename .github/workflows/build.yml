@@ -38,7 +38,7 @@ jobs:
 
     - name: Upload artifact
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-linux-amd64
         path: artifacts/linux-amd64.tar
@@ -66,7 +66,7 @@ jobs:
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: windows-amd64-unsigned
         path: artifacts/windows-amd64/
@@ -79,7 +79,7 @@ jobs:
 
     steps:
     - name: Download unsigned artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: windows-amd64-unsigned
         path: artifacts/windows-amd64/
@@ -112,7 +112,7 @@ jobs:
         }
 
     - name: Upload signed artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-windows-amd64
         path: artifacts/windows-amd64/
@@ -149,7 +149,7 @@ jobs:
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: darwin-amd64-unsigned
         path: artifacts/darwin-amd64.tar
@@ -186,7 +186,7 @@ jobs:
 
     - name: Upload unsigned artifact
       if: github.event_name == 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: darwin-arm64-unsigned
         path: artifacts/darwin-arm64.tar
@@ -204,13 +204,13 @@ jobs:
         node-version: '22'
 
     - name: Download unsigned x64 artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: darwin-amd64-unsigned
         path: artifacts/
 
     - name: Download unsigned arm64 artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: darwin-arm64-unsigned
         path: artifacts/
@@ -264,13 +264,13 @@ jobs:
         tar -cf artifacts/darwin-arm64-signed.tar -C artifacts/darwin-arm64 .
 
     - name: Upload signed x64 artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-amd64
         path: artifacts/darwin-amd64-signed.tar
 
     - name: Upload signed arm64 artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ github.ref_type == 'tag' && !endsWith(github.ref_name, '-canary') && 'itch' || 'kitch' }}-${{ github.ref_name }}-darwin-arm64
         path: artifacts/darwin-arm64-signed.tar
@@ -284,10 +284,10 @@ jobs:
 
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         path: artifacts
-        pattern: ?itch-*
+        pattern: "{itch,kitch}-*"
 
     - name: Create archives
       run: |
@@ -328,10 +328,10 @@ jobs:
       run: npm ci
 
     - name: Download all artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         path: artifacts
-        pattern: ?itch-*
+        pattern: "{itch,kitch}-*"
 
     - name: Extract tarballs (preserves permissions and symlinks)
       run: |
