@@ -36,13 +36,6 @@ export async function measure(name, cb) {
 }
 
 /**
- * @returns {boolean} True if we're building a tag
- */
-export function hasTag() {
-  return process.env.GITHUB_REF_TYPE === 'tag';
-}
-
-/**
  * @returns {string} A string like v0.1.2, or v9999.0.0-canary
  */
 export function getBuildTag() {

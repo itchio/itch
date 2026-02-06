@@ -13,7 +13,6 @@ import { chalk } from "@itchio/bob";
  *  os: string,
  *  arch: string,
  *  archInfo: {electronArch: "ia32" | "x64" | "arm64"},
- *  shouldSign: boolean,
  *  projectDir: string,
  *  artifactDir: string,
  *  binarySubdir: string,
@@ -92,7 +91,6 @@ export async function parseContext() {
     }
   }
 
-  const shouldSign = !!process.env.SKIP_CODESIGN ? false : !!process.env.CI || !!process.env.FORCE_CODESIGN;
   const projectDir = process.cwd();
 
   const artifactDir = ospath.join(projectDir, "artifacts", `${os}-${arch}`);
@@ -108,7 +106,7 @@ export async function parseContext() {
     readFileSync("package.json", { encoding: "utf-8" })
   ).devDependencies.electron.replace(/^\^/, "");
 
-  console.log(`| ${chalk.green(appName)} for ${chalk.green(os)}-${chalk.green(arch)}, Electron ${chalk.blue(electronVersion)}, code signing (${shouldSign ? chalk.green("enabled") : chalk.magenta("disabled")})`);
+  console.log(`| ${chalk.green(appName)} for ${chalk.green(os)}-${chalk.green(arch)}, Electron ${chalk.blue(electronVersion)}`);
 
   return {
     appName,
@@ -116,7 +114,6 @@ export async function parseContext() {
     os,
     arch,
     archInfo,
-    shouldSign,
     projectDir,
     artifactDir: artifactDir,
     binarySubdir,

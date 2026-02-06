@@ -52,8 +52,6 @@ export async function doPackage(cx) {
   $(`rm -rf "${toUnixPath(cx.artifactDir)}"`);
   $(`mkdir -p artifacts`);
   $(`mv "${buildPath}" "${toUnixPath(cx.artifactDir)}"`);
-
-  await sign(cx);
 }
 
 /**
@@ -129,37 +127,5 @@ function darwinOptions(cx) {
     ],
   };
 
-  if (cx.shouldSign) {
-    if (!process.env.APPLE_ID_PASSWORD && cx.os === "darwin") {
-      throw new Error(
-        `Code signing enabled, but $APPLE_ID_PASSWORD environment variable unset or empty`
-      );
-    }
-  }
   return options;
-}
-
-/**
- * @param {import("./context.js").Context} cx
- */
-async function sign(cx) {
-  const artifactDir = cx.artifactDir;
-  console.log(`Artifact dir is (${artifactDir})`);
-
-  if (!cx.shouldSign) {
-    console.log("Code signing disabled, skipping");
-    return;
-  }
-
-  if (cx.os === "windows") {
-    console.log("Signing Windows executable...");
-    const windows = await import("./windows.js");
-    await windows.sign(cx, artifactDir);
-  } else if (cx.os === "darwin") {
-    console.log("Signing macOS app bundle...");
-    const darwin = await import("./darwin.js");
-    await darwin.sign(cx, artifactDir);
-  } else {
-    console.log("We don't sign Linux executables.");
-  }
 }

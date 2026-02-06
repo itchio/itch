@@ -6,8 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  SKIP_CODESIGN: 1
-  SKIP_NOTARIZE: 1
   SKIP_TESTS: 1
 
 jobs:
