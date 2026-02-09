@@ -10,9 +10,9 @@ import { join } from "path";
 import { request } from "main/net/request";
 import { exists, readFile, writeFile } from "main/os/ifs";
 
-const upgradesEnabled =
-  (env.production && !env.integrationTests) ||
-  process.env.DID_I_STUTTER === "1";
+// locales.itch.zone no longer exists, disable remote locale fetching
+const upgradesEnabled = false;
+//  (env.production && !env.integrationTests);
 
 const remoteDir = join(app.getPath("userData"), "locales");
 const localesConfigPath = getLocalesConfigPath();
@@ -45,9 +45,7 @@ async function doDownloadLocale(
 ): Promise<I18nResources> {
   if (!upgradesEnabled) {
     if (!implicit) {
-      logger.debug(
-        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`
-      );
+      logger.debug(`Not downloading locale (${lang}), remote locales disabled`);
     }
     return {};
   }
