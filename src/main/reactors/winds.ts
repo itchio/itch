@@ -114,11 +114,11 @@ async function createRootWindow(store: Store) {
 
   hookNativeWindow(store, wind, nativeWindow);
 
-  nativeWindow.on("maximize", (e: any) => {
+  nativeWindow.on("maximize", () => {
     config.set(MAXIMIZED_CONFIG_KEY, true);
   });
 
-  nativeWindow.on("unmaximize", (e: any) => {
+  nativeWindow.on("unmaximize", () => {
     config.set(MAXIMIZED_CONFIG_KEY, false);
   });
 
@@ -572,12 +572,12 @@ function hookNativeWindow(
     store.dispatch(actions.windFocusChanged({ wind, focused: false }));
   });
 
-  nativeWindow.on("enter-full-screen", (e: any) => {
+  nativeWindow.on("enter-full-screen", () => {
     const ns = store.getState().winds[wind].native;
     store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: true }));
   });
 
-  nativeWindow.on("leave-full-screen", (e: any) => {
+  nativeWindow.on("leave-full-screen", () => {
     const ns = store.getState().winds[wind].native;
     store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: false }));
   });
@@ -593,14 +593,14 @@ function hookNativeWindow(
     );
   });
 
-  nativeWindow.on("maximize", (e: any) => {
+  nativeWindow.on("maximize", () => {
     const ns = store.getState().winds[wind].native;
     if (!ns.maximized) {
       store.dispatch(actions.windMaximizedChanged({ wind, maximized: true }));
     }
   });
 
-  nativeWindow.on("unmaximize", (e: any) => {
+  nativeWindow.on("unmaximize", () => {
     const ns = store.getState().winds[wind].native;
     if (ns.maximized) {
       store.dispatch(actions.windMaximizedChanged({ wind, maximized: false }));
@@ -636,11 +636,11 @@ function hookNativeWindow(
     store.dispatch(actions.windBoundsChanged({ wind, bounds: windowBounds }));
   }, 2000);
 
-  nativeWindow.on("move", (e: any) => {
+  nativeWindow.on("move", () => {
     debouncedBounds();
   });
 
-  nativeWindow.on("resize", (e: any) => {
+  nativeWindow.on("resize", () => {
     debouncedBounds();
   });
 
@@ -697,7 +697,7 @@ function hookNativeWindow(
     }
   });
 
-  nativeWindow.on("closed", (e: any) => {
+  nativeWindow.on("closed", () => {
     store.dispatch(actions.windClosed({ wind }));
   });
 

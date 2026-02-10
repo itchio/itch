@@ -23,9 +23,9 @@ export const mainConfig = {
   },
   bundle: true,
   platform: "node",
-  target: "node16",
+  target: "node20",
   outdir: "dist/main",
-  // TODO: Electron 28+ supports ESM for main process. Once upgraded, change to .bundle.js and format: "esm"
+  // NOTE: Electron supports ESM for main process. Migrating from CJS to ESM is an optional follow-up.
   outExtension: { ".js": ".bundle.cjs" },
   format: "cjs",
   sourcemap: true,
@@ -55,7 +55,7 @@ export const rendererConfig = {
   },
   bundle: true,
   platform: "browser",
-  target: "chrome120", // Match Electron 28's Chromium version
+  target: "chrome130", // Match Electron 33's Chromium version
   outdir: "dist/renderer",
   outExtension: { ".js": ".bundle.js" },
   format: "iife",

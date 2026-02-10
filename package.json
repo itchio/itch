@@ -97,7 +97,7 @@
     "@types/which": "^1.3.2",
     "@types/yauzl": "^2.9.1",
     "cross-env": "^10.1.0",
-    "electron": "^28.0.0",
+    "electron": "^33.0.0",
     "esbuild": "^0.27.0",
     "husky": "^7.0.4",
     "lint-staged": "^10.5.3",

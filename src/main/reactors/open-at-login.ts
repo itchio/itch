@@ -85,7 +85,6 @@ async function updateOpenAtLoginState(
     // macOS, Windows
     app.setLoginItemSettings({
       openAtLogin: openAtLogin,
-      openAsHidden: openAsHidden,
     });
   }
 }
