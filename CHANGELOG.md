@@ -1,5 +1,31 @@
 # Changelog
 
+## [26.7.0-canary] - 2026-02-10
+
+This release upgrades from Electron 25 to Electron 33. **macOS 10.15 (Catalina) is no longer supported** macOS 11 (Big Sur) or later is now required.
+
+This is release is made available as an intermediate for upcoming Electron to allow for us to bisect for any issues.
+
+### Electron
+
+- Upgrade from Electron 25 to Electron 33 ([#3382](https://github.com/itchio/itch/issues/3382))
+- esbuild target updated to Node 20 and Chrome 130 to match Electron 33
+- Updated `openAsHidden` login item setting to only apply on Windows (removed from macOS in newer Electron)
+
+### Other
+
+- Changed app ID from `com.squirrel.itch.itch` to `io.itch.itch`
+- Disabled remote locale fetching (locales.itch.zone no longer exists)
+
+
+## [26.6.0] - 2026-02-06
+
+First stable release since v26.1.9, includes all changes from v26.2.1-canary, v26.3.0-canary, v26.4.0-canary, and v26.5.0-canary.
+
+Highlights: native Apple Silicon support, new OAuth login flow, full migration from GitLab CI to GitHub Actions, Electron 22 to 25 upgrade, Webpack to esbuild migration, semantic HTML accessibility improvements, and numerous bug fixes.
+
+See the [GitHub release](https://github.com/itchio/itch/releases/tag/v26.6.0) for full details.
+
 ## [26.5.0-canary] - 2026-02-05
 
 This is the first version of the app to officially support arm64 on macOS (aka Apple silicon)! The auto-updater will automatically pull the arm64 version for those on Apple silicon. No separate reinstallation necessary. All supplemental binaries (butler, itch-setup) will also automatically be replaced with their arm64 equivalent. The app should now start faster, be faster, and have less impact on your battery since it no longer needs to run through emulation on modern macOS computers.
