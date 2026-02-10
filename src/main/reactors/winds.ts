@@ -573,12 +573,10 @@ function hookNativeWindow(
   });
 
   nativeWindow.on("enter-full-screen", () => {
-    const ns = store.getState().winds[wind].native;
     store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: true }));
   });
 
   nativeWindow.on("leave-full-screen", () => {
-    const ns = store.getState().winds[wind].native;
     store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: false }));
   });
 

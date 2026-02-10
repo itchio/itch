@@ -83,9 +83,11 @@ async function updateOpenAtLoginState(
     }
   } else {
     // macOS, Windows
-    app.setLoginItemSettings({
-      openAtLogin: openAtLogin,
-    });
+    const settings: any = { openAtLogin };
+    if (process.platform === "win32") {
+      settings.openAsHidden = openAsHidden;
+    }
+    app.setLoginItemSettings(settings);
   }
 }
 
