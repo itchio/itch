@@ -712,5 +712,12 @@
 
   "plan_install.no_available_downloads": "No compatible downloads were found",
 
-  "empty_state.nothing_to_see_here": "Nothing to see here"
+  "empty_state.nothing_to_see_here": "Nothing to see here",
+
+  "browser.back": "Go back",
+  "browser.forward": "Go forward",
+  "browser.stop": "Stop loading",
+  "browser.reload": "Reload page",
+  "browser.more_menu": "More options",
+  "game.manage": "Manage game"
 }

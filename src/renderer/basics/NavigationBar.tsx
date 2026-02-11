@@ -17,6 +17,7 @@ import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
 import watching, { Watcher } from "renderer/hocs/watching";
 import { withTab } from "renderer/hocs/withTab";
+import { _ } from "renderer/t";
 import {
   dispatchTabEvolve,
   dispatchTabReloaded,
@@ -185,12 +186,14 @@ class NavigationBar extends React.PureComponent<Props, State> {
       <NavigationBarDiv className={classNames({ loading })}>
         <IconButton
           icon="arrow-left"
+          hint={_("browser.back")}
           disabled={!canGoBack}
           onClick={this.goBack}
           onContextMenu={this.showBackHistory}
         />
         <IconButton
           icon="arrow-right"
+          hint={_("browser.forward")}
           disabled={!canGoForward}
           onClick={this.goForward}
           onContextMenu={this.showForwardHistory}
@@ -212,9 +215,17 @@ class NavigationBar extends React.PureComponent<Props, State> {
     return (
       <>
         {loading ? (
-          <IconButton icon="cross" onClick={this.stop} />
+          <IconButton
+            icon="cross"
+            hint={_("browser.stop")}
+            onClick={this.stop}
+          />
         ) : (
-          <IconButton icon="repeat" onClick={this.reload} />
+          <IconButton
+            icon="repeat"
+            hint={_("browser.reload")}
+            onClick={this.reload}
+          />
         )}
         <AddressWrapper className={classNames({ editing: editingAddress })}>
           {editingAddress ? (

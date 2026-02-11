@@ -131,7 +131,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     const { enableTabs } = this.props;
 
     return (
-      <SidebarDiv id="sidebar">
+      <SidebarDiv id="sidebar" role="navigation">
         <Logo />
 
         <Search />

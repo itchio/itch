@@ -16,6 +16,7 @@ interface Props extends HoverProps {
   className?: string;
   gameId: number;
   square?: boolean;
+  alt?: string;
 }
 
 const CoverDiv = styled.div`
@@ -36,6 +37,7 @@ const Cover = ({
   hover,
   square,
   className,
+  alt,
   ...restProps
 }: Props) => {
   const [loading, setLoading] = useState(false);
@@ -67,6 +69,7 @@ const Cover = ({
       {url ? (
         <SmartImage
           src={url}
+          alt={alt}
           onLoadStart={onLoadStart}
           onLoadEnd={onLoadEnd}
           onError={onError}
@@ -98,6 +101,7 @@ export const GameCover = ({
       coverUrl={game.coverUrl}
       stillCoverUrl={game.stillCoverUrl}
       showGifMarker={showGifMarker}
+      alt={game.title}
     />
   );
 };

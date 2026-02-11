@@ -60,7 +60,13 @@ const LoadingCircle = ({
   huge,
 }: LoadingCircleProps) => {
   return (
-    <CircleContainer className={classNames(className, { bare, wide, huge })}>
+    <CircleContainer
+      className={classNames(className, { bare, wide, huge })}
+      role="progressbar"
+      aria-valuenow={Math.round(progress * 100)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       <Circle
         percent={progress > 0 ? progress * 100.0 : 100 / 3}
         trailWidth={3}

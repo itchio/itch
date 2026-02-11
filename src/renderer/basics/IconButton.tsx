@@ -1,8 +1,10 @@
 import classNames from "classnames";
 import { LocalizedString } from "common/types";
 import React from "react";
+import { useIntl } from "react-intl";
 import styled, * as styles from "renderer/styles";
 import Icon from "renderer/basics/Icon";
+import { TString } from "renderer/t";
 
 const IconButtonStyled = styled.button`
   ${styles.resetButton};
@@ -84,6 +86,9 @@ const IconButton = ({
   hintPosition = "top",
   ...restProps
 }: Props) => {
+  const intl = useIntl();
+  const ariaLabel = hint ? TString(intl, hint) : undefined;
+
   return (
     <IconButtonStyled
       type="button"
@@ -96,6 +101,8 @@ const IconButton = ({
       })}
       data-rh={hint ? JSON.stringify(hint) : null}
       data-rh-at={hintPosition}
+      aria-label={ariaLabel}
+      aria-disabled={disabled || undefined}
       {...restProps}
     >
       {typeof icon === "string" ? <Icon icon={icon} /> : icon}
