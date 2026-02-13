@@ -1888,6 +1888,8 @@ export interface Candidate {
   scriptInfo?: ScriptInfo;
   /** JarInfo contains information specific to Java archives (`.jar` files) */
   jarInfo?: JarInfo;
+  /** Any other info. */
+  metadata?: { [key: string]: any };
 }
 
 /**
@@ -2665,6 +2667,8 @@ export interface Runtime {
   platform: Platform;
   /** undocumented */
   is64: boolean;
+  /** undocumented */
+  arch: string;
 }
 
 /**
@@ -3163,6 +3167,8 @@ export interface InstallQueueParams {
  * Params for Install.Plan
  */
 export interface InstallPlanParams {
+  /** ID for cancellation support. If provided, can be cancelled via Install.Cancel */
+  id?: string;
   /** The ID of the game we're planning to install */
   gameId: number;
   /** The download session ID to use for this install plan */

@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { v4 as uuid } from "uuid";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import {
@@ -466,6 +467,15 @@ class PlanInstall extends React.PureComponent<Props, State> {
     this.pickUpload(uploadId);
   }
 
+  componentWillUnmount() {
+    const { planRequestId } = this.state;
+    if (planRequestId) {
+      rcall(messages.InstallCancel, { id: planRequestId }).catch(() => {
+        // Ignore errors - request may have already completed
+      });
+    }
+  }
+
   loadInstallLocations() {
     doAsync(async () => {
       const { defaultInstallLocation } = this.props;
@@ -488,14 +498,19 @@ class PlanInstall extends React.PureComponent<Props, State> {
   }
 
   pickUpload(uploadId: number) {
+    const requestId = uuid();
+    this.setState({ planRequestId: requestId });
+
     doAsync(async () => {
       try {
         const { gameId } = this.state;
         const logger = recordingLogger(rendererLogger);
         // investigate
-        const res = await rcall(messages.InstallPlan, { gameId, uploadId }, [
-          hookLogging(logger),
-        ]);
+        const res = await rcall(
+          messages.InstallPlan,
+          { gameId, uploadId, id: requestId },
+          [hookLogging(logger)]
+        );
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
@@ -540,6 +555,7 @@ interface State {
 
   pickedUploadId?: number;
   pickedInstallLocationId?: string;
+  planRequestId?: string;
 }
 
 export default injectIntl(
