@@ -951,11 +951,47 @@ export interface InstallPlanResult {
 }
 
 /**
- * For modal-first install
+ * undocumented
  */
 export const InstallPlan = createRequest<InstallPlanParams, InstallPlanResult>(
   "Install.Plan"
 );
+
+/**
+ * Result for Install.GetUploads
+ */
+export interface InstallGetUploadsResult {
+  /** undocumented */
+  game: Game;
+  /** undocumented */
+  uploads: Upload[];
+}
+
+/**
+ * Returns the list of available uploads for a game, narrowed by platform/format.
+ * This is the fast part of install planning (no file I/O).
+ */
+export const InstallGetUploads = createRequest<
+  InstallGetUploadsParams,
+  InstallGetUploadsResult
+>("Install.GetUploads");
+
+/**
+ * Result for Install.PlanUpload
+ */
+export interface InstallPlanUploadResult {
+  /** undocumented */
+  info: InstallPlanInfo;
+}
+
+/**
+ * Returns installer type and disk usage info for a specific upload.
+ * This is the slow part of install planning (network I/O + file inspection).
+ */
+export const InstallPlanUpload = createRequest<
+  InstallPlanUploadParams,
+  InstallPlanUploadResult
+>("Install.PlanUpload");
 
 /**
  * undocumented
@@ -3167,14 +3203,32 @@ export interface InstallQueueParams {
  * Params for Install.Plan
  */
 export interface InstallPlanParams {
-  /** ID for cancellation support. If provided, can be cancelled via Install.Cancel */
-  id?: string;
-  /** The ID of the game we're planning to install */
+  /** undocumented */
   gameId: number;
-  /** The download session ID to use for this install plan */
+  /** undocumented */
   downloadSessionId?: string;
   /** undocumented */
   uploadId?: number;
+}
+
+/**
+ * Params for Install.GetUploads
+ */
+export interface InstallGetUploadsParams {
+  /** undocumented */
+  gameId: number;
+}
+
+/**
+ * Params for Install.PlanUpload
+ */
+export interface InstallPlanUploadParams {
+  /** ID for cancellation support. If provided, can be cancelled via Install.Cancel */
+  id?: string;
+  /** undocumented */
+  uploadId: number;
+  /** undocumented */
+  downloadSessionId?: string;
 }
 
 /**

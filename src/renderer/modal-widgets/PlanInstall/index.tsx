@@ -8,6 +8,8 @@ import {
   InstallLocationSummary,
   InstallPlanInfo,
   Upload,
+  InstallGetUploads,
+  InstallPlanUpload,
 } from "common/butlerd/messages";
 import { formatError, getInstallPlanInfoError } from "common/format/errors";
 import { fileSize } from "common/format/filesize";
@@ -179,6 +181,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       installLocations,
       pickedInstallLocationId,
       busy,
+      infoBusy,
       error,
     } = this.state;
 
@@ -254,6 +257,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
           ? this.renderError()
           : uploads && uploads.length == 0
           ? this.renderNoBuilds()
+          : infoBusy
+          ? this.renderInfoBusy()
           : this.renderSizes()}
         <Filler />
         <ModalButtons>
@@ -311,6 +316,16 @@ class PlanInstall extends React.PureComponent<Props, State> {
   };
 
   renderBusy() {
+    return (
+      <LoadingStateDiv>
+        {T(_("plan_install.computing_space_requirements"))}
+        <FilterSpacer />
+        <Floater />
+      </LoadingStateDiv>
+    );
+  }
+
+  renderInfoBusy() {
     return (
       <LoadingStateDiv>
         {T(_("plan_install.computing_space_requirements"))}
@@ -398,9 +413,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
     const id = item.value;
     this.setState({
       pickedUploadId: id,
-      busy: true,
     });
-    this.pickUpload(id);
+    this.loadPlanInfo(id);
   };
 
   close() {
@@ -464,7 +478,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
   componentDidMount() {
     this.loadInstallLocations();
     const { uploadId } = this.props.modal.widgetParams;
-    this.pickUpload(uploadId);
+    this.loadUploads(uploadId);
   }
 
   componentWillUnmount() {
@@ -497,27 +511,60 @@ class PlanInstall extends React.PureComponent<Props, State> {
     });
   }
 
-  pickUpload(uploadId: number) {
-    const requestId = uuid();
-    this.setState({ planRequestId: requestId });
+  loadUploads(uploadId?: number) {
+    this.setState({ busy: true });
 
     doAsync(async () => {
       try {
         const { gameId } = this.state;
-        const logger = recordingLogger(rendererLogger);
-        // investigate
-        const res = await rcall(
-          messages.InstallPlan,
-          { gameId, uploadId, id: requestId },
-          [hookLogging(logger)]
-        );
+        const res = await rcall(InstallGetUploads, { gameId });
+        const pickedUploadId =
+          uploadId || (res.uploads.length > 0 ? res.uploads[0].id : null);
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
           uploads: res.uploads,
-          pickedUploadId: res.info ? res.info.upload.id : null,
-          info: res.info,
+          pickedUploadId,
           busy: false,
+        });
+        if (pickedUploadId) {
+          this.loadPlanInfo(pickedUploadId);
+        }
+      } catch (e) {
+        this.setState({
+          busy: false,
+          error: e,
+        });
+      }
+    });
+  }
+
+  loadPlanInfo(uploadId: number) {
+    // Cancel any in-flight PlanUpload request
+    const { planRequestId } = this.state;
+    if (planRequestId) {
+      rcall(messages.InstallCancel, { id: planRequestId }).catch(() => {});
+    }
+
+    const requestId = uuid();
+    this.setState({
+      planRequestId: requestId,
+      infoBusy: true,
+      info: undefined,
+      error: undefined,
+    });
+
+    doAsync(async () => {
+      try {
+        const logger = recordingLogger(rendererLogger);
+        const res = await rcall(
+          InstallPlanUpload,
+          { uploadId, id: requestId },
+          [hookLogging(logger)]
+        );
+        this.setState({
+          info: res.info,
+          infoBusy: false,
           error:
             res.info && res.info.error
               ? getInstallPlanInfoError(res.info)
@@ -526,7 +573,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
         });
       } catch (e) {
         this.setState({
-          busy: false,
+          infoBusy: false,
           error: e,
         });
       }
@@ -545,6 +592,7 @@ interface Props
 interface State {
   stage: PlanStage;
   busy: boolean;
+  infoBusy?: boolean;
   gameId: number;
   game?: Game;
   uploads?: Upload[];
