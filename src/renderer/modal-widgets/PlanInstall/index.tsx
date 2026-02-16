@@ -307,7 +307,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           widgetParams: {
             game,
             rawError: error,
-            log,
+            log: log || "",
           },
           buttons: ["ok"],
         })

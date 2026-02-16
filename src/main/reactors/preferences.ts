@@ -42,8 +42,6 @@ export default function (watcher: Watcher) {
           storages: ["cookies"],
           // for all origins
           origin: null,
-          // look chromium just clear everything thanks
-          quotas: ["temporary", "syncable"],
         })
       );
     }

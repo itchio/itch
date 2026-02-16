@@ -121,7 +121,7 @@ class Log extends React.PureComponent<Props, State> {
     const { maxLines } = this.state;
     let level = parseInt(this.state.level, 10);
     const { log, className, extraControls } = this.props;
-    let lines = log.split("\n");
+    let lines = (log || "").split("\n");
 
     let entries = lines.map((x) => {
       // TODO: use fast-json-parse instead ?
