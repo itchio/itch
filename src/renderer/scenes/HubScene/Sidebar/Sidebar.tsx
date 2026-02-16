@@ -67,7 +67,7 @@ interface SortableContainerParams {
 }
 
 const SortableListContainer = styled.div`
-  overflow-y: auto;
+  overflow: hidden;
 `;
 
 const SortableList = SortableContainer((params: SortableContainerParams) => {

@@ -74,6 +74,7 @@ const Row = styled.div`
   flex-shrink: 0;
   flex-direction: row;
   align-items: center;
+  overflow: hidden;
 `;
 
 const IconContainer = styled.div`
