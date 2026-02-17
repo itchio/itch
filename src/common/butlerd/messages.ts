@@ -1599,6 +1599,29 @@ export const SnoozeCave = createRequest<SnoozeCaveParams, SnoozeCaveResult>(
 );
 
 /**
+ * undocumented
+ */
+export enum SandboxType {
+  Auto = "auto",
+  Bubblewrap = "bubblewrap",
+  Firejail = "firejail",
+  Flatpak = "flatpak",
+  Fuji = "fuji",
+}
+
+/**
+ * Options for controlling sandbox behavior.
+ */
+export interface SandboxOptions {
+  /** Which sandbox runner to use. Empty string means auto-detect. */
+  type?: SandboxType;
+  /** (Linux Only) If true, disable network access within the sandbox. */
+  noNetwork?: boolean;
+  /** (Linux Only) List of environment variable names to allow through from the host into the sandbox. */
+  allowEnv?: string[];
+}
+
+/**
  * Result for Launch
  */
 export interface LaunchResult {
@@ -3618,6 +3641,8 @@ export interface LaunchParams {
   forcePrereqs?: boolean;
   /** Enable sandbox (regardless of manifest opt-in) */
   sandbox?: boolean;
+  /** Sandbox configuration options. Only applied when sandbox is enabled. */
+  sandboxOptions?: SandboxOptions;
 }
 
 /**
