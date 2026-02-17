@@ -14,6 +14,7 @@ import {
   DownloadProgress,
   Platform,
   Profile,
+  SandboxType,
 } from "common/butlerd/messages";
 import { Endpoint } from "@itchio/butlerd";
 import { modalShape } from "common/modals";
@@ -447,6 +448,9 @@ export interface PreferencesState {
 
   /** use sandbox */
   isolateApps: boolean;
+
+  /** sandbox runner to use on Linux (unset means auto) */
+  linuxSandboxType?: SandboxType;
 
   /** when closing window, keep running in tray */
   closeToTray: boolean;

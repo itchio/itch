@@ -277,6 +277,8 @@
     "After clicking 'Proceed', a prompt will pop up, asking for your password. This is only needed when the sandbox is first used or updated, and your password is never remembered.",
   "preferences.security": "Security & privacy",
   "preferences.security.sandbox.title": "Enable itch.io sandbox",
+  "preferences.security.sandbox.type.label": "Sandbox type",
+  "preferences.security.sandbox.type.auto": "Auto",
   "preferences.security.sandbox.description":
     "The itch.io sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch.io sandbox is much safer.",
   "preferences.install_location.add": "Add location",
