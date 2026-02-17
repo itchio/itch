@@ -452,6 +452,9 @@ export interface PreferencesState {
   /** sandbox runner to use on Linux (unset means auto) */
   linuxSandboxType?: SandboxType;
 
+  /** disable network access in Linux sandbox (unset means default behavior) */
+  linuxSandboxNoNetwork?: boolean;
+
   /** when closing window, keep running in tray */
   closeToTray: boolean;
 

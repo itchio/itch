@@ -72,15 +72,23 @@ export async function performLaunch(
           sandbox: preferences.isolateApps,
         };
 
-        if (
-          process.platform === "linux" &&
-          preferences.isolateApps &&
-          preferences.linuxSandboxType &&
-          preferences.linuxSandboxType !== messages.SandboxType.Auto
-        ) {
-          launchParams.sandboxOptions = {
-            type: preferences.linuxSandboxType,
-          };
+        if (process.platform === "linux" && preferences.isolateApps) {
+          const sandboxOptions: messages.SandboxOptions = {};
+
+          if (
+            preferences.linuxSandboxType &&
+            preferences.linuxSandboxType !== messages.SandboxType.Auto
+          ) {
+            sandboxOptions.type = preferences.linuxSandboxType;
+          }
+
+          if (preferences.linuxSandboxNoNetwork === true) {
+            sandboxOptions.noNetwork = true;
+          }
+
+          if (Object.keys(sandboxOptions).length > 0) {
+            launchParams.sandboxOptions = sandboxOptions;
+          }
         }
 
         await mcall(messages.Launch, launchParams, (convo) => {

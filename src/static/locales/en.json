@@ -279,6 +279,8 @@
   "preferences.security.sandbox.title": "Enable itch.io sandbox",
   "preferences.security.sandbox.type.label": "Sandbox type",
   "preferences.security.sandbox.type.auto": "Auto",
+  "preferences.security.sandbox.no_network.title":
+    "Disable network access in sandbox",
   "preferences.security.sandbox.description":
     "The itch.io sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch.io sandbox is much safer.",
   "preferences.install_location.add": "Add location",

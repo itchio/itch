@@ -26,7 +26,12 @@ const SandboxTypeSelect = styled(SimpleSelect)`
 
 class BehaviorSettings extends React.PureComponent<Props> {
   render() {
-    const { linux, isolateApps, linuxSandboxType } = this.props;
+    const {
+      linux,
+      isolateApps,
+      linuxSandboxType,
+      linuxSandboxNoNetwork,
+    } = this.props;
     const sandboxTypeOptions: BaseOptionType[] = [
       {
         label: ["preferences.security.sandbox.type.auto"],
@@ -52,18 +57,32 @@ class BehaviorSettings extends React.PureComponent<Props> {
           />
 
           {linux && isolateApps ? (
-            <SandboxTypeRow>
-              <span>{T(["preferences.security.sandbox.type.label"])}</span>
-              <SandboxTypeSelect
-                onChange={this.onSandboxTypeChange}
-                options={sandboxTypeOptions}
-                value={
-                  findWhere(sandboxTypeOptions, {
-                    value: linuxSandboxType,
-                  }) || sandboxTypeOptions[0]
-                }
-              />
-            </SandboxTypeRow>
+            <>
+              <SandboxTypeRow>
+                <span>{T(["preferences.security.sandbox.type.label"])}</span>
+                <SandboxTypeSelect
+                  onChange={this.onSandboxTypeChange}
+                  options={sandboxTypeOptions}
+                  value={
+                    findWhere(sandboxTypeOptions, {
+                      value: linuxSandboxType,
+                    }) || sandboxTypeOptions[0]
+                  }
+                />
+              </SandboxTypeRow>
+
+              <Label active={!!linuxSandboxNoNetwork}>
+                <input
+                  type="checkbox"
+                  checked={!!linuxSandboxNoNetwork}
+                  onChange={this.onSandboxNoNetworkChange}
+                />
+                <span>
+                  {" "}
+                  {T(["preferences.security.sandbox.no_network.title"])}{" "}
+                </span>
+              </Label>
+            </>
           ) : null}
         </div>
 
@@ -135,12 +154,22 @@ class BehaviorSettings extends React.PureComponent<Props> {
       })
     );
   };
+
+  onSandboxNoNetworkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { dispatch } = this.props;
+    dispatch(
+      actions.updatePreferences({
+        linuxSandboxNoNetwork: e.currentTarget.checked ? true : undefined,
+      })
+    );
+  };
 }
 
 export default hook((map) => ({
   linux: map((rs) => rs.system.linux),
   isolateApps: map((rs) => rs.preferences.isolateApps),
   linuxSandboxType: map((rs) => rs.preferences.linuxSandboxType),
+  linuxSandboxNoNetwork: map((rs) => rs.preferences.linuxSandboxNoNetwork),
 }))(BehaviorSettings);
 
 interface Props {
@@ -148,4 +177,5 @@ interface Props {
   linux: boolean;
   isolateApps: boolean;
   linuxSandboxType: PreferencesState["linuxSandboxType"];
+  linuxSandboxNoNetwork: PreferencesState["linuxSandboxNoNetwork"];
 }
