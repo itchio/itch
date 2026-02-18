@@ -119,6 +119,13 @@ class SecretSettings extends React.PureComponent<Props> {
             onClick={this.onRestartButler}
             label="Force butlerd restart"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="history"
+            onClick={this.onViewChangelog}
+            label="View changelog"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -223,6 +230,19 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(actions.navigate({ wind: "root", url: "itch://crashy" }));
     dispatch(actions.closeModal({ wind: "root" }));
+  };
+
+  onViewChangelog = () => {
+    const { dispatch } = this.props;
+    dispatch(
+      actions.openModal(
+        modals.viewChangelog.make({
+          wind: "root",
+          title: "Changelog",
+          widgetParams: {},
+        })
+      )
+    );
   };
 
   onRestartButler = async () => {

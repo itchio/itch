@@ -138,3 +138,8 @@ export interface ConfirmQuitParams {
   gameIds: number[];
 }
 export interface ConfirmQuitResponse {}
+
+//---------------------
+
+export interface ViewChangelogParams {}
+export interface ViewChangelogResponse {}

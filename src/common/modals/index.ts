@@ -25,6 +25,8 @@ import {
   TwoFactorInputResponse,
   ConfirmQuitParams,
   ConfirmQuitResponse,
+  ViewChangelogParams,
+  ViewChangelogResponse,
 } from "common/modals/types";
 import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
 import uuid from "common/util/uuid";
@@ -149,6 +151,8 @@ export const prepModals = (uuid: () => string) => {
     naked: widget<{}, {}>(uuid),
 
     confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(uuid),
+
+    viewChangelog: widget<ViewChangelogParams, ViewChangelogResponse>(uuid),
   });
 };
 

@@ -14,6 +14,7 @@ import SecretSettings from "renderer/modal-widgets/SecretSettings";
 import ShowError from "renderer/modal-widgets/ShowError";
 import TwoFactorInput from "renderer/modal-widgets/TwoFactorInput";
 import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
+import ViewChangelog from "renderer/modal-widgets/ViewChangelog";
 
 type ModalRegistry = typeof modals;
 
@@ -40,6 +41,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   showError: ShowError,
   twoFactorInput: TwoFactorInput,
   confirmQuit: ConfirmQuit,
+  viewChangelog: ViewChangelog,
 
   // dummies
   adminWipeBlessing: null,
