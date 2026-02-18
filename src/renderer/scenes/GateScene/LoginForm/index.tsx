@@ -14,8 +14,7 @@ import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
 const ErrorDiv = styled.div`
-  min-width: 500px;
-  margin: 1.4em 0;
+  width: var(--control-width);
 
   .header {
     text-align: center;
@@ -51,11 +50,15 @@ const RevealButton = styled(IconButton)`
 `;
 
 const ManualCodeSection = styled.div`
-  margin-top: 1.5em;
+  width: var(--control-width);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5em;
   text-align: center;
 
   p {
-    margin: 0.5em 0;
+    margin: 0;
     color: ${(props) => props.theme.secondaryText};
   }
 
@@ -67,8 +70,7 @@ const ManualCodeSection = styled.div`
   input {
     ${styles.heavyInput};
     font-size: ${(props) => props.theme.fontSizes.large};
-    width: 380px;
-    margin-top: 0.5em;
+    width: 100%;
   }
 `;
 
@@ -308,15 +310,18 @@ class LoginForm extends React.PureComponent<Props, State> {
 }
 
 const Form = styled.form`
+  --control-width: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1em;
 
   label {
+    width: var(--control-width);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 0.5em 1em;
+    gap: 0.35em;
 
     span {
       margin: 0 4px;
@@ -332,11 +337,11 @@ const Form = styled.form`
   input {
     ${styles.heavyInput};
     font-size: ${(props) => props.theme.fontSizes.large};
-    width: 380px;
+    width: 100%;
   }
 
   .login-button {
-    margin: 1em 0;
+    width: var(--control-width);
   }
 `;
 
