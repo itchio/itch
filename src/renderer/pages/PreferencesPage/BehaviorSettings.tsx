@@ -67,7 +67,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
     return (
       <>
         <h2>{T(["preferences.security"])}</h2>
-        <div className="security-form">
+        <SettingsGroup className="security-form">
           <Checkbox
             name="isolateApps"
             label={T(["preferences.security.sandbox.title"])}
@@ -112,7 +112,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
               </SandboxTypeRow>
             </SettingsGroup>
           ) : null}
-        </div>
+        </SettingsGroup>
 
         <p className="explanation">
           {T(["preferences.security.sandbox.description"])}{" "}
@@ -120,7 +120,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
         </p>
 
         <h2>{T(["preferences.behavior"])}</h2>
-        <div className="behavior-form">
+        <SettingsGroup className="behavior-form">
           <Checkbox
             name="enableTabs"
             label={T(["preferences.behavior.enable_tabs"])}
@@ -152,15 +152,15 @@ class BehaviorSettings extends React.PureComponent<Props> {
             name="preventDisplaySleep"
             label={T(["preferences.behavior.prevent_display_sleep"])}
           />
-        </div>
+        </SettingsGroup>
 
         <h2>{T(["preferences.notifications"])}</h2>
-        <div className="behavior-form">
+        <SettingsGroup className="behavior-form">
           <Checkbox
             name="readyNotification"
             label={T(["preferences.notifications.ready_notification"])}
           />
-        </div>
+        </SettingsGroup>
       </>
     );
   }

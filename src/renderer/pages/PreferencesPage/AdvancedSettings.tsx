@@ -8,6 +8,7 @@ import { hook } from "renderer/hocs/hook";
 import BrothComponents from "renderer/pages/PreferencesPage/BrothComponents";
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import ProxySettings from "renderer/pages/PreferencesPage/ProxySettings";
+import { SettingsGroup } from "renderer/pages/PreferencesPage/SettingsGroup";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
@@ -53,14 +54,16 @@ class AdvancedSettings extends React.PureComponent<Props> {
               {T(["preferences.advanced.clear_browsing_data"])}
             </LinkButton>
           </div>
-          <Checkbox
-            name="disableBrowser"
-            label={T(["preferences.advanced.disable_browser"])}
-          />
-          <Checkbox
-            name="disableHardwareAcceleration"
-            label={T(["preferences.advanced.disable_hardware_acceleration"])}
-          />
+          <SettingsGroup>
+            <Checkbox
+              name="disableBrowser"
+              label={T(["preferences.advanced.disable_browser"])}
+            />
+            <Checkbox
+              name="disableHardwareAcceleration"
+              label={T(["preferences.advanced.disable_hardware_acceleration"])}
+            />
+          </SettingsGroup>
         </div>
       </>
     );

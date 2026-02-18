@@ -7,7 +7,10 @@ import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
-import Label from "renderer/pages/PreferencesPage/Label";
+import {
+  SettingsGroup,
+  SettingsGroupRow,
+} from "renderer/pages/PreferencesPage/SettingsGroup";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { findWhere } from "underscore";
@@ -46,8 +49,8 @@ class LanguageSettings extends React.PureComponent<Props> {
     return (
       <>
         <h2>{T(["preferences.language"])}</h2>
-        <div className="language-form">
-          <Label active>
+        <SettingsGroup className="language-form">
+          <SettingsGroupRow active>
             <Icon icon="earth" />
             <Spacer />
             <LanguageSelect
@@ -60,8 +63,8 @@ class LanguageSettings extends React.PureComponent<Props> {
             ) : (
               <IconButton icon="repeat" onClick={this.queueLocaleDownload} />
             )}
-          </Label>
-        </div>
+          </SettingsGroupRow>
+        </SettingsGroup>
 
         <p className="explanation flex">
           {T(["preferences.language.get_involved", { name: "itch" }])}{" "}
