@@ -5,8 +5,11 @@ import { actions } from "common/actions";
 import { SandboxType } from "common/butlerd/messages";
 import { Dispatch, PreferencesState } from "common/types";
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
-import Label from "renderer/pages/PreferencesPage/Label";
 import OpenAtLoginErrorMessage from "renderer/pages/PreferencesPage/OpenAtLoginErrorMessage";
+import {
+  SettingsGroup,
+  SettingsGroupRow,
+} from "renderer/pages/PreferencesPage/SettingsGroup";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
@@ -14,14 +17,27 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import urls from "common/constants/urls";
 
-const SandboxTypeRow = styled(Label)`
-  margin-top: 8px;
+const SandboxTypeRow = styled(SettingsGroupRow)`
   gap: 12px;
 `;
 
 const SandboxTypeSelect = styled(SimpleSelect)`
   flex-grow: 0;
   flex-basis: 220px;
+`;
+
+const SandboxAllowEnvInput = styled.input`
+  flex-grow: 1;
+  min-width: 240px;
+  background: ${(props) => props.theme.inputBackground};
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  border-radius: 2px;
+  color: ${(props) => props.theme.baseText};
+  padding: 6px 8px;
+
+  &:hover {
+    border-color: ${(props) => props.theme.inputBorderFocused};
+  }
 `;
 
 class BehaviorSettings extends React.PureComponent<Props> {
@@ -31,6 +47,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
       isolateApps,
       linuxSandboxType,
       linuxSandboxNoNetwork,
+      linuxSandboxAllowEnv,
     } = this.props;
     const sandboxTypeOptions: BaseOptionType[] = [
       {
@@ -57,8 +74,8 @@ class BehaviorSettings extends React.PureComponent<Props> {
           />
 
           {linux && isolateApps ? (
-            <>
-              <SandboxTypeRow>
+            <SettingsGroup>
+              <SandboxTypeRow active>
                 <span>{T(["preferences.security.sandbox.type.label"])}</span>
                 <SandboxTypeSelect
                   onChange={this.onSandboxTypeChange}
@@ -71,7 +88,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
                 />
               </SandboxTypeRow>
 
-              <Label active={!!linuxSandboxNoNetwork}>
+              <SettingsGroupRow active={!!linuxSandboxNoNetwork}>
                 <input
                   type="checkbox"
                   checked={!!linuxSandboxNoNetwork}
@@ -81,8 +98,19 @@ class BehaviorSettings extends React.PureComponent<Props> {
                   {" "}
                   {T(["preferences.security.sandbox.no_network.title"])}{" "}
                 </span>
-              </Label>
-            </>
+              </SettingsGroupRow>
+
+              <SandboxTypeRow active={!!linuxSandboxAllowEnv}>
+                <span>
+                  {T(["preferences.security.sandbox.allow_env.label"])}
+                </span>
+                <SandboxAllowEnvInput
+                  type="text"
+                  value={linuxSandboxAllowEnv || ""}
+                  onChange={this.onSandboxAllowEnvChange}
+                />
+              </SandboxTypeRow>
+            </SettingsGroup>
           ) : null}
         </div>
 
@@ -163,6 +191,16 @@ class BehaviorSettings extends React.PureComponent<Props> {
       })
     );
   };
+
+  onSandboxAllowEnvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { dispatch } = this.props;
+    const rawText = e.currentTarget.value;
+    dispatch(
+      actions.updatePreferences({
+        linuxSandboxAllowEnv: rawText.trim().length > 0 ? rawText : undefined,
+      })
+    );
+  };
 }
 
 export default hook((map) => ({
@@ -170,6 +208,7 @@ export default hook((map) => ({
   isolateApps: map((rs) => rs.preferences.isolateApps),
   linuxSandboxType: map((rs) => rs.preferences.linuxSandboxType),
   linuxSandboxNoNetwork: map((rs) => rs.preferences.linuxSandboxNoNetwork),
+  linuxSandboxAllowEnv: map((rs) => rs.preferences.linuxSandboxAllowEnv),
 }))(BehaviorSettings);
 
 interface Props {
@@ -178,4 +217,5 @@ interface Props {
   isolateApps: boolean;
   linuxSandboxType: PreferencesState["linuxSandboxType"];
   linuxSandboxNoNetwork: PreferencesState["linuxSandboxNoNetwork"];
+  linuxSandboxAllowEnv: PreferencesState["linuxSandboxAllowEnv"];
 }

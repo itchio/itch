@@ -455,6 +455,9 @@ export interface PreferencesState {
   /** disable network access in Linux sandbox (unset means default behavior) */
   linuxSandboxNoNetwork?: boolean;
 
+  /** raw text for Linux sandbox env var passthrough (unset means default behavior) */
+  linuxSandboxAllowEnv?: string;
+
   /** when closing window, keep running in tray */
   closeToTray: boolean;
 

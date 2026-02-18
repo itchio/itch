@@ -16,6 +16,26 @@ import { pickManifestAction } from "main/reactors/launch/pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
 import { Conversation } from "@itchio/butlerd";
 
+function parseSandboxAllowEnv(rawText?: string): string[] {
+  if (!rawText) {
+    return [];
+  }
+
+  const result: string[] = [];
+  const seen = new Set<string>();
+
+  for (const token of rawText.split(/[\s,]+/)) {
+    const name = token.trim();
+    if (!name || seen.has(name)) {
+      continue;
+    }
+    seen.add(name);
+    result.push(name);
+  }
+
+  return result;
+}
+
 export async function performLaunch(
   ctx: Context,
   logger: RecordingLogger,
@@ -84,6 +104,13 @@ export async function performLaunch(
 
           if (preferences.linuxSandboxNoNetwork === true) {
             sandboxOptions.noNetwork = true;
+          }
+
+          const allowEnv = parseSandboxAllowEnv(
+            preferences.linuxSandboxAllowEnv
+          );
+          if (allowEnv.length > 0) {
+            sandboxOptions.allowEnv = allowEnv;
           }
 
           if (Object.keys(sandboxOptions).length > 0) {
