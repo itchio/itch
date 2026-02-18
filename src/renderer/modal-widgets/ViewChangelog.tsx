@@ -1,18 +1,29 @@
+import { actions } from "common/actions";
+import urls from "common/constants/urls";
+import { ModalWidgetProps } from "common/modals";
 import {
   ViewChangelogParams,
   ViewChangelogResponse,
 } from "common/modals/types";
-import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import React from "react";
-import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import styled from "renderer/styles";
-import { ModalWidgetProps } from "common/modals";
-import Markdown from "renderer/basics/Markdown";
 import Button from "renderer/basics/Button";
 import Link from "renderer/basics/Link";
+import Markdown from "renderer/basics/Markdown";
+import env from "renderer/env";
 import { hook } from "renderer/hocs/hook";
-import urls from "common/constants/urls";
+import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import styled from "renderer/styles";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+
+type RepoKey = "itch" | "butler" | "itchSetup";
+
+interface RepoConfig {
+  label: string;
+  description: string;
+  repoUrl: string;
+  releasesUrl: string;
+}
 
 interface GitHubRelease {
   id: number;
@@ -22,58 +33,262 @@ interface GitHubRelease {
   body: string;
 }
 
-interface State {
+interface GitHubApiRelease extends GitHubRelease {
+  draft: boolean;
+  prerelease: boolean;
+}
+
+interface RepoState {
   releases: GitHubRelease[];
   loading: boolean;
+  loaded: boolean;
   error: string | null;
 }
 
+interface State {
+  activeTab: RepoKey;
+  repoStates: Record<RepoKey, RepoState>;
+}
+
+const repoOrder: RepoKey[] = ["itch", "butler", "itchSetup"];
+
+const repoConfigs: Record<RepoKey, RepoConfig> = {
+  itch: {
+    label: "itch",
+    description: "Latest published itch app releases from GitHub.",
+    repoUrl: urls.itchRepo,
+    releasesUrl: urls.releasesPage,
+  },
+  butler: {
+    label: "butler",
+    description: "Latest published butler releases from GitHub.",
+    repoUrl: urls.butlerRepo,
+    releasesUrl: urls.butlerReleasesPage,
+  },
+  itchSetup: {
+    label: "itch-setup",
+    description: "Latest published itch-setup releases from GitHub.",
+    repoUrl: urls.itchSetupRepo,
+    releasesUrl: urls.itchSetupReleasesPage,
+  },
+};
+
+const emptyRepoState = (): RepoState => ({
+  releases: [],
+  loading: false,
+  loaded: false,
+  error: null,
+});
+
 class ViewChangelog extends React.PureComponent<Props, State> {
-  private abortController: AbortController | null = null;
+  private abortControllers: Partial<Record<RepoKey, AbortController>> = {};
 
   state: State = {
-    releases: [],
-    loading: true,
-    error: null,
+    activeTab: "itch",
+    repoStates: {
+      itch: emptyRepoState(),
+      butler: emptyRepoState(),
+      itchSetup: emptyRepoState(),
+    },
   };
 
   componentDidMount() {
-    this.fetchReleases();
+    this.fetchReleasesForRepo("itch");
   }
 
   componentWillUnmount() {
-    if (this.abortController) {
-      this.abortController.abort();
+    for (const repoKey of repoOrder) {
+      const controller = this.abortControllers[repoKey];
+      if (controller) {
+        controller.abort();
+      }
     }
   }
 
-  async fetchReleases() {
-    if (this.abortController) {
-      this.abortController.abort();
+  render() {
+    const { activeTab } = this.state;
+    const activeRepoConfig = repoConfigs[activeTab];
+    const activeTabIndex = repoOrder.indexOf(activeTab);
+
+    return (
+      <ChangelogDialog>
+        <Tabs selectedIndex={activeTabIndex} onSelect={this.onTabSelected}>
+          <TabList>
+            {repoOrder.map((repoKey) => (
+              <Tab key={repoKey}>{repoConfigs[repoKey].label}</Tab>
+            ))}
+          </TabList>
+
+          <HeaderBar>
+            <HeaderMeta>
+              <h2>Recent releases</h2>
+              <p>{activeRepoConfig.description}</p>
+            </HeaderMeta>
+            <Link
+              onClick={this.onOpenActiveReleasesPage}
+              label="Open on GitHub"
+            />
+          </HeaderBar>
+
+          {repoOrder.map((repoKey) => (
+            <TabPanel key={repoKey}>
+              <ChangelogContainer>
+                {this.renderRepoPanel(repoKey)}
+              </ChangelogContainer>
+            </TabPanel>
+          ))}
+        </Tabs>
+      </ChangelogDialog>
+    );
+  }
+
+  renderRepoPanel(repoKey: RepoKey) {
+    const repoState = this.state.repoStates[repoKey];
+    const repoConfig = repoConfigs[repoKey];
+    const { loading, error, releases } = repoState;
+
+    if (loading) {
+      return <LoadingState />;
     }
+
+    if (error) {
+      return (
+        <StatusPanel>
+          <h3>Could not load changelog</h3>
+          <p>{error}</p>
+          <Button label="Retry" onClick={() => this.onRetry(repoKey)} />
+        </StatusPanel>
+      );
+    }
+
+    if (releases.length === 0) {
+      return (
+        <StatusPanel>
+          <h3>No releases found</h3>
+          <p>GitHub returned no published releases for {repoConfig.label}.</p>
+        </StatusPanel>
+      );
+    }
+
+    return (
+      <>
+        {releases.map((release) => {
+          const title = (release.name || release.tag_name || "").trim();
+          const hasDistinctTag = hasDistinctReleaseTag(title, release.tag_name);
+
+          return (
+            <ReleaseSection key={release.id}>
+              <ReleaseHeader>
+                <TitleBlock>
+                  <h3>{title}</h3>
+                </TitleBlock>
+                <MetaBlock>
+                  {hasDistinctTag ? (
+                    <span className="tag">{release.tag_name}</span>
+                  ) : null}
+                  <time>
+                    {new Date(release.published_at).toLocaleDateString(
+                      undefined,
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )}
+                  </time>
+                </MetaBlock>
+              </ReleaseHeader>
+              {release.body ? (
+                <ReleaseBody>
+                  <Markdown source={release.body} externalLinks />
+                </ReleaseBody>
+              ) : (
+                <EmptyBody>This release has no notes.</EmptyBody>
+              )}
+            </ReleaseSection>
+          );
+        })}
+        <AllReleasesLink>
+          <Link
+            onClick={() => this.onOpenReleasesPage(repoKey)}
+            label="See all release notes on GitHub"
+          />
+        </AllReleasesLink>
+      </>
+    );
+  }
+
+  fetchReleasesForRepo = async (repoKey: RepoKey, force = false) => {
+    const repoState = this.state.repoStates[repoKey];
+    if (repoState.loading) {
+      return;
+    }
+    if (repoState.loaded && !force) {
+      return;
+    }
+
+    const existingController = this.abortControllers[repoKey];
+    if (existingController) {
+      existingController.abort();
+    }
+
     const abortController = new AbortController();
-    this.abortController = abortController;
+    this.abortControllers[repoKey] = abortController;
+
+    this.setState((prevState) => ({
+      repoStates: {
+        ...prevState.repoStates,
+        [repoKey]: {
+          ...prevState.repoStates[repoKey],
+          loading: true,
+          error: null,
+        },
+      },
+    }));
+
+    const repoConfig = repoConfigs[repoKey];
+    const perPage = repoKey === "itch" ? 30 : 10;
+    const releasesApiUrl =
+      `${repoConfig.repoUrl}`.replace("github.com", "api.github.com/repos") +
+      `/releases?per_page=${perPage}`;
 
     try {
-      this.setState({ loading: true, error: null });
-
-      const response = await fetch(
-        `${urls.itchRepo}/releases`.replace(
-          "github.com",
-          "api.github.com/repos"
-        ) + "?per_page=10",
-        { signal: abortController.signal }
-      );
+      const response = await fetch(releasesApiUrl, {
+        signal: abortController.signal,
+      });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      const data: GitHubRelease[] = await response.json();
 
-      this.setState({
-        releases: data,
-        loading: false,
-        error: null,
-      });
+      const data: GitHubApiRelease[] = await response.json();
+      let releases = data
+        .filter((release) => !release.draft && !release.prerelease)
+        .map((release) => ({
+          id: release.id,
+          tag_name: release.tag_name,
+          name: release.name,
+          published_at: release.published_at,
+          body: release.body,
+        }));
+
+      // Stable "itch" builds should not display canary-tagged app releases.
+      if (repoKey === "itch" && env.appName === "itch") {
+        releases = releases.filter(
+          (release) => !/-canary/i.test(release.tag_name)
+        );
+      }
+
+      this.setState((prevState) => ({
+        repoStates: {
+          ...prevState.repoStates,
+          [repoKey]: {
+            releases,
+            loading: false,
+            loaded: true,
+            error: null,
+          },
+        },
+      }));
     } catch (e) {
       if (abortController.signal.aborted) {
         return;
@@ -83,101 +298,42 @@ class ViewChangelog extends React.PureComponent<Props, State> {
       if (e instanceof Error && e.message) {
         errorMessage = e.message;
       }
-      this.setState({ error: errorMessage, loading: false });
+
+      this.setState((prevState) => ({
+        repoStates: {
+          ...prevState.repoStates,
+          [repoKey]: {
+            ...prevState.repoStates[repoKey],
+            loading: false,
+            error: errorMessage,
+          },
+        },
+      }));
+    } finally {
+      if (this.abortControllers[repoKey] === abortController) {
+        delete this.abortControllers[repoKey];
+      }
     }
-  }
-
-  render() {
-    const { loading, error, releases } = this.state;
-
-    return (
-      <ChangelogDialog>
-        <HeaderBar>
-          <HeaderMeta>
-            <h2>Recent releases</h2>
-            <p>Latest updates from itch app releases on GitHub.</p>
-          </HeaderMeta>
-          <Link onClick={this.onOpenReleasesPage} label="Open on GitHub" />
-        </HeaderBar>
-
-        <ChangelogContainer>
-          {loading && <LoadingState />}
-          {!loading && error && (
-            <StatusPanel>
-              <h3>Could not load changelog</h3>
-              <p>{error}</p>
-              <Button label="Retry" onClick={this.onRetry} />
-            </StatusPanel>
-          )}
-          {!loading && !error && releases.length === 0 && (
-            <StatusPanel>
-              <h3>No releases found</h3>
-              <p>GitHub returned an empty release list.</p>
-            </StatusPanel>
-          )}
-          {!loading &&
-            !error &&
-            releases.length > 0 &&
-            releases.map((release) => {
-              const title = (release.name || release.tag_name || "").trim();
-              const hasDistinctTag = hasDistinctReleaseTag(
-                title,
-                release.tag_name
-              );
-
-              return (
-                <ReleaseSection key={release.id}>
-                  <ReleaseHeader>
-                    <TitleBlock>
-                      <h3>{title}</h3>
-                    </TitleBlock>
-                    <MetaBlock>
-                      {hasDistinctTag ? (
-                        <span className="tag">{release.tag_name}</span>
-                      ) : null}
-                      <time>
-                        {new Date(release.published_at).toLocaleDateString(
-                          undefined,
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </time>
-                    </MetaBlock>
-                  </ReleaseHeader>
-                  {release.body ? (
-                    <ReleaseBody>
-                      <Markdown source={release.body} externalLinks />
-                    </ReleaseBody>
-                  ) : (
-                    <EmptyBody>This release has no notes.</EmptyBody>
-                  )}
-                </ReleaseSection>
-              );
-            })}
-          {!loading && !error && releases.length > 0 && (
-            <AllReleasesLink>
-              <Link
-                onClick={this.onOpenReleasesPage}
-                label="See all release notes on GitHub"
-              />
-            </AllReleasesLink>
-          )}
-        </ChangelogContainer>
-      </ChangelogDialog>
-    );
-  }
-
-  onRetry = () => {
-    this.fetchReleases();
   };
 
-  onOpenReleasesPage = () => {
+  onTabSelected = (tabIndex: number) => {
+    const nextRepoKey = repoOrder[tabIndex] || "itch";
+    this.setState({ activeTab: nextRepoKey });
+    this.fetchReleasesForRepo(nextRepoKey);
+  };
+
+  onRetry = (repoKey: RepoKey) => {
+    this.fetchReleasesForRepo(repoKey, true);
+  };
+
+  onOpenActiveReleasesPage = () => {
+    this.onOpenReleasesPage(this.state.activeTab);
+  };
+
+  onOpenReleasesPage = (repoKey: RepoKey) => {
     const { dispatch } = this.props;
     dispatch(
-      actions.openInExternalBrowser({ url: `${urls.itchRepo}/releases` })
+      actions.openInExternalBrowser({ url: repoConfigs[repoKey].releasesUrl })
     );
   };
 }
@@ -216,20 +372,36 @@ function normalizeReleaseLabel(value: string): string {
 const ChangelogDialog = styled(ModalWidgetDiv)`
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   overflow: hidden;
-  min-height: 280px;
-  max-height: 70vh;
+  width: clamp(700px, 86vw, 980px);
+  height: clamp(460px, 70vh, 780px);
+
+  .react-tabs {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .react-tabs__tab-panel {
+    display: none;
+  }
+
+  .react-tabs__tab-panel--selected {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
 `;
 
 const HeaderBar = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 14px;
-  border: 1px solid ${(props) => props.theme.prefBorder};
-  background: ${(props) => props.theme.sidebarBackground};
+  padding: 8px 2px 10px;
 `;
 
 const HeaderMeta = styled.div`
@@ -240,13 +412,16 @@ const HeaderMeta = styled.div`
 
   p {
     margin: 4px 0 0;
+    font-size: ${(props) => props.theme.fontSizes.small};
     color: ${(props) => props.theme.secondaryText};
   }
 `;
 
 const ChangelogContainer = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding-right: 6px;
+  padding-right: 4px;
 `;
 
 const ReleaseSection = styled.section`
@@ -276,6 +451,7 @@ const TitleBlock = styled.div`
   h3 {
     margin: 0;
     font-size: ${(props) => props.theme.fontSizes.modal};
+    font-weight: bold;
   }
 `;
 

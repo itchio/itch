@@ -2,11 +2,15 @@ const originalItchio = "https://itch.io";
 const itchio = process.env.WHEN_IN_ROME || originalItchio;
 const manual = "https://itch.io/docs/itch";
 const itchRepo = "https://github.com/itchio/itch";
+const butlerRepo = "https://github.com/itchio/butler";
+const itchSetupRepo = "https://github.com/itchio/itch-setup";
 
 export const ITCH_URL_RE = /^itch:/i;
 
 export default {
   itchRepo,
+  butlerRepo,
+  itchSetupRepo,
   originalItchio,
   itchio,
   appHomepage: "https://itch.io/app",
@@ -28,6 +32,8 @@ export default {
   linuxSandboxSetup: `${manual}/using/sandbox/linux.html#one-time-setup`,
   windowsSandboxSetup: `${manual}/using/sandbox/windows.html#one-time-setup`,
   releasesPage: `${itchRepo}/releases`,
+  butlerReleasesPage: `${butlerRepo}/releases`,
+  itchSetupReleasesPage: `${itchSetupRepo}/releases`,
   installingOnLinux: `${manual}/installing/linux/`,
   windowsAntivirus: `${manual}/installing/windows.html#antivirus-software`,
 };
