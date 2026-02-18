@@ -46,6 +46,10 @@ const BuildListDiv = styled.div`
     background: ${(props) => props.theme.sidebarBackground};
     padding: 12px 16px;
     align-items: center;
+    border: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
 
     &:hover {
       cursor: pointer;
@@ -125,7 +129,7 @@ class SwitchVersionCave extends React.PureComponent<Props> {
     const updatedAt = b.updatedAt;
 
     return (
-      <div
+      <button
         className="builds--item"
         key={b.id}
         data-index={index}
@@ -144,11 +148,11 @@ class SwitchVersionCave extends React.PureComponent<Props> {
         <div className="timeago" data-rh={JSON.stringify({ date: updatedAt })}>
           <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
         </div>
-      </div>
+      </button>
     );
   }
 
-  onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
+  onClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
     const res: SwitchVersionCaveResponse = { index };
     const { dispatch } = this.props;
