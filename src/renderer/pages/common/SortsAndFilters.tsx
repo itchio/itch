@@ -70,8 +70,11 @@ export const FilterOptionLink = styled.a`
   }
 `;
 
-export const FilterOptionButton = styled.div`
+export const FilterOptionButton = styled.button.attrs({
+  type: "button" as "button",
+})`
   ${optionButtonLike};
+  font: inherit;
 `;
 
 export const FilterOptionIcon = styled(Icon)`

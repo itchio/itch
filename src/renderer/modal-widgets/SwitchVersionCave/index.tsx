@@ -18,7 +18,13 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
 
-const BuildListDiv = styled.div`
+const SwitchVersionCaveDialog = styled(ModalWidgetDiv).withConfig({
+  displayName: "SwitchVersionCave-Dialog",
+})``;
+
+const BuildListDiv = styled.div.withConfig({
+  displayName: "SwitchVersionCave-BuildList",
+})`
   width: 100%;
   max-height: 400px;
 
@@ -118,9 +124,9 @@ class SwitchVersionCave extends React.PureComponent<Props> {
     }
 
     return (
-      <ModalWidgetDiv>
+      <SwitchVersionCaveDialog>
         <BuildListDiv>{buildElements}</BuildListDiv>
-      </ModalWidgetDiv>
+      </SwitchVersionCaveDialog>
     );
   }
 
@@ -130,6 +136,7 @@ class SwitchVersionCave extends React.PureComponent<Props> {
 
     return (
       <button
+        type="button"
         className="builds--item"
         key={b.id}
         data-index={index}

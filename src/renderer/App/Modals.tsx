@@ -39,7 +39,9 @@ const HoverCover = Hoverable(Cover);
 
 type Flavor = "normal" | "big";
 
-const ModalDialog = styled.dialog`
+const ModalDialog = styled.dialog.withConfig({
+  displayName: "AppModals-Dialog",
+})`
   /* Reset default dialog styles */
   border: none;
   padding: 0;
@@ -88,7 +90,9 @@ const ModalDialog = styled.dialog`
   }
 `;
 
-const ModalsDiv = styled.div`
+const ModalsDiv = styled.div.withConfig({
+  displayName: "AppModals-Container",
+})`
   min-width: 200px;
   min-height: 200px;
 
