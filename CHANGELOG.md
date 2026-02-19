@@ -2,8 +2,7 @@
 
 ## [26.8.0-canary] - 2026-02-18
 
-
-This release upgrades from Electron 33 to Electron 40 and adds a large set of UI and sandboxing improvements, including a reintroduced in-app changelog dialog.
+This release upgrades from Electron 33 to Electron 40, adds Linux sandboxing overhaul, and breaks apart install planning phase so that it doesn't block installing a game.
 
 **macOS 11 (Big Sur) is no longer supported. macOS 12 (Monterey) or later is now required.**
 
