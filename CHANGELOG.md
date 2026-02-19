@@ -1,5 +1,50 @@
 # Changelog
 
+## [26.8.0-canary] - 2026-02-18
+
+
+This release upgrades from Electron 33 to Electron 40 and adds a large set of UI and sandboxing improvements, including a reintroduced in-app changelog dialog.
+
+**macOS 11 (Big Sur) is no longer supported. macOS 12 (Monterey) or later is now required.**
+
+### Electron
+
+- Upgrade from Electron 33 to Electron 40 ([#3382](https://github.com/itchio/itch/issues/3382))
+- Minimum supported macOS version is now 12 (Monterey)
+- Linux now defaults to native Wayland in Wayland sessions
+- Updated esbuild targets to Node 24 and Chrome 144 to match Electron 40
+
+### Install
+
+- Refactored install planning to split install target listing (`Install.GetUploads`) from per-upload planning (`Install.PlanUpload`). Due to how the app computes space requirements, it may take some time as our CDN warms up cold files. For this reason we made the size calculation happen asynchronously so you can queue an install immediately without having to wait for install size calculation to complete.
+- Added cancellation support for in-flight install planning requests when changing upload or closing the modal
+
+### Linux Sandboxing
+
+- Added new Bubblewrap sandbox backend with user-namespace isolation, a persistent per-game home directory, read-only system mounts, and GPU, audio, and display passthrough
+- Added Flatpak-spawn sandbox backend for running sandboxed games when itch is installed as a Flatpak
+- Updated Firejail backend with network disable support, an expanded blacklist covering sensitive paths (~/.ssh, ~/.gnupg, ~/.aws, browser data), and environment variable filtering consistent with the new backends
+- Auto-detection selects the best available backend: Flatpak-spawn when inside Flatpak, otherwise Bubblewrap if available, with Firejail as fallback
+- New sandbox preferences under Security & privacy: sandbox type dropdown (`Auto`, `Bubblewrap`, `Firejail`), "Disable network access in sandbox" toggle, and allowed environment variable names input
+- Strict environment variable allowlist: only display, audio, session, and itch.io-specific variables are passed through, with user-configurable additions via preferences
+
+### Changelog Dialog
+
+- Reintroduced the in-app changelog dialog
+- Added release tabs for `itch`, `butler`, and `itch-setup`
+
+### UI & Accessibility
+
+- Added more semantic HTML and ARIA labels across controls (navigation buttons, game management actions, progress indicators, sidebar navigation)
+- Game cover images now include alt text
+- Updated cave version selection rows to semantic buttons
+- Fixed tab list scrollbar rendering issues ([#3384](https://github.com/itchio/itch/issues/3384))
+- Improved login form alignment and spacing
+
+### Documentation
+
+- Reviewed the itch docs and modernized many pages. https://itch.io/docs/itch/
+
 ## [26.7.0-canary] - 2026-02-10
 
 This release upgrades from Electron 25 to Electron 33. **macOS 10.15 (Catalina) is no longer supported** macOS 11 (Big Sur) or later is now required.
