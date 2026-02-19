@@ -2,7 +2,7 @@
   "name": "kitch",
   "productName": "kitch",
   "desktopName": "kitch",
-  "version": "26.7.0-canary",
+  "version": "26.8.0-canary",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",
@@ -112,6 +112,7 @@
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "ts-watch": "tsc --noEmit --skipLibCheck --watch",
+    "release": "node release/push-tag.js",
     "prepare": "husky install"
   },
   "lint-staged": {
