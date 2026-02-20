@@ -352,9 +352,11 @@ async function hookWebContents(
     logger.debug(`new-window fired for ${url}`);
 
     if (!loadURL(wc, url)) {
-      // url wasn't handled by the current web-contents, open
-      // in external browser
-      store.dispatch(actions.openInExternalBrowser({ url: url }));
+      // only open http/https URLs in external browser, ignore
+      // about:blank and other non-navigable URLs
+      if (url.startsWith("https:") || url.startsWith("http:")) {
+        store.dispatch(actions.openInExternalBrowser({ url: url }));
+      }
     }
     return { action: "deny" };
   });
