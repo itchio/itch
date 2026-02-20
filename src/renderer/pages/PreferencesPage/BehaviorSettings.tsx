@@ -12,6 +12,7 @@ import {
 } from "renderer/pages/PreferencesPage/SettingsGroup";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
+import Icon from "renderer/basics/Icon";
 import styled from "renderer/styles";
 
 import { T } from "renderer/t";
@@ -116,6 +117,12 @@ class BehaviorSettings extends React.PureComponent<Props> {
 
         <p className="explanation">
           {T(["preferences.security.sandbox.description"])}{" "}
+          <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
+        </p>
+
+        <p className="explanation">
+          <Icon icon="warning" />{" "}
+          {T(["preferences.security.sandbox.save_warning"])}{" "}
           <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
         </p>
 

@@ -285,6 +285,8 @@
     "Allowed environment variable names (comma or whitespace separated)",
   "preferences.security.sandbox.description":
     "The itch.io sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch.io sandbox is much safer.",
+  "preferences.security.sandbox.save_warning":
+    "Changing sandbox settings may affect access to existing game save files.",
   "preferences.install_location.add": "Add location",
   "preferences.install_location.delete":
     "Remove this install location",
