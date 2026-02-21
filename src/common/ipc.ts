@@ -4,6 +4,7 @@ export type AsyncIpcHandlers = {
   showOpenDialog: (o: OpenDialogOptions) => Promise<string[]>;
   getUserCacheSize: (n: number) => Promise<number>;
   getGPUFeatureStatus: (x: undefined) => Promise<any>;
+  fetchGitHubReleases: (url: string) => Promise<any>;
 };
 
 export type SyncIpcHandlers = {

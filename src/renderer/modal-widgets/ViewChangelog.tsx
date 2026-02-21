@@ -8,6 +8,7 @@ import {
 import { Dispatch } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
+import { github } from "renderer/bridge";
 import Link from "renderer/basics/Link";
 import Markdown from "renderer/basics/Markdown";
 import env from "renderer/env";
@@ -81,7 +82,8 @@ const emptyRepoState = (): RepoState => ({
 });
 
 class ViewChangelog extends React.PureComponent<Props, State> {
-  private abortControllers: Partial<Record<RepoKey, AbortController>> = {};
+  private fetchGeneration: Partial<Record<RepoKey, number>> = {};
+  private unmounted = false;
 
   state: State = {
     activeTab: "itch",
@@ -97,12 +99,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount() {
-    for (const repoKey of repoOrder) {
-      const controller = this.abortControllers[repoKey];
-      if (controller) {
-        controller.abort();
-      }
-    }
+    this.unmounted = true;
   }
 
   render() {
@@ -227,13 +224,8 @@ class ViewChangelog extends React.PureComponent<Props, State> {
       return;
     }
 
-    const existingController = this.abortControllers[repoKey];
-    if (existingController) {
-      existingController.abort();
-    }
-
-    const abortController = new AbortController();
-    this.abortControllers[repoKey] = abortController;
+    const generation = (this.fetchGeneration[repoKey] || 0) + 1;
+    this.fetchGeneration[repoKey] = generation;
 
     this.setState((prevState) => ({
       repoStates: {
@@ -253,14 +245,14 @@ class ViewChangelog extends React.PureComponent<Props, State> {
       `/releases?per_page=${perPage}`;
 
     try {
-      const response = await fetch(releasesApiUrl, {
-        signal: abortController.signal,
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const data: GitHubApiRelease[] = await github.fetchReleases(
+        releasesApiUrl
+      );
+
+      if (this.unmounted || this.fetchGeneration[repoKey] !== generation) {
+        return;
       }
 
-      const data: GitHubApiRelease[] = await response.json();
       let releases = data
         .filter((release) => !release.draft && !release.prerelease)
         .map((release) => ({
@@ -290,7 +282,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
         },
       }));
     } catch (e) {
-      if (abortController.signal.aborted) {
+      if (this.unmounted || this.fetchGeneration[repoKey] !== generation) {
         return;
       }
 
@@ -309,10 +301,6 @@ class ViewChangelog extends React.PureComponent<Props, State> {
           },
         },
       }));
-    } finally {
-      if (this.abortControllers[repoKey] === abortController) {
-        delete this.abortControllers[repoKey];
-      }
     }
   };
 

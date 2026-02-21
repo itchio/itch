@@ -14,6 +14,7 @@ import {
   dialog,
   globalShortcut,
   ipcMain,
+  net,
   protocol,
   session,
   App,
@@ -143,6 +144,16 @@ export function main() {
         },
         getGPUFeatureStatus: async (_x) => {
           return app.getGPUFeatureStatus;
+        },
+        fetchGitHubReleases: async (url: string) => {
+          if (!url.startsWith("https://api.github.com/")) {
+            throw new Error("Only GitHub API URLs are allowed");
+          }
+          const response = await net.fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          return response.json();
         },
       }
     );

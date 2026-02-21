@@ -29,6 +29,11 @@ const memo = <A>(fn: () => A): (() => A) => {
 
 export const mainWorldSupplement = {
   nodeUrl: { parse, format },
+  github: {
+    fetchReleases: (url: string) => {
+      return emitAsyncIpcEvent("fetchGitHubReleases", url);
+    },
+  },
   electron: {
     getApp: memo(() => {
       const res = emitSyncIpcEvent("buildApp", undefined);
@@ -109,6 +114,7 @@ export const mainWorldSupplement = {
   promisedFs: { readFile: promises.readFile },
 };
 
+contextBridge.exposeInMainWorld("github", mainWorldSupplement.github);
 contextBridge.exposeInMainWorld("electron", mainWorldSupplement.electron);
 contextBridge.exposeInMainWorld("butlerd", mainWorldSupplement.butlerd);
 contextBridge.exposeInMainWorld("nodeUrl", mainWorldSupplement.nodeUrl);

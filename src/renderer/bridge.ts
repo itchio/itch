@@ -12,6 +12,10 @@ export const querystring = {
   parse: supplement.querystring.parse,
 };
 
+export const github = {
+  fetchReleases: supplement.github.fetchReleases,
+};
+
 export const electron = supplement.electron;
 
 export const useragent = {
