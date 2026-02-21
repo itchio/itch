@@ -50,6 +50,7 @@ const LogTable = styled.table`
   tbody {
     overflow-y: scroll;
     height: 100%;
+    user-select: text;
 
     display: block;
     tr {
