@@ -16,6 +16,8 @@ import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
 import { electron, butlerd } from "renderer/bridge";
 import { onRequest } from "common/helpers/bridge";
+import { recordingLogger } from "common/logger";
+import { rendererLogger } from "renderer/logger";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -111,6 +113,13 @@ class SecretSettings extends React.PureComponent<Props> {
             icon="bug"
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
+          />
+          <Button
+            className="control"
+            primary={true}
+            icon="bug"
+            onClick={this.onSimulateLaunchCrash}
+            label="Simulate launch crash"
           />
           <Button
             className="control"
@@ -230,6 +239,45 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(actions.navigate({ wind: "root", url: "itch://crashy" }));
     dispatch(actions.closeModal({ wind: "root" }));
+  };
+
+  onSimulateLaunchCrash = () => {
+    doAsync(async () => {
+      const logger = recordingLogger(rendererLogger, "secret.launch");
+      let err: Error;
+      try {
+        logger.info("Preparing to launch game (debug simulation)");
+        logger.info("Resolving executable path");
+        logger.warn("Executable is present but test mode will force a crash");
+        throw new Error(
+          "Simulated launch failure: process crashed before first frame"
+        );
+      } catch (e) {
+        err = e;
+      }
+
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openModal(
+          modals.showError.make({
+            wind: "root",
+            title: "test launch crash",
+            message: "This is a simulated launch crash for debug testing",
+            detail: "Use this to verify error dialog log rendering",
+            widgetParams: {
+              rawError: err,
+              log: logger.getLog(),
+              forceDetails: true,
+            },
+            buttons: [
+              {
+                label: ["prompt.action.continue"],
+              },
+            ],
+          })
+        )
+      );
+    });
   };
 
   onViewChangelog = () => {
