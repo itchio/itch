@@ -1,3 +1,4 @@
+process.setSourceMapsEnabled(true);
 import env from "main/env";
 
 env.setNodeEnv();
