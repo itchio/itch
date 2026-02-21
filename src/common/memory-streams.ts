@@ -7,10 +7,23 @@ export class WritableMemoryStream extends Writable {
     super(options);
   }
 
-  _write(chunk: Buffer, encoding: string, callback: () => void): void {
-    this.chunks.push(
-      Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding)
-    );
+  _write(
+    chunk: Buffer | string | Uint8Array,
+    encoding: string,
+    callback: () => void
+  ): void {
+    if (Buffer.isBuffer(chunk)) {
+      this.chunks.push(chunk);
+    } else if (typeof chunk === "string") {
+      this.chunks.push(
+        Buffer.from(
+          chunk,
+          Buffer.isEncoding(encoding) ? (encoding as BufferEncoding) : "utf8"
+        )
+      );
+    } else {
+      this.chunks.push(Buffer.from(chunk));
+    }
     callback();
   }
 
