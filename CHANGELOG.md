@@ -1,5 +1,89 @@
 # Changelog
 
+## [26.9.0] - 2026-02-20
+
+This release upgrades Electron from 25 to 40, overhauls sandboxing across Linux, macOS, and Windows, makes install planning non-blocking, and adds support for compressed HTML game files.
+
+**macOS 10.15 (Catalina) is no longer supported. macOS 12 (Monterey) or later is now required.**
+
+### Electron
+
+- Upgrade from Electron 25 to Electron 40 ([#3382](https://github.com/itchio/itch/issues/3382))
+  - Minimum supported macOS version is now 12 (Monterey)
+  - Linux now defaults to native Wayland in Wayland sessions
+- Updated esbuild targets to Node 24 and Chrome 144 to match Electron 40
+- Updated `openAsHidden` login item setting to only apply on Windows (removed from macOS in newer Electron)
+
+### Game Installation
+
+- Refactored install planning to split install target listing (`Install.GetUploads`) from per-upload planning (`Install.PlanUpload`). Due to how the app computes space requirements, it may take some time as our CDN warms up cold files. For this reason we made the size calculation happen asynchronously so you can queue an install immediately without having to wait for install size calculation to complete.
+- Added cancellation support for in-flight install planning requests when changing upload or closing the modal
+- Fixed quadratic operation in collection and library sync that could cause the app to lock up when synchronizing large collections
+- Added hard limits on collection sync (2000 items) and owned keys (5000) to prevent excessive resource consumption
+
+### Sandboxing
+
+#### Linux
+
+- Added new Bubblewrap sandbox backend with user-namespace isolation, a persistent per-game home directory, read-only system mounts, and GPU, audio, and display passthrough
+- Added Flatpak-spawn sandbox backend for running sandboxed games when itch is installed as a Flatpak
+- Updated Firejail backend with network disable support, an expanded blacklist covering sensitive paths (~/.ssh, ~/.gnupg, ~/.aws, browser data), and environment variable filtering consistent with the new backends
+- Auto-detection selects the best available backend: Flatpak-spawn when inside Flatpak, otherwise Bubblewrap if available, with Firejail as fallback
+
+#### macOS
+
+- New balanced (strict, default) and legacy sandbox policy modes — legacy allows broader compatibility for problematic games
+- Rosetta 2 support — x86 games can now run sandboxed on Apple Silicon Macs
+
+#### Windows
+
+- Fixed "access denied" error on first sandbox launch caused by ACL permission propagation delay
+- Cryptographically secure sandbox account passwords
+
+#### All Platforms
+
+- Unified network disable control across all sandbox backends (Bubblewrap, Flatpak-spawn, Firejail, macOS, Windows)
+- Per-cave sandbox override settings (sandbox type, network access, allowed environment variables)
+- Per-cave extra command-line launch arguments
+- New sandbox preferences under Security & privacy: sandbox type dropdown (`Auto`, `Bubblewrap`, `Firejail`), "Disable network access in sandbox" toggle, and allowed environment variable names input
+- Strict environment variable allowlist: only display, audio, session, and itch.io-specific variables are passed through, with user-configurable additions via preferences
+- Added warning about game save data when changing sandbox settings
+
+### HTML Games
+
+- Handle compressed HTML game files (gzip, brotli, .unityweb) before transferring to client, since protocol URLs do not support content encoding ([#3286](https://github.com/itchio/itch/issues/3286))
+- Don't try to open non-HTTP links (like `about:blank`) in external browser ([#3394](https://github.com/itchio/itch/issues/3394))
+
+### Changelog Dialog
+
+- Reintroduced the in-app changelog dialog
+- Added release tabs for `itch`, `butler`, and `itch-setup`
+- Fixed changelog failing to load due to Content Security Policy restrictions by moving GitHub API fetch to main process IPC
+
+### UI & Accessibility
+
+- Added more semantic HTML and ARIA labels across controls (navigation buttons, game management actions, progress indicators, sidebar navigation)
+- Game cover images now include alt text
+- Updated cave version selection rows to semantic buttons
+- Fixed tab list scrollbar rendering issues ([#3384](https://github.com/itchio/itch/issues/3384))
+- Updated `react-tabs` to v4.3.0 with bundled types and added global tab styles
+- Improved login form alignment and spacing
+- Allow logs in log viewer to be copied and pasted ([#3000](https://github.com/itchio/itch/issues/3000))
+
+### Bug Fixes
+
+- Fixed Windows game launching broken by a Go runtime update
+- Fixed macOS memory leak in file path resolution
+- Fix log entries not showing up correctly in game crash dialog
+- Fix TypeScript buffer type handling in memory streams
+
+### Other
+
+- Changed app ID from `com.squirrel.itch.itch` to `io.itch.itch`
+- Disabled remote locale fetching (locales.itch.zone no longer exists)
+- Use Node's built-in sourcemap support, removing `source-map-support` dependency
+- Reviewed the itch docs and modernized many pages. https://itch.io/docs/itch/
+
 ## [26.8.0-canary] - 2026-02-18
 
 This release upgrades from Electron 33 to Electron 40, adds Linux sandboxing overhaul, and breaks apart install planning phase so that it doesn't block installing a game.
@@ -9,8 +93,8 @@ This release upgrades from Electron 33 to Electron 40, adds Linux sandboxing ove
 ### Electron
 
 - Upgrade from Electron 33 to Electron 40 ([#3382](https://github.com/itchio/itch/issues/3382))
-- Minimum supported macOS version is now 12 (Monterey)
-- Linux now defaults to native Wayland in Wayland sessions
+  - Minimum supported macOS version is now 12 (Monterey)
+  - Linux now defaults to native Wayland in Wayland sessions
 - Updated esbuild targets to Node 24 and Chrome 144 to match Electron 40
 
 ### Install
@@ -38,6 +122,7 @@ This release upgrades from Electron 33 to Electron 40, adds Linux sandboxing ove
 - Game cover images now include alt text
 - Updated cave version selection rows to semantic buttons
 - Fixed tab list scrollbar rendering issues ([#3384](https://github.com/itchio/itch/issues/3384))
+- Updated `react-tabs` to v4.2.1 and added global tab styles
 - Improved login form alignment and spacing
 
 ### Documentation
