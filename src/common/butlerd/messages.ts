@@ -801,6 +801,25 @@ export interface CaveInstallInfo {
 }
 
 /**
+ * Per-cave launch settings that override global preferences.
+ */
+export interface CaveSettings {
+  /**
+   * Overrides the global sandbox enabled/disabled preference.
+   * nil = inherit global, true = force on, false = force off
+   */
+  sandbox?: boolean;
+  /** Override sandbox runner type (bubblewrap, firejail, flatpak, fuji, auto). */
+  sandboxType?: SandboxType;
+  /** Override network restriction within the sandbox. */
+  sandboxNoNetwork?: boolean;
+  /** Override allowed environment variables within the sandbox. */
+  sandboxAllowEnv?: string[];
+  /** Additional command-line arguments appended after manifest action args. */
+  extraArgs?: string[];
+}
+
+/**
  * undocumented
  */
 export interface InstallLocationSummary {
@@ -1024,6 +1043,37 @@ export interface DiskUsageInfo {
   /** undocumented */
   accuracy: string;
 }
+
+/**
+ * Result for Caves.GetSettings
+ */
+export interface CavesGetSettingsResult {
+  /** undocumented */
+  settings: CaveSettings;
+}
+
+/**
+ * undocumented
+ */
+export const CavesGetSettings = createRequest<
+  CavesGetSettingsParams,
+  CavesGetSettingsResult
+>("Caves.GetSettings");
+
+/**
+ * Result for Caves.SetSettings
+ */
+export interface CavesSetSettingsResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const CavesSetSettings = createRequest<
+  CavesSetSettingsParams,
+  CavesSetSettingsResult
+>("Caves.SetSettings");
 
 /**
  * Result for Caves.SetPinned
@@ -1854,6 +1904,8 @@ export enum Code {
   DatabaseBusy = 16000,
   // An install location could not be removed because it has active downloads
   CantRemoveLocationBecauseOfActiveDownloads = 18000,
+  // The selected sandbox is not available on this system
+  SandboxNotAvailable = 19000,
 }
 
 /**
@@ -3255,6 +3307,24 @@ export interface InstallPlanUploadParams {
 }
 
 /**
+ * Params for Caves.GetSettings
+ */
+export interface CavesGetSettingsParams {
+  /** ID of the cave to retrieve settings for. */
+  caveId: string;
+}
+
+/**
+ * Params for Caves.SetSettings
+ */
+export interface CavesSetSettingsParams {
+  /** ID of the cave to store settings for. */
+  caveId: string;
+  /** Full settings object replacement. */
+  settings: CaveSettings;
+}
+
+/**
  * Params for Caves.SetPinned
  */
 export interface CavesSetPinnedParams {
@@ -3643,6 +3713,8 @@ export interface LaunchParams {
   sandbox?: boolean;
   /** Sandbox configuration options. Only applied when sandbox is enabled. */
   sandboxOptions?: SandboxOptions;
+  /** Additional command-line arguments appended after manifest action args. */
+  extraArgs?: string[];
 }
 
 /**
