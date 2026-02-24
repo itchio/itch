@@ -62,6 +62,7 @@ interface Props {
   disabled?: boolean;
   className?: string;
   id?: string;
+  title?: string;
   hint?: LocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
@@ -87,7 +88,7 @@ const IconButton = ({
   ...restProps
 }: Props) => {
   const intl = useIntl();
-  const ariaLabel = hint ? TString(intl, hint) : undefined;
+  const ariaLabel = hint ? TString(intl, hint) : restProps.title;
 
   return (
     <IconButtonStyled

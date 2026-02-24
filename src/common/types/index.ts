@@ -349,6 +349,7 @@ export interface ProfileLoginState {
   error?: Error;
   blockingOperation: SetupOperation;
   lastUsername?: string;
+  oauthURL?: string;
 }
 
 export type TabLayout = "grid" | "table";

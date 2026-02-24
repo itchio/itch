@@ -8,6 +8,20 @@ const initialState = {
 } as ProfileLoginState;
 
 export default reducer<ProfileLoginState>(initialState, (on) => {
+  on(actions.initiateOAuthLogin, (state, action) => {
+    return {
+      ...state,
+      error: undefined,
+    };
+  });
+
+  on(actions.oauthURLGenerated, (state, action) => {
+    return {
+      ...state,
+      oauthURL: action.payload.url,
+    };
+  });
+
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,

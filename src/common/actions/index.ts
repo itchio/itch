@@ -229,6 +229,7 @@ export const actions = wireActions({
     totpCode?: string;
   }>(),
   initiateOAuthLogin: action<{}>(),
+  oauthURLGenerated: action<{ url: string }>(),
   handleOAuthCallback: action<{
     /** The authorization code extracted from the URL */
     code: string;

@@ -13,7 +13,9 @@ import { Links } from "renderer/scenes/GateScene/styles";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
-const ErrorDiv = styled.div`
+const ErrorDiv = styled.div.withConfig({
+  displayName: "ErrorDiv",
+})`
   width: var(--control-width);
 
   .header {
@@ -27,11 +29,16 @@ const ErrorDiv = styled.div`
   color: ${(props) => props.theme.error};
 `;
 
-const PasswordContainer = styled.div`
+const PasswordContainer = styled.div.withConfig({
+  displayName: "PasswordContainer",
+})`
   position: relative;
+  width: 100%;
 `;
 
-const RevealButton = styled(IconButton)`
+const RevealButton = styled(IconButton).withConfig({
+  displayName: "RevealButton",
+})`
   position: absolute;
   right: 8px;
   top: 0;
@@ -49,7 +56,9 @@ const RevealButton = styled(IconButton)`
   }
 `;
 
-const ManualCodeSection = styled.div`
+const ManualCodeSection = styled.div.withConfig({
+  displayName: "ManualCodeSection",
+})`
   width: var(--control-width);
   display: flex;
   flex-direction: column;
@@ -64,13 +73,52 @@ const ManualCodeSection = styled.div`
 
   p.hint {
     font-size: 90%;
-    color: ${(props) => props.theme.ternaryText};
   }
 
-  input {
-    ${styles.heavyInput};
-    font-size: ${(props) => props.theme.fontSizes.large};
-    width: 100%;
+  #manual-code {
+    margin: 0;
+  }
+`;
+
+const OAuthURLSection = styled.div.withConfig({
+  displayName: "OAuthURLSection",
+})`
+  width: var(--control-width);
+
+  details {
+    summary {
+      cursor: pointer;
+      font-size: 90%;
+      color: ${(props) => props.theme.ternaryText};
+      text-align: center;
+      padding: 4px 0;
+      user-select: none;
+
+      &:hover {
+        color: ${(props) => props.theme.secondaryText};
+      }
+    }
+
+    &[open] {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      padding: 8px;
+    }
+  }
+
+  .url-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 4px;
+  }
+
+  #oauth-url {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    margin: 0;
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 
@@ -86,7 +134,7 @@ class LoginForm extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { dispatch, showSaved, lastUsername } = this.props;
+    const { dispatch, showSaved, lastUsername, oauthURL } = this.props;
     const { passwordShown, showLegacy, oauthPending, manualCode } = this.state;
 
     if (!showLegacy) {
@@ -94,18 +142,41 @@ class LoginForm extends React.PureComponent<Props, State> {
         <>
           <Form onSubmit={this.handleManualCodeSubmit}>
             {this.renderError()}
-            <Button
-              id="oauth-login-button"
-              className="login-button"
-              onClick={this.initiateOAuth}
-              fat
-              primary
-              label={T(["Log in with itch.io"])}
-              icon="itchio"
-            />
+            {!oauthPending && (
+              <Button
+                id="oauth-login-button"
+                className="login-button"
+                onClick={this.initiateOAuth}
+                fat
+                primary
+                label={T(["Log in with itch.io"])}
+                icon="itchio"
+              />
+            )}
             {oauthPending && (
               <ManualCodeSection>
                 <p>{T(["A browser window has opened for login."])}</p>
+                {oauthURL && (
+                  <OAuthURLSection>
+                    <details>
+                      <summary>{T(["Browser didn't open?"])}</summary>
+                      <div className="url-row">
+                        <input
+                          id="oauth-url"
+                          type="text"
+                          value={oauthURL}
+                          readOnly
+                          onFocus={(e) => e.target.select()}
+                        />
+                        <IconButton
+                          icon="copy"
+                          title="Copy URL"
+                          onClick={this.copyOAuthURL}
+                        />
+                      </div>
+                    </details>
+                  </OAuthURLSection>
+                )}
                 <p className="hint">
                   {T([
                     "If the link didn't work, paste the authorization code below:",
@@ -244,6 +315,13 @@ class LoginForm extends React.PureComponent<Props, State> {
     dispatch(actions.submitOAuthCode({ code: manualCode.trim() }));
   };
 
+  copyOAuthURL = () => {
+    const { dispatch, oauthURL } = this.props;
+    if (oauthURL) {
+      dispatch(actions.copyToClipboard({ text: oauthURL }));
+    }
+  };
+
   cancelOAuth = () => {
     this.setState({ oauthPending: false, manualCode: "" });
   };
@@ -309,7 +387,9 @@ class LoginForm extends React.PureComponent<Props, State> {
   };
 }
 
-const Form = styled.form`
+const Form = styled.form.withConfig({
+  displayName: "Form",
+})`
   --control-width: 380px;
   display: flex;
   flex-direction: column;
@@ -353,6 +433,7 @@ interface Props {
   dispatch: Dispatch;
   lastUsername: string | null;
   error: Error | null;
+  oauthURL: string | null;
 }
 
 interface State {
@@ -365,4 +446,5 @@ interface State {
 export default hook((map) => ({
   lastUsername: map((rs) => rs.profile.login.lastUsername),
   error: map((rs) => rs.profile.login.error),
+  oauthURL: map((rs) => rs.profile.login.oauthURL),
 }))(LoginForm);

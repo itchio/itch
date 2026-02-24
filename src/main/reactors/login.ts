@@ -123,6 +123,7 @@ export default function (watcher: Watcher) {
 
     const loginUrl = `${urls.itchio}/user/oauth?${params.toString()}`;
     logger.info(`Opening OAuth URL: ${loginUrl}`);
+    store.dispatch(actions.oauthURLGenerated({ url: loginUrl }));
     store.dispatch(actions.openInExternalBrowser({ url: loginUrl }));
   });
 
