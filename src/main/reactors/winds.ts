@@ -28,11 +28,13 @@ import {
   session,
   Session,
 } from "electron";
+import fs from "fs";
 import { mainLogger } from "main/logger";
 import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { promisedModal } from "main/reactors/modals";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
+import { basename, dirname } from "path";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "underscore";
@@ -42,6 +44,7 @@ const logger = mainLogger.child(__filename);
 let dispatchedBoot = false;
 let prebootDone = false;
 let rootWindowReady = false;
+let devRendererReloadWatcherStarted = false;
 
 type AppCommand = "browser-backward" | "browser-forward";
 
@@ -220,6 +223,8 @@ function ensureMainWindowInsideDisplay(store: Store) {
 let secondaryWindowSeed = 1;
 
 export default function (watcher: Watcher) {
+  mountDevRendererReloadWatcher();
+
   let subWatcher: Watcher;
 
   const refreshSelectors = (rs: RootState) => {
@@ -492,6 +497,58 @@ export default function (watcher: Watcher) {
   });
 }
 
+const debouncedReloadAllWindows = debounce(() => {
+  const windows = BrowserWindow.getAllWindows();
+  if (windows.length === 0) {
+    return;
+  }
+
+  logger.info(`Renderer bundle changed, reloading ${windows.length} window(s)`);
+  windows.forEach((win) => {
+    if (!win.isDestroyed()) {
+      win.webContents.reloadIgnoringCache();
+    }
+  });
+}, 150);
+
+function mountDevRendererReloadWatcher() {
+  if (!env.development || devRendererReloadWatcherStarted) {
+    return;
+  }
+
+  devRendererReloadWatcherStarted = true;
+
+  const rendererBundlePath = getRendererFilePath("renderer.bundle.js");
+  const rendererDir = dirname(rendererBundlePath);
+  const rendererBundleName = basename(rendererBundlePath);
+
+  try {
+    const fileWatcher = fs.watch(rendererDir, (_eventType, filename) => {
+      if (!filename) {
+        return;
+      }
+      if (String(filename) !== rendererBundleName) {
+        return;
+      }
+      debouncedReloadAllWindows();
+    });
+
+    fileWatcher.on("error", (e) => {
+      logger.warn(`Dev renderer reload watcher errored: ${e?.stack || e}`);
+    });
+
+    app.on("before-quit", () => {
+      fileWatcher.close();
+    });
+
+    logger.info(`Watching ${rendererBundlePath} for dev renderer reloads`);
+  } catch (e) {
+    logger.warn(
+      `Could not start dev renderer reload watcher: ${e?.stack || e}`
+    );
+  }
+}
+
 interface AppURLParams extends ParsedUrlQueryInput {
   wind: string;
   role: WindRole;
@@ -547,7 +604,8 @@ let _cachedAppSession: Session;
 function getAppSession(store: Store): Session {
   if (!_cachedAppSession) {
     _cachedAppSession = session.fromPartition(partitionForApp(), {
-      cache: true,
+      // Disable cache in development so renderer refresh always picks latest bundles.
+      cache: env.development ? false : true,
     });
 
     // this works around https://github.com/itchio/itch/issues/2039
