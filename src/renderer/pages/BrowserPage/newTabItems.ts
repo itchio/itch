@@ -23,25 +23,28 @@ export const newTabPrimaryItems = [
   },
 ];
 
+const createItchioUrl = (path: string) =>
+  `${urls.itchio}/${path}`.replace(/(?<!:)\/\/+/g, "/");
+
 export const newTabSecondaryItems = [
   {
     label: ["new_tab.random"],
     icon: "shuffle",
-    url: urls.itchio + "/randomizer",
+    url: createItchioUrl("randomizer"),
   },
   {
     label: ["new_tab.on_sale"],
     icon: "shopping_cart",
-    url: urls.itchio + "/games/on-sale",
+    url: createItchioUrl("games/on-sale"),
   },
   {
     label: ["new_tab.top_sellers"],
     icon: "star",
-    url: urls.itchio + "/games/top-sellers",
+    url: createItchioUrl("games/top-sellers"),
   },
   {
     label: ["new_tab.devlogs"],
     icon: "fire",
-    url: urls.itchio + "/devlogs",
+    url: createItchioUrl("devlogs"),
   },
 ];
