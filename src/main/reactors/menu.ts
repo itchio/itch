@@ -370,6 +370,24 @@ function computeMenuTemplate(
           localizedLabel: ["menu.view.downloads"],
           accelerator: "CmdOrCtrl+J",
         },
+        {
+          type: "separator",
+        },
+        {
+          label: "Zoom In",
+          role: "zoomIn",
+          accelerator: "CmdOrCtrl+=",
+        },
+        {
+          label: "Zoom Out",
+          role: "zoomOut",
+          accelerator: "CmdOrCtrl+-",
+        },
+        {
+          label: "Reset Zoom",
+          role: "resetZoom",
+          accelerator: "CmdOrCtrl+0",
+        },
       ],
     },
 
