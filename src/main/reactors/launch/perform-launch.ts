@@ -347,7 +347,7 @@ export async function performLaunch(
         });
       } finally {
         closePrereqsModal();
-        if (powerSaveBlockerId) {
+        if (powerSaveBlockerId !== null) {
           powerSaveBlocker.stop(powerSaveBlockerId);
         }
       }
