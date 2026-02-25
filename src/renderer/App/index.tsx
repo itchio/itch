@@ -63,14 +63,23 @@ class App extends React.PureComponent<Props, State> {
       !isEqual(props.localeMessages, state.localeMessages) ||
       !isEqual(props.fallbackMessages, state.fallbackMessages)
     ) {
+      let locale = props.locale;
+      let localeMessages = props.localeMessages;
+
+      if (!isLocaleValid(locale)) {
+        console.warn(`Invalid locale "${locale}", falling back to English`);
+        locale = "en";
+        localeMessages = props.fallbackMessages;
+      }
+
       return {
-        locale: props.locale,
-        localeMessages: props.localeMessages,
+        locale,
+        localeMessages,
         fallbackMessages: props.fallbackMessages,
         localeVersion: state.localeVersion + 1,
         messages: {
           ...props.fallbackMessages,
-          ...props.localeMessages,
+          ...localeMessages,
         },
       };
     }
@@ -105,8 +114,22 @@ interface State {
 
 const emptyObj = {};
 
+function isLocaleValid(locale: string): boolean {
+  try {
+    Intl.NumberFormat.supportedLocalesOf(locale);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Normalize locale codes to BCP 47 format (e.g. pt_BR -> pt-BR)
+function normalizeLocale(locale: string): string {
+  return locale.replace(/_/g, "-");
+}
+
 export default hook((map) => ({
-  locale: map((rs) => rs.i18n.lang),
+  locale: map((rs) => normalizeLocale(rs.i18n.lang)),
   localeMessages: map((rs) => {
     const { strings, lang } = rs.i18n;
     return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
