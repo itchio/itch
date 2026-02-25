@@ -20,13 +20,17 @@ export const FloaterSpacer = styled.div`
   flex-shrink: 0;
 `;
 
-const SimpleSelectDiv = styled.div`
+const SimpleSelectButton = styled.button`
   cursor: default;
   flex-grow: 1;
 
   background: ${(props) => props.theme.inputBackground};
   border: 1px solid ${(props) => props.theme.inputBorder};
   border-radius: 2px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 0;
 
   transition: border-color: 0.1s;
 
@@ -34,9 +38,6 @@ const SimpleSelectDiv = styled.div`
     border-color: ${(props) => props.theme.inputBorderFocused};
   }
 
-  &:focus {
-    outline: none;
-  }
 `;
 
 const wrapperPadding = 10;
@@ -166,12 +167,11 @@ export default class SimpleSelect<
       className,
     } = this.props;
     return (
-      <SimpleSelectDiv
+      <SimpleSelectButton
         className={className}
         onClick={this.onToggle}
         onKeyDown={this.onKeyDown}
         onKeyPress={this.onKeyPress}
-        tabIndex={-1}
         onBlur={this.onBlur}
       >
         <ValueWrapper>
@@ -193,7 +193,7 @@ export default class SimpleSelect<
           </IconWrapper>
         </ValueWrapper>
         <OptionsAnchorDiv>{this.renderOptions()}</OptionsAnchorDiv>
-      </SimpleSelectDiv>
+      </SimpleSelectButton>
     );
   }
 
