@@ -8,6 +8,6 @@ export const SettingsGroup = styled.div.withConfig({
   flex-direction: column;
 `;
 
-export const SettingsGroupRow = styled(Label).withConfig({
+export const SettingsGroupRow = styled(Label).attrs({ as: "div" }).withConfig({
   displayName: "Preferences-SettingsGroupRow",
 })``;

@@ -89,17 +89,11 @@ class BehaviorSettings extends React.PureComponent<Props> {
                 />
               </SandboxTypeRow>
 
-              <SettingsGroupRow active={!!linuxSandboxNoNetwork}>
-                <input
-                  type="checkbox"
-                  checked={!!linuxSandboxNoNetwork}
-                  onChange={this.onSandboxNoNetworkChange}
-                />
-                <span>
-                  {" "}
-                  {T(["preferences.security.sandbox.no_network.title"])}{" "}
-                </span>
-              </SettingsGroupRow>
+              <Checkbox
+                name="linuxSandboxNoNetwork"
+                label={T(["preferences.security.sandbox.no_network.title"])}
+                onChange={this.onSandboxNoNetworkChange}
+              />
 
               <SandboxTypeRow active={!!linuxSandboxAllowEnv}>
                 <span>
