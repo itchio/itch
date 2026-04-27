@@ -38,11 +38,13 @@ export function formatError(
   return asError(e).message;
 }
 
-export function getDownloadError(item: Download): RequestError {
+export function getDownloadError(item: Download): RequestError | null {
   return getButlerdErrorFromTuple(item);
 }
 
-export function getInstallPlanInfoError(item: InstallPlanInfo): RequestError {
+export function getInstallPlanInfoError(
+  item: InstallPlanInfo
+): RequestError | null {
   return getButlerdErrorFromTuple(item);
 }
 
@@ -54,7 +56,7 @@ interface ButlerdErrorTuple {
 
 export function getButlerdErrorFromTuple(
   item: ButlerdErrorTuple
-): RequestError {
+): RequestError | null {
   if (!item.errorMessage) {
     return null;
   }

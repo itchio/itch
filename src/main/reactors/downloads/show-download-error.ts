@@ -22,6 +22,12 @@ export default function (watcher: Watcher) {
       return;
     }
 
+    const downloadErr = getDownloadError(item);
+    if (!downloadErr) {
+      logger.warn(`no error info for download (${id})`);
+      return;
+    }
+
     const operateLogPath = join(item.stagingFolder, "operate-log.json");
     let log = "<missing log>";
     try {
@@ -32,7 +38,7 @@ export default function (watcher: Watcher) {
 
     await showInstallErrorModal({
       store,
-      e: getDownloadError(item),
+      e: downloadErr,
       log,
       game: item.game,
       retryAction: () => actions.retryDownload({ id }),

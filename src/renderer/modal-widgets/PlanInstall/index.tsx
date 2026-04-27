@@ -568,8 +568,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
           infoBusy: false,
           error:
             res.info && res.info.error
-              ? getInstallPlanInfoError(res.info)
-              : null,
+              ? getInstallPlanInfoError(res.info) ?? undefined
+              : undefined,
           log: logger.getLog(),
         });
       } catch (e) {

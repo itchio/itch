@@ -9,7 +9,10 @@ export function asError(e: unknown): Error {
   return new Error(String(e));
 }
 
-export function asRequestError(e: unknown): RequestError {
+export function asRequestError(e: unknown): RequestError | null {
+  if (typeof e !== "object" || e === null) {
+    return null;
+  }
   const re = e as RequestError;
   if (re.rpcError) {
     return re;
@@ -22,7 +25,7 @@ export function getRpcErrorData(e: unknown): RequestError["rpcError"]["data"] {
   if (re && re.rpcError && re.rpcError.data) {
     return re.rpcError.data;
   }
-  return null;
+  return undefined;
 }
 
 export function isInternalError(e: unknown): boolean {
@@ -54,7 +57,8 @@ export function getErrorStack(e: unknown): string {
     return "Unknown error";
   }
 
-  let errorStack = asError(e).stack;
+  const err = asError(e);
+  let errorStack = err.stack || err.message;
 
   const re = asRequestError(e);
   if (re) {
@@ -67,10 +71,10 @@ export function getErrorStack(e: unknown): string {
       errorStack = re.message;
     }
   }
-  return errorStack;
+  return errorStack || "Unknown error";
 }
 
-export function mergeLogAndError(log: string, e: any): string {
+export function mergeLogAndError(log: string, e: unknown): string {
   let formattedLog = "";
   if (log) {
     let lines = log.split("\n");
