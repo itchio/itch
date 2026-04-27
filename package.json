@@ -99,7 +99,7 @@
     "esbuild": "^0.27.0",
     "husky": "^7.0.4",
     "lint-staged": "^10.5.3",
-    "prettier": "^2.2.1",
+    "prettier": "^2.8.8",
     "typescript": "^6.0.3"
   },
   "scripts": {
