@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 // This file is the entry point for the main (browser) process
 
 import env from "main/env";
@@ -232,7 +233,7 @@ export function main() {
         // Use stopForwarding to prevent tick from being synced to renderers
         store.dispatch(stopForwarding(actions.tick({})));
       } catch (e) {
-        mainLogger.error(`While dispatching tick: ${e.stack}`);
+        mainLogger.error(`While dispatching tick: ${getErrorStack(e)}`);
       }
     }, 1 * 1000 /* every second */);
   };

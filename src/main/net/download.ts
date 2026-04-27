@@ -1,3 +1,4 @@
+import { asError, getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { dirname } from "path";
 import progress from "progress-stream";
 
@@ -26,7 +27,7 @@ export async function downloadToFile(
   try {
     await sf.mkdir(dir);
   } catch (e) {
-    logger.error(`Could not create ${dir}: ${e.message}`);
+    logger.error(`Could not create ${dir}: ${getErrorMessage(e)}`);
   }
 
   const fileSink = createWriteStream(file, {
@@ -134,7 +135,7 @@ export async function downloadToFileWithRetry(
         }
 
         if (shouldRetry) {
-          lastError = originalErr;
+          lastError = asError(originalErr);
           tries++;
           // exponential backoff: 1, 2, 4, 8 seconds...
           let numSeconds = tries * tries;
@@ -142,7 +143,7 @@ export async function downloadToFileWithRetry(
           // see https://cloud.google.com/storage/docs/exponential-backoff
           let jitter = Math.random() % 1000;
           let sleepTime = numSeconds * 1000 + jitter;
-          logger.warn(`While downloading file, got: ${err.stack}`);
+          logger.warn(`While downloading file, got: ${getErrorStack(err)}`);
           logger.warn(`Retrying after ${sleepTime.toFixed()}ms`);
           await delay(sleepTime);
           tries++;

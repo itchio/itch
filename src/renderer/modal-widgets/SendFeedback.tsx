@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { fillShape } from "common/format/shape";
 import { ModalWidgetProps } from "common/modals";
@@ -190,7 +191,9 @@ class ReportIssue extends React.PureComponent<Props, State> {
         });
       } catch (e) {
         this.setState({
-          system: { state: `Could not gather system information: ${e.stack}` },
+          system: {
+            state: `Could not gather system information: ${getErrorStack(e)}`,
+          },
         });
       }
     });
@@ -450,7 +453,7 @@ ${log}
       } catch (e) {
         this.setState({
           stage: ReportStage.Failed,
-          errorMessage: e.stack,
+          errorMessage: getErrorStack(e),
         });
       }
     });

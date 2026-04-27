@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { getDownloadError } from "common/format/errors";
 import { Watcher } from "common/util/watcher";
@@ -26,7 +27,7 @@ export default function (watcher: Watcher) {
     try {
       log = await sf.readFile(operateLogPath, { encoding: "utf8" });
     } catch (e) {
-      logger.warn(`could not read log: ${e.stack}`);
+      logger.warn(`could not read log: ${getErrorStack(e)}`);
     }
 
     await showInstallErrorModal({

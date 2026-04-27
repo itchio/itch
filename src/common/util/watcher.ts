@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { Store, RootState, Action } from "common/types";
 
 import { each } from "underscore";
@@ -57,7 +58,9 @@ export class Watcher {
             try {
               f();
             } catch (e) {
-              this.logger.error(`In scheduled stateChange: ${e.stack}`);
+              this.logger.error(
+                `In scheduled stateChange: ${getErrorStack(e)}`
+              );
             }
           });
         };
@@ -70,7 +73,7 @@ export class Watcher {
       try {
         selector(rs);
       } catch (e) {
-        this.logger.error(`In state selector: ${e.stack}`);
+        this.logger.error(`In state selector: ${getErrorStack(e)}`);
       }
     });
   }

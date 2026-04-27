@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorCode } from "common/butlerd/errors";
 import * as url from "main/util/url";
 import { Session } from "electron";
 import {
@@ -105,9 +106,9 @@ export async function registerItchCaveProtocol(
         headers,
       });
     } catch (e) {
-      logger.warn(`while serving ${request.url}, got ${e.stack}`);
+      logger.warn(`while serving ${request.url}, got ${getErrorStack(e)}`);
       let statusCode = 400;
-      switch (e.code) {
+      switch (getErrorCode(e)) {
         case "ENOENT":
           statusCode = 404;
           break;

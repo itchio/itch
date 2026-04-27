@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { NET_PARTITION_NAME } from "common/constants/net";
 import env from "main/env";
@@ -43,7 +44,9 @@ export default function (watcher: Watcher) {
         await loadPreferences(store);
       } catch (e) {
         logger.error(
-          `Could not load preferences: ${e.stack || e.message || e}`
+          `Could not load preferences: ${
+            getErrorStack(e) || getErrorMessage(e) || e
+          }`
         );
       }
 
@@ -75,7 +78,9 @@ export default function (watcher: Watcher) {
         await applyProxySettings(netSession, proxySettings);
       } catch (e) {
         logger.warn(
-          `Could not detect proxy settings: ${e ? e.message : "unknown error"}`
+          `Could not detect proxy settings: ${
+            e ? getErrorMessage(e) : "unknown error"
+          }`
         );
       }
 
@@ -86,7 +91,7 @@ export default function (watcher: Watcher) {
         } catch (e) {
           logger.error(
             `Could not set app as default protocol client: ${
-              e.stack || e.message || e
+              getErrorStack(e) || getErrorMessage(e) || e
             }`
           );
         }
@@ -97,13 +102,11 @@ export default function (watcher: Watcher) {
         } catch (e) {
           logger.error(
             `Could not set app as default protocol client: ${
-              e.stack || e.message || e
+              getErrorStack(e) || getErrorMessage(e) || e
             }`
           );
         }
       }
-    } catch (e) {
-      throw e;
     } finally {
       const t2 = Date.now();
       logger.info(`preboot ran in ${elapsed(t1, t2)}`);
@@ -145,7 +148,7 @@ export default function (watcher: Watcher) {
         // we can no longer load statically from `BrowserWindow`
         // relevantSession.loadExtension(devtoolsPath);
       } catch (e) {
-        logger.error(`While adding react devtools path: ${e.stack}`);
+        logger.error(`While adding react devtools path: ${getErrorStack(e)}`);
       }
     }
   });

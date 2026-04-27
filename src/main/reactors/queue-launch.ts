@@ -1,21 +1,18 @@
 import { actions } from "common/actions";
-
-import asTask from "main/reactors/tasks/as-task";
-import { Watcher } from "common/util/watcher";
-
-import { promisedModal } from "main/reactors/modals";
-
-import { performLaunch } from "main/reactors/launch/perform-launch";
 import {
-  isInternalError,
   asRequestError,
+  isInternalError,
   mergeLogAndError,
 } from "common/butlerd/errors";
+import { Watcher } from "common/util/watcher";
 import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";
 import { t } from "common/format/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import modals from "main/modals";
+import { performLaunch } from "main/reactors/launch/perform-launch";
+import { promisedModal } from "main/reactors/modals";
+import asTask from "main/reactors/tasks/as-task";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {

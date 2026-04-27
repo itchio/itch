@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { Watcher } from "common/util/watcher";
 
 import { app } from "electron";
@@ -70,7 +71,7 @@ async function refreshTray(store: Store) {
         append(caveItems);
       }
     } catch (e) {
-      logger.warn(`Could not fetch caves: ${e.stack}`);
+      logger.warn(`Could not fetch caves: ${getErrorStack(e)}`);
     }
   }
 
@@ -117,7 +118,7 @@ export default function (watcher: Watcher) {
     try {
       await refreshTray(store);
     } catch (e) {
-      logger.error(`Could not refresh tray: ${e.stack}`);
+      logger.error(`Could not refresh tray: ${getErrorStack(e)}`);
     }
   }
 

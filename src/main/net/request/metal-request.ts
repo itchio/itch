@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import querystring from "querystring";
 
 import { NET_PARTITION_NAME, NET_TIMEOUT_MS } from "common/constants/net";
@@ -101,7 +102,7 @@ export async function request(
             try {
               response.body = JSON.parse(text);
             } catch (e) {
-              reject(new RequestParsingFailure(e.message));
+              reject(new RequestParsingFailure(getErrorMessage(e)));
               return;
             }
           } else {
@@ -110,15 +111,15 @@ export async function request(
 
           resolve(response);
         } catch (e) {
-          logger.error(`Request error: ${e.stack}`);
-          reject(new RequestError(e.message));
+          logger.error(`Request error: ${getErrorStack(e)}`);
+          reject(new RequestError(getErrorMessage(e)));
         }
       };
       res.on("end", onEnd);
     });
 
     req.on("error", (e) => {
-      reject(new RequestError(e.message));
+      reject(new RequestError(getErrorMessage(e)));
     });
 
     req.on("abort", () => {
@@ -152,7 +153,7 @@ export async function request(
           reqBody = querystring.stringify(data);
         }
       } catch (e) {
-        reject(new RequestFormattingFailure(e.message));
+        reject(new RequestFormattingFailure(getErrorMessage(e)));
       }
 
       req.setHeader("content-type", "application/x-www-form-urlencoded");

@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
 import { normalizeURL, opensInWindow } from "common/constants/windows";
@@ -104,7 +105,7 @@ async function createRootWindow(store: Store) {
     try {
       app.dock.setIcon(getIconPath());
     } catch (err) {
-      logger.warn(`Could not set dock icon: ${err.stack}`);
+      logger.warn(`Could not set dock icon: ${getErrorStack(err)}`);
     }
   }
 
@@ -544,7 +545,7 @@ function mountDevRendererReloadWatcher() {
     logger.info(`Watching ${rendererBundlePath} for dev renderer reloads`);
   } catch (e) {
     logger.warn(
-      `Could not start dev renderer reload watcher: ${e?.stack || e}`
+      `Could not start dev renderer reload watcher: ${getErrorStack(e)}`
     );
   }
 }

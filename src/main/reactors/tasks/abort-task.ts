@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
@@ -13,7 +14,7 @@ export default function (watcher: Watcher) {
       try {
         await ctx.tryAbort();
       } catch (e) {
-        logger.warn(`Could not cancel task ${id}: ${e.stack}`);
+        logger.warn(`Could not cancel task ${id}: ${getErrorStack(e)}`);
       }
     }
   });

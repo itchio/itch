@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import modals from "main/modals";
@@ -47,10 +48,10 @@ export default function (watcher: Watcher) {
         const { uploads } = await mcall(messages.GameFindUploads, { game });
         widgetParams.allUploads = uploads;
       } catch (e) {
-        console.log(`Could not fetch compatible uploads: ${e.stack}`);
+        console.log(`Could not fetch compatible uploads: ${getErrorStack(e)}`);
       }
     } catch (e) {
-      logger.warn(`could not list uploads: ${e.message}`);
+      logger.warn(`could not list uploads: ${getErrorMessage(e)}`);
     } finally {
       widgetParams.loadingUploads = false;
 

@@ -1,3 +1,4 @@
+import { getErrorCode } from "common/butlerd/errors";
 import { promises as fs, constants, Stats } from "fs";
 import path from "path";
 
@@ -13,7 +14,7 @@ export async function exists(file: string) {
     await fs.access(file, constants.R_OK);
     return true;
   } catch (err) {
-    if (err.code === "ENOENT") {
+    if (getErrorCode(err) === "ENOENT") {
       return false;
     } else {
       throw err;

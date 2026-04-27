@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import groupIdBy from "common/helpers/group-id-by";
@@ -13,7 +14,7 @@ async function updateCommonsNow(store: Store) {
   try {
     await updateCommonsNowThrows(store);
   } catch (e) {
-    logger.warn(`While fetching commons: ${e.stack}`);
+    logger.warn(`While fetching commons: ${getErrorStack(e)}`);
   }
 }
 

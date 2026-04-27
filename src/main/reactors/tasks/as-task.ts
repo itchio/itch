@@ -1,3 +1,4 @@
+import { asError, getErrorStack } from "common/butlerd/errors";
 import {
   Store,
   ProgressInfo,
@@ -61,7 +62,7 @@ async function asTask(opts: AsTaskOpts) {
   try {
     await work(ctx, logger);
   } catch (e) {
-    err = e;
+    err = asError(e);
   }
 
   delete getCurrentTasks()[id];
@@ -78,7 +79,7 @@ async function asTask(opts: AsTaskOpts) {
         await onCancel();
       }
     } else {
-      mainLogger.warn(`Task ${name} threw: ${err.stack}`);
+      mainLogger.warn(`Task ${name} threw: ${getErrorStack(err)}`);
       if (onError) {
         await onError(err, logger.getLog());
       }

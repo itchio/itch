@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { hookLogging, hookProgress } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
@@ -72,7 +73,9 @@ export default function (watcher: Watcher) {
           await mcall(messages.UninstallPerform, { caveId, hard: true });
           store.dispatch(actions.uninstallEnded({}));
         } catch (e) {
-          logger.error(`Well, even hard uninstall didn't work: ${e.stack}`);
+          logger.error(
+            `Well, even hard uninstall didn't work: ${getErrorStack(e)}`
+          );
         }
       },
     });

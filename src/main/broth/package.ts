@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Logger } from "common/logger";
@@ -273,13 +274,13 @@ export class Package implements PackageLike {
       try {
         await sf.wipe(this.getDownloadsDir());
       } catch (e) {
-        logger.warn(`While cleaning downloads dir: ${e.stack}`);
+        logger.warn(`While cleaning downloads dir: ${getErrorStack(e)}`);
       }
 
       try {
         await this.cleanOldVersions(logger);
       } catch (e) {
-        logger.warn(`While cleaning old versions: ${e.stack}`);
+        logger.warn(`While cleaning old versions: ${getErrorStack(e)}`);
       }
     }
   }
@@ -302,9 +303,11 @@ export class Package implements PackageLike {
     try {
       latestVersion = await this.getLatestVersion(logger);
     } catch (e) {
-      logger.warn(`While checking for latest version: ${e.stack}`);
+      logger.warn(`While checking for latest version: ${getErrorStack(e)}`);
       throw new Error(
-        `Could not retrieve latest version of (${this.name}): ${e.message}`
+        `Could not retrieve latest version of (${this.name}): ${getErrorMessage(
+          e
+        )}`
       );
     }
     logger.info(`Latest is (${latestVersion})`);
@@ -391,7 +394,7 @@ export class Package implements PackageLike {
     try {
       await sf.readFile(installedMarkerPath, { encoding: "utf8" });
       return true;
-    } catch (e) {}
+    } catch {}
 
     return false;
   }
@@ -474,7 +477,9 @@ export class Package implements PackageLike {
       }
       return true;
     } catch (e) {
-      logger.warn(`Could not check architecture of ${this.name}: ${e.message}`);
+      logger.warn(
+        `Could not check architecture of ${this.name}: ${getErrorMessage(e)}`
+      );
       return true;
     }
   }
@@ -502,11 +507,11 @@ export class Package implements PackageLike {
         })(),
       ]);
     } catch (e) {
-      logger.warn(`Sanity check failed: ${e.message}`);
+      logger.warn(`Sanity check failed: ${getErrorMessage(e)}`);
       return false;
     } finally {
       ctx.tryAbort().catch((e) => {
-        logger.warn(`While aborting validation context: ${e.stack}`);
+        logger.warn(`While aborting validation context: ${getErrorStack(e)}`);
       });
     }
 

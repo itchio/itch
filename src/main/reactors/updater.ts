@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { hookLogging } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
@@ -130,7 +131,7 @@ export default function (watcher: Watcher) {
         verbose: true,
       });
     } catch (e) {
-      logger.error(`While checking for game update: ${e.stack}`);
+      logger.error(`While checking for game update: ${getErrorStack(e)}`);
       if (!res) {
         res = {
           updates: [],

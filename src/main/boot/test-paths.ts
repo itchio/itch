@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { app } from "electron";
 import { resolve } from "path";
 import { mkdirSync } from "original-fs";
@@ -25,7 +26,9 @@ export function setup() {
       mkdirSync(location, { recursive: true });
       app.setPath(name, location);
     } catch (e) {
-      console.warn(`Could not set location ${name} to ${location}: ${e.stack}`);
+      console.warn(
+        `Could not set location ${name} to ${location}: ${getErrorStack(e)}`
+      );
     }
   }
 }

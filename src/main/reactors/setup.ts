@@ -1,3 +1,4 @@
+import { asError, getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { Client, Instance } from "@itchio/butlerd";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
@@ -49,7 +50,7 @@ async function syncInstallLocations(store: Store) {
               path: oldLoc.path,
             });
           } catch (e) {
-            logger.warn(`Could not add ${oldLoc.path}: ${e.stack}`);
+            logger.warn(`Could not add ${oldLoc.path}: ${getErrorStack(e)}`);
           }
         }
       }
@@ -132,7 +133,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     store.dispatch(actions.setupDone({}));
     logger.info(`Setup done`);
   } catch (e) {
-    logger.error(`setup got error: ${e.stack}`);
+    logger.error(`setup got error: ${getErrorStack(e)}`);
 
     if (retry) {
       // UX trick #239408: sometimes setup is so fast,
@@ -144,8 +145,11 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     store.dispatch(
       actions.setupStatus({
         icon: "error",
-        message: ["login.status.setup_failure", { error: e.message || "" + e }],
-        rawError: e,
+        message: [
+          "login.status.setup_failure",
+          { error: getErrorMessage(e) || "" + e },
+        ],
+        rawError: asError(e),
         log: logger.getLog(),
       })
     );
@@ -183,7 +187,7 @@ async function refreshButlerd(store: Store) {
     .promise()
     .catch((e) => {
       logger.error(`butlerd instance ${id} threw:`);
-      logger.error(e.stack);
+      logger.error(getErrorStack(e));
       let endpointAtCrash = store.getState().butlerd.endpoint;
       setTimeout(() => {
         let endpointOnRestart = store.getState().butlerd.endpoint;

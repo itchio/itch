@@ -33,6 +33,6 @@ export function isItchioURL(s: string): boolean {
         return true;
       }
     }
-  } catch (e) {}
+  } catch {}
   return false;
 }

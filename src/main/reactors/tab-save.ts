@@ -1,3 +1,4 @@
+import { getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
@@ -96,7 +97,7 @@ export async function restoreTabs(store: Store, profile: Profile) {
       // nevermind
     }
   } catch (e) {
-    logger.warn(`Could not retrieve saved tabs: ${e.message}`);
+    logger.warn(`Could not retrieve saved tabs: ${getErrorMessage(e)}`);
     return;
   }
 }

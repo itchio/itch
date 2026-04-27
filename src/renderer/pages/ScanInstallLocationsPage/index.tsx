@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
@@ -160,7 +161,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
                   this.setState({ didImport: true });
                   return { confirm: true };
                 } catch (e) {
-                  logger.warn(`While importing games: ${e.stack}`);
+                  logger.warn(`While importing games: ${getErrorStack(e)}`);
                 }
                 return { confirm: false };
               }

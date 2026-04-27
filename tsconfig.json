@@ -17,7 +17,6 @@
 
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
-    "useUnknownInCatchVariables": false,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import childProcess from "child_process";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
@@ -98,10 +99,10 @@ export default function (watcher: Watcher) {
     const logPath = relaunchLogPath();
     try {
       fs.mkdirSync(dirname(logPath));
-    } catch (e) {}
+    } catch {}
     try {
       fs.unlinkSync(logPath);
-    } catch (e) {}
+    } catch {}
 
     let out = -1;
     let err = -1;
@@ -114,7 +115,9 @@ export default function (watcher: Watcher) {
       err = fs.openSync(logPath, "a");
       stdio[2] = err;
     } catch (e) {
-      logger.warn(`Could not set up stdout/stderr for relaunch: ${e.stack}`);
+      logger.warn(
+        `Could not set up stdout/stderr for relaunch: ${getErrorStack(e)}`
+      );
       if (out != -1) {
         fs.closeSync(out);
       }
@@ -145,7 +148,7 @@ export default function (watcher: Watcher) {
           }
         }
       } catch (e) {
-        logger.warn(`While polling itch-setup log: ${e.stack}`);
+        logger.warn(`While polling itch-setup log: ${getErrorStack(e)}`);
       }
       await delay(250);
     }

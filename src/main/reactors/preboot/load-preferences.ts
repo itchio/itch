@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorCode } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { camelifyObject } from "common/format/camelify";
 import { initialState } from "common/reducers/preferences";
@@ -26,10 +27,10 @@ export function loadPreferencesSync(): PreferencesState {
     prefs = mergePreferences(contents);
     logger.debug(`imported preferences: ${JSON.stringify(prefs)}`);
   } catch (e) {
-    if (e.code === "ENOENT") {
+    if (getErrorCode(e) === "ENOENT") {
       // ignore
     } else {
-      logger.warn(`while importing preferences: ${e.stack}`);
+      logger.warn(`while importing preferences: ${getErrorStack(e)}`);
     }
   }
 

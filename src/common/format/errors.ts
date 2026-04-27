@@ -1,11 +1,11 @@
-import { asRequestError } from "common/butlerd/errors";
+import { asError, asRequestError } from "common/butlerd/errors";
 import { LocalizedString } from "common/types";
 import { RequestError } from "@itchio/butlerd";
 import { Download, InstallPlanInfo } from "common/butlerd/messages";
 import { first } from "underscore";
 
 export function formatError(
-  e: Error,
+  e: unknown,
   apiErrorPrefix?: string
 ): LocalizedString {
   const re = asRequestError(e);
@@ -35,7 +35,7 @@ export function formatError(
       },
     ];
   }
-  return e.message;
+  return asError(e).message;
 }
 
 export function getDownloadError(item: Download): RequestError {

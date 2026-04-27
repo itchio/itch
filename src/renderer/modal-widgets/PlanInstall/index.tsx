@@ -1,3 +1,4 @@
+import { asError, getErrorStack } from "common/butlerd/errors";
 import classNames from "classnames";
 import { v4 as uuid } from "uuid";
 import { actions } from "common/actions";
@@ -454,7 +455,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
         logger.info(`Queued!`);
         dispatch(actions.downloadQueued({}));
       } catch (e) {
-        logger.error(`While queuing download: ${e.stack}`);
+        logger.error(`While queuing download: ${getErrorStack(e)}`);
         const { intl } = this.props;
         dispatch(
           actions.openModal(
@@ -533,7 +534,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       } catch (e) {
         this.setState({
           busy: false,
-          error: e,
+          error: asError(e),
         });
       }
     });
@@ -574,7 +575,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       } catch (e) {
         this.setState({
           infoBusy: false,
-          error: e,
+          error: asError(e),
         });
       }
     });

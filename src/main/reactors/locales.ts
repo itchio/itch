@@ -1,3 +1,8 @@
+import {
+  getErrorStack,
+  getErrorMessage,
+  getErrorCode,
+} from "common/butlerd/errors";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import env from "main/env";
@@ -83,7 +88,9 @@ async function doDownloadLocale(
     await writeFile(remote, payload, { encoding: "utf8" });
   } catch (e) {
     logger.warn(
-      `Could not save locale to ${remote}: ${e.stack || e.message || e}`
+      `Could not save locale to ${remote}: ${
+        getErrorStack(e) || getErrorMessage(e) || e
+      }`
     );
   }
 
@@ -104,10 +111,10 @@ async function loadLocale(store: Store, lang: string) {
     const resources = processLocaleResources(JSON.parse(payload));
     commitLocale(store, lang, resources);
   } catch (e) {
-    if (e.code === "ENOENT") {
+    if (getErrorCode(e) === "ENOENT") {
       logger.warn(`No such locale ${local}`);
     } else {
-      logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
+      logger.warn(`Failed to load locale from ${local}: ${getErrorStack(e)}`);
     }
   }
 
@@ -127,7 +134,7 @@ async function loadLocale(store: Store, lang: string) {
         commitLocale(store, lang, resources);
       }
     } catch (e) {
-      logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
+      logger.warn(`Failed to load locale from ${local}: ${getErrorStack(e)}`);
     }
   }
 
@@ -170,7 +177,9 @@ export default function (watcher: Watcher) {
       try {
         resources = await doDownloadLocale(lang, resources, { implicit });
       } catch (e) {
-        logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
+        logger.warn(
+          `Failed downloading locale for ${lang}: ${getErrorMessage(e)}`
+        );
       } finally {
         commitLocale(store, lang, resources);
       }

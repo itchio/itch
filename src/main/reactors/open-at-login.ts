@@ -1,3 +1,4 @@
+import { getErrorMessage, getErrorCode } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { PreferencesState, Store } from "common/types";
 import { Watcher } from "common/util/watcher";
@@ -58,10 +59,13 @@ async function updateOpenAtLoginState(
         });
       } catch (err) {
         logger.error(
-          `Error while symlinking ${autostartFilePath}: ${err.message}`
+          `Error while symlinking ${autostartFilePath}: ${getErrorMessage(err)}`
         );
         store.dispatch(
-          actions.openAtLoginError({ cause: "error", message: err.message })
+          actions.openAtLoginError({
+            cause: "error",
+            message: getErrorMessage(err),
+          })
         );
         return;
       }
@@ -69,11 +73,13 @@ async function updateOpenAtLoginState(
       try {
         await unlink(autostartFilePath);
       } catch (err) {
-        if (err.code === "ENOENT") {
+        if (getErrorCode(err) === "ENOENT") {
           // not even there, good!
         } else {
           logger.error(
-            `Error while unlinking ${autostartFilePath}: ${err.message}`
+            `Error while unlinking ${autostartFilePath}: ${getErrorMessage(
+              err
+            )}`
           );
           return;
         }

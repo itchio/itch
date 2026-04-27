@@ -1,3 +1,4 @@
+import { asError, getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { hookLogging } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
@@ -87,15 +88,17 @@ async function exchangeOAuthCode(store: Store, code: string): Promise<boolean> {
         logger.info(`Setting cookies...`);
         await setCookie(profile, cookie);
       } catch (e) {
-        logger.error(`Could not set cookie: ${e.stack}`);
+        logger.error(`Could not set cookie: ${getErrorStack(e)}`);
       }
     }
 
     await loginSucceeded(store, profile);
     return true;
   } catch (e) {
-    logger.error(`OAuth code exchange failed: ${e.stack}`);
-    store.dispatch(actions.loginFailed({ username: "OAuth", error: e }));
+    logger.error(`OAuth code exchange failed: ${getErrorStack(e)}`);
+    store.dispatch(
+      actions.loginFailed({ username: "OAuth", error: asError(e) })
+    );
     return false;
   }
 }
@@ -247,14 +250,14 @@ export default function (watcher: Watcher) {
           logger.info(`Setting cookies...`);
           await setCookie(profile, cookie);
         } catch (e) {
-          logger.error(`Could not set cookie: ${e.stack}`);
+          logger.error(`Could not set cookie: ${getErrorStack(e)}`);
         }
       }
 
       await loginSucceeded(store, profile);
     } catch (e) {
-      logger.error(`Password login failed: ${e.stack}`);
-      store.dispatch(actions.loginFailed({ username, error: e }));
+      logger.error(`Password login failed: ${getErrorStack(e)}`);
+      store.dispatch(actions.loginFailed({ username, error: asError(e) }));
     }
   });
 
@@ -285,7 +288,7 @@ export default function (watcher: Watcher) {
       store.dispatch(
         actions.loginFailed({
           username: originalProfile.user.username,
-          error: e,
+          error: asError(e),
         })
       );
     }
@@ -337,14 +340,16 @@ async function loginSucceeded(store: Store, profile: Profile) {
     logger.info(`Registering itch protocol for session ${partition}`);
     registerItchProtocol(store, customSession);
   } catch (e) {
-    logger.warn(`Could not register itch protocol for session: ${e.stack}`);
+    logger.warn(
+      `Could not register itch protocol for session: ${getErrorStack(e)}`
+    );
   }
 
   try {
     logger.info(`Restoring tabs...`);
     await restoreTabs(store, profile);
   } catch (e) {
-    logger.warn(`Could not restore tabs: ${e.stack}`);
+    logger.warn(`Could not restore tabs: ${getErrorStack(e)}`);
   }
 
   logger.info(`Dispatching login succeeded`);
@@ -368,6 +373,6 @@ async function loginSucceeded(store: Store, profile: Profile) {
     logger.info(`Fetched owned keys in ${elapsed(t1, t2)}`);
     store.dispatch(actions.ownedKeysFetched({}));
   } catch (e) {
-    logger.warn(`In initial owned keys fetch: ${e.stack}`);
+    logger.warn(`In initial owned keys fetch: ${getErrorStack(e)}`);
   }
 }

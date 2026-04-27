@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { hookLogging } from "common/butlerd/utils";
 import * as messages from "common/butlerd/messages";
@@ -115,7 +116,7 @@ async function driverPoll(store: Store) {
           if (isCancelled(e)) {
             // ignore
           } else {
-            logger.error(`${e.stack}`);
+            logger.error(`${getErrorStack(e)}`);
           }
         } finally {
           if (state.isConvoCurrent(driveConvo)) {

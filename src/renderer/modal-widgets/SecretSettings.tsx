@@ -1,3 +1,4 @@
+import { asError } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import {
@@ -192,7 +193,7 @@ class SecretSettings extends React.PureComponent<Props> {
       try {
         await rcall(FakeRequest, {});
       } catch (ee) {
-        e = ee;
+        e = asError(ee);
       }
 
       const { dispatch } = this.props;
@@ -253,7 +254,7 @@ class SecretSettings extends React.PureComponent<Props> {
           "Simulated launch failure: process crashed before first frame"
         );
       } catch (e) {
-        err = e;
+        err = asError(e);
       }
 
       const { dispatch } = this.props;

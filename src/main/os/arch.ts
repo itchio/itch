@@ -1,3 +1,4 @@
+import { getErrorMessage } from "common/butlerd/errors";
 import { mainLogger } from "main/logger";
 import { execSync } from "child_process";
 
@@ -52,7 +53,9 @@ function determineLinux64(): boolean {
     const arch = String(execSync("uname -m")).trim();
     return arch === "x86_64";
   } catch (e) {
-    logger.warn(`Could not determine if linux64 via uname: ${e.message}`);
+    logger.warn(
+      `Could not determine if linux64 via uname: ${getErrorMessage(e)}`
+    );
   }
 
   try {
@@ -60,7 +63,9 @@ function determineLinux64(): boolean {
     const arch = String(execSync("arch")).trim();
     return arch === "x86_64";
   } catch (e) {
-    logger.warn(`Could not determine if linux64 via arch: ${e.message}`);
+    logger.warn(
+      `Could not determine if linux64 via arch: ${getErrorMessage(e)}`
+    );
   }
 
   // if we're lacking uname AND arch, honestly, our chances are slim.

@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Store } from "common/types";
@@ -32,7 +33,7 @@ export function registerItchProtocol(store: Store, ses: Session) {
           handled = handleItchioUrl(store, url);
         }
       } catch (e) {
-        logger.warn(`In beforeRequest handler: ${e.stack}`);
+        logger.warn(`In beforeRequest handler: ${getErrorStack(e)}`);
       }
       callback({ cancel: handled });
     });
@@ -68,7 +69,7 @@ export function registerItchProtocol(store: Store, ses: Session) {
             }
           }
         } catch (e) {
-          logger.warn(`While sniffing headers: ${e.stack}`);
+          logger.warn(`While sniffing headers: ${getErrorStack(e)}`);
         }
       });
     });

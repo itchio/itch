@@ -126,7 +126,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           });
           dispatch(actions.queueLaunch({ cave }));
           return;
-        } catch (e) {}
+        } catch {}
       }
 
       dispatch(

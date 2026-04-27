@@ -7,10 +7,10 @@ import {
 import { isEqual } from "underscore";
 import { Store, isCancelled, isAborted } from "common/types";
 import {
-  asRequestError,
   getRpcErrorData,
   isInternalError,
   getErrorStack,
+  getErrorMessage,
 } from "common/butlerd/errors";
 import { Logger } from "common/logger";
 import { delay } from "main/reactors/delay";
@@ -99,9 +99,9 @@ export async function call<Params, Res>(
           logger.error(`butler version: ${ed.butlerVersion}`);
           logger.error(`Golang stack:\n${ed.stack}`);
         }
-        logger.error(`JavaScript stack: ${e.stack}`);
+        logger.error(`JavaScript stack: ${getErrorStack(e)}`);
       } else {
-        logger.error(`${e.message}`);
+        logger.error(`${getErrorMessage(e)}`);
       }
     }
     throw e;

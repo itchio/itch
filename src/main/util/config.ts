@@ -1,3 +1,4 @@
+import { getErrorCode } from "common/butlerd/errors";
 import ospath from "path";
 import fs from "fs";
 import { app } from "electron";
@@ -10,7 +11,7 @@ try {
   data = JSON.parse(fs.readFileSync(configFile, { encoding: "utf8" }));
 } catch (e) {
   // We don't want that to be fatal
-  if (e.code === "ENOENT") {
+  if (getErrorCode(e) === "ENOENT") {
     // that's ok
   } else {
     console.warn(`Could not read config: ${e}`);

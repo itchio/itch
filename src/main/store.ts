@@ -1,3 +1,4 @@
+import { getErrorStack } from "common/butlerd/errors";
 if (process.type !== "browser") {
   throw new Error("main store required from renderer");
 }
@@ -32,7 +33,9 @@ const crashGetter = (store: MiddlewareAPI<any>) => (
     }
     return next(action);
   } catch (e) {
-    console.log(`Uncaught redux: for action ${action.type}: ${e.stack}`);
+    console.log(
+      `Uncaught redux: for action ${action.type}: ${getErrorStack(e)}`
+    );
   }
 };
 

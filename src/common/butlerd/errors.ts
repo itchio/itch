@@ -2,15 +2,22 @@ import { RequestError } from "@itchio/butlerd";
 import { levels, LogEntry } from "common/logger";
 import { formatDate, DATE_FORMAT } from "common/format/datetime";
 
-export function asRequestError(e: Error): RequestError {
+export function asError(e: unknown): Error {
+  if (e instanceof Error) {
+    return e;
+  }
+  return new Error(String(e));
+}
+
+export function asRequestError(e: unknown): RequestError {
   const re = e as RequestError;
   if (re.rpcError) {
-    return e as RequestError;
+    return re;
   }
   return null;
 }
 
-export function getRpcErrorData(e: Error): RequestError["rpcError"]["data"] {
+export function getRpcErrorData(e: unknown): RequestError["rpcError"]["data"] {
   const re = asRequestError(e);
   if (re && re.rpcError && re.rpcError.data) {
     return re.rpcError.data;
@@ -18,7 +25,7 @@ export function getRpcErrorData(e: Error): RequestError["rpcError"]["data"] {
   return null;
 }
 
-export function isInternalError(e: any): boolean {
+export function isInternalError(e: unknown): boolean {
   const re = asRequestError(e);
 
   if (!re) {
@@ -31,12 +38,23 @@ export function isInternalError(e: any): boolean {
   return false;
 }
 
-export function getErrorStack(e: any): string {
+export function getErrorMessage(e: unknown): string {
+  return asError(e).message;
+}
+
+export function getErrorCode(e: unknown): unknown {
+  if (typeof e === "object" && e !== null && "code" in e) {
+    return e.code;
+  }
+  return undefined;
+}
+
+export function getErrorStack(e: unknown): string {
   if (!e) {
     return "Unknown error";
   }
 
-  let errorStack = e.stack;
+  let errorStack = asError(e).stack;
 
   const re = asRequestError(e);
   if (re) {

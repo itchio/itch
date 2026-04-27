@@ -1,3 +1,4 @@
+import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { Logger, multiSink, streamSink, LogSink } from "common/logger";
 import { mainLogPath } from "main/util/paths";
 import stream from "logrotate-stream";
@@ -14,7 +15,11 @@ export function getLogStream(): NodeJS.WritableStream {
     if ((err as any).code === "EEXIST") {
       // good
     } else {
-      console.log(`Could not create file sink: ${err.stack || err.message}`);
+      console.log(
+        `Could not create file sink: ${
+          getErrorStack(err) || getErrorMessage(err)
+        }`
+      );
     }
   }
 

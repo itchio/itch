@@ -78,8 +78,6 @@ export class MinimalContext {
         throw new Cancelled();
       }
       return result as T;
-    } catch (e) {
-      throw e;
     } finally {
       this.stoppers = this.stoppers.filter((c) => c !== opts.stop);
     }

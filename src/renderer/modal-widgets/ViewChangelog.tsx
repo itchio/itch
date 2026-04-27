@@ -1,3 +1,4 @@
+import { getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { ModalWidgetProps } from "common/modals";
@@ -286,10 +287,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
         return;
       }
 
-      let errorMessage = "Failed to fetch releases";
-      if (e instanceof Error && e.message) {
-        errorMessage = e.message;
-      }
+      let errorMessage = getErrorMessage(e) || "Failed to fetch releases";
 
       this.setState((prevState) => ({
         repoStates: {

@@ -1,10 +1,6 @@
 import modals from "main/modals";
 import { ModalButtonSpec, LocalizedString, Store, Action } from "common/types";
-import {
-  asRequestError,
-  mergeLogAndError,
-  isInternalError,
-} from "common/butlerd/errors";
+import { mergeLogAndError, isInternalError } from "common/butlerd/errors";
 import * as messages from "common/butlerd/messages";
 import { t } from "common/format/t";
 import { formatError } from "common/format/errors";

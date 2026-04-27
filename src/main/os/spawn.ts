@@ -1,4 +1,5 @@
 import childProcess from "child_process";
+import { asError } from "common/butlerd/errors";
 import { formatExitCode } from "common/format/exit-code";
 import { Logger } from "common/logger";
 import { mainLogger } from "main/logger";
@@ -98,7 +99,7 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
       try {
         onToken(tok);
       } catch (err) {
-        cbErr = err;
+        cbErr = asError(err);
       }
     });
   }
@@ -108,7 +109,7 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
       try {
         onErrToken(tok);
       } catch (err) {
-        cbErr = err;
+        cbErr = asError(err);
       }
     });
   }
