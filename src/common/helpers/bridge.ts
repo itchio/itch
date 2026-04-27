@@ -1,11 +1,20 @@
 import { Logger } from "common/logger";
 import * as utils from "common/butlerd/utils";
+import type { Conversation } from "@itchio/butlerd";
 import { createRequest, createNotification } from "@itchio/butlerd/lib/support";
 
 export type Message =
   | { type: "HOOK_LOGGING"; logger: Logger }
-  | { type: "ON_NOTIFICATION"; messageName: string; callback: (any) => void }
-  | { type: "ON_REQUEST"; messageName: string; callback: (any) => void };
+  | {
+      type: "ON_NOTIFICATION";
+      messageName: string;
+      callback: (arg: any) => void;
+    }
+  | {
+      type: "ON_REQUEST";
+      messageName: string;
+      callback: (arg: any) => Promise<any>;
+    };
 
 export const hookLogging = (logger: Logger): Message => {
   return { type: "HOOK_LOGGING", logger: logger };
@@ -13,7 +22,7 @@ export const hookLogging = (logger: Logger): Message => {
 
 export const onNotification = (
   messageName: string,
-  callback: (any) => void
+  callback: (arg: any) => void
 ): Message => {
   return {
     type: "ON_NOTIFICATION",
@@ -24,12 +33,12 @@ export const onNotification = (
 
 export const onRequest = (
   messageName: string,
-  callback: (any) => void
+  callback: (arg: any) => Promise<any>
 ): Message => {
   return { type: "ON_REQUEST", messageName: messageName, callback: callback };
 };
 
-type SetupFunc = (Conversation) => void;
+type SetupFunc = (convo: Conversation) => void;
 
 export const convertMessage = (message: Message): SetupFunc => {
   if (message.type === "HOOK_LOGGING") {

@@ -235,7 +235,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
           loading: true,
           error: null,
         },
-      },
+      } as Record<RepoKey, RepoState>,
     }));
 
     const repoConfig = repoConfigs[repoKey];
@@ -279,7 +279,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
             loaded: true,
             error: null,
           },
-        },
+        } as Record<RepoKey, RepoState>,
       }));
     } catch (e) {
       if (this.unmounted || this.fetchGeneration[repoKey] !== generation) {

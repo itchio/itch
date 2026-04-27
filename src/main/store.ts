@@ -68,7 +68,7 @@ let watcher = getWatcher(mainLogger);
 const initialState = {} as any;
 const enhancers = [syncMain, applyMiddleware(...middleware)];
 
-const hack = { store: null };
+const hack: { store: Store | null } = { store: null };
 hack.store = createStore(
   (state: RootState, action: AnyAction) => {
     const res = reducer(state, action);

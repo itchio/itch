@@ -5,7 +5,8 @@ import {
   OpenDialogOptions,
 } from "electron";
 import { call } from "common/butlerd/net";
-import { createRequest, Conversation } from "@itchio/butlerd";
+import { createRequest } from "@itchio/butlerd";
+import type { Conversation } from "@itchio/butlerd";
 import { parse, format } from "url";
 import { cpu, graphics, osInfo } from "systeminformation";
 import qs from "querystring";
@@ -74,7 +75,7 @@ export const mainWorldSupplement = {
       // we need to convert the messages into their function
       // equivalent on this side of the bridge. This allows us
       // keep the Conversation object in the main process.
-      let setup: ((Conversation) => void) | null = null;
+      let setup: ((convo: Conversation) => void) | null = null;
       if (ms) {
         setup = (convo: Conversation) => {
           for (const m of ms) {

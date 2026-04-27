@@ -1,8 +1,8 @@
 import { IntlMessageFormat } from "intl-messageformat";
 
-import { I18nState, LocalizedString } from "common/types";
+import { I18nResources, I18nState, LocalizedString } from "common/types";
 
-const emptyObj = {};
+const emptyObj: I18nResources = {};
 
 /**
  * Returns the input if it's a string, or a localized message if

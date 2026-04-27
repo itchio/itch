@@ -113,7 +113,7 @@ export default function (watcher: Watcher) {
     rememberNotificationAction(onClick);
   });
 
-  async function scheduleRefreshTray(store, action: any) {
+  async function scheduleRefreshTray(store: Store, action: any) {
     try {
       await refreshTray(store);
     } catch (e) {

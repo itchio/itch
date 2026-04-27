@@ -206,7 +206,7 @@ export class Package implements PackageLike {
     await this.upgrade({ logger: opts.logger });
   }
 
-  async ensureLocal(logger) {
+  async ensureLocal(logger: Logger) {
     logger.info(`Looking for local binary...`);
 
     const executablePath = await which(this.name);

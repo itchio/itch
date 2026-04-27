@@ -203,7 +203,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       value: pickedInstallLocationId,
     });
 
-    let uploadOptions = [];
+    let uploadOptions: UploadOption[] = [];
     if (uploads) {
       uploadOptions = uploads.map((u) => {
         let val: UploadOption = {

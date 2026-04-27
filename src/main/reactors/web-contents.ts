@@ -336,7 +336,7 @@ async function hookWebContents(
     setLoading(false);
   });
 
-  wc.on("page-title-updated" as any, (ev, title: string) => {
+  wc.on("page-title-updated", (ev, title: string) => {
     pushPageUpdate({
       label: title,
     });

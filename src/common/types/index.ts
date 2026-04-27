@@ -32,6 +32,10 @@ export interface Action<T extends Object> {
 interface Watcher {
   addSub(sub: Watcher): void;
   removeSub(sub: Watcher): void;
+  on<T>(
+    actionCreator: (payload: T) => Action<T>,
+    reactor: (store: Store, action: Action<T>) => Promise<void> | void
+  ): void;
 }
 
 export interface ChromeStore extends Store {

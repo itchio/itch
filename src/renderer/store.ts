@@ -19,7 +19,7 @@ const watcher = new Watcher(rendererLogger);
 
 const filter = true;
 const middleware: Middleware[] = [];
-const hack = { store: null };
+const hack: { store: ChromeStore | null } = { store: null };
 
 let reduxLoggingEnabled = () =>
   hack.store.getState().status.reduxLoggingEnabled;
@@ -46,8 +46,8 @@ hack.store = createStore(
   compose(...enhancers)
 ) as ChromeStore;
 
-hack.store.watcher = watcher;
+hack.store!.watcher = watcher;
 
-export default hack.store;
+export default hack.store!;
 
 (window as any).ReduxStore = hack.store;

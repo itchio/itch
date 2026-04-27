@@ -104,7 +104,7 @@ class Layout extends React.PureComponent<Props> {
     return <ReactHint events onRenderContent={this.renderReactHintContent} />;
   }
 
-  renderReactHintContent = (target, content) => {
+  renderReactHintContent = (target: HTMLElement, content: string) => {
     const { intl } = this.props;
     let { rh } = target.dataset;
     if (!rh) {

@@ -138,7 +138,7 @@ class StandardGameCover extends React.PureComponent<Props> {
     );
   }
 
-  onContextMenu = (ev) => {
+  onContextMenu = (ev: React.MouseEvent) => {
     const { game, dispatch } = this.props;
     if (!game) {
       return;

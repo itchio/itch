@@ -39,7 +39,7 @@ export default function (state: TabInstances, action: Action<any>) {
         snapshot,
       } = action.payload as typeof actions.tabsRestored["payload"];
 
-      let newState = {};
+      let newState: TabInstances = {};
 
       each(snapshot.items, (tabSave: TabDataSave) => {
         if (typeof tabSave !== "object") {

@@ -550,8 +550,8 @@ class Modals extends React.PureComponent<Props, State> {
   }
 
   renderNormalButtons(buttons: ModalButtonSpec[]) {
-    let leftButtons = [];
-    let rightButtons = [];
+    let leftButtons: JSX.Element[] = [];
+    let rightButtons: JSX.Element[] = [];
 
     let index = 0;
     for (const buttonSpec of buttons) {

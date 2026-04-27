@@ -1,4 +1,4 @@
-function v4(rng) {
+function v4(rng: () => Uint8Array) {
   const rnds = rng();
 
   // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`

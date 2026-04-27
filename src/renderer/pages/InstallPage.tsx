@@ -23,7 +23,7 @@ class InstallPage extends React.PureComponent<Props> {
     });
   }
 
-  render() {
+  render(): React.ReactNode {
     return null;
   }
 }

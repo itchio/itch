@@ -323,7 +323,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
     );
   }
 
-  onTabSelected = (tabIndex) => this.setState({ tabIndex });
+  onTabSelected = (tabIndex: number) => this.setState({ tabIndex });
   onGoBack = () => this.setState((state) => ({ tabIndex: state.tabIndex - 1 }));
   onGoForward = () =>
     this.setState((state) => ({ tabIndex: state.tabIndex + 1 }));
