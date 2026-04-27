@@ -62,7 +62,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
     });
   }
 
-  render() {
+  override render() {
     const params = this.props.modal.widgetParams;
     const { url } = params;
     const { loaded } = this.state;

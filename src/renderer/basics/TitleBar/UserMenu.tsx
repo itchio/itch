@@ -46,7 +46,7 @@ const UserMenuButton = styled.button`
 `;
 
 class UserMenu extends React.PureComponent<Props> {
-  render() {
+  override render() {
     if (!this.props.me) {
       return null; // cf. #1405
     }

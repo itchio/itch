@@ -37,7 +37,7 @@ export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
       this.selector = createStructuredSelector({});
     }
 
-    render() {
+    override render() {
       const { props } = this;
       return (
         <Series
@@ -63,7 +63,7 @@ export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
 class GenericCollectionRecordComponent<Item> extends React.PureComponent<
   RecordComponentProps<Item, Collection, GenericExtraProps<Item>>
 > {
-  render() {
+  override render() {
     const { item, record } = this.props;
     const coll = record;
     return <CollectionPreview coll={coll} />;

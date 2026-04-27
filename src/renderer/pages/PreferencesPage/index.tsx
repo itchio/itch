@@ -118,13 +118,13 @@ const PreferencesContentDiv = styled.div`
 `;
 
 class PreferencesPage extends React.PureComponent<Props> {
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, {
       label: ["sidebar.preferences"],
     });
   }
 
-  render() {
+  override render() {
     return (
       <PreferencesDiv>
         <PreferencesContentDiv>

@@ -56,7 +56,7 @@ const Spacer = styled.div`
 `;
 
 class BlockingOperation extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { dispatch, blockingOperation, windows } = this.props;
 
     const { message, icon, progressInfo } = blockingOperation;

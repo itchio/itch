@@ -1,5 +1,4 @@
 import { fileSize } from "common/format/filesize";
-import React from "react";
 import FormattedDuration from "renderer/basics/FormattedDuration";
 import { T } from "renderer/t";
 

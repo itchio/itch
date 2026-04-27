@@ -26,7 +26,7 @@ const ScanningIndicatorDiv = styled.div`
 `;
 
 class ScanningIndicator extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { progress } = this.props;
     const active = progress !== null;
 

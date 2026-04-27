@@ -95,7 +95,7 @@ class Meat extends React.PureComponent<Props, State> {
     return null;
   }
 
-  componentDidCatch(error: any, info: any) {
+  override componentDidCatch(error: any, info: any) {
     this.setState({
       hasError: true,
       loading: false,
@@ -104,7 +104,7 @@ class Meat extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return this.renderError();
     }

@@ -96,7 +96,7 @@ function monthFor(b: Build): number {
 }
 
 class SwitchVersionCave extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { builds } = this.props.modal.widgetParams;
 
     const buildElements: JSX.Element[] = [];

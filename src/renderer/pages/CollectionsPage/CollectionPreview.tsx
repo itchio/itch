@@ -26,7 +26,7 @@ const CollectionInfoSpacer = styled.div`
 `;
 
 class CollectionPreview extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { profile, coll } = this.props;
     return (
       <CollectionGameStripe

@@ -12,7 +12,7 @@ const ContentContainer = styled.div`
 `;
 
 class HubContent extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { profile } = this.props;
     if (!profile) {
       return null;

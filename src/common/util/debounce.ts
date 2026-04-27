@@ -3,7 +3,7 @@ class CancelError extends Error {
     super("");
   }
 
-  toString() {
+  override toString() {
     return `CancelError: ${this.message}`;
   }
 }

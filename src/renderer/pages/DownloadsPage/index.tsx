@@ -68,13 +68,13 @@ const DownloadsContentDiv = styled.div`
 `;
 
 class DownloadsPage extends React.PureComponent<Props> {
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, {
       label: ["sidebar.downloads"],
     });
   }
 
-  render() {
+  override render() {
     return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
   }
 

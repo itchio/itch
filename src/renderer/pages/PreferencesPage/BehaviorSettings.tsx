@@ -42,7 +42,7 @@ const SandboxAllowEnvInput = styled.input`
 `;
 
 class BehaviorSettings extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const {
       linux,
       isolateApps,

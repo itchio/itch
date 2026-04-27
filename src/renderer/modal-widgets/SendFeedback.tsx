@@ -134,7 +134,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     doAsync(async () => {
       try {
         let output = {
@@ -199,7 +199,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { stage } = this.state;
 
     if (stage === ReportStage.Filling) {

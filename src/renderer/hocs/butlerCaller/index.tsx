@@ -71,7 +71,7 @@ const butlerCaller = <Params, Result>(
       this.invalidators = invalidators.get(method);
     }
 
-    componentDidMount() {
+    override componentDidMount() {
       this.queueFetch();
       if (this.invalidators) {
         this.watcher = new Watcher(new Logger(devNull));
@@ -84,7 +84,7 @@ const butlerCaller = <Params, Result>(
       }
     }
 
-    componentWillUnmount() {
+    override componentWillUnmount() {
       if (this.watcher) {
         this.props.__store.watcher.removeSub(this.watcher);
       }
@@ -141,7 +141,7 @@ const butlerCaller = <Params, Result>(
       this.setState({ error: e, loading: false });
     };
 
-    render() {
+    override render() {
       const { error, loading, result } = this.state;
       const { render, errorsHandled, loadingHandled } = this.props;
 
@@ -164,7 +164,7 @@ const butlerCaller = <Params, Result>(
       return render({ error, loading, result });
     }
 
-    componentDidUpdate(prevProps: GenericProps<Params, Result>) {
+    override componentDidUpdate(prevProps: GenericProps<Params, Result>) {
       if (!equal(prevProps.params, this.props.params)) {
         this.queueFetch();
         return;
@@ -178,7 +178,7 @@ const butlerCaller = <Params, Result>(
   }
 
   class Wrapper extends React.PureComponent<Props, State> {
-    render() {
+    override render() {
       return (
         <ReactReduxContext.Consumer>
           {({ store }) => <Caller {...this.props} __store={store as any} />}

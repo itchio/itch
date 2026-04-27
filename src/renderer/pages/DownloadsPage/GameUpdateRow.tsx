@@ -58,7 +58,7 @@ const VersionInfo = styled.div`
 `;
 
 class GameUpdateRow extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { update } = this.props;
     const { game } = update;
     const { upload, build } = update.choices[0];

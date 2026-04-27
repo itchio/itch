@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import React from "react";
 import styled, { keyframes } from "renderer/styles";
 
 const floaterKeyframes = keyframes`

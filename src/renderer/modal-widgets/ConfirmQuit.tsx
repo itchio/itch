@@ -13,7 +13,7 @@ import { map } from "underscore";
 const FetchGame = butlerCaller(messages.FetchGame);
 
 class RunningGame extends React.PureComponent<{ gameId: number }> {
-  render() {
+  override render() {
     const { gameId } = this.props;
     return <FetchGame params={{ gameId }} render={this.renderGame} />;
   }
@@ -37,7 +37,7 @@ class RunningGame extends React.PureComponent<{ gameId: number }> {
 }
 
 export default class ConfirmQuit extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { gameIds } = this.props.modal.widgetParams;
 
     return (

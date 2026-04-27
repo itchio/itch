@@ -28,7 +28,7 @@ class GateScene extends React.PureComponent<Props> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 
-  render() {
+  override render() {
     return (
       <GateSceneDiv>
         <TitleBar tab="login" />

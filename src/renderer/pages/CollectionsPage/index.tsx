@@ -30,7 +30,7 @@ const CollectionsDiv = styled.div`
 `;
 
 class CollectionsPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { profile, search, sortBy, sortDir } = this.props;
     return (
       <CollectionsDiv>

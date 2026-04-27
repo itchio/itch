@@ -26,7 +26,7 @@ const LanguageSelect = styled(SimpleSelect)`
 `;
 
 class LanguageSettings extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { dispatch, locales, lang, sniffedLang } = this.props;
 
     let autoLang: BaseOptionType = {

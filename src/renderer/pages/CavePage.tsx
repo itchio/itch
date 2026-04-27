@@ -13,7 +13,7 @@ import { actions } from "common/actions";
 const FetchCave = butlerCaller(messages.FetchCave);
 
 class CavePage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { caveId } = this.props;
 
     return (

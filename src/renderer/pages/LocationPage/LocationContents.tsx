@@ -21,7 +21,7 @@ import LocationItemExtras from "renderer/pages/LocationPage/LocationItemExtras";
 const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class LocationContents extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { sortBy, sortDir, location } = this.props;
     if (!location) {
       return "Location not found";

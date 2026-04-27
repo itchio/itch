@@ -39,7 +39,7 @@ class SelectRow extends React.PureComponent<Props> {
     }
   };
 
-  render() {
+  override render() {
     const { options, value, intl } = this.props;
 
     const optionTags = map(options, (option, index) => (

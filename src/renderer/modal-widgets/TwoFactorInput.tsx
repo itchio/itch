@@ -43,7 +43,7 @@ class TwoFactorInput extends React.PureComponent<Props, State> {
     };
   }
 
-  render() {
+  override render() {
     const params = this.props.modal.widgetParams;
     const { username } = params;
     const { valid } = this.state;

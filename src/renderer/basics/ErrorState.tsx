@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "renderer/styles";
 
 const ButlerErrorDiv = styled.div`

@@ -76,7 +76,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { loading, log, error } = this.state;
 
     return (
@@ -129,12 +129,12 @@ class AppLogPage extends React.PureComponent<Props, State> {
     );
   };
 
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.applog"] });
     this.queueFetch();
   }
 
-  componentDidUpdate(prevProps: AppLogPage["props"]) {
+  override componentDidUpdate(prevProps: AppLogPage["props"]) {
     if (
       prevProps.sequence != this.props.sequence ||
       prevProps.file !== this.props.file

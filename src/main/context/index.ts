@@ -135,7 +135,7 @@ export class Context extends MinimalContext {
     super();
   }
 
-  clone(): Context {
+  override clone(): Context {
     return new Context(this.store);
   }
 }

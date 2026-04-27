@@ -300,18 +300,18 @@ class Modals extends React.PureComponent<Props, State> {
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     this.syncDialogState();
     this.dialogRef.current?.addEventListener("cancel", this.onDialogCancel);
     this.dialogRef.current?.addEventListener("close", this.onDialogClose);
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     this.dialogRef.current?.removeEventListener("cancel", this.onDialogCancel);
     this.dialogRef.current?.removeEventListener("close", this.onDialogClose);
   }
 
-  componentDidUpdate() {
+  override componentDidUpdate() {
     this.syncDialogState();
   }
 
@@ -368,7 +368,7 @@ class Modals extends React.PureComponent<Props, State> {
     }
   };
 
-  render() {
+  override render() {
     const { modal } = this.props;
 
     return (

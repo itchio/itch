@@ -32,7 +32,7 @@ const Spacer = styled.div`
 `;
 
 class DisabledBrowser extends React.PureComponent<Props> {
-  render() {
+  override render() {
     return (
       <DisabledBrowserContainer>
         <DisabledBrowserDiv>

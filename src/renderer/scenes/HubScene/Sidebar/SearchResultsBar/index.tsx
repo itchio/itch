@@ -54,7 +54,7 @@ const NoResults = styled.p`
 
 @watching
 class SearchResultsBar extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { open, games } = this.props;
     if (!open) {
       return null;

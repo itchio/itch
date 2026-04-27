@@ -89,7 +89,7 @@ const ManageGameDiv = styled(ModalWidgetDiv)`
 `;
 
 class ManageGame extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const params = this.props.modal.widgetParams;
     const { game, caves, allUploads, loadingUploads } = params;
 

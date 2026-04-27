@@ -5,7 +5,7 @@
     "module": "esnext",
     "importHelpers": true,
     "esModuleInterop": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
 
     "paths": {
@@ -18,7 +18,8 @@
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
     "noImplicitReturns": true,
-    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "experimentalDecorators": true,
 
     "sourceMap": true

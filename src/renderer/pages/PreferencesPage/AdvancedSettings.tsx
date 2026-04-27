@@ -20,7 +20,7 @@ const LinkButton = styled.button`
 `;
 
 class AdvancedSettings extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { system, dispatch } = this.props;
 
     return (

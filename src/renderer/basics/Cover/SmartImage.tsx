@@ -2,22 +2,22 @@ import React from "react";
 import styled from "renderer/styles";
 
 class Image extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { onLoadStart, onLoadEnd, ...restProps } = this.props;
     return <img {...restProps} onLoad={onLoadEnd} />;
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     this.props.onLoadStart();
   }
 
-  componentDidUpdate(props: Props, state: any, snapshot: Props) {
+  override componentDidUpdate(props: Props, state: any, snapshot: Props) {
     if (snapshot && snapshot.src !== props.src) {
       this.props.onLoadStart();
     }
   }
 
-  getSnapshotBeforeUpdate(prevProps: Props): Props {
+  override getSnapshotBeforeUpdate(prevProps: Props): Props {
     if (prevProps.src !== this.props.src) {
       return prevProps;
     }

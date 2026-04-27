@@ -7,7 +7,7 @@ export class WritableMemoryStream extends Writable {
     super(options);
   }
 
-  _write(
+  override _write(
     chunk: Buffer | string | Uint8Array,
     encoding: string,
     callback: () => void
@@ -27,7 +27,7 @@ export class WritableMemoryStream extends Writable {
     callback();
   }
 
-  toString(): string {
+  override toString(): string {
     return this.toBuffer().toString();
   }
 

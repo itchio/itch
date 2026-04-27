@@ -13,7 +13,6 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
@@ -47,7 +46,7 @@ window.addEventListener("beforeunload", () => {
 
 async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
-  const extWindow = (window as unknown) as ExtendedWindow;
+  const extWindow = window as unknown as ExtendedWindow;
   extWindow.windSpec = {
     wind: String(opts.wind),
     role: String(opts.role) as any,

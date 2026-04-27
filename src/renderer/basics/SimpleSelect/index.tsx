@@ -76,7 +76,7 @@ class OptionWrapper extends React.PureComponent<
 > {
   el: HTMLElement;
 
-  render() {
+  override render() {
     return <OptionWrapperDiv {...this.props} ref={this.gotEl} />;
   }
 
@@ -87,7 +87,7 @@ class OptionWrapper extends React.PureComponent<
     }
   };
 
-  componentDidUpdate() {
+  override componentDidUpdate() {
     this.updateScroll();
   }
 
@@ -159,7 +159,7 @@ export default class SimpleSelect<
     };
   }
 
-  render() {
+  override render() {
     const {
       value,
       OptionComponent = DefaultOptionComponent,

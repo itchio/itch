@@ -41,7 +41,7 @@ const LocationSizeDiv = styled.div`
 `;
 
 export default class LocationSizeBar extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { location } = this.props;
     if (!location) {
       return null;

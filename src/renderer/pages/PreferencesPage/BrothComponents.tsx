@@ -15,7 +15,7 @@ const CheckUpdatesButton = styled.button`
 `;
 
 class BrothComponents extends React.Component<Props> {
-  render() {
+  override render() {
     const { packageNames } = this.props;
 
     return (

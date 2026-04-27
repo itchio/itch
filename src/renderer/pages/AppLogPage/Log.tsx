@@ -118,7 +118,7 @@ class Log extends React.PureComponent<Props, State> {
     };
   }
 
-  render() {
+  override render() {
     const { maxLines } = this.state;
     let level = parseInt(this.state.level, 10);
     const { log, className, extraControls } = this.props;

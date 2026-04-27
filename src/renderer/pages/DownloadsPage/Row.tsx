@@ -214,7 +214,7 @@ class DownloadRow extends React.PureComponent<Props> {
     );
   };
 
-  render() {
+  override render() {
     const { first, finished, item, speeds } = this.props;
 
     const { game } = item;

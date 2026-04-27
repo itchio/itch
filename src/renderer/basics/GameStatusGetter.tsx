@@ -12,7 +12,7 @@ interface Props {
 }
 
 class GameStatusGetter extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { status, render } = this.props;
     return render(status);
   }

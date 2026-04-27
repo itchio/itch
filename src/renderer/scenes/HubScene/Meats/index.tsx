@@ -45,7 +45,7 @@ const MeatTab = styled.div`
 `;
 
 class Meats extends React.PureComponent<Props> {
-  render() {
+  override render() {
     let { profile, openTabs, tabInstances, tab: currentId } = this.props;
     if (!profile) {
       return null;

@@ -7,7 +7,7 @@ import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 class FeaturedPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     dispatchTabEvolve(this.props, {
       replace: true,
       url: urls.itchio,

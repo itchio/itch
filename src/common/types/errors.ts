@@ -8,7 +8,7 @@ class ItchError extends Error {
     super();
   }
 
-  toString(): string {
+  override toString(): string {
     return this.code;
   }
 }
@@ -60,7 +60,7 @@ export class Retry extends ItchError {
     this.message = `Retry: ${detail}`;
   }
 
-  toString() {
+  override toString() {
     return this.message;
   }
 }

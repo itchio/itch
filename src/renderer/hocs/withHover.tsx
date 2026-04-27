@@ -34,10 +34,10 @@ function withHover<ChildProps extends HoverProps>(
       this.setState({ hover: false });
     };
 
-    render() {
+    override render() {
       return (
         <Component
-          {...((this.props as unknown) as ChildProps)}
+          {...(this.props as unknown as ChildProps)}
           hover={this.state.hover}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}

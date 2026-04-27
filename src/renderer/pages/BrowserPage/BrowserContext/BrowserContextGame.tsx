@@ -45,7 +45,7 @@ const BrowserContextDiv = styled.div`
 `;
 
 class BrowserContextGame extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { game, status } = this.props;
 
     return (
@@ -72,7 +72,7 @@ class BrowserContextGame extends React.PureComponent<Props> {
     );
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     const { status, dispatch } = this.props;
     if (!status.operation && !status.update && status.cave) {
       // this logic is inferred from the onClick handler

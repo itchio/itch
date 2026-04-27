@@ -249,7 +249,7 @@ class Search extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { intl } = this.props;
     const { loading, open } = this.state;
 

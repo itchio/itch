@@ -29,7 +29,7 @@ const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = makeGameSeries(messages.FetchCollectionGames);
 
 class CollectionPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const {
       profile,
       collectionId,

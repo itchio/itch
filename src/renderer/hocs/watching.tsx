@@ -56,14 +56,14 @@ export default function <C extends React.ComponentType<any>>(
     }
   };
 
-  let Patched = (constructor as unknown) as React.ComponentType<any>;
-  return (class extends React.PureComponent<PropsOf<C>> {
-    render() {
+  let Patched = constructor as unknown as React.ComponentType<any>;
+  return class extends React.PureComponent<PropsOf<C>> {
+    override render() {
       return (
         <ReactReduxContext.Consumer>
           {({ store }) => <Patched {...this.props} __store={store} />}
         </ReactReduxContext.Consumer>
       );
     }
-  } as any) as C;
+  } as any as C;
 }

@@ -23,7 +23,7 @@ class LoginScreen extends React.PureComponent<Props, State> {
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     this.refresh();
   }
 
@@ -47,7 +47,7 @@ class LoginScreen extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { loading, showingSaved, profiles } = this.state;
     if (loading) {
       return <LoadingCircle progress={-1} wide />;

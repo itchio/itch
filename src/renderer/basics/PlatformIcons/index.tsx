@@ -15,7 +15,7 @@ const PlatformIconsDiv = styled.span`
 `;
 
 class PlatformIcons extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { target, before, ...restProps } = this.props;
     if (!hasPlatforms(target)) {
       return null;

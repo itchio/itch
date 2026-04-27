@@ -23,7 +23,7 @@ import { T, _ } from "renderer/t";
 const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class InstalledPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { search, sortBy, sortDir, classification } = this.props;
 
     return (

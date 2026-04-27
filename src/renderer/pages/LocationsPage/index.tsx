@@ -34,7 +34,7 @@ const Spacer = styled.div`
 `;
 
 class LocationsPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     return (
       <Page>
         <ListInstallLocations
@@ -110,7 +110,7 @@ class LocationsPage extends React.PureComponent<Props> {
     dispatch(actions.addInstallLocation({ wind: ambientWind() }));
   };
 
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["install_locations.manage"] });
   }
 }

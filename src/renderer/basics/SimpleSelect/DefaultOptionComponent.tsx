@@ -16,7 +16,7 @@ const DefaultOptionDiv = styled.div`
 export default class DefaultOptionComponent<
   OptionType extends BaseOptionType
 > extends React.PureComponent<OptionComponentProps<OptionType>> {
-  render() {
+  override render() {
     const { option } = this.props;
     return <DefaultOptionDiv>{T(option.label)}</DefaultOptionDiv>;
   }

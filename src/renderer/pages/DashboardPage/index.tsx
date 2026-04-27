@@ -24,15 +24,9 @@ import { _ } from "renderer/t";
 const ProfileGameSeries = makeGameSeries(messages.FetchProfileGames);
 
 class DashboardPage extends React.PureComponent<Props> {
-  render() {
-    const {
-      profile,
-      sortBy,
-      sortDir,
-      search,
-      visibility,
-      paidStatus,
-    } = this.props;
+  override render() {
+    const { profile, sortBy, sortDir, search, visibility, paidStatus } =
+      this.props;
 
     return (
       <Page>

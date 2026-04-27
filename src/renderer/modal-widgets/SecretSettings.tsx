@@ -44,7 +44,7 @@ const ControlsDiv = styled.div`
 `;
 
 class SecretSettings extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { status } = this.props;
 
     return (

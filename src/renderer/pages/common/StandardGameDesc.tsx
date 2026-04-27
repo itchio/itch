@@ -1,6 +1,5 @@
 import { Game, GameClassification } from "common/butlerd/messages";
 import { urlForGame } from "common/util/navigation";
-import React from "react";
 import Filler from "renderer/basics/Filler";
 import PlatformIcons from "renderer/basics/PlatformIcons";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";

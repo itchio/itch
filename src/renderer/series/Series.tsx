@@ -103,7 +103,7 @@ export function makeSeries<
     gotLoadMore: (el: HTMLDivElement) => void;
     loadNextPage: (cursor: string) => void;
   }> {
-    render() {
+    override render() {
       const { gotLoadMore } = this.props;
       return (
         <LoadMoreContainer ref={gotLoadMore} onClick={this.loadNextPage}>
@@ -136,7 +136,7 @@ export function makeSeries<
   >;
 
   class SeriesPage extends React.PureComponent<PageProps> {
-    render() {
+    override render() {
       const { params, cursor, limit, sequence } = this.props;
       return (
         <Call
@@ -204,13 +204,8 @@ export function makeSeries<
       }
       const { items } = result;
 
-      const {
-        fallbackGetKey,
-        getKey,
-        getRecord,
-        RecordComponent,
-        extraProps,
-      } = this.props;
+      const { fallbackGetKey, getKey, getRecord, RecordComponent, extraProps } =
+        this.props;
 
       let doneSet = new Set<any>();
       return (
@@ -275,7 +270,7 @@ export function makeSeries<
       }
     }
 
-    componentWillUnmount() {
+    override componentWillUnmount() {
       if (this.restoreScrollInterval) {
         clearInterval(this.restoreScrollInterval);
         this.restoreScrollInterval = null;
@@ -296,7 +291,10 @@ export function makeSeries<
       return null;
     }
 
-    getSnapshotBeforeUpdate(prevProps: Props, prevState: State): Snapshot {
+    override getSnapshotBeforeUpdate(
+      prevProps: Props,
+      prevState: State
+    ): Snapshot {
       if (!equal(this.props.params, prevProps.params)) {
         return {
           resetScroll: true,
@@ -305,7 +303,11 @@ export function makeSeries<
       return null;
     }
 
-    componentDidUpdate(props: Props, state: State, snapshot: Snapshot) {
+    override componentDidUpdate(
+      props: Props,
+      state: State,
+      snapshot: Snapshot
+    ) {
       if (snapshot && snapshot.resetScroll && this.itemList) {
         console.log(`resetting scrollTop!`);
         this.itemList.scrollTop = 0;
@@ -313,14 +315,14 @@ export function makeSeries<
       }
     }
 
-    componentDidMount() {
+    override componentDidMount() {
       const { label } = this.props;
       if (label) {
         dispatchTabPageUpdate(this.props, { label });
       }
     }
 
-    render() {
+    override render() {
       const { params, sequence } = this.props;
       const {
         renderMainFilters = renderNoop,

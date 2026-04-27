@@ -52,7 +52,7 @@ class BrowserPage extends React.PureComponent<Props> {
     super(props, context);
   }
 
-  render() {
+  override render() {
     const { sleepy, disableBrowser, visible, partition } = this.props;
     if (sleepy && !visible) {
       return null;
@@ -82,7 +82,7 @@ class BrowserPage extends React.PureComponent<Props> {
     );
   }
 
-  componentDidUpdate(prevProps: Props, prevState: any) {
+  override componentDidUpdate(prevProps: Props, prevState: any) {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
       dispatchTabLoadingStateChanged(this.props, false);
     }
@@ -106,7 +106,7 @@ class BrowserPage extends React.PureComponent<Props> {
     }
   };
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     dispatchTabLosingWebContents(this.props);
   }
 }

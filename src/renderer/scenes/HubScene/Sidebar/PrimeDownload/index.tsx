@@ -13,7 +13,7 @@ const FetchGame = butlerCaller(messages.FetchGame);
 const FetchCaves = butlerCaller(messages.FetchCaves);
 
 class PrimeDownload extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { task } = this.props;
     if (task) {
       if (task.name === "launch" || task.name === "uninstall") {
@@ -99,13 +99,11 @@ interface Props {
 export default hook((map) => ({
   task: map((rs) => getActiveTask(rs.tasks)),
   download: map((rs) => getActiveDownload(rs.downloads)),
-  progress: map(
-    (rs): DownloadProgress => {
-      const active = getActiveDownload(rs.downloads);
-      if (active) {
-        return rs.downloads.progresses[active.id];
-      }
-      return null;
+  progress: map((rs): DownloadProgress => {
+    const active = getActiveDownload(rs.downloads);
+    if (active) {
+      return rs.downloads.progresses[active.id];
     }
-  ),
+    return null;
+  }),
 }))(PrimeDownload);

@@ -1,4 +1,3 @@
-import React from "react";
 import { FilterGroup } from "renderer/pages/common/SortsAndFilters";
 import { FilterOption } from "renderer/pages/common/Filter";
 import { GameClassification } from "common/butlerd/messages";

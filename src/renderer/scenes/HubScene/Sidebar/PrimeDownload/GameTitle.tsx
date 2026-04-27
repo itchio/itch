@@ -1,4 +1,3 @@
-import React from "react";
 import styled, { singleLine } from "renderer/styles";
 
 const GameTitleDiv = styled.div`

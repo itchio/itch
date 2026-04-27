@@ -3,7 +3,7 @@ import React from "react";
 import { injectIntl, IntlShape } from "react-intl";
 
 class CustomDate extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { intl, date, format = DATE_FORMAT } = this.props;
 
     const dateObject = new Date(date);

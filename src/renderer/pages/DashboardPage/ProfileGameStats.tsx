@@ -1,4 +1,3 @@
-import React from "react";
 import { ProfileGame } from "common/butlerd/messages";
 import { StatBox, StatNumber } from "renderer/pages/PageStyles/stats";
 import { FormattedNumber } from "react-intl";

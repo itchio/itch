@@ -101,7 +101,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
   type Props = GenericProps<Params, Item>;
 
   class Stripe extends React.PureComponent<Props> {
-    render() {
+    override render() {
       const { params, sequence } = this.props;
 
       return (
@@ -250,7 +250,7 @@ class StripeItem extends React.PureComponent<
     game?: Game;
   } & React.HTMLAttributes<HTMLDivElement>
 > {
-  render() {
+  override render() {
     const { game, ...restProps } = this.props;
     return (
       <StripeItemDiv {...restProps}>

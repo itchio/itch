@@ -7,7 +7,7 @@ import { ModalWidgetProps } from "common/modals";
 const Inspector = require("react-json-inspector");
 
 class ExploreJson extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const params = this.props.modal.widgetParams;
     const { data } = params;
 

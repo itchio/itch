@@ -90,7 +90,7 @@ const DarkTitle = styled.div`
 `;
 
 class StandardGameCover extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const {
       game,
       showInfo,

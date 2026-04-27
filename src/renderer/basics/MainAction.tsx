@@ -18,7 +18,7 @@ import { hook } from "renderer/hocs/hook";
 import { isSecretClick } from "common/helpers/secret-click";
 
 class MainAction extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { wide } = this.props;
     const { cave, access, operation, update } = this.props.status;
     let translucent = false;

@@ -20,7 +20,7 @@ const BrowserContextContainer = styled.div`
 `;
 
 class BrowserContext extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { gameId, sequence } = this.props;
     if (!gameId) {
       return null;

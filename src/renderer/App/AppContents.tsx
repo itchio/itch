@@ -13,7 +13,7 @@ import { hook } from "renderer/hocs/hook";
 import GlobalStyles from "renderer/global-styles";
 
 class AppContents extends React.PureComponent<Props> {
-  render() {
+  override render() {
     return (
       <div onClickCapture={this.onClickCapture}>
         <GlobalStyles />

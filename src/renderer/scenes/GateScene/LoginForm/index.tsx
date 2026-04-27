@@ -133,7 +133,7 @@ class LoginForm extends React.PureComponent<Props, State> {
     };
   }
 
-  render() {
+  override render() {
     const { dispatch, showSaved, lastUsername, oauthURL } = this.props;
     const { passwordShown, showLegacy, oauthPending, manualCode } = this.state;
 

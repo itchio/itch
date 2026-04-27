@@ -155,17 +155,9 @@ class Item extends React.PureComponent<Props> {
     }
   };
 
-  render() {
-    const {
-      count,
-      sublabel,
-      progress,
-      tab,
-      label,
-      active,
-      url,
-      resource,
-    } = this.props;
+  override render() {
+    const { count, sublabel, progress, tab, label, active, url, resource } =
+      this.props;
     const { onClose } = this.props;
 
     const progressColor = "white";

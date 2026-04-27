@@ -88,7 +88,7 @@ const ProgressContainer = styled.div`
 `;
 
 class PrimeDownloadContents extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { game } = this.props;
     return (
       <PrimeDownloadButton

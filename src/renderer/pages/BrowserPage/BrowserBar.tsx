@@ -9,7 +9,7 @@ import { withTab } from "renderer/hocs/withTab";
 import { _ } from "renderer/t";
 
 class BrowserBar extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { loading } = this.props;
     return (
       <FiltersContainer loading={loading}>

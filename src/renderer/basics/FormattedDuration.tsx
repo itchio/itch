@@ -1,5 +1,4 @@
 import { formatDurationAsMessage } from "common/format/datetime";
-import React from "react";
 import { FormattedMessage } from "react-intl";
 
 interface Props {

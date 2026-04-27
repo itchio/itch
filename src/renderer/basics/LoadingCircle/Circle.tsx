@@ -25,7 +25,7 @@ export default class Circle extends React.PureComponent<Props> {
     return { pathString, trailPathStyle, strokePathStyle };
   }
 
-  render() {
+  override render() {
     const {
       strokeWidth,
       trailWidth,
@@ -34,11 +34,8 @@ export default class Circle extends React.PureComponent<Props> {
       strokeLinecap,
       style,
     } = this.props;
-    const {
-      pathString,
-      trailPathStyle,
-      strokePathStyle,
-    } = this.getPathStyles();
+    const { pathString, trailPathStyle, strokePathStyle } =
+      this.getPathStyles();
     return (
       <svg className="circle" viewBox="0 0 100 100" style={style}>
         <path

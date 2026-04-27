@@ -162,7 +162,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     return <PlanInstallDiv>{this.renderBody()}</PlanInstallDiv>;
   }
 
@@ -476,13 +476,13 @@ class PlanInstall extends React.PureComponent<Props, State> {
     });
   };
 
-  componentDidMount() {
+  override componentDidMount() {
     this.loadInstallLocations();
     const { uploadId } = this.props.modal.widgetParams;
     this.loadUploads(uploadId);
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     const { planRequestId } = this.state;
     if (planRequestId) {
       rcall(messages.InstallCancel, { id: planRequestId }).catch(() => {

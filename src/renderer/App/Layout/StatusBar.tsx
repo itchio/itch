@@ -73,7 +73,7 @@ class StatusBar extends React.PureComponent<Props> {
     super(props, context);
   }
 
-  render() {
+  override render() {
     const { statusMessages, dispatch } = this.props;
 
     let children: JSX.Element[] = [];

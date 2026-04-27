@@ -10,7 +10,7 @@ import { debounce } from "underscore";
 import { IntlShape, injectIntl } from "react-intl";
 
 class SearchControl extends React.PureComponent<Props> {
-  render(): JSX.Element {
+  override render(): JSX.Element {
     const { defaultValue } = this.props;
     return (
       <FilterInput

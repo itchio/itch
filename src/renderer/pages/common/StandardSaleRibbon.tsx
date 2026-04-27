@@ -1,5 +1,4 @@
 import { Game } from "common/butlerd/messages";
-import React from "react";
 import styled from "renderer/styles";
 
 const SaleRibbon = styled.div`

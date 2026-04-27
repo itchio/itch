@@ -19,7 +19,7 @@ const IndicatorDiv = styled.div`
 `;
 
 class NonLocalIndicator extends React.PureComponent<{}, {}> {
-  render() {
+  override render() {
     if (urls.itchio === urls.originalItchio) {
       return null;
     }

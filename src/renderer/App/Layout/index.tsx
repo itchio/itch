@@ -74,7 +74,7 @@ const ReactHintContainer = styled.div`
  * Also, subscribes to app store to synchronize its state
  */
 class Layout extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { maximized, focused } = this.props;
 
     return (

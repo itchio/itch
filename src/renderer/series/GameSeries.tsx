@@ -48,7 +48,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
       });
     }
 
-    render() {
+    override render() {
       const { props } = this;
       return (
         <Series
@@ -78,7 +78,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
 class GenericGameRecordComponent<Item> extends React.PureComponent<
   RecordComponentProps<Item, Game, GenericExtraProps<Item>>
 > {
-  render() {
+  override render() {
     const {
       item,
       record,

@@ -61,7 +61,7 @@ interface State {
 }
 
 class BrothComponent extends React.PureComponent<Props, State> {
-  state: State = {
+  override state: State = {
     expanded: false,
   };
 
@@ -69,7 +69,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
     this.setState((state) => ({ expanded: !state.expanded }));
   };
 
-  render() {
+  override render() {
     const { name, pkg } = this.props;
     const { expanded } = this.state;
 

@@ -41,7 +41,7 @@ class Tab extends React.PureComponent<Props> {
     dispatch(actions.closeTab({ wind: ambientWind(), tab }));
   };
 
-  render() {
+  override render() {
     const { tab, index, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
 

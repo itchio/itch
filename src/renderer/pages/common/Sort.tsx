@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { Dispatch, LocalizedString } from "common/types";
 import { ambientTab } from "common/util/navigation";
-import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
 import { urlWithParams } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";

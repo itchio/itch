@@ -34,7 +34,7 @@ const SizeDiv = styled.div`
 `;
 
 class LocationItemExtras extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { cave } = this.props;
     return (
       <>

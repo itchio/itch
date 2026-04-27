@@ -3,7 +3,7 @@ import Icon from "renderer/basics/Icon";
 import platformData, { PlatformHolder } from "common/constants/platform-data";
 
 export default class PlatformIcon extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { target, field, before } = this.props;
     if (!target.platforms || !(target.platforms as any)[field]) {
       return null;

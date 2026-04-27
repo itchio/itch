@@ -11,7 +11,7 @@ import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 class PrereqsState extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { gameTitle, tasks } = this.props.modal.widgetParams;
 
     return (

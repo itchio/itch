@@ -29,7 +29,7 @@ const LogoIndicatorDiv = styled.div`
 class LogoIndicator extends React.PureComponent<Props> {
   vivus: Vivus;
 
-  render() {
+  override render() {
     return <LogoIndicatorDiv id="logo-indicator-div" ref={this.gotEl} />;
   }
 
@@ -48,7 +48,7 @@ class LogoIndicator extends React.PureComponent<Props> {
     }
   };
 
-  componentDidUpdate() {
+  override componentDidUpdate() {
     this.update();
   }
 

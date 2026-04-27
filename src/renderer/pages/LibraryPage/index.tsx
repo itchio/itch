@@ -18,7 +18,7 @@ const OwnedGameStripe = makeGameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = makeGameStripe(messages.FetchCaves);
 
 class LibraryPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { profile } = this.props;
 
     return (
@@ -53,7 +53,7 @@ class LibraryPage extends React.PureComponent<Props> {
     return <ScanningIndicator />;
   };
 
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.library"] });
   }
 }

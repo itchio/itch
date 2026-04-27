@@ -72,7 +72,7 @@ const Title = styled.h2`
 `;
 
 class NewTabPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     return (
       <NewTabPageDiv>
         <BrowserBar />
@@ -108,7 +108,7 @@ class NewTabPage extends React.PureComponent<Props> {
     );
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, {
       label: ["sidebar.new_tab"],
     });

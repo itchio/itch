@@ -15,7 +15,7 @@ const ControlButtonsDiv = styled.div`
 `;
 
 class InstallLocationSettings extends React.Component<Props> {
-  render() {
+  override render() {
     return (
       <>
         <h2>{T(["preferences.install_locations"])}</h2>

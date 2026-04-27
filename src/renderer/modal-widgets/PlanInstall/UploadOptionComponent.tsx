@@ -1,4 +1,3 @@
-import React from "react";
 import { OptionComponentProps } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
 import UploadIcon from "renderer/basics/UploadIcon";
 import {

@@ -22,7 +22,7 @@ const SizeTag = styled.div`
 `;
 
 class LocationSummary extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { location } = this.props;
 
     return (

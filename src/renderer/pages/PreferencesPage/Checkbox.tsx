@@ -5,7 +5,7 @@ import { hookWithProps } from "renderer/hocs/hook";
 import Label from "renderer/pages/PreferencesPage/Label";
 
 class Checkbox extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { active, children, label } = this.props;
 
     return (

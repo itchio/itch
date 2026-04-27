@@ -7,7 +7,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 
 class ProxySettings extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { proxy, proxySource } = this.props;
 
     return (

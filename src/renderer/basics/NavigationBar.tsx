@@ -179,7 +179,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { canGoBack, canGoForward, loading } = this.props;
 
     return (

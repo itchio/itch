@@ -13,7 +13,7 @@ import LocationContents from "renderer/pages/LocationPage/LocationContents";
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 
 class LocationPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { installLocationId } = this.props;
 
     return (

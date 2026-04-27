@@ -1,7 +1,6 @@
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { LocalizedString } from "common/types";
-import React from "react";
 import Icon from "renderer/basics/Icon";
 import { OptionComponentProps } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
 import { SelectValueDiv } from "renderer/modal-widgets/PlanInstall/select-common";

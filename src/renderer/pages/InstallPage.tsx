@@ -14,7 +14,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { actions } from "common/actions";
 
 class InstallPage extends React.PureComponent<Props> {
-  componentDidMount() {
+  override componentDidMount() {
     const { dispatch, url, gameId } = this.props;
     dispatch(actions.handleItchioURI({ uri: url }));
     dispatchTabEvolve(this.props, {
@@ -23,7 +23,7 @@ class InstallPage extends React.PureComponent<Props> {
     });
   }
 
-  render(): React.ReactNode {
+  override render(): React.ReactNode {
     return null;
   }
 }

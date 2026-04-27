@@ -25,7 +25,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
     this.doUpdatePayload(this.state);
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     const { userId } = this.props;
 
     electron.getUserCacheSize(userId).then((cacheSize) => {
@@ -62,13 +62,9 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
     this.change({ clearCookies: !this.state.clearCookies });
   };
 
-  render() {
-    const {
-      fetchedCacheSize,
-      cacheSize,
-      clearCache,
-      clearCookies,
-    } = this.state;
+  override render() {
+    const { fetchedCacheSize, cacheSize, clearCache, clearCookies } =
+      this.state;
 
     // chrome sometimes return negative values (-2 B)
     const shownCacheSize = cacheSize < 0 ? 0 : cacheSize;

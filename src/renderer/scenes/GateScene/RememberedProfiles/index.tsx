@@ -25,7 +25,7 @@ const RememberedProfilesDiv = styled.div.withConfig({
 
 @watching
 class RememberedProfiles extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { profiles, showForm } = this.props;
 
     return (

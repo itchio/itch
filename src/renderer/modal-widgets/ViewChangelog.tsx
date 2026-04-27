@@ -86,7 +86,7 @@ class ViewChangelog extends React.PureComponent<Props, State> {
   private fetchGeneration: Partial<Record<RepoKey, number>> = {};
   private unmounted = false;
 
-  state: State = {
+  override state: State = {
     activeTab: "itch",
     repoStates: {
       itch: emptyRepoState(),
@@ -95,15 +95,15 @@ class ViewChangelog extends React.PureComponent<Props, State> {
     },
   };
 
-  componentDidMount() {
+  override componentDidMount() {
     this.fetchReleasesForRepo("itch");
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     this.unmounted = true;
   }
 
-  render() {
+  override render() {
     const { activeTab } = this.state;
     const activeRepoConfig = repoConfigs[activeTab];
     const activeTabIndex = repoOrder.indexOf(activeTab);

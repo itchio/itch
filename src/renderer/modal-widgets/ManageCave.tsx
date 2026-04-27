@@ -99,7 +99,7 @@ const ManageCaveDiv = styled(ModalWidgetDiv)`
 `;
 
 class ManageCave extends React.PureComponent<Props> {
-  render() {
+  override render() {
     return <ManageCaveDiv>{this.renderCave()}</ManageCaveDiv>;
   }
 

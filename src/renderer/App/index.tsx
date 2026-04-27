@@ -20,7 +20,7 @@ class App extends React.PureComponent<Props, State> {
     };
   }
 
-  render() {
+  override render() {
     if (enableProfiling) {
       return (
         <Profiler id="app" onRender={this.logProfile}>

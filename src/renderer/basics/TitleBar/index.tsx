@@ -77,9 +77,9 @@ const TitleDiv = styled.div`
 const emptyObj = {};
 
 class TitleBar extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { tab, macos, tabInstance } = this.props;
-    const iw = ((window as unknown) as ExtendedWindow).windSpec;
+    const iw = (window as unknown as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
     const sp = Space.fromInstance(tab, tabInstance);
@@ -121,7 +121,7 @@ class TitleBar extends React.PureComponent<Props> {
       return null;
     }
 
-    const iw = ((window as unknown) as ExtendedWindow).windSpec;
+    const iw = (window as unknown as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
     return (

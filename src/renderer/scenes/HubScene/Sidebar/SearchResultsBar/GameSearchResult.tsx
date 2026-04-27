@@ -96,13 +96,13 @@ class GameSearchResult extends React.PureComponent<Props> {
     });
   }
 
-  componentDidUpdate() {
+  override componentDidUpdate() {
     if (this.props.chosen && this.divRef.current) {
       this.divRef.current.scrollIntoView({ block: "nearest" });
     }
   }
 
-  render() {
+  override render() {
     const { game, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
 

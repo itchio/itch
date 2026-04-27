@@ -114,7 +114,7 @@ class ShowError extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     return (
       <>
         {this.renderGameStuff()}
@@ -147,12 +147,8 @@ class ShowError extends React.PureComponent<Props, State> {
   }
 
   renderErrorStuff() {
-    const {
-      rawError,
-      log,
-      forceDetails,
-      showSendReport,
-    } = this.props.modal.widgetParams;
+    const { rawError, log, forceDetails, showSendReport } =
+      this.props.modal.widgetParams;
     const internal = isInternalError(rawError);
     if (!internal && !forceDetails) {
       return null;

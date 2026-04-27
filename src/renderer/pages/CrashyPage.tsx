@@ -2,7 +2,7 @@ import React from "react";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 export default class CrashyPage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     if (1 == 1) {
       throw new Error("Just testing error boundaries");
     }

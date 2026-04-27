@@ -15,7 +15,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 const FetchGame = butlerCaller(messages.FetchGame);
 
 class GamePage extends React.PureComponent<Props> {
-  render() {
+  override render() {
     const { gameId } = this.props;
 
     return (

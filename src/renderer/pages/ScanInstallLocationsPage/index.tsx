@@ -120,7 +120,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     dispatchTabPageUpdate(this.props, {
       label: ["preferences.scan_install_locations"],
     });
@@ -180,7 +180,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
     });
   }
 
-  render() {
+  override render() {
     const { progress, game } = this.state;
     return (
       <PageScan>
@@ -321,7 +321,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
     this.setState({ showLog: true });
   };
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     if (this.reject) {
       this.reject(new Error("closed!"));
     }

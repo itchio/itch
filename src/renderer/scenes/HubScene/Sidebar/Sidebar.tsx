@@ -127,7 +127,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   };
 
-  render() {
+  override render() {
     const { enableTabs } = this.props;
 
     return (

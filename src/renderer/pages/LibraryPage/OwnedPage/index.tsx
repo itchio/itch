@@ -25,15 +25,9 @@ import { _ } from "renderer/t";
 const OwnedSeries = makeGameSeries(messages.FetchProfileOwnedKeys);
 
 class OwnedPage extends React.PureComponent<Props> {
-  render() {
-    const {
-      profile,
-      sortBy,
-      sortDir,
-      search,
-      classification,
-      installed,
-    } = this.props;
+  override render() {
+    const { profile, sortBy, sortDir, search, classification, installed } =
+      this.props;
 
     return (
       <OwnedSeries
