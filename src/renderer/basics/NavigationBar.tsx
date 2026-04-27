@@ -335,7 +335,10 @@ class NavigationBar extends React.PureComponent<Props, State> {
     this.setState({ editingAddress: true });
   };
 
-  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
+  static getDerivedStateFromProps(
+    props: Readonly<Props>,
+    state: State
+  ): Partial<State> {
     if (props.url !== state.url) {
       return {
         url: props.url,

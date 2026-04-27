@@ -13,6 +13,7 @@ import { promises } from "fs";
 import { Logger } from "common/logger";
 import { Message } from "common/helpers/bridge";
 import { emitAsyncIpcEvent, emitSyncIpcEvent } from "common/ipc";
+import type { InjectName } from "common/ipc";
 import { Store } from "common/types";
 import { convertMessage } from "common/helpers/bridge";
 import "@goosewobbler/electron-redux/preload";
@@ -95,7 +96,7 @@ export const mainWorldSupplement = {
     getImageURL: (path: string): string => {
       return emitSyncIpcEvent("getImageURL", path);
     },
-    getInjectURL: (path: string): string => {
+    getInjectURL: (path: InjectName): string => {
       return emitSyncIpcEvent("getInjectURL", path);
     },
   },

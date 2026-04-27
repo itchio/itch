@@ -1,5 +1,7 @@
 import { ipcRenderer, IpcRenderer, OpenDialogOptions } from "electron";
 
+export type InjectName = "game" | "captcha" | "preload";
+
 export type AsyncIpcHandlers = {
   showOpenDialog: (o: OpenDialogOptions) => Promise<string[]>;
   getUserCacheSize: (n: number) => Promise<number>;
@@ -11,7 +13,7 @@ export type SyncIpcHandlers = {
   buildApp: (x: undefined) => { name: string; isPackaged: boolean };
   userAgent: (x: undefined) => string;
   getImageURL: (p: string) => string;
-  getInjectURL: (p: string) => string;
+  getInjectURL: (p: InjectName) => string;
   onCaptchaResponse: (r: string) => null;
   legacyMarketPath: () => string;
   mainLogPath: () => string;

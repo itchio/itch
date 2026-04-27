@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "esnext",
     "importHelpers": true,
     "esModuleInterop": true,
     "jsx": "react",
     "skipLibCheck": true,
 
-    "baseUrl": "src",
     "paths": {
-      "common": ["common"],
-      "renderer": ["renderer"],
-      "main": ["main"],
-      "vendor": ["vendor"]
+      "common/*": ["./src/common/*"],
+      "renderer/*": ["./src/renderer/*"],
+      "main/*": ["./src/main/*"],
+      "vendor/*": ["./src/vendor/*"]
     },
 
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
+    "useUnknownInCatchVariables": false,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

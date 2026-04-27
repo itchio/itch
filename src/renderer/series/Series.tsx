@@ -100,7 +100,7 @@ export function makeSeries<
 
   class NextPageButton extends React.PureComponent<{
     cursor: string;
-    gotLoadMore: (el: HTMLElement) => void;
+    gotLoadMore: (el: HTMLDivElement) => void;
     loadNextPage: (cursor: string) => void;
   }> {
     render() {
@@ -122,7 +122,7 @@ export function makeSeries<
     cursor: string;
     limit: number;
     isLast: boolean;
-    gotLoadMore?: (loadMore: HTMLElement) => void;
+    gotLoadMore?: (loadMore: HTMLDivElement) => void;
     loadNextPage?: (cursor: string) => void;
   } & Pick<
     Props,
@@ -399,7 +399,7 @@ export function makeSeries<
       dispatchTabPageUpdate(this.props, { scrollTop });
     }, 100);
 
-    loadMore: HTMLElement;
+    loadMore: HTMLDivElement;
     gotLoadMore = (loadMore: HTMLDivElement) => {
       this.loadMore = loadMore;
     };

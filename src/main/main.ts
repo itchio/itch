@@ -20,6 +20,7 @@ import {
   App,
   BrowserWindow,
   IpcMainEvent,
+  IpcMainInvokeEvent,
   OpenDialogOptions,
 } from "electron";
 
@@ -43,7 +44,7 @@ const registerSync = (
   Object.entries(asyncHandlers).forEach(([eventName, callback]): void => {
     ipcMain.handle(
       eventName,
-      (event: IpcMainEvent, arg: any): ReturnType<typeof callback> => {
+      (event: IpcMainInvokeEvent, arg: any): ReturnType<typeof callback> => {
         return callback(arg);
       }
     );
@@ -242,7 +243,7 @@ export function main() {
   });
 
   // macOS (Info.pList)
-  app.on("open-url", (e: Event, url: string) => {
+  app.on("open-url", (e, url) => {
     if (isItchioURL(url)) {
       // otherwise it'll err -600
       e.preventDefault();

@@ -10,7 +10,9 @@ import React from "react";
  * to actions, much like reactors. They have to define a `subscribe`
  * method that will get a watcher as only argument.
  */
-export default function <C extends React.ComponentType<P>, P>(
+type PropsOf<C> = C extends React.ComponentType<infer P> ? P : never;
+
+export default function <C extends React.ComponentType<any>>(
   constructor: C
 ): C {
   if (!constructor.prototype.subscribe) {
@@ -55,7 +57,7 @@ export default function <C extends React.ComponentType<P>, P>(
   };
 
   let Patched = (constructor as unknown) as React.ComponentType<any>;
-  return (class extends React.PureComponent<P> {
+  return (class extends React.PureComponent<PropsOf<C>> {
     render() {
       return (
         <ReactReduxContext.Consumer>

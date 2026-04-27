@@ -8,7 +8,7 @@ interface LabelProps {
 
 const Label = styled.label
   .withConfig({
-    shouldForwardProp: (prop: string) => prop !== "active",
+    shouldForwardProp: (prop) => (prop as string) !== "active",
   })
   .attrs((props: LabelProps) => ({
     className: classNames(props.className, { active: props.active }),

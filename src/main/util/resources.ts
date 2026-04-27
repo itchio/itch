@@ -1,5 +1,6 @@
 import { join } from "path";
 import { getAppPath } from "main/helpers/app";
+import type { InjectName } from "common/ipc";
 
 let absoluteAppPath = join(getAppPath(), "src");
 let absoluteMainDistPath = join(getAppPath(), "dist", "main");
@@ -32,8 +33,6 @@ export function getLocalesConfigPath(): string {
   let resourcePath = "static/locales.json";
   return getPath(resourcePath);
 }
-
-type InjectName = "game" | "captcha" | "preload";
 
 export function getInjectPath(name: InjectName) {
   return join(absoluteMainDistPath, `inject-${name}.bundle.cjs`);

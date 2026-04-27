@@ -100,7 +100,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^10.5.3",
     "prettier": "^2.2.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "scripts": {
     "sync-butler": "cd ../butler && go run ./butlerd/generous ts ../itch/src/common/butlerd/messages.ts",

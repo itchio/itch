@@ -135,16 +135,18 @@ export const theme = {
 
 export type Theme = typeof theme;
 
-import * as sc from "styled-components";
-import { ThemedStyledComponentsModule } from "styled-components";
-const {
-  default: styled,
+declare module "styled-components" {
+  export interface DefaultTheme extends Theme {}
+}
+
+import {
+  default as styled,
   css,
   keyframes,
   createGlobalStyle,
   ThemeProvider,
   StyleSheetManager,
-} = sc as ThemedStyledComponentsModule<Theme>;
+} from "styled-components";
 
 export default styled;
 export { css, keyframes, createGlobalStyle, ThemeProvider, StyleSheetManager };
