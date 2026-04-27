@@ -71,7 +71,7 @@
     "uuid": "^13.0.0",
     "vivus": "^0.4.5",
     "which": "^2.0.2",
-    "yauzl": "^2.9.2"
+    "yauzl": "^3.2.1"
   },
   "devDependencies": {
     "@electron/notarize": "^3.1.1",
