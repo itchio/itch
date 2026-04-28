@@ -44,8 +44,13 @@ async function main() {
   // Start Electron
   const electronPath = (await import("electron")).default;
   const inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
+  const chromeDevToolsPort = process.env.ITCH_CHROME_DEVTOOLS_PORT || "9223";
 
   const proc = spawn(electronPath, [".", `--${inspectArg}=9222`, "--color"], {
+    env: {
+      ...process.env,
+      ITCH_CHROME_DEVTOOLS_PORT: chromeDevToolsPort,
+    },
     stdio: ["ignore", "inherit", "inherit"],
   });
 

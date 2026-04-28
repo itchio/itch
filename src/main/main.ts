@@ -61,6 +61,15 @@ export function main() {
     } in ${env.production ? "production" : "development"}`
   );
 
+  const chromeDevToolsPort = process.env.ITCH_CHROME_DEVTOOLS_PORT;
+  if (env.development && chromeDevToolsPort) {
+    app.commandLine.appendSwitch("remote-debugging-port", chromeDevToolsPort);
+    app.commandLine.appendSwitch("remote-debugging-address", "127.0.0.1");
+    mainLogger.info(
+      `Chrome DevTools Protocol listening on 127.0.0.1:${chromeDevToolsPort}`
+    );
+  }
+
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
