@@ -46,12 +46,14 @@ export interface ActionCreator<PayloadType> {
 }
 
 function action<PayloadType>(): ActionCreator<PayloadType> {
-  const ret = (type: string) => (payload: PayloadType): Action<PayloadType> => {
-    return {
-      type,
-      payload,
+  const ret =
+    (type: string) =>
+    (payload: PayloadType): Action<PayloadType> => {
+      return {
+        type,
+        payload,
+      };
     };
-  };
   // bending typing rules a bit, forgive me
   return ret as any;
 }
@@ -910,5 +912,36 @@ export const actions = wireActions({
   copyToClipboard: action<{
     /** text to copy to clipboard */
     text: string;
+  }>(),
+
+  // upload (push to itch.io via butler)
+
+  startPush: action<{
+    jobId: string;
+    createdAt: number;
+    gameId: number;
+    /** wharf target in user/slug form, e.g. "leafo/x-moon" */
+    target: string;
+    channel: string;
+    /** source path (folder or zip) */
+    src: string;
+  }>(),
+  pushProgress: action<{
+    jobId: string;
+    progress: number;
+    label?: string;
+  }>(),
+  pushDone: action<{
+    jobId: string;
+    channel: string;
+    buildId: number;
+  }>(),
+  pushFailed: action<{
+    jobId: string;
+    channel: string;
+    message: string;
+  }>(),
+  cancelPush: action<{
+    jobId: string;
   }>(),
 });

@@ -281,6 +281,8 @@ export function internalPageToIcon(internalPage: string): string {
       return "itchio";
     case "dashboard":
       return "archive";
+    case "upload":
+      return "upload";
     case "library":
       return "heart-filled";
     case "preferences":

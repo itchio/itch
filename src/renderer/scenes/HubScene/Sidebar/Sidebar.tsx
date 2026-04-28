@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { User } from "common/butlerd/messages";
+import { selectActivePushJob } from "common/reducers/upload";
 import {
   ambientNavigation,
   ambientWind,
@@ -8,6 +9,7 @@ import {
 import React from "react";
 import { arrayMove, SortableContainer } from "react-sortable-hoc";
 import Filler from "renderer/basics/Filler";
+import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import { hook } from "renderer/hocs/hook";
@@ -191,6 +193,14 @@ class Sidebar extends React.PureComponent<Props, State> {
           {this.renderLink("itch://dashboard", "archive", [
             "sidebar.dashboard",
           ])}
+          {this.props.isKitch
+            ? this.renderLink(
+                "itch://upload",
+                "upload",
+                ["sidebar.upload"],
+                this.props.uploadActive ? <Floater tiny /> : null
+              )
+            : null}
         </SidebarItems>
       </>
     );
@@ -213,7 +223,12 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   }
 
-  renderLink(url: string, icon: string, label: LocalizedString): JSX.Element {
+  renderLink(
+    url: string,
+    icon: string,
+    label: LocalizedString,
+    indicator?: JSX.Element | null
+  ): JSX.Element {
     return (
       <SidebarSection>
         <a
@@ -221,6 +236,9 @@ class Sidebar extends React.PureComponent<Props, State> {
           className={classNames({ active: this.props.url.startsWith(url) })}
         >
           <Icon icon={icon} /> {T(label)}
+          {indicator ? (
+            <span style={{ marginLeft: "auto" }}>{indicator}</span>
+          ) : null}
         </a>
       </SidebarSection>
     );
@@ -244,6 +262,8 @@ interface Props {
   openTabs: string[];
   enableTabs: boolean;
   url: string;
+  uploadActive: boolean;
+  isKitch: boolean;
 
   dispatch: Dispatch;
 }
@@ -263,4 +283,6 @@ export default hook((map) => ({
     const ti = ws.tabInstances[ambientNavigation(rs).tab];
     return ti.history[ti.currentIndex].url;
   }),
+  uploadActive: map((rs) => selectActivePushJob(rs.upload) !== null),
+  isKitch: map((rs) => rs.system.appName === "kitch"),
 }))(Sidebar);

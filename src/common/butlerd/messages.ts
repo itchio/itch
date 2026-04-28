@@ -1425,9 +1425,10 @@ export interface DownloadsDriveProgressNotification {
 /**
  * undocumented
  */
-export const DownloadsDriveProgress = createNotification<DownloadsDriveProgressNotification>(
-  "Downloads.Drive.Progress"
-);
+export const DownloadsDriveProgress =
+  createNotification<DownloadsDriveProgressNotification>(
+    "Downloads.Drive.Progress"
+  );
 
 /**
  * Payload for Downloads.Drive.Started
@@ -1440,9 +1441,10 @@ export interface DownloadsDriveStartedNotification {
 /**
  * undocumented
  */
-export const DownloadsDriveStarted = createNotification<DownloadsDriveStartedNotification>(
-  "Downloads.Drive.Started"
-);
+export const DownloadsDriveStarted =
+  createNotification<DownloadsDriveStartedNotification>(
+    "Downloads.Drive.Started"
+  );
 
 /**
  * Payload for Downloads.Drive.Errored
@@ -1459,9 +1461,10 @@ export interface DownloadsDriveErroredNotification {
 /**
  * undocumented
  */
-export const DownloadsDriveErrored = createNotification<DownloadsDriveErroredNotification>(
-  "Downloads.Drive.Errored"
-);
+export const DownloadsDriveErrored =
+  createNotification<DownloadsDriveErroredNotification>(
+    "Downloads.Drive.Errored"
+  );
 
 /**
  * Payload for Downloads.Drive.Finished
@@ -1474,9 +1477,10 @@ export interface DownloadsDriveFinishedNotification {
 /**
  * undocumented
  */
-export const DownloadsDriveFinished = createNotification<DownloadsDriveFinishedNotification>(
-  "Downloads.Drive.Finished"
-);
+export const DownloadsDriveFinished =
+  createNotification<DownloadsDriveFinishedNotification>(
+    "Downloads.Drive.Finished"
+  );
 
 /**
  * Payload for Downloads.Drive.Discarded
@@ -1489,9 +1493,10 @@ export interface DownloadsDriveDiscardedNotification {
 /**
  * undocumented
  */
-export const DownloadsDriveDiscarded = createNotification<DownloadsDriveDiscardedNotification>(
-  "Downloads.Drive.Discarded"
-);
+export const DownloadsDriveDiscarded =
+  createNotification<DownloadsDriveDiscardedNotification>(
+    "Downloads.Drive.Discarded"
+  );
 
 /**
  * Payload for Downloads.Drive.NetworkStatus
@@ -1505,9 +1510,10 @@ export interface DownloadsDriveNetworkStatusNotification {
  * Sent during @@DownloadsDriveParams to inform on network
  * status changes.
  */
-export const DownloadsDriveNetworkStatus = createNotification<DownloadsDriveNetworkStatusNotification>(
-  "Downloads.Drive.NetworkStatus"
-);
+export const DownloadsDriveNetworkStatus =
+  createNotification<DownloadsDriveNetworkStatusNotification>(
+    "Downloads.Drive.NetworkStatus"
+  );
 
 /**
  * undocumented
@@ -1907,6 +1913,92 @@ export enum Code {
   // The selected sandbox is not available on this system
   SandboxNotAvailable = 19000,
 }
+
+/**
+ * Result for Wharf.Push
+ */
+export interface WharfPushResult {
+  /** ID of the build that was created (0 if --dry-run) */
+  buildId: number;
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * Pushes a new build to itch.io for a given target+channel. Heavy lifting
+ * (walk, diff, upload) runs in a `butler push` worker subprocess that butlerd
+ * spawns; butlerd brokers progress over WharfPushProgress notifications and
+ * kills the worker if the RPC's context is cancelled.
+ */
+export const WharfPush = createRequest<WharfPushParams, WharfPushResult>(
+  "Wharf.Push"
+);
+
+/**
+ * Result for Wharf.ListChannels
+ */
+export interface WharfListChannelsResult {
+  /** Channels keyed by name */
+  channels: { [key: string]: WharfChannel };
+}
+
+/**
+ * Lists all channels for a given push target via the wharf API.
+ */
+export const WharfListChannels = createRequest<
+  WharfListChannelsParams,
+  WharfListChannelsResult
+>("Wharf.ListChannels");
+
+/**
+ * WharfChannel mirrors itchio.Channel — defined here so generous picks it
+ * up for the butlerd spec / TS bindings (the itchio.Channel definition lives
+ * in go-itchio/endpoints_wharf.go, which is not part of the assimilated set).
+ */
+export interface WharfChannel {
+  /** Channel name, e.g. "win-64" */
+  name: string;
+  /** Platform tags for this channel */
+  tags: string;
+  /** Latest upload tied to this channel */
+  upload?: Upload;
+  /** Most recent successfully-processed build, if any */
+  head?: Build;
+  /** In-flight build that hasn't finished processing, if any */
+  pending?: Build;
+}
+
+/**
+ * Result for Wharf.GetChannel
+ */
+export interface WharfGetChannelResult {
+  /** undocumented */
+  channel: WharfChannel;
+}
+
+/**
+ * Returns information about a single channel.
+ */
+export const WharfGetChannel = createRequest<
+  WharfGetChannelParams,
+  WharfGetChannelResult
+>("Wharf.GetChannel");
+
+/**
+ * Result for Wharf.GetBuild
+ */
+export interface WharfGetBuildResult {
+  /** undocumented */
+  build: Build;
+}
+
+/**
+ * Returns information about a single build by ID.
+ */
+export const WharfGetBuild = createRequest<
+  WharfGetBuildParams,
+  WharfGetBuildResult
+>("Wharf.GetBuild");
 
 /**
  * undocumented
@@ -2820,9 +2912,8 @@ export interface MetaFlowEstablishedNotification {
 /**
  * The first notification sent when @@MetaFlowParams is called.
  */
-export const MetaFlowEstablished = createNotification<MetaFlowEstablishedNotification>(
-  "MetaFlowEstablished"
-);
+export const MetaFlowEstablished =
+  createNotification<MetaFlowEstablishedNotification>("MetaFlowEstablished");
 
 /**
  * Params for Version.Get
@@ -3466,9 +3557,8 @@ export interface TaskStartedNotification {
  * Each operation is made up of one or more tasks. This notification
  * is sent during @@OperationStartParams whenever a specific task starts.
  */
-export const TaskStarted = createNotification<TaskStartedNotification>(
-  "TaskStarted"
-);
+export const TaskStarted =
+  createNotification<TaskStartedNotification>("TaskStarted");
 
 /**
  * Payload for TaskSucceeded
@@ -3486,9 +3576,8 @@ export interface TaskSucceededNotification {
 /**
  * Sent during @@OperationStartParams whenever a task succeeds for an operation.
  */
-export const TaskSucceeded = createNotification<TaskSucceededNotification>(
-  "TaskSucceeded"
-);
+export const TaskSucceeded =
+  createNotification<TaskSucceededNotification>("TaskSucceeded");
 
 /**
  * What was installed by a subtask of @@OperationStartParams.
@@ -3560,9 +3649,10 @@ export interface InstallLocationsScanYieldNotification {
  * Sent during @@InstallLocationsScanParams whenever
  * a game is found.
  */
-export const InstallLocationsScanYield = createNotification<InstallLocationsScanYieldNotification>(
-  "Install.Locations.Scan.Yield"
-);
+export const InstallLocationsScanYield =
+  createNotification<InstallLocationsScanYieldNotification>(
+    "Install.Locations.Scan.Yield"
+  );
 
 /**
  * Params for Install.Locations.Scan.ConfirmImport
@@ -3655,9 +3745,8 @@ export interface GameUpdateAvailableNotification {
  * finds an update for a game. Can be safely ignored if displaying
  * updates as they are found is not a requirement for the client.
  */
-export const GameUpdateAvailable = createNotification<GameUpdateAvailableNotification>(
-  "GameUpdateAvailable"
-);
+export const GameUpdateAvailable =
+  createNotification<GameUpdateAvailableNotification>("GameUpdateAvailable");
 
 /**
  * Describes an available update for a particular game install.
@@ -3728,9 +3817,8 @@ export interface LaunchRunningNotification {
  * Sent during @@LaunchParams, when the game is configured, prerequisites are installed
  * sandbox is set up (if enabled), and the game is actually running.
  */
-export const LaunchRunning = createNotification<LaunchRunningNotification>(
-  "LaunchRunning"
-);
+export const LaunchRunning =
+  createNotification<LaunchRunningNotification>("LaunchRunning");
 
 /**
  * Payload for LaunchExited
@@ -3742,9 +3830,8 @@ export interface LaunchExitedNotification {
 /**
  * Sent during @@LaunchParams, when the game has actually exited.
  */
-export const LaunchExited = createNotification<LaunchExitedNotification>(
-  "LaunchExited"
-);
+export const LaunchExited =
+  createNotification<LaunchExitedNotification>("LaunchExited");
 
 /**
  * Params for AcceptLicense
@@ -3818,9 +3905,8 @@ export interface PrereqsStartedNotification {
  *
  * Updates are regularly provided via @@PrereqsTaskStateNotification.
  */
-export const PrereqsStarted = createNotification<PrereqsStartedNotification>(
-  "PrereqsStarted"
-);
+export const PrereqsStarted =
+  createNotification<PrereqsStartedNotification>("PrereqsStarted");
 
 /**
  * Information about a prerequisite task.
@@ -3854,9 +3940,8 @@ export interface PrereqsTaskStateNotification {
  * Sent during @@LaunchParams, after @@PrereqsStartedNotification, repeatedly
  * until all prereq tasks are done.
  */
-export const PrereqsTaskState = createNotification<PrereqsTaskStateNotification>(
-  "PrereqsTaskState"
-);
+export const PrereqsTaskState =
+  createNotification<PrereqsTaskStateNotification>("PrereqsTaskState");
 
 /**
  * undocumented
@@ -3886,9 +3971,8 @@ export interface PrereqsEndedNotification {
  *
  * After this is received, it's safe to close any UI element showing prereq task state.
  */
-export const PrereqsEnded = createNotification<PrereqsEndedNotification>(
-  "PrereqsEnded"
-);
+export const PrereqsEnded =
+  createNotification<PrereqsEndedNotification>("PrereqsEnded");
 
 /**
  * Params for PrereqsFailed
@@ -4006,4 +4090,82 @@ export const TestDoubleTwice = createRequest<
 export interface TestDoubleParams {
   /** The number to double */
   number: number;
+}
+
+/**
+ * Params for Wharf.Push
+ */
+export interface WharfPushParams {
+  /** itch.io profile to authenticate as */
+  profileId: number;
+  /** Source path: directory or zip archive */
+  src: string;
+  /** Push target in user/slug or numeric form, e.g. "leafo/x-moon" */
+  target: string;
+  /** Channel name, e.g. "win-64" */
+  channel: string;
+  /** Optional user-supplied version string for the build */
+  userVersion?: string;
+  /** Mark new channel as hidden on creation */
+  hidden?: boolean;
+  /** Skip push if the source matches the previous build */
+  ifChanged?: boolean;
+  /** Walk and report what would be pushed without uploading */
+  dryRun?: boolean;
+  /** Dereference symlinks during walk */
+  dereference?: boolean;
+  /** When non-nil, overrides butler's default (--fix-permissions, default true) */
+  fixPermissions?: boolean;
+  /** When non-nil, overrides butler's default (--auto-wrap, default true) */
+  autoWrap?: boolean;
+}
+
+/**
+ * Payload for Wharf.Push.Progress
+ */
+export interface WharfPushProgressNotification {
+  /** 0..1 */
+  progress: number;
+  /** Estimated seconds remaining (0 if unknown) */
+  eta: number;
+  /** Bytes per second (0 if unknown) */
+  bps: number;
+}
+
+/**
+ * Periodic progress update emitted while a Wharf.Push is in flight.
+ */
+export const WharfPushProgress =
+  createNotification<WharfPushProgressNotification>("Wharf.Push.Progress");
+
+/**
+ * Params for Wharf.ListChannels
+ */
+export interface WharfListChannelsParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  target: string;
+}
+
+/**
+ * Params for Wharf.GetChannel
+ */
+export interface WharfGetChannelParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  target: string;
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * Params for Wharf.GetBuild
+ */
+export interface WharfGetBuildParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  buildId: number;
 }

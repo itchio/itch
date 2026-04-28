@@ -34,6 +34,7 @@ import DashboardPage from "renderer/pages/DashboardPage";
 import DownloadsPage from "renderer/pages/DownloadsPage";
 import PreferencesPage from "renderer/pages/PreferencesPage";
 import ScanInstallLocationsPage from "renderer/pages/ScanInstallLocationsPage";
+import UploadPage from "renderer/pages/UploadPage";
 
 const ErrorDiv = styled.div`
   display: block;
@@ -227,6 +228,8 @@ class Meat extends React.PureComponent<Props, State> {
         }
       case "dashboard":
         return DashboardPage;
+      case "upload":
+        return this.props.isKitch ? UploadPage : null;
       case "downloads":
         return DownloadsPage;
       case "preferences":
@@ -261,6 +264,7 @@ interface Props extends MeatProps {
   isBrowser: boolean;
   internalPage: string;
   firstPathElement: string;
+  isKitch: boolean;
 }
 
 export default withTab(
@@ -273,5 +277,6 @@ export default withTab(
     firstPathElement: map(
       (rs, props) => ambientTab(rs, props).location.firstPathElement
     ),
+    isKitch: map((rs) => rs.system.appName === "kitch"),
   }))(Meat)
 );

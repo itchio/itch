@@ -84,6 +84,30 @@ export interface RootState {
   systemTasks: SystemTasksState;
   broth: BrothState;
   butlerd: ButlerdState;
+  upload: UploadState;
+}
+
+export type PushJobStatus = "pushing" | "processing" | "failed" | "cancelled";
+
+export interface PushJob {
+  id: string;
+  gameId: number;
+  target: string;
+  channel: string;
+  src: string;
+  buildId?: number;
+  status: PushJobStatus;
+  progress: number;
+  label?: string;
+  message?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface UploadState {
+  jobs: { [id: string]: PushJob };
+  jobOrder: string[];
+  activeJobId: string | null;
 }
 
 export interface BrothState {
