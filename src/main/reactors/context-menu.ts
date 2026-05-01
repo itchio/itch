@@ -46,11 +46,15 @@ export default function (watcher: Watcher) {
     const { wind, template, clientX, clientY } = action.payload;
     const nw = getNativeWindow(rs, wind);
 
+    // menu.popup expects window-content coordinates, but the renderer reports
+    // clientX/clientY in zoom-scaled CSS pixels. Multiply by the zoom factor
+    // so the menu lands at the click point when the user has zoomed in/out.
+    const zoom = nw?.webContents?.getZoomFactor?.() ?? 1;
     const menu = Menu.buildFromTemplate(convertTemplate(store, template));
     menu.popup({
       window: nw,
-      x: clientX,
-      y: clientY,
+      x: Math.round(clientX * zoom),
+      y: Math.round(clientY * zoom),
     });
   });
 }

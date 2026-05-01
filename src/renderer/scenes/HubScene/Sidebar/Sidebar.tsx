@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { User } from "common/butlerd/messages";
-import { selectActivePushJob } from "common/reducers/upload";
+import { selectActivePushJobs } from "common/reducers/upload";
 import {
   ambientNavigation,
   ambientWind,
@@ -283,6 +283,6 @@ export default hook((map) => ({
     const ti = ws.tabInstances[ambientNavigation(rs).tab];
     return ti.history[ti.currentIndex].url;
   }),
-  uploadActive: map((rs) => selectActivePushJob(rs.upload) !== null),
+  uploadActive: map((rs) => selectActivePushJobs(rs.upload).length > 0),
   isKitch: map((rs) => rs.system.appName === "kitch"),
 }))(Sidebar);

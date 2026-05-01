@@ -1918,10 +1918,12 @@ export enum Code {
  * Result for Wharf.Push
  */
 export interface WharfPushResult {
-  /** ID of the build that was created (0 if --dry-run) */
+  /** ID of the build that was created (0 if skipped) */
   buildId: number;
   /** undocumented */
   channel: string;
+  /** True when no build was created because ifChanged found no diff */
+  skipped: boolean;
 }
 
 /**
@@ -1929,10 +1931,55 @@ export interface WharfPushResult {
  * (walk, diff, upload) runs in a `butler push` worker subprocess that butlerd
  * spawns; butlerd brokers progress over WharfPushProgress notifications and
  * kills the worker if the RPC's context is cancelled.
+ *
+ * For a no-side-effects "what would change?" preview, call Wharf.PushPreview
+ * instead.
  */
 export const WharfPush = createRequest<WharfPushParams, WharfPushResult>(
   "Wharf.Push"
 );
+
+/**
+ * Result for Wharf.PushPreview
+ */
+export interface WharfPushPreviewResult {
+  /** undocumented */
+  channel: string;
+  /**
+   * False when the channel has no previous build to compare against;
+   * in that case every entry in the source is treated as new.
+   */
+  hasParent: boolean;
+  /** ID of the build the preview compared against. Absent when !HasParent. */
+  parentBuildId: number;
+  /** Per-entry change counts (files, dirs, symlinks combined). */
+  comparison: WharfPushComparison;
+}
+
+/**
+ * Reports what would change if Src were pushed to the given channel,
+ * without creating a build or uploading anything. Hashes the source; same
+ * cost as the diffing pass of a real push.
+ */
+export const WharfPushPreview = createRequest<
+  WharfPushPreviewParams,
+  WharfPushPreviewResult
+>("Wharf.PushPreview");
+
+/**
+ * WharfPushComparison summarises how the source compares to the channel's
+ * previous build. Counts cover files, dirs, and symlinks together.
+ */
+export interface WharfPushComparison {
+  /** undocumented */
+  new: number;
+  /** undocumented */
+  modified: number;
+  /** undocumented */
+  deleted: number;
+  /** undocumented */
+  same: number;
+}
 
 /**
  * Result for Wharf.ListChannels
@@ -1999,6 +2046,54 @@ export const WharfGetBuild = createRequest<
   WharfGetBuildParams,
   WharfGetBuildResult
 >("Wharf.GetBuild");
+
+/**
+ * Per-state counts plus editable project count, so the client can render
+ * filter-tab badges (All / Live / Processing / Failed) without re-querying.
+ */
+export interface WharfBuildTotals {
+  /** undocumented */
+  all: number;
+  /** undocumented */
+  live: number;
+  /** undocumented */
+  processing: number;
+  /** undocumented */
+  failed: number;
+  /** undocumented */
+  projectCount: number;
+}
+
+/**
+ * Result for Wharf.ListBuilds
+ */
+export interface WharfListBuildsResult {
+  /**
+   * Builds for the requested page, ordered newest first. Each carries
+   * nested game and upload context.
+   */
+  builds: Build[];
+  /** undocumented */
+  page: number;
+  /** undocumented */
+  perPage: number;
+  /**
+   * Counts across the unfiltered set, for tab badges. Only populated when
+   * requested with includeTotals.
+   */
+  totals?: WharfBuildTotals;
+}
+
+/**
+ * Lists builds across every game the current user develops or admins,
+ * powering the app's "Uploads" view. Results are fetched live from the
+ * itch.io API on every call (no local caching) so build state always
+ * reflects the server's current view.
+ */
+export const WharfListBuilds = createRequest<
+  WharfListBuildsParams,
+  WharfListBuildsResult
+>("Wharf.ListBuilds");
 
 /**
  * undocumented
@@ -2537,11 +2632,17 @@ export interface Build {
   id: number;
   /**
    * Identifier of the build before this one on the same channel,
-   * or 0 if this is the initial build.
+   * or -1 if this is the initial build.
    */
   parentBuildId: number;
   /** State of the build: started, processing, etc. */
   state: BuildState;
+  /** Upload this build belongs to */
+  uploadId: number;
+  /** Game this build belongs to */
+  gameId: number;
+  /** User who pushed the build */
+  userId: number;
   /** Automatically-incremented version number, starting with 1 */
   version: number;
   /**
@@ -2557,6 +2658,10 @@ export interface Build {
   files: BuildFile[];
   /** User who pushed the build */
   user: User;
+  /** Upload this build belongs to (only populated by endpoints that nest it) */
+  upload: Upload;
+  /** Game this build belongs to (only populated by endpoints that nest it) */
+  game: Game;
   /** Timestamp the build was created at */
   createdAt: RFCDate;
   /** Timestamp the build was last updated at */
@@ -4110,8 +4215,26 @@ export interface WharfPushParams {
   hidden?: boolean;
   /** Skip push if the source matches the previous build */
   ifChanged?: boolean;
-  /** Walk and report what would be pushed without uploading */
-  dryRun?: boolean;
+  /** Dereference symlinks during walk */
+  dereference?: boolean;
+  /** When non-nil, overrides butler's default (--fix-permissions, default true) */
+  fixPermissions?: boolean;
+  /** When non-nil, overrides butler's default (--auto-wrap, default true) */
+  autoWrap?: boolean;
+}
+
+/**
+ * Params for Wharf.PushPreview
+ */
+export interface WharfPushPreviewParams {
+  /** itch.io profile to authenticate as */
+  profileId: number;
+  /** Source path: directory or zip archive */
+  src: string;
+  /** Push target in user/slug or numeric form, e.g. "leafo/x-moon" */
+  target: string;
+  /** Channel name, e.g. "win-64" */
+  channel: string;
   /** Dereference symlinks during walk */
   dereference?: boolean;
   /** When non-nil, overrides butler's default (--fix-permissions, default true) */
@@ -4124,12 +4247,37 @@ export interface WharfPushParams {
  * Payload for Wharf.Push.Progress
  */
 export interface WharfPushProgressNotification {
-  /** 0..1 */
+  /**
+   * 0..1; conservative estimate based on uploaded vs source size, since
+   * patch size isn't known until the diff is fully written.
+   */
   progress: number;
-  /** Estimated seconds remaining (0 if unknown) */
+  /**
+   * Estimated seconds remaining (0 if unknown). Refers to the upload, so
+   * it's only meaningful once bytes are actually flowing to itch.io.
+   */
   eta: number;
-  /** Bytes per second (0 if unknown) */
+  /**
+   * Upload bytes per second (0 if unknown). This is wire throughput, not
+   * disk read speed.
+   */
   bps: number;
+  /**
+   * Bytes read from the source container so far while computing the
+   * patch. Compare to TotalBytes for diff-pass progress, which can
+   * outpace UploadedBytes since reused/compressed-away bytes never hit
+   * the wire.
+   */
+  readBytes: number;
+  /** Total bytes in the source container. */
+  totalBytes: number;
+  /** Bytes of the patch uploaded to itch.io so far. */
+  uploadedBytes: number;
+  /**
+   * Compressed patch size produced so far. Equals UploadedBytes once
+   * upload catches up; the gap between them is the in-flight buffer.
+   */
+  patchBytes: number;
 }
 
 /**
@@ -4168,4 +4316,20 @@ export interface WharfGetBuildParams {
   profileId: number;
   /** undocumented */
   buildId: number;
+}
+
+/**
+ * Params for Wharf.ListBuilds
+ */
+export interface WharfListBuildsParams {
+  /** undocumented */
+  profileId: number;
+  /** Page number, 1-based. Defaults to 1. */
+  page?: number;
+  /** Page size. Server-capped at 100. */
+  perPage?: number;
+  /** State filter. One of "live", "processing", "failed". Empty for all. */
+  state?: string;
+  /** If set, include aggregate totals in the response. */
+  includeTotals?: boolean;
 }

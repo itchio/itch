@@ -1,151 +1,277 @@
+import { actions } from "common/actions";
+import * as messages from "common/butlerd/messages";
+import { Build, Profile } from "common/butlerd/messages";
+import modals from "renderer/modals";
+import { selectActivePushJobs } from "common/reducers/upload";
+import { Dispatch, PushJob, RootState } from "common/types";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
-import { ReactReduxContext } from "react-redux";
-import { Game, Profile } from "common/butlerd/messages";
-import { selectActivePushJob } from "common/reducers/upload";
-import { Store } from "common/types";
+import Button from "renderer/basics/Button";
+import FiltersContainer from "renderer/basics/FiltersContainer";
+import butlerCaller from "renderer/hocs/butlerCaller";
+import { hookWithProps } from "renderer/hocs/hook";
+import {
+  dispatchTabEvolve,
+  dispatchTabPageUpdate,
+  urlWithParams,
+} from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import BuildRow from "renderer/pages/UploadPage/BuildRow";
+import Filters, { StatusFilter } from "renderer/pages/UploadPage/Filters";
+import UploadSearch from "renderer/pages/UploadPage/UploadSearch";
 import Page from "renderer/pages/common/Page";
+import { Title as BaseTitle, TitleBox } from "renderer/pages/PageStyles/games";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
-import GamePicker from "renderer/pages/UploadPage/GamePicker";
-import ChannelList from "renderer/pages/UploadPage/ChannelList";
-import SourcePicker from "renderer/pages/UploadPage/SourcePicker";
-import PushBar from "renderer/pages/UploadPage/PushBar";
-import { targetForGame } from "renderer/pages/UploadPage/target";
+const FetchBuilds = butlerCaller(messages.WharfListBuilds);
 
 const Container = styled.div`
-  padding: 24px;
-  max-width: 720px;
-  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  height: 100%;
+  padding: 0 12px;
 `;
 
-const Title = styled.h1`
-  font-size: ${(props) => props.theme.fontSizes.huge};
-  margin-bottom: 8px;
+const Title = styled(BaseTitle)`
+  color: ${(props) => props.theme.baseText};
 `;
 
-const Sub = styled.p`
+const Subtitle = styled.div`
   color: ${(props) => props.theme.secondaryText};
-  margin-bottom: 16px;
+  margin-top: 4px;
+`;
+
+const Toolbar = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+`;
+
+const Spacer = styled.div`
+  flex: 1;
+`;
+
+const Columns = styled.div`
+  display: grid;
+  grid-template-columns: 24px 2fr 1.4fr 1fr 1fr 0.8fr 0.8fr 32px;
+  gap: 12px;
+  padding: 8px 16px;
+  color: ${(props) => props.theme.secondaryText};
+  text-transform: uppercase;
+  font-size: 75%;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid ${(props) => props.theme.inputBorder};
+`;
+
+const Empty = styled.div`
+  padding: 60px 20px;
+  text-align: center;
+  color: ${(props) => props.theme.secondaryText};
+`;
+
+const List = styled.div`
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  border-radius: 4px;
+  overflow: hidden;
+  background: ${(props) => props.theme.itemBackground};
 `;
 
 interface Props extends MeatProps {
   profile: Profile;
   tab: string;
+  dispatch: Dispatch;
+
+  status: StatusFilter;
+  search: string;
+  url: string;
+
+  syntheticJobs: PushJob[];
 }
 
-interface State {
-  /** id of the selected game; selectedness drives GamePicker */
-  gameId: number | null;
-  /** wharf target ("user/slug") derived from the picked Game; null when the
-   *  game's URL doesn't yield a parseable slug (custom domain) */
-  target: string | null;
-  channel: string | null;
-  src: string | null;
-  /** true when the picked game has no parseable target (custom domain) */
-  unsupported: boolean;
-}
-
-const idleState: State = {
-  gameId: null,
-  target: null,
-  channel: null,
-  src: null,
-  unsupported: false,
-};
-
-class UploadPage extends React.PureComponent<Props, State> {
-  // We need the store at construction time to seed local state from any
-  // in-flight push (so navigating back to the tab shows the picker
-  // selections that match the running upload). Reading via context — rather
-  // than subscribing via hook() — avoids re-rendering UploadPage on every
-  // progress tick; PushBar subscribes for the live progress separately.
-  static override contextType = ReactReduxContext;
-  declare context: React.ContextType<typeof ReactReduxContext>;
-
-  constructor(
-    props: Props,
-    context: React.ContextType<typeof ReactReduxContext>
-  ) {
-    super(props, context);
-    const store = context.store as Store;
-    const job = selectActivePushJob(store.getState().upload);
-    this.state = job
-      ? {
-          gameId: job.gameId,
-          target: job.target,
-          channel: job.channel,
-          src: job.src,
-          unsupported: false,
-        }
-      : idleState;
+class UploadPage extends React.PureComponent<Props> {
+  override componentDidMount() {
+    dispatchTabPageUpdate(this.props, { label: ["sidebar.upload"] });
   }
 
   override render() {
-    const { profile } = this.props;
-    const { gameId, target, channel, src, unsupported } = this.state;
+    const { profile, tab, status, search, syntheticJobs, sequence } =
+      this.props;
 
     return (
       <Page>
-        <Container>
-          <Title>{T(_("upload.title"))}</Title>
-          <Sub>{T(_("upload.subtitle"))}</Sub>
+        <FetchBuilds
+          params={{
+            profileId: profile.id,
+            page: 1,
+            perPage: 50,
+            state: status || undefined,
+            includeTotals: true,
+          }}
+          sequence={sequence}
+          errorsHandled
+          loadingHandled
+          render={({ result, loading, error }) => {
+            const builds = result?.builds ?? [];
+            const totals = result?.totals;
 
-          <GamePicker
-            profile={profile}
-            selectedGameId={gameId}
-            onChange={this.handleGameChange}
-          />
+            const q = (search || "").trim().toLowerCase();
+            const filtered = q
+              ? builds.filter((b) => buildMatchesSearch(b, q))
+              : builds;
 
-          {unsupported ? <p>{T(_("upload.unsupported_target"))}</p> : null}
+            // Synthetic rows: jobs not yet associated with a server-side
+            // build go on top.
+            const syntheticToShow = syntheticJobs.filter(
+              (j) => !builds.some((b) => b.id === j.buildId)
+            );
 
-          <ChannelList
-            key={target ?? ""}
-            target={target}
-            profileId={profile.id}
-            selectedChannel={channel}
-            onChange={this.handleChannelChange}
-          />
+            return (
+              <>
+                <FiltersContainer loading={loading} />
+                <Container>
+                  <TitleBox>
+                    <Title>{T(_("upload.title"))}</Title>
+                    <Subtitle>
+                      {totals
+                        ? T([
+                            "upload.subtitle",
+                            {
+                              builds: totals.all,
+                              projects: totals.projectCount,
+                            },
+                          ])
+                        : T(_("upload.subtitle_loading"))}
+                    </Subtitle>
+                  </TitleBox>
+                  <Toolbar>
+                    <UploadSearch />
+                    <Filters
+                      tab={tab}
+                      totals={
+                        totals
+                          ? {
+                              all: totals.all,
+                              live: totals.live,
+                              processing: totals.processing,
+                              failed: totals.failed,
+                            }
+                          : undefined
+                      }
+                    />
+                    <Spacer />
+                    <Button
+                      primary
+                      icon="upload"
+                      onClick={this.handlePushNewBuild}
+                    >
+                      {T(_("upload.push_new_build"))}
+                    </Button>
+                  </Toolbar>
 
-          <SourcePicker src={src} onChange={this.handleSrcChange} />
+                  {error ? <Empty>{error.message}</Empty> : null}
 
-          <PushBar
-            gameId={gameId}
-            target={target}
-            channel={channel}
-            src={src}
-          />
-        </Container>
+                  {!error &&
+                  filtered.length === 0 &&
+                  syntheticToShow.length === 0 ? (
+                    <Empty>
+                      {loading ? T(_("upload.loading")) : T(_("upload.empty"))}
+                    </Empty>
+                  ) : (
+                    <List>
+                      <Columns>
+                        <span />
+                        <span>{T(_("upload.col.project"))}</span>
+                        <span>{T(_("upload.col.channel"))}</span>
+                        <span>{T(_("upload.col.version"))}</span>
+                        <span>{T(_("upload.col.status"))}</span>
+                        <span>{T(_("upload.col.size"))}</span>
+                        <span>{T(_("upload.col.pushed"))}</span>
+                        <span />
+                      </Columns>
+                      {syntheticToShow.map((job) => (
+                        <BuildRow
+                          key={`syn-${job.id}`}
+                          build={null}
+                          syntheticJob={job}
+                          tab={tab}
+                          onSetSearch={this.setSearch}
+                        />
+                      ))}
+                      {filtered.map((build) => (
+                        <BuildRow
+                          key={`${build.id}-${build.uploadId}`}
+                          build={build}
+                          tab={tab}
+                          onSetSearch={this.setSearch}
+                        />
+                      ))}
+                    </List>
+                  )}
+                </Container>
+              </>
+            );
+          }}
+        />
       </Page>
     );
   }
 
-  handleGameChange = (game: Game | null) => {
-    if (!game) {
-      this.setState(idleState);
-      return;
-    }
-    const target = targetForGame(game, this.props.profile);
-    this.setState({
-      gameId: game.id,
-      target,
-      channel: null,
-      unsupported: target === null,
+  setSearch = (search: string) => {
+    dispatchTabEvolve(this.props, {
+      replace: true,
+      url: urlWithParams(this.props.url, { search }),
     });
   };
 
-  handleChannelChange = (channel: string | null) => {
-    this.setState({ channel });
-  };
-
-  handleSrcChange = (src: string | null) => {
-    this.setState({ src });
+  handlePushNewBuild = () => {
+    this.props.dispatch(
+      actions.openModal(
+        modals.pushBuild.make({
+          wind: ambientWind(),
+          title: "Push new build",
+          message: "",
+          widgetParams: {},
+        })
+      )
+    );
   };
 }
 
-export default withProfile(withTab(UploadPage));
+function buildMatchesSearch(build: Build, q: string): boolean {
+  const title = build.game?.title?.toLowerCase() ?? "";
+  const url = build.game?.url?.toLowerCase() ?? "";
+  const channel = build.upload?.channelName?.toLowerCase() ?? "";
+  const version = (build.userVersion ?? "").toLowerCase();
+  return (
+    title.includes(q) ||
+    url.includes(q) ||
+    channel.includes(q) ||
+    version.includes(q)
+  );
+}
+
+export default withProfile(
+  withTab(
+    hookWithProps(UploadPage)((map) => ({
+      status: map((rs: RootState, props: any) => {
+        const q = ambientTab(rs, props).location.query;
+        const s = (q.status ?? "") as StatusFilter;
+        if (s === "live" || s === "processing" || s === "failed") return s;
+        return "" as StatusFilter;
+      }),
+      search: map(
+        (rs: RootState, props: any) =>
+          ambientTab(rs, props).location.query.search ?? ""
+      ),
+      url: map(
+        (rs: RootState, props: any) => ambientTab(rs, props).location.url
+      ),
+      syntheticJobs: map((rs: RootState) => selectActivePushJobs(rs.upload)),
+    }))(UploadPage)
+  )
+);

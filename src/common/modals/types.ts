@@ -6,6 +6,21 @@ import {
   Build,
 } from "common/butlerd/messages";
 
+export interface PushBuildParams {
+  /**
+   * Pre-fill the project picker. Pass the full Game so the modal can
+   * derive the wharf target and show cover art without waiting for the
+   * profile-games fetch.
+   */
+  prefilledGame?: Game;
+  /** Pre-fill the channel picker with this channel name. */
+  prefilledChannel?: string;
+}
+
+export interface PushBuildResponse {}
+
+//---------------------
+
 export interface TwoFactorInputParams {
   username: string;
 }

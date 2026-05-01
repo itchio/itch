@@ -22,7 +22,10 @@ export const initialState = {
   preferOptimizedPatches: false,
   disableBrowser: env.integrationTests ? true : false,
   enableTabs: false,
+  recentPushFolders: [],
 } as PreferencesState;
+
+export const MAX_RECENT_PUSH_FOLDERS = 5;
 
 export default reducer<PreferencesState>(initialState, (on) => {
   on(actions.updatePreferences, (state, action) => {

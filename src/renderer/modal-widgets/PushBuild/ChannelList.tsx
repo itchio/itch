@@ -76,8 +76,17 @@ const Empty = styled.div`
   color: ${(props) => props.theme.secondaryText};
 `;
 
+function channelHeadLabel(ch: WharfChannel): string {
+  const b = ch.head;
+  if (!b) return "no builds yet";
+  const v = b.userVersion?.trim();
+  if (v) return v;
+  if (b.version) return `v${b.version}`;
+  return `build #${b.id}`;
+}
+
 interface Props {
-  /** wharf target ("user/slug"), or null when no game is picked or target is unresolvable */
+  /** wharf target ("user/slug"), or null when no game is picked */
   target: string | null;
   profileId: number;
   selectedChannel: string | null;
@@ -121,15 +130,7 @@ export default class ChannelList extends React.PureComponent<Props, State> {
                     onClick={() => this.handlePick(ch.name)}
                   >
                     <ChannelName>{ch.name}</ChannelName>
-                    <ChannelMeta>
-                      {ch.head
-                        ? `build #${ch.head.id}${
-                            ch.head.userVersion
-                              ? ` · ${ch.head.userVersion}`
-                              : ""
-                          }`
-                        : "no builds yet"}
-                    </ChannelMeta>
+                    <ChannelMeta>{channelHeadLabel(ch)}</ChannelMeta>
                   </ChannelRow>
                 ))}
               </>

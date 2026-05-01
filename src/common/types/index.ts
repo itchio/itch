@@ -98,6 +98,23 @@ export interface PushJob {
   buildId?: number;
   status: PushJobStatus;
   progress: number;
+  /** Snapshot fields from the picked game so synthetic in-flight rows
+   *  can render before the real Build is fetched. */
+  gameTitle?: string;
+  gameCoverUrl?: string;
+  gameStillCoverUrl?: string;
+  /** Estimated seconds remaining (0 if unknown). */
+  eta?: number;
+  /** Upload bytes per second (0 if unknown). */
+  bps?: number;
+  /** Bytes read from the source so far while diffing. */
+  readBytes?: number;
+  /** Total bytes in the source container. */
+  totalBytes?: number;
+  /** Bytes of the patch uploaded to itch.io so far. */
+  uploadedBytes?: number;
+  /** Compressed patch size produced so far. */
+  patchBytes?: number;
   label?: string;
   message?: string;
   createdAt: number;
@@ -107,7 +124,6 @@ export interface PushJob {
 export interface UploadState {
   jobs: { [id: string]: PushJob };
   jobOrder: string[];
-  activeJobId: string | null;
 }
 
 export interface BrothState {
@@ -534,6 +550,20 @@ export interface PreferencesState {
 
   /** whether or not we've already imported appdata as an install location */
   importedOldInstallLocations: boolean;
+
+  /** Recently-used directories from the Push new build modal, persisted
+   *  so the modal's Recent folders list survives app restarts. Most
+   *  recent first, capped at MAX_RECENT_PUSH_FOLDERS. */
+  recentPushFolders: RecentPushFolder[];
+}
+
+export interface RecentPushFolder {
+  /** Absolute path of the directory or .zip that was pushed. */
+  path: string;
+  /** Epoch ms of the most recent push from this path. */
+  lastUsedAt: number;
+  /** gameId the path was last pushed to (for re-prefilling the picker). */
+  gameId?: number;
 }
 
 export interface Task {

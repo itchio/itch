@@ -925,10 +925,22 @@ export const actions = wireActions({
     channel: string;
     /** source path (folder or zip) */
     src: string;
+    /** Display fields snapshotted from the picked Game so the synthetic
+     *  in-flight row in the dashboard can render the project name/cover
+     *  before the real Build comes back from the server. */
+    gameTitle?: string;
+    gameCoverUrl?: string;
+    gameStillCoverUrl?: string;
   }>(),
   pushProgress: action<{
     jobId: string;
     progress: number;
+    eta?: number;
+    bps?: number;
+    readBytes?: number;
+    totalBytes?: number;
+    uploadedBytes?: number;
+    patchBytes?: number;
     label?: string;
   }>(),
   pushDone: action<{

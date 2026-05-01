@@ -23,6 +23,8 @@ import {
   SwitchVersionCaveResponse,
   TwoFactorInputParams,
   TwoFactorInputResponse,
+  PushBuildParams,
+  PushBuildResponse,
   ConfirmQuitParams,
   ConfirmQuitResponse,
   ViewChangelogParams,
@@ -119,6 +121,7 @@ export const prepModals = (uuid: () => string) => {
     showError: widget<ShowErrorParams, ShowErrorResponse>(uuid),
     twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
     sendFeedback: widget<SendFeedbackParams, void>(uuid),
+    pushBuild: widget<PushBuildParams, PushBuildResponse>(uuid),
 
     // dummy widgets
 

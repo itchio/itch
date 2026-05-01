@@ -1,11 +1,11 @@
 import React from "react";
 import { actions } from "common/actions";
-import { selectActivePushJob } from "common/reducers/upload";
+import { selectActivePushJobByTarget } from "common/reducers/upload";
 import { Dispatch, PushJob, RootState } from "common/types";
 import uuid from "common/util/uuid";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { hook } from "renderer/hocs/hook";
+import { hookWithProps } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 import rng from "renderer/util/rng";
@@ -48,10 +48,19 @@ const Result = styled.div`
 
 interface OwnProps {
   gameId: number | null;
+  /** Snapshot fields from the picked game, forwarded into startPush so the
+   *  synthetic in-flight row in the dashboard can render the project. */
+  gameTitle: string | null;
+  gameCoverUrl: string | null;
+  gameStillCoverUrl: string | null;
   /** wharf target in user/slug form, or null if not ready */
   target: string | null;
   channel: string | null;
   src: string | null;
+  /** Optional: called after a successful startPush dispatch. The modal
+   *  uses this to close itself once the push is in flight; the dashboard
+   *  takes over showing live progress on the matching row. */
+  onPushStarted?: () => void;
 }
 
 interface MappedProps {
@@ -116,18 +125,32 @@ class PushBar extends React.PureComponent<Props> {
   }
 
   handlePush = () => {
-    const { dispatch, gameId, target, channel, src } = this.props;
+    const {
+      dispatch,
+      gameId,
+      gameTitle,
+      gameCoverUrl,
+      gameStillCoverUrl,
+      target,
+      channel,
+      src,
+      onPushStarted,
+    } = this.props;
     if (!gameId || !target || !channel || !src) return;
     dispatch(
       actions.startPush({
         jobId: uuid(rng),
         createdAt: Date.now(),
         gameId,
+        gameTitle: gameTitle ?? undefined,
+        gameCoverUrl: gameCoverUrl ?? undefined,
+        gameStillCoverUrl: gameStillCoverUrl ?? undefined,
         target,
         channel,
         src,
       })
     );
+    onPushStarted?.();
   };
 
   handleCancel = () => {
@@ -148,7 +171,11 @@ function getLatestResult(rs: RootState): PushJob | null {
   return null;
 }
 
-export default hook((map) => ({
-  activeJob: map((rs) => selectActivePushJob(rs.upload)),
-  latestResult: map(getLatestResult),
+export default hookWithProps(PushBar)((map) => ({
+  activeJob: map((rs, props: OwnProps) =>
+    props.target && props.channel
+      ? selectActivePushJobByTarget(rs.upload, props.target, props.channel)
+      : null
+  ),
+  latestResult: map((rs, _props: OwnProps) => getLatestResult(rs)),
 }))(PushBar);

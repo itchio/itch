@@ -5,18 +5,41 @@ import { PushJob, UploadState } from "common/types";
 const initialState: UploadState = {
   jobs: {},
   jobOrder: [],
-  activeJobId: null,
 };
 
 /**
- * Returns the in-flight push job, if any. A job is "in flight" only while
- * its status is "pushing"; once it transitions to processing/failed/cancelled
- * we no longer treat it as active even if `activeJobId` hasn't been cleared
- * yet (it briefly lingers between cancelPush and the reactor's pushFailed).
+ * Returns every push job whose status is "pushing" — these are the
+ * synthetic rows the dashboard pins to the top of the list. Once a job
+ * transitions to processing/failed/cancelled it stops appearing here.
  */
-export function selectActivePushJob(s: UploadState): PushJob | null {
-  const job = s.activeJobId ? s.jobs[s.activeJobId] ?? null : null;
-  return job?.status === "pushing" ? job : null;
+export function selectActivePushJobs(s: UploadState): PushJob[] {
+  return s.jobOrder
+    .map((id) => s.jobs[id])
+    .filter((j): j is PushJob => !!j && j.status === "pushing");
+}
+
+/**
+ * Returns the active push job for a given (target, channel) tuple, or null
+ * if none. Used by dashboard rows to attach live progress to a row that
+ * matches an in-flight push.
+ */
+export function selectActivePushJobByTarget(
+  s: UploadState,
+  target: string,
+  channel: string
+): PushJob | null {
+  for (const id of s.jobOrder) {
+    const j = s.jobs[id];
+    if (
+      j &&
+      j.status === "pushing" &&
+      j.target === target &&
+      j.channel === channel
+    ) {
+      return j;
+    }
+  }
+  return null;
 }
 
 // History cap — long-running sessions push many builds; we never need more
@@ -28,18 +51,23 @@ function pruneJobHistory(state: UploadState): UploadState {
     return state;
   }
   const kept = state.jobOrder.slice(0, MAX_JOB_HISTORY);
-  const keptSet = new Set(kept);
+  // Always keep jobs that are still pushing, even if they've fallen off
+  // the recency window — losing one out from under a running reactor would
+  // strand the conversation.
+  const keepIds = new Set(kept);
+  for (const id of state.jobOrder) {
+    const j = state.jobs[id];
+    if (j && j.status === "pushing") {
+      keepIds.add(id);
+    }
+  }
+  const orderedKept = state.jobOrder.filter((id) => keepIds.has(id));
   const jobs: { [id: string]: PushJob } = {};
-  for (const id of kept) {
+  for (const id of orderedKept) {
     const job = state.jobs[id];
     if (job) jobs[id] = job;
   }
-  // Preserve the active job even if (somehow) it isn't in the trimmed set.
-  if (state.activeJobId && !keptSet.has(state.activeJobId)) {
-    const active = state.jobs[state.activeJobId];
-    if (active) jobs[state.activeJobId] = active;
-  }
-  return { ...state, jobs, jobOrder: kept };
+  return { ...state, jobs, jobOrder: orderedKept };
 }
 
 function updateJob(
@@ -65,17 +93,27 @@ function updateJob(
 
 export default reducer<UploadState>(initialState, (on) => {
   on(actions.startPush, (state, action) => {
-    if (state.activeJobId) {
-      return state;
-    }
+    const {
+      jobId,
+      createdAt,
+      gameId,
+      target,
+      channel,
+      src,
+      gameTitle,
+      gameCoverUrl,
+      gameStillCoverUrl,
+    } = action.payload;
 
-    const { jobId, createdAt, gameId, target, channel, src } = action.payload;
     const job: PushJob = {
       id: jobId,
       gameId,
       target,
       channel,
       src,
+      gameTitle,
+      gameCoverUrl,
+      gameStillCoverUrl,
       status: "pushing",
       progress: 0,
       createdAt,
@@ -88,21 +126,45 @@ export default reducer<UploadState>(initialState, (on) => {
         [jobId]: job,
       },
       jobOrder: [jobId, ...state.jobOrder],
-      activeJobId: jobId,
     });
   });
 
   on(actions.pushProgress, (state, action) => {
-    const { jobId, progress, label } = action.payload;
+    const {
+      jobId,
+      progress,
+      eta,
+      bps,
+      readBytes,
+      totalBytes,
+      uploadedBytes,
+      patchBytes,
+      label,
+    } = action.payload;
     const job = state.jobs[jobId];
     if (!job || job.status !== "pushing") {
       return state;
     }
-    if (job.progress === progress && job.label === label) {
+    if (
+      job.progress === progress &&
+      job.label === label &&
+      job.eta === eta &&
+      job.bps === bps &&
+      job.readBytes === readBytes &&
+      job.totalBytes === totalBytes &&
+      job.uploadedBytes === uploadedBytes &&
+      job.patchBytes === patchBytes
+    ) {
       return state;
     }
     return updateJob(state, jobId, {
       progress,
+      eta,
+      bps,
+      readBytes,
+      totalBytes,
+      uploadedBytes,
+      patchBytes,
       label,
       updatedAt: Date.now(),
     });
@@ -115,21 +177,15 @@ export default reducer<UploadState>(initialState, (on) => {
       return state;
     }
     if (job.status === "cancelled") {
-      return {
-        ...state,
-        activeJobId: state.activeJobId === jobId ? null : state.activeJobId,
-      };
+      return state;
     }
-    return {
-      ...updateJob(state, jobId, {
-        buildId,
-        status: "processing",
-        progress: 1,
-        label: undefined,
-        updatedAt: Date.now(),
-      }),
-      activeJobId: state.activeJobId === jobId ? null : state.activeJobId,
-    };
+    return updateJob(state, jobId, {
+      buildId,
+      status: "processing",
+      progress: 1,
+      label: undefined,
+      updatedAt: Date.now(),
+    });
   });
 
   on(actions.pushFailed, (state, action) => {
@@ -139,20 +195,14 @@ export default reducer<UploadState>(initialState, (on) => {
       return state;
     }
     if (job.status === "cancelled") {
-      return {
-        ...state,
-        activeJobId: state.activeJobId === jobId ? null : state.activeJobId,
-      };
+      return state;
     }
-    return {
-      ...updateJob(state, jobId, {
-        status: "failed",
-        label: undefined,
-        message,
-        updatedAt: Date.now(),
-      }),
-      activeJobId: state.activeJobId === jobId ? null : state.activeJobId,
-    };
+    return updateJob(state, jobId, {
+      status: "failed",
+      label: undefined,
+      message,
+      updatedAt: Date.now(),
+    });
   });
 
   on(actions.cancelPush, (state, action) => {
@@ -161,9 +211,6 @@ export default reducer<UploadState>(initialState, (on) => {
     if (!job || job.status !== "pushing") {
       return state;
     }
-    // We deliberately leave activeJobId set: the reactor's cancel handler
-    // gates on it, and the follow-up pushFailed will clear it once the
-    // worker subprocess actually exits.
     return updateJob(state, jobId, {
       status: "cancelled",
       label: undefined,

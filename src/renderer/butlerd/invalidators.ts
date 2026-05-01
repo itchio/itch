@@ -11,6 +11,10 @@ invalidators.set(messages.FetchProfileOwnedKeys, [actions.commonsUpdated]);
 invalidators.set(messages.FetchCaves, [actions.commonsUpdated]);
 invalidators.set(messages.FetchCave, [actions.commonsUpdated]);
 invalidators.set(messages.WharfListChannels, [actions.pushDone]);
+invalidators.set(messages.WharfListBuilds, [
+  actions.pushDone,
+  actions.pushFailed,
+]);
 invalidators.set(messages.InstallLocationsList, [
   actions.commonsUpdated,
   actions.installLocationsChanged,
