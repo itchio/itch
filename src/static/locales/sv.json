@@ -163,7 +163,6 @@
     "new_tab.titles.browser_placeholder": "Skriv in en webbadress",
     "new_tab.titles.input": "...eller",
     "new_tab.top_sellers": "Toppförsäljare",
-    "new_tab.twitter": "Populär på Twitter",
     "notification.see_you_soon.message": "itch kör nu i bakgrunden. Använd menyn för att stänga av det helt.",
     "notification.see_you_soon.title": "På återseende!",
     "notification.purchase_complete.just_bought": "Du har precis köpt {{title}}!",
@@ -591,5 +590,6 @@
     "plan_install.select_upload": "Installera",
     "plan_install.disk_space_required": "Diskutrymme som krävs",
     "plan_install.disk_space_available": "Diskutrymme tillgängligt",
-    "empty_state.nothing_to_see_here": "Ingenting att se här"
+    "empty_state.nothing_to_see_here": "Ingenting att se här",
+    "duration.precise.hour_minutes": "1 timme {{minutes}} minuter"
 }
