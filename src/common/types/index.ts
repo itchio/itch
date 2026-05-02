@@ -15,6 +15,8 @@ import {
   Platform,
   Profile,
   SandboxType,
+  WharfPushComparison,
+  WharfPushPreviewEntry,
 } from "common/butlerd/messages";
 import { Endpoint } from "@itchio/butlerd";
 import { modalShape } from "common/modals";
@@ -121,9 +123,44 @@ export interface PushJob {
   updatedAt: number;
 }
 
+export type PreviewStatus = "running" | "done" | "failed" | "cancelled";
+
+export interface PreviewState {
+  /** uuid for this preview run; late notifications with a stale id are dropped */
+  id: string;
+  status: PreviewStatus;
+  /** Snapshot of inputs the preview was started with — the result reflects
+   *  these, not the live form state. Used to ignore stale notifications and
+   *  could power a "stale" banner if the modal needed one. */
+  target: string;
+  channel: string;
+  src: string;
+  progress: number;
+  eta?: number;
+  bps?: number;
+  readBytes?: number;
+  totalBytes?: number;
+  /** Result fields, populated on previewDone. */
+  hasParent?: boolean;
+  parentBuildId?: number;
+  /** Total uncompressed size of the source container, in bytes. */
+  sourceSize?: number;
+  comparison?: WharfPushComparison;
+  /** Up to 20 changed files (NEW/MODIFIED/DELETED), sorted by size desc.
+   *  Always non-null when status === "done", but may be empty. */
+  topChangedFiles?: WharfPushPreviewEntry[];
+  /** Failure or cancellation message. */
+  message?: string;
+  startedAt: number;
+  finishedAt?: number;
+}
+
 export interface UploadState {
   jobs: { [id: string]: PushJob };
   jobOrder: string[];
+  /** At most one preview is in-flight or pending review at a time — only one
+   *  PushBuild dialog is open and previews are dialog-scoped. */
+  currentPreview?: PreviewState;
 }
 
 export interface BrothState {

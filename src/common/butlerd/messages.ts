@@ -1952,8 +1952,19 @@ export interface WharfPushPreviewResult {
   hasParent: boolean;
   /** ID of the build the preview compared against. Absent when !HasParent. */
   parentBuildId: number;
+  /**
+   * Total uncompressed size of the source container, in bytes. Header
+   * context for the comparison summary.
+   */
+  sourceSize: number;
   /** Per-entry change counts (files, dirs, symlinks combined). */
   comparison: WharfPushComparison;
+  /**
+   * Up to 20 changed files (NEW, MODIFIED, or DELETED), sorted by size
+   * descending. Dirs and symlinks are excluded — they have no meaningful
+   * size. Empty when nothing changed.
+   */
+  topChangedFiles: WharfPushPreviewEntry[];
 }
 
 /**
@@ -1967,8 +1978,28 @@ export const WharfPushPreview = createRequest<
 >("Wharf.PushPreview");
 
 /**
+ * WharfPushPreviewEntry is a single row in the "biggest changes" listing
+ * emitted with a push preview.
+ */
+export interface WharfPushPreviewEntry {
+  /** Path within the source container. */
+  path: string;
+  /** One of "new", "modified", "deleted". */
+  status: string;
+  /**
+   * File size in bytes. For "deleted" this is the size on the previous
+   * build (since the entry no longer exists in source); for "new" and
+   * "modified" it's the size on the source side.
+   */
+  size: number;
+}
+
+/**
  * WharfPushComparison summarises how the source compares to the channel's
- * previous build. Counts cover files, dirs, and symlinks together.
+ * previous build. Counts cover files, dirs, and symlinks together; byte
+ * sums only reflect file sizes — dirs and symlinks contribute zero. New /
+ * Modified / Same byte sums are taken from the source side; Deleted bytes
+ * are taken from the previous build (those entries don't exist in source).
  */
 export interface WharfPushComparison {
   /** undocumented */
@@ -1979,6 +2010,14 @@ export interface WharfPushComparison {
   deleted: number;
   /** undocumented */
   same: number;
+  /** undocumented */
+  newBytes: number;
+  /** undocumented */
+  modifiedBytes: number;
+  /** undocumented */
+  deletedBytes: number;
+  /** undocumented */
+  sameBytes: number;
 }
 
 /**
@@ -4221,6 +4260,11 @@ export interface WharfPushParams {
   fixPermissions?: boolean;
   /** When non-nil, overrides butler's default (--auto-wrap, default true) */
   autoWrap?: boolean;
+  /**
+   * Tags the originating client for analytics (e.g. "app").
+   * Defaults to "butlerd" if unset.
+   */
+  source?: string;
 }
 
 /**

@@ -21,6 +21,11 @@ export const baseColors = {
 
   carnation: "#fa5c5c",
   vividTangerine: "#ff8080",
+
+  // Amber for "you're confirming an unusual action" UI states. Distinct
+  // from `mintJulep` (warning) — that's a pale info-yellow; this is a
+  // saturated caution-orange.
+  hokeyPokey: "#dca03c",
 };
 
 export const uiColors = {
@@ -43,6 +48,9 @@ export const colors = {
 
   error: baseColors.flushMahogany,
   warning: baseColors.mintJulep,
+  // Saturated amber for confirm-style "are you sure?" affordances. See
+  // PushBuild's confirm Push button + Review-panel callout.
+  caution: baseColors.hokeyPokey,
   success: baseColors.gossip,
 
   buy: baseColors.shamrock,

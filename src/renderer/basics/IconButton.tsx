@@ -9,7 +9,7 @@ import { TString } from "renderer/t";
 const IconButtonStyled = styled.button`
   ${styles.resetButton};
 
-  &:not(.disabled) {
+  &:not(:disabled) {
     ${styles.clickable};
   }
 
@@ -23,13 +23,13 @@ const IconButtonStyled = styled.button`
   width: 30px;
   height: 30px;
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: ${(props) => props.theme.secondaryTextHover};
   }
 
-  &.disabled {
+  &:disabled {
     opacity: 0.2;
-    pointer: disabled;
+    cursor: not-allowed;
   }
 
   &.emphasized {
@@ -93,8 +93,8 @@ const IconButton = ({
   return (
     <IconButtonStyled
       type="button"
+      disabled={disabled}
       className={classNames(className, {
-        disabled,
         big,
         huge,
         enormous,
@@ -103,7 +103,6 @@ const IconButton = ({
       data-rh={hint ? JSON.stringify(hint) : null}
       data-rh-at={hintPosition}
       aria-label={ariaLabel}
-      aria-disabled={disabled || undefined}
       {...restProps}
     >
       {typeof icon === "string" ? <Icon icon={icon} /> : icon}

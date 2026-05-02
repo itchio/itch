@@ -1,8 +1,9 @@
+import { darken, transparentize } from "polished";
 import React from "react";
 import * as messages from "common/butlerd/messages";
 import { WharfChannel } from "common/butlerd/messages";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
 
 const FetchChannels = butlerCaller(messages.WharfListChannels);
@@ -21,30 +22,68 @@ const Header = styled.div`
   font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
-const ChannelRow = styled.div`
+const ChannelRow = styled.button`
+  ${styles.resetButton};
+  text-align: left;
+  width: 100%;
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px 12px;
-  cursor: pointer;
+  /* Extra left padding leaves room for the accent bar on the active row
+   *  without shifting text when toggling between rows. */
+  padding: 8px 12px 8px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.12s;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: transparent;
+    transition: background 0.12s;
+  }
 
   &:last-child {
     border-bottom: none;
   }
 
-  &.active {
-    background: ${(props) => props.theme.sidebarBackground};
-  }
-
   &:hover {
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Inset the global focus ring so it doesn't get clipped by the rounded
+   *  Wrapper border. (Color/width come from the global focus style.) */
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+
+  &.active {
+    background: ${(props) =>
+      transparentize(0.82, darken(0.25, props.theme.accent))};
+
+    &::before {
+      background: ${(props) => props.theme.accent};
+    }
+  }
+
+  &.active:hover {
+    background: ${(props) =>
+      transparentize(0.76, darken(0.25, props.theme.accent))};
   }
 `;
 
 const ChannelName = styled.div`
   flex: 1;
   font-weight: bold;
+  color: ${(props) => props.theme.secondaryText};
+
+  .active & {
+    color: ${(props) => props.theme.baseText};
+  }
 `;
 
 const ChannelMeta = styled.div`
@@ -126,7 +165,9 @@ export default class ChannelList extends React.PureComponent<Props, State> {
                 {channels.map((ch) => (
                   <ChannelRow
                     key={ch.name}
+                    type="button"
                     className={selectedChannel === ch.name ? "active" : ""}
+                    aria-pressed={selectedChannel === ch.name}
                     onClick={() => this.handlePick(ch.name)}
                   >
                     <ChannelName>{ch.name}</ChannelName>

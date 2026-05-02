@@ -9,6 +9,8 @@ import {
   GameUpdateChoice,
   Profile,
   InstallLocationSummary,
+  WharfPushComparison,
+  WharfPushPreviewEntry,
 } from "common/butlerd/messages";
 import { LogEntry } from "common/logger";
 import { TypedModal, TypedModalUpdate } from "common/modals";
@@ -956,4 +958,44 @@ export const actions = wireActions({
   cancelPush: action<{
     jobId: string;
   }>(),
+
+  // upload — preview (Wharf.PushPreview, no side effects on itch.io)
+
+  startPreview: action<{
+    /** uuid for this preview run */
+    id: string;
+    /** wharf target in user/slug form */
+    target: string;
+    channel: string;
+    /** source path (folder or zip) */
+    src: string;
+  }>(),
+  previewProgress: action<{
+    id: string;
+    progress: number;
+    eta?: number;
+    bps?: number;
+    readBytes?: number;
+    totalBytes?: number;
+  }>(),
+  previewDone: action<{
+    id: string;
+    hasParent: boolean;
+    parentBuildId: number;
+    sourceSize: number;
+    comparison: WharfPushComparison;
+    topChangedFiles: WharfPushPreviewEntry[];
+  }>(),
+  previewFailed: action<{
+    id: string;
+    /** "Cancelled" is mapped to status "cancelled" by the reducer; any
+     *  other message becomes status "failed". */
+    message: string;
+  }>(),
+  cancelPreview: action<{
+    id: string;
+  }>(),
+  /** Drop the current preview slot — used by the dialog when the user
+   *  changes a form field or closes the modal. */
+  clearPreview: action<{}>(),
 });

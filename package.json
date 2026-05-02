@@ -103,7 +103,7 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "sync-butler": "cd ../butler && go run ./butlerd/generous ts ../itch/src/common/butlerd/messages.ts",
+    "sync-butler": "cd ../butler && go run ./butlerd/generous ts ../itch/src/common/butlerd/messages.ts && cd ../itch && prettier --write src/common/butlerd/messages.ts",
     "start": "node develop.mjs",
     "codex": "codex -c 'mcp_servers.chrome-devtools.command=\"npx\"' -c 'mcp_servers.chrome-devtools.args=[\"chrome-devtools-mcp@latest\",\"--browser-url=http://127.0.0.1:9223\"]'",
     "compile": "cross-env NODE_ENV=production node build.mjs",

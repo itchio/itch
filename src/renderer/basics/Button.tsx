@@ -35,12 +35,12 @@ const ButtonStyled = styled.button`
   min-height: 38px;
   min-width: 7em;
 
-  &:hover {
+  &:hover:not(:disabled) {
     box-shadow: 0 0 8px ${(props) => props.theme.inputBoxShadow};
     cursor: pointer;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(1px);
   }
 
@@ -71,11 +71,9 @@ const ButtonStyled = styled.button`
     font-weight: normal;
   }
 
-  &.disabled {
+  &:disabled {
     opacity: 0.2;
-    &:hover {
-      cursor: not-allowed;
-    }
+    cursor: not-allowed;
   }
 
   &.translucent {
@@ -131,14 +129,14 @@ const Button = ({
   return (
     <ButtonStyled
       type={type}
-      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      onClick={onClick}
       data-rh={hint ? JSON.stringify(hint) : null}
       data-rh-at="top"
       className={classNames(className, {
         primary,
         wide,
         fat,
-        disabled,
         translucent,
       })}
       {...restProps}

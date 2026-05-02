@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
-import { PushJob, UploadState } from "common/types";
+import { PreviewState, PushJob, UploadState } from "common/types";
 
 const initialState: UploadState = {
   jobs: {},
@@ -217,6 +217,105 @@ export default reducer<UploadState>(initialState, (on) => {
       message: "Cancelled",
       updatedAt: Date.now(),
     });
+  });
+
+  on(actions.startPreview, (state, action) => {
+    const { id, target, channel, src } = action.payload;
+    const preview: PreviewState = {
+      id,
+      target,
+      channel,
+      src,
+      status: "running",
+      progress: 0,
+      startedAt: Date.now(),
+    };
+    return {
+      ...state,
+      currentPreview: preview,
+    };
+  });
+
+  on(actions.previewProgress, (state, action) => {
+    const { id, progress, eta, bps, readBytes, totalBytes } = action.payload;
+    const cur = state.currentPreview;
+    if (!cur || cur.id !== id || cur.status !== "running") {
+      return state;
+    }
+    if (
+      cur.progress === progress &&
+      cur.eta === eta &&
+      cur.bps === bps &&
+      cur.readBytes === readBytes &&
+      cur.totalBytes === totalBytes
+    ) {
+      return state;
+    }
+    return {
+      ...state,
+      currentPreview: {
+        ...cur,
+        progress,
+        eta,
+        bps,
+        readBytes,
+        totalBytes,
+      },
+    };
+  });
+
+  on(actions.previewDone, (state, action) => {
+    const {
+      id,
+      hasParent,
+      parentBuildId,
+      sourceSize,
+      comparison,
+      topChangedFiles,
+    } = action.payload;
+    const cur = state.currentPreview;
+    if (!cur || cur.id !== id) {
+      return state;
+    }
+    return {
+      ...state,
+      currentPreview: {
+        ...cur,
+        status: "done",
+        progress: 1,
+        hasParent,
+        parentBuildId,
+        sourceSize,
+        comparison,
+        topChangedFiles,
+        finishedAt: Date.now(),
+      },
+    };
+  });
+
+  on(actions.previewFailed, (state, action) => {
+    const { id, message } = action.payload;
+    const cur = state.currentPreview;
+    if (!cur || cur.id !== id) {
+      return state;
+    }
+    return {
+      ...state,
+      currentPreview: {
+        ...cur,
+        status: message === "Cancelled" ? "cancelled" : "failed",
+        message,
+        finishedAt: Date.now(),
+      },
+    };
+  });
+
+  on(actions.clearPreview, (state) => {
+    if (!state.currentPreview) {
+      return state;
+    }
+    const { currentPreview, ...rest } = state;
+    return rest;
   });
 
   on(actions.loggedOut, () => initialState);

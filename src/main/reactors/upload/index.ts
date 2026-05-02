@@ -18,6 +18,12 @@ const activeConvos = new Map<string, Conversation>();
 // stashed here; the startPush handler checks this on convo creation.
 const pendingCancels = new Set<string>();
 
+// Preview gets its own tracking maps so a push and a preview with colliding
+// uuids can't cross-cancel. Only one preview is meaningful at a time but we
+// still key by id for late-arriving cancels against a replaced run.
+const activePreviewConvos = new Map<string, Conversation>();
+const pendingPreviewCancels = new Set<string>();
+
 export default function (watcher: Watcher) {
   watcher.on(actions.startPush, async (store, action) => {
     const { jobId, target, channel, src, gameId } = action.payload;
@@ -109,6 +115,81 @@ export default function (watcher: Watcher) {
       // The startPush handler hasn't registered its convo yet; mark for
       // cancellation when it does.
       pendingCancels.add(jobId);
+    }
+  });
+
+  watcher.on(actions.startPreview, async (store, action) => {
+    const { id, target, channel, src } = action.payload;
+
+    const profile = store.getState().profile.profile;
+    if (!profile) {
+      store.dispatch(actions.previewFailed({ id, message: "Not logged in" }));
+      return;
+    }
+
+    try {
+      const res = await mcall(
+        messages.WharfPushPreview,
+        { profileId: profile.id, src, target, channel },
+        (convo) => {
+          hookLogging(convo, logger);
+          activePreviewConvos.set(id, convo);
+          if (pendingPreviewCancels.has(id)) {
+            pendingPreviewCancels.delete(id);
+            logger.info(
+              `cancelling butler push-preview ${id} (pre-registered)`
+            );
+            convo.cancel();
+          }
+          convo.onNotification(
+            messages.WharfPushProgress,
+            async ({ progress, eta, bps, readBytes, totalBytes }) => {
+              store.dispatch(
+                actions.previewProgress({
+                  id,
+                  // round to 1% — sub-1% deltas don't change the UI
+                  progress: Math.round(progress * 100) / 100,
+                  eta,
+                  bps,
+                  readBytes,
+                  totalBytes,
+                })
+              );
+            }
+          );
+        }
+      );
+      store.dispatch(
+        actions.previewDone({
+          id,
+          hasParent: res.hasParent,
+          parentBuildId: res.parentBuildId,
+          sourceSize: res.sourceSize,
+          comparison: res.comparison,
+          topChangedFiles: res.topChangedFiles,
+        })
+      );
+    } catch (e) {
+      if (isCancelled(e)) {
+        store.dispatch(actions.previewFailed({ id, message: "Cancelled" }));
+      } else {
+        const message = e instanceof Error ? e.message : String(e);
+        store.dispatch(actions.previewFailed({ id, message }));
+      }
+    } finally {
+      activePreviewConvos.delete(id);
+      pendingPreviewCancels.delete(id);
+    }
+  });
+
+  watcher.on(actions.cancelPreview, async (_store, action) => {
+    const { id } = action.payload;
+    const convo = activePreviewConvos.get(id);
+    if (convo) {
+      logger.info(`cancelling butler push-preview ${id}`);
+      convo.cancel();
+    } else {
+      pendingPreviewCancels.add(id);
     }
   });
 }
