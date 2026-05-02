@@ -355,6 +355,42 @@ const ProgressBarFill = styled.div`
   transition: width 0.2s ease;
 `;
 
+const ErrorBlock = styled.pre`
+  margin: 0;
+  padding: 8px 10px;
+  max-height: 240px;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 90%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: ${(props) => props.theme.baseText};
+`;
+
+const ErrorActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+`;
+
+const DismissButton = styled.button`
+  background: transparent;
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  border-radius: 3px;
+  color: ${(props) => props.theme.baseText};
+  padding: 6px 12px;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+`;
+
 function projectInitials(title: string | undefined): string {
   if (!title) return "?";
   const words = title.trim().split(/\s+/);
@@ -512,7 +548,9 @@ class BuildRow extends React.PureComponent<Props, State> {
     // active push, even if its (target, channel) matches — the push will
     // produce a brand-new build, surfaced via its own synthetic row.
     const activeJob = syntheticJob ?? null;
-    const showProgressBar = !!activeJob;
+    const isTerminal =
+      activeJob?.status === "failed" || activeJob?.status === "cancelled";
+    const showProgressBar = !!activeJob && !isTerminal;
 
     const butlerCmd = `butler push <dir> ${target}:${channelName}`;
 
@@ -651,11 +689,40 @@ class BuildRow extends React.PureComponent<Props, State> {
             {showProgressBar && activeJob
               ? this.renderProgressSection(activeJob)
               : null}
+            {isTerminal && activeJob
+              ? this.renderErrorSection(activeJob)
+              : null}
           </Expanded>
         ) : null}
       </Row>
     );
   }
+
+  renderErrorSection = (job: PushJob) => {
+    const labelKey =
+      job.status === "cancelled"
+        ? "upload.expanded.cancelled"
+        : "upload.expanded.error";
+    return (
+      <ExpandedSection>
+        <ExpandedLabel>{T(_(labelKey))}</ExpandedLabel>
+        {job.message ? <ErrorBlock>{job.message}</ErrorBlock> : null}
+        <ErrorActions>
+          <DismissButton onClick={this.handleDismiss}>
+            {T(_("upload.dismiss"))}
+          </DismissButton>
+        </ErrorActions>
+      </ExpandedSection>
+    );
+  };
+
+  handleDismiss = (ev: React.MouseEvent) => {
+    ev.stopPropagation();
+    const { syntheticJob, dispatch } = this.props;
+    if (syntheticJob) {
+      dispatch(actions.dismissPushJob({ jobId: syntheticJob.id }));
+    }
+  };
 
   toggle = () => {
     this.setState((s) => ({ expanded: !s.expanded }));
@@ -808,6 +875,22 @@ class BuildRow extends React.PureComponent<Props, State> {
       template.push({
         localizedLabel: ["upload.menu.copy_build_id"],
         action: actions.copyToClipboard({ text: String(build.id) }),
+      });
+    }
+
+    // Synthetic-only rows in a terminal state can be cleared from the
+    // dashboard. Once a buildId is set the row will merge with the real
+    // build, so removing it from job state alone wouldn't actually clear
+    // anything visible.
+    if (
+      syntheticJob &&
+      !syntheticJob.buildId &&
+      (syntheticJob.status === "failed" || syntheticJob.status === "cancelled")
+    ) {
+      template.push({ type: "separator" });
+      template.push({
+        localizedLabel: ["upload.menu.remove"],
+        action: actions.dismissPushJob({ jobId: syntheticJob.id }),
       });
     }
 

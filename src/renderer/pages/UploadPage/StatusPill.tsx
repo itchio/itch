@@ -36,6 +36,11 @@ const Pill = styled.span`
     color: #e07b7b;
   }
 
+  &.cancelled {
+    background: rgba(255, 255, 255, 0.06);
+    color: #c8b07b;
+  }
+
   &.inactive {
     background: rgba(255, 255, 255, 0.06);
     color: #9aa0a6;
@@ -60,14 +65,42 @@ export default class StatusPill extends React.PureComponent<Props> {
   override render() {
     const { build, pushJob } = this.props;
 
-    if (pushJob && pushJob.status === "pushing") {
-      const pct = Math.round((pushJob.progress ?? 0) * 100);
-      return (
-        <Pill className="pushing">
-          <Dot />
-          {T(_("upload.status.pushing"))} · {pct}%
-        </Pill>
-      );
+    if (pushJob) {
+      if (pushJob.status === "pushing") {
+        const pct = Math.round((pushJob.progress ?? 0) * 100);
+        return (
+          <Pill className="pushing">
+            <Dot />
+            {T(_("upload.status.pushing"))} · {pct}%
+          </Pill>
+        );
+      }
+      if (pushJob.status === "failed") {
+        return (
+          <Pill className="failed">
+            <Dot />
+            {T(_("upload.status.failed"))}
+          </Pill>
+        );
+      }
+      if (pushJob.status === "cancelled") {
+        return (
+          <Pill className="cancelled">
+            <Dot />
+            {T(_("upload.status.cancelled"))}
+          </Pill>
+        );
+      }
+      // status === "processing" falls through to the build-state branch
+      // below if a build is attached, otherwise to the bare processing pill.
+      if (!build) {
+        return (
+          <Pill className="processing">
+            <Dot />
+            {T(_("upload.status.processing"))}
+          </Pill>
+        );
+      }
     }
 
     if (!build) {

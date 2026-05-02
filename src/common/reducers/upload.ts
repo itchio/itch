@@ -8,14 +8,26 @@ const initialState: UploadState = {
 };
 
 /**
- * Returns every push job whose status is "pushing" — these are the
- * synthetic rows the dashboard pins to the top of the list. Once a job
- * transitions to processing/failed/cancelled it stops appearing here.
+ * Returns every push job in recency order. These power the synthetic rows
+ * pinned to the top of the dashboard. Terminal failed/cancelled jobs stay
+ * here until dismissed so the user sees the error; processing jobs are
+ * filtered out by the consumer once the matching real Build appears.
  */
 export function selectActivePushJobs(s: UploadState): PushJob[] {
-  return s.jobOrder
-    .map((id) => s.jobs[id])
-    .filter((j): j is PushJob => !!j && j.status === "pushing");
+  return s.jobOrder.map((id) => s.jobs[id]).filter((j): j is PushJob => !!j);
+}
+
+/**
+ * True iff any push is currently transferring data — used by the sidebar's
+ * activity indicator. Excludes failed/cancelled jobs that are sticking
+ * around just to surface their error.
+ */
+export function selectHasInFlightPush(s: UploadState): boolean {
+  for (const id of s.jobOrder) {
+    const j = s.jobs[id];
+    if (j && j.status === "pushing") return true;
+  }
+  return false;
 }
 
 /**
@@ -217,6 +229,25 @@ export default reducer<UploadState>(initialState, (on) => {
       message: "Cancelled",
       updatedAt: Date.now(),
     });
+  });
+
+  on(actions.dismissPushJob, (state, action) => {
+    const { jobId } = action.payload;
+    const job = state.jobs[jobId];
+    if (!job) {
+      return state;
+    }
+    // Only terminal jobs can be dismissed — dropping an in-flight job from
+    // state would strand its butler conversation in the reactor.
+    if (job.status !== "failed" && job.status !== "cancelled") {
+      return state;
+    }
+    const { [jobId]: _dropped, ...remaining } = state.jobs;
+    return {
+      ...state,
+      jobs: remaining,
+      jobOrder: state.jobOrder.filter((id) => id !== jobId),
+    };
   });
 
   on(actions.startPreview, (state, action) => {

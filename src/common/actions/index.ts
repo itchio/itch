@@ -958,6 +958,11 @@ export const actions = wireActions({
   cancelPush: action<{
     jobId: string;
   }>(),
+  /** Remove a terminal (failed/cancelled) push job from the dashboard's
+   *  synthetic-row list. No-op on jobs that are still pushing/processing. */
+  dismissPushJob: action<{
+    jobId: string;
+  }>(),
 
   // upload — preview (Wharf.PushPreview, no side effects on itch.io)
 
