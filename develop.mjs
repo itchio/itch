@@ -1,7 +1,15 @@
 import * as esbuild from "esbuild";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import fs from "fs";
 import { mainConfig, rendererConfig } from "./esbuild.config.mjs";
+
+// Electron/Chromium on Linux can leave the TTY in raw mode after an abrupt SIGINT.
+// `</dev/tty` is required so stty can find the terminal regardless of our stdio.
+const restoreTty = () => {
+  if (!process.stdin.isTTY) return;
+  try { execSync("stty sane </dev/tty", { stdio: "ignore" }); } catch {}
+};
+process.on("exit", restoreTty);
 
 async function main() {
   process.on("unhandledRejection", (e) => {
@@ -55,6 +63,19 @@ async function main() {
   });
 
   console.log("Started Electron app...");
+
+  // Catch SIGINT so we wait for Electron to fully exit before tearing down —
+  // otherwise Node exits first and Electron re-mangles the TTY on its way out.
+  // A second Ctrl+C bails immediately.
+  let interrupted = false;
+  process.on("SIGINT", () => {
+    if (interrupted) {
+      restoreTty();
+      process.exit(130);
+    }
+    interrupted = true;
+    proc.kill("SIGINT");
+  });
 
   proc.on("close", () => {
     console.log("App closed");
