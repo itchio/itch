@@ -43,13 +43,18 @@ const Header = styled.div`
   }
 `;
 
-const Caret = styled.span`
-  width: 16px;
-  height: 16px;
+const Caret = styled.button`
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: ${(props) => props.theme.secondaryText};
+  cursor: pointer;
   transform: rotate(-90deg);
   transition: transform 0.15s ease;
 
@@ -127,10 +132,6 @@ const Channel = styled.button`
   width: max-content;
   max-width: 100%;
   cursor: pointer;
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const Version = styled.div`
@@ -229,10 +230,6 @@ const BuildIdValue = styled.button`
   color: inherit;
   cursor: pointer;
   text-align: left;
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const ButlerCommand = styled.div`
@@ -261,10 +258,6 @@ const CommandText = styled.input`
   color: inherit;
   user-select: text;
   cursor: text;
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const CopyButton = styled.button`
@@ -526,7 +519,15 @@ class BuildRow extends React.PureComponent<Props, State> {
     return (
       <Row className={expanded ? "expanded" : ""}>
         <Header onClick={this.toggle} onContextMenu={this.handleKebab}>
-          <Caret className={expanded ? "open" : ""}>
+          <Caret
+            type="button"
+            className={expanded ? "open" : ""}
+            onClick={this.handleCaretClick}
+            aria-expanded={expanded}
+            aria-label={
+              expanded ? "Collapse build details" : "Expand build details"
+            }
+          >
             <Icon icon="caret-down" />
           </Caret>
           <Project>
@@ -658,6 +659,11 @@ class BuildRow extends React.PureComponent<Props, State> {
 
   toggle = () => {
     this.setState((s) => ({ expanded: !s.expanded }));
+  };
+
+  handleCaretClick = (ev: React.MouseEvent) => {
+    ev.stopPropagation();
+    this.toggle();
   };
 
   renderProgressSection = (job: PushJob) => {
