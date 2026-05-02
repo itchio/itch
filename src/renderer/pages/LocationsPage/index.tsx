@@ -93,7 +93,7 @@ class LocationsPage extends React.PureComponent<Props> {
       <ItemList>
         {sortBy(
           result.installLocations,
-          (location) => -location.sizeInfo.installedSize
+          (location) => -(location.sizeInfo?.installedSize ?? 0)
         ).map((location) => (
           <LocationSummary
             key={location.id}

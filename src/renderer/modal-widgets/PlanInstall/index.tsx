@@ -188,8 +188,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
     let canInstall = !error && !busy && uploads && uploads.length > 0;
     let locationOptions = installLocations.map((il) => {
+      let label = il.sizeInfo
+        ? `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`
+        : il.path;
       let val: InstallLocationOption = {
-        label: `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`,
+        label,
         value: il.id,
         location: il,
       };
@@ -360,7 +363,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
     }
 
     const requiredSpace = info ? info.diskUsage.neededFreeSpace : -1;
-    const freeSpace = installLocation.sizeInfo.freeSize;
+    const freeSpace = installLocation.sizeInfo
+      ? installLocation.sizeInfo.freeSize
+      : -1;
     const haveEnoughSpace = requiredSpace <= freeSpace;
 
     return (
@@ -379,7 +384,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
               {T(_("plan_install.disk_space_available"))}
             </td>
             <td className={classNames({ low: !haveEnoughSpace })}>
-              <strong>{fileSize(freeSpace)}</strong>
+              <strong>{freeSpace >= 0 ? fileSize(freeSpace) : "?"}</strong>
               {haveEnoughSpace ? (
                 <DiskSpaceIcon icon="checkmark" />
               ) : (

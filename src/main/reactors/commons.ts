@@ -31,7 +31,9 @@ async function updateCommonsNowThrows(store: Store) {
   let locationSizes: { [key: string]: number } = {};
   if (!isEmpty(installLocations)) {
     for (const x of installLocations) {
-      locationSizes[x.id] = x.sizeInfo.installedSize;
+      if (x.sizeInfo) {
+        locationSizes[x.id] = x.sizeInfo.installedSize;
+      }
     }
   }
 

@@ -37,7 +37,9 @@ export default function InstallLocationOptionComponent(
         {l.path}
       </div>
       <div className="spacer" />
-      <div className="tag">{fileSize(l.sizeInfo.freeSize)}</div>
+      {l.sizeInfo ? (
+        <div className="tag">{fileSize(l.sizeInfo.freeSize)}</div>
+      ) : null}
       <div className="spacer" />
     </SelectValueDiv>
   );

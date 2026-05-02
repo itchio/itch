@@ -90,6 +90,9 @@ class LocationContents extends React.PureComponent<Props> {
 
   renderLocationInfo() {
     const { location } = this.props;
+    if (!location.sizeInfo) {
+      return null;
+    }
     return (
       <div className="info">
         {T([

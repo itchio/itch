@@ -391,11 +391,11 @@ export interface GameRecord {
   /** Game title */
   title: string;
   /** Game cover */
-  cover: string;
+  cover?: string;
   /** True if owned */
-  owned: boolean;
+  owned?: boolean;
   /** Non-nil if installed (has caves) */
-  installedAt: RFCDate;
+  installedAt?: RFCDate;
 }
 
 /**
@@ -479,7 +479,7 @@ export interface FetchDownloadKeysResult {
    * Whether the information was fetched from a stale cache,
    * and could warrant a refresh if online.
    */
-  stale: boolean;
+  stale?: boolean;
 }
 
 /**
@@ -797,7 +797,7 @@ export interface CaveInstallInfo {
   /** Absolute path to the install folder */
   installFolder: string;
   /** If true, this cave is ignored while checking for updates */
-  pinned: boolean;
+  pinned?: boolean;
 }
 
 /**
@@ -828,7 +828,7 @@ export interface InstallLocationSummary {
   /** Absolute path on disk for this install location */
   path: string;
   /** Information about the size used and available at this install location */
-  sizeInfo: InstallLocationSizeInfo;
+  sizeInfo?: InstallLocationSizeInfo;
 }
 
 /**
@@ -1025,11 +1025,11 @@ export interface InstallPlanInfo {
   /** undocumented */
   diskUsage: DiskUsageInfo;
   /** undocumented */
-  error: string;
+  error?: string;
   /** undocumented */
-  errorMessage: string;
+  errorMessage?: string;
   /** undocumented */
-  errorCode: number;
+  errorCode?: number;
 }
 
 /**
@@ -3692,9 +3692,9 @@ export interface TaskStartedNotification {
   /** The upload this task is dealing with */
   upload: Upload;
   /** The build this task is dealing with (if any) */
-  build: Build;
+  build?: Build;
   /** Total size in bytes */
-  totalSize: number;
+  totalSize?: number;
 }
 
 /**
@@ -3714,7 +3714,7 @@ export interface TaskSucceededNotification {
    * If the task installed something, then this contains
    * info about the game, upload, build that were installed
    */
-  installResult: InstallResult;
+  installResult?: InstallResult;
 }
 
 /**

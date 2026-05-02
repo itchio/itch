@@ -49,9 +49,9 @@ export function getInstallPlanInfoError(
 }
 
 interface ButlerdErrorTuple {
-  error: string;
-  errorMessage: string;
-  errorCode: number;
+  error?: string;
+  errorMessage?: string;
+  errorCode?: number;
 }
 
 export function getButlerdErrorFromTuple(
@@ -64,7 +64,7 @@ export function getButlerdErrorFromTuple(
   let rawError = new Error(item.errorMessage) as RequestError;
   rawError.stack = item.error;
   rawError.rpcError = {
-    code: item.errorCode,
+    code: item.errorCode ?? 0,
     message: item.errorMessage,
     data: {
       stack: item.error,
