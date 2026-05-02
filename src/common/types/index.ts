@@ -16,7 +16,7 @@ import {
   Profile,
   SandboxType,
   PublishPushComparison,
-  PublishPushPreviewEntry,
+  PublishPushTopChangedFiles,
 } from "common/butlerd/messages";
 import { Endpoint } from "@itchio/butlerd";
 import { modalShape } from "common/modals";
@@ -146,9 +146,11 @@ export interface PreviewState {
   /** Total uncompressed size of the source container, in bytes. */
   sourceSize?: number;
   comparison?: PublishPushComparison;
-  /** Up to 20 changed files (NEW/MODIFIED/DELETED), sorted by size desc.
-   *  Always non-null when status === "done", but may be empty. */
-  topChangedFiles?: PublishPushPreviewEntry[];
+  /** Per-category top changed files (each capped at 20, sorted by size
+   *  desc / path asc). Always populated when status === "done"; individual
+   *  category arrays may be empty. The merged "biggest changes overall"
+   *  view is reconstructed in the renderer. */
+  topChangedFiles?: PublishPushTopChangedFiles;
   /** Failure or cancellation message. */
   message?: string;
   startedAt: number;

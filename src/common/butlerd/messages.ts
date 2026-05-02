@@ -1960,11 +1960,14 @@ export interface PublishPushPreviewResult {
   /** Per-entry change counts (files, dirs, symlinks combined). */
   comparison: PublishPushComparison;
   /**
-   * Up to 20 changed files (NEW, MODIFIED, or DELETED), sorted by size
-   * descending. Dirs and symlinks are excluded — they have no meaningful
-   * size. Empty when nothing changed.
+   * Per-category top changed files. Each list holds up to 20 entries
+   * sorted by size descending (path ascending as tie-breaker). Dirs and
+   * symlinks are excluded — they have no meaningful size. Unchanged
+   * entries are never included. Each sub-slice is non-nil (empty when
+   * the category has no changes); the renderer reconstructs the
+   * cross-category "biggest changes overall" view by merging them.
    */
-  topChangedFiles: PublishPushPreviewEntry[];
+  topChangedFiles: PublishPushTopChangedFiles;
 }
 
 /**
@@ -1976,6 +1979,20 @@ export const PublishPushPreview = createRequest<
   PublishPushPreviewParams,
   PublishPushPreviewResult
 >("Publish.PushPreview");
+
+/**
+ * PublishPushTopChangedFiles groups the largest changed files in a push
+ * preview by status. See PublishPushPreviewResult.TopChangedFiles for the
+ * guarantees on each list.
+ */
+export interface PublishPushTopChangedFiles {
+  /** undocumented */
+  new: PublishPushPreviewEntry[];
+  /** undocumented */
+  modified: PublishPushPreviewEntry[];
+  /** undocumented */
+  deleted: PublishPushPreviewEntry[];
+}
 
 /**
  * PublishPushPreviewEntry is a single row in the "biggest changes" listing
@@ -2109,7 +2126,7 @@ export interface PublishBuildTotals {
 export interface PublishListBuildsResult {
   /**
    * Builds for the requested page, ordered newest first. Each carries
-   * nested game and upload context.
+   * nested game, upload, and user context.
    */
   builds: Build[];
   /** undocumented */

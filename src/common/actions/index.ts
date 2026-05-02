@@ -10,7 +10,7 @@ import {
   Profile,
   InstallLocationSummary,
   PublishPushComparison,
-  PublishPushPreviewEntry,
+  PublishPushTopChangedFiles,
 } from "common/butlerd/messages";
 import { LogEntry } from "common/logger";
 import { TypedModal, TypedModalUpdate } from "common/modals";
@@ -990,7 +990,7 @@ export const actions = wireActions({
     parentBuildId?: number;
     sourceSize: number;
     comparison: PublishPushComparison;
-    topChangedFiles: PublishPushPreviewEntry[];
+    topChangedFiles: PublishPushTopChangedFiles;
   }>(),
   previewFailed: action<{
     id: string;

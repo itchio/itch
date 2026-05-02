@@ -1,6 +1,7 @@
 import {
   PublishPushComparison,
   PublishPushPreviewEntry,
+  PublishPushTopChangedFiles,
 } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import React from "react";
@@ -41,6 +42,9 @@ const Stat = styled.div`
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  font: inherit;
+  color: inherit;
+  text-align: left;
 
   &.new {
     background: rgba(80, 180, 80, 0.12);
@@ -53,6 +57,25 @@ const Stat = styled.div`
   &.deleted {
     background: rgba(200, 80, 80, 0.12);
     border-color: rgba(200, 80, 80, 0.3);
+  }
+
+  &.clickable {
+    cursor: pointer;
+    transition: border-color 0.1s ease, background 0.1s ease;
+
+    &:not(.disabled):hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &.active {
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
   }
 `;
 
@@ -174,15 +197,35 @@ const ChangedSize = styled.span`
   flex-shrink: 0;
 `;
 
+type ChangedFilter = "new" | "modified" | "deleted";
+
 interface Props {
   hasParent: boolean;
   parentBuildId: number;
   sourceSize: number;
   comparison: PublishPushComparison;
-  topChangedFiles: PublishPushPreviewEntry[];
+  topChangedFiles: PublishPushTopChangedFiles;
 }
 
-class PreviewSummary extends React.PureComponent<Props> {
+interface State {
+  filter: ChangedFilter | null;
+}
+
+class PreviewSummary extends React.PureComponent<Props, State> {
+  override state: State = { filter: null };
+
+  // Memoized merged "all" list. Recomputed only when the input arrays
+  // change identity — they swap atomically on previewDone, so identity
+  // checks are sufficient.
+  private mergedCacheKey:
+    | [
+        PublishPushPreviewEntry[],
+        PublishPushPreviewEntry[],
+        PublishPushPreviewEntry[]
+      ]
+    | null = null;
+  private mergedCacheValue: PublishPushPreviewEntry[] = [];
+
   override render() {
     const {
       hasParent,
@@ -216,6 +259,12 @@ class PreviewSummary extends React.PureComponent<Props> {
       );
     }
 
+    // If a filter is set but its category has no entries (e.g. user
+    // re-previewed onto data with no deletions while the DELETED filter
+    // was active), treat it as no filter so the stale highlight clears
+    // and the merged list shows up instead of an empty section.
+    const { filter } = this.state;
+    const effectiveFilter = filter && comparison[filter] > 0 ? filter : null;
     return (
       <Wrapper>
         <Header>
@@ -225,27 +274,30 @@ class PreviewSummary extends React.PureComponent<Props> {
           </span>
         </Header>
         <Stats>
-          <Stat className="new">
-            <StatLine>
-              <Count>+{comparison.new}</Count>
-              <Label>{T(_("upload.preview.new"))}</Label>
-            </StatLine>
-            <Bytes>{fileSize(comparison.newBytes)}</Bytes>
-          </Stat>
-          <Stat className="modified">
-            <StatLine>
-              <Count>~{comparison.modified}</Count>
-              <Label>{T(_("upload.preview.modified"))}</Label>
-            </StatLine>
-            <Bytes>{fileSize(comparison.modifiedBytes)}</Bytes>
-          </Stat>
-          <Stat className="deleted">
-            <StatLine>
-              <Count>−{comparison.deleted}</Count>
-              <Label>{T(_("upload.preview.deleted"))}</Label>
-            </StatLine>
-            <Bytes>{fileSize(comparison.deletedBytes)}</Bytes>
-          </Stat>
+          {this.renderFilterStat(
+            "new",
+            comparison.new,
+            comparison.newBytes,
+            "+",
+            "upload.preview.new",
+            effectiveFilter
+          )}
+          {this.renderFilterStat(
+            "modified",
+            comparison.modified,
+            comparison.modifiedBytes,
+            "~",
+            "upload.preview.modified",
+            effectiveFilter
+          )}
+          {this.renderFilterStat(
+            "deleted",
+            comparison.deleted,
+            comparison.deletedBytes,
+            "−",
+            "upload.preview.deleted",
+            effectiveFilter
+          )}
           <Stat>
             <StatLine>
               <Count>·{comparison.same}</Count>
@@ -254,22 +306,70 @@ class PreviewSummary extends React.PureComponent<Props> {
             <Bytes>{fileSize(comparison.sameBytes)}</Bytes>
           </Stat>
         </Stats>
-        {this.renderChangedFiles(topChangedFiles)}
+        {this.renderChangedFiles(topChangedFiles, effectiveFilter)}
       </Wrapper>
     );
   }
 
-  renderChangedFiles(entries: PublishPushPreviewEntry[]) {
-    if (!entries || entries.length === 0) {
+  renderFilterStat(
+    category: ChangedFilter,
+    count: number,
+    bytes: number,
+    countPrefix: string,
+    labelKey: string,
+    effectiveFilter: ChangedFilter | null
+  ) {
+    const empty = count === 0;
+    const active = effectiveFilter === category;
+    const classes = [category, "clickable"];
+    if (empty) {
+      classes.push("disabled");
+    }
+    if (active) {
+      classes.push("active");
+    }
+    return (
+      <Stat
+        as="button"
+        type="button"
+        className={classes.join(" ")}
+        disabled={empty}
+        aria-pressed={active}
+        onClick={empty ? undefined : () => this.toggleFilter(category)}
+      >
+        <StatLine>
+          <Count>
+            {countPrefix}
+            {count}
+          </Count>
+          <Label>{T(_(labelKey))}</Label>
+        </StatLine>
+        <Bytes>{fileSize(bytes)}</Bytes>
+      </Stat>
+    );
+  }
+
+  toggleFilter = (category: ChangedFilter) => {
+    this.setState((prev) => ({
+      filter: prev.filter === category ? null : category,
+    }));
+  };
+
+  renderChangedFiles(
+    topChangedFiles: PublishPushTopChangedFiles,
+    filter: ChangedFilter | null = null
+  ) {
+    const list = filter
+      ? topChangedFiles[filter]
+      : this.mergedTopChangedFiles(topChangedFiles);
+    if (!list || list.length === 0) {
       return null;
     }
     return (
       <ChangedFilesSection>
-        <ChangedFilesHeader>
-          {T(_("upload.preview.top_changed_files"))}
-        </ChangedFilesHeader>
+        <ChangedFilesHeader>{T(_(headerKey(filter)))}</ChangedFilesHeader>
         <ChangedFilesList>
-          {entries.map((e) => (
+          {list.map((e) => (
             <ChangedFileRow key={`${e.status}:${e.path}`}>
               <StatusBadge className={e.status}>
                 {T(_(`upload.preview.${e.status}`))}
@@ -281,6 +381,49 @@ class PreviewSummary extends React.PureComponent<Props> {
         </ChangedFilesList>
       </ChangedFilesSection>
     );
+  }
+
+  mergedTopChangedFiles(
+    topChangedFiles: PublishPushTopChangedFiles
+  ): PublishPushPreviewEntry[] {
+    const key: [
+      PublishPushPreviewEntry[],
+      PublishPushPreviewEntry[],
+      PublishPushPreviewEntry[]
+    ] = [
+      topChangedFiles.new,
+      topChangedFiles.modified,
+      topChangedFiles.deleted,
+    ];
+    if (
+      this.mergedCacheKey &&
+      this.mergedCacheKey[0] === key[0] &&
+      this.mergedCacheKey[1] === key[1] &&
+      this.mergedCacheKey[2] === key[2]
+    ) {
+      return this.mergedCacheValue;
+    }
+    // Same (size desc, path asc) tie-breaker butler uses, so the merged
+    // top-20 is identical to a server-side merge.
+    const merged = [...key[0], ...key[1], ...key[2]]
+      .sort((a, b) => b.size - a.size || a.path.localeCompare(b.path))
+      .slice(0, 20);
+    this.mergedCacheKey = key;
+    this.mergedCacheValue = merged;
+    return merged;
+  }
+}
+
+function headerKey(filter: ChangedFilter | null): string {
+  switch (filter) {
+    case "new":
+      return "upload.preview.top_changed_files_new";
+    case "modified":
+      return "upload.preview.top_changed_files_modified";
+    case "deleted":
+      return "upload.preview.top_changed_files_deleted";
+    default:
+      return "upload.preview.top_changed_files";
   }
 }
 
