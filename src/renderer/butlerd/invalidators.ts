@@ -10,8 +10,8 @@ export const invalidators = new Map<MessageType, ActionList>();
 invalidators.set(messages.FetchProfileOwnedKeys, [actions.commonsUpdated]);
 invalidators.set(messages.FetchCaves, [actions.commonsUpdated]);
 invalidators.set(messages.FetchCave, [actions.commonsUpdated]);
-invalidators.set(messages.WharfListChannels, [actions.pushDone]);
-invalidators.set(messages.WharfListBuilds, [
+invalidators.set(messages.PublishListChannels, [actions.pushDone]);
+invalidators.set(messages.PublishListBuilds, [
   actions.pushDone,
   actions.pushFailed,
 ]);

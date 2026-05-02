@@ -9,8 +9,8 @@ import {
   GameUpdateChoice,
   Profile,
   InstallLocationSummary,
-  WharfPushComparison,
-  WharfPushPreviewEntry,
+  PublishPushComparison,
+  PublishPushPreviewEntry,
 } from "common/butlerd/messages";
 import { LogEntry } from "common/logger";
 import { TypedModal, TypedModalUpdate } from "common/modals";
@@ -964,7 +964,7 @@ export const actions = wireActions({
     jobId: string;
   }>(),
 
-  // upload — preview (Wharf.PushPreview, no side effects on itch.io)
+  // upload — preview (Publish.PushPreview, no side effects on itch.io)
 
   startPreview: action<{
     /** uuid for this preview run */
@@ -989,8 +989,8 @@ export const actions = wireActions({
     /** Absent when !hasParent (no previous build to compare against). */
     parentBuildId?: number;
     sourceSize: number;
-    comparison: WharfPushComparison;
-    topChangedFiles: WharfPushPreviewEntry[];
+    comparison: PublishPushComparison;
+    topChangedFiles: PublishPushPreviewEntry[];
   }>(),
   previewFailed: action<{
     id: string;

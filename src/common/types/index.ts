@@ -15,8 +15,8 @@ import {
   Platform,
   Profile,
   SandboxType,
-  WharfPushComparison,
-  WharfPushPreviewEntry,
+  PublishPushComparison,
+  PublishPushPreviewEntry,
 } from "common/butlerd/messages";
 import { Endpoint } from "@itchio/butlerd";
 import { modalShape } from "common/modals";
@@ -145,10 +145,10 @@ export interface PreviewState {
   parentBuildId?: number;
   /** Total uncompressed size of the source container, in bytes. */
   sourceSize?: number;
-  comparison?: WharfPushComparison;
+  comparison?: PublishPushComparison;
   /** Up to 20 changed files (NEW/MODIFIED/DELETED), sorted by size desc.
    *  Always non-null when status === "done", but may be empty. */
-  topChangedFiles?: WharfPushPreviewEntry[];
+  topChangedFiles?: PublishPushPreviewEntry[];
   /** Failure or cancellation message. */
   message?: string;
   startedAt: number;

@@ -1915,9 +1915,9 @@ export enum Code {
 }
 
 /**
- * Result for Wharf.Push
+ * Result for Publish.Push
  */
-export interface WharfPushResult {
+export interface PublishPushResult {
   /** ID of the build that was created (0 if skipped) */
   buildId: number;
   /** undocumented */
@@ -1929,20 +1929,20 @@ export interface WharfPushResult {
 /**
  * Pushes a new build to itch.io for a given target+channel. Heavy lifting
  * (walk, diff, upload) runs in a `butler push` worker subprocess that butlerd
- * spawns; butlerd brokers progress over WharfPushProgress notifications and
+ * spawns; butlerd brokers progress over PublishPushProgress notifications and
  * kills the worker if the RPC's context is cancelled.
  *
- * For a no-side-effects "what would change?" preview, call Wharf.PushPreview
+ * For a no-side-effects "what would change?" preview, call Publish.PushPreview
  * instead.
  */
-export const WharfPush = createRequest<WharfPushParams, WharfPushResult>(
-  "Wharf.Push"
+export const PublishPush = createRequest<PublishPushParams, PublishPushResult>(
+  "Publish.Push"
 );
 
 /**
- * Result for Wharf.PushPreview
+ * Result for Publish.PushPreview
  */
-export interface WharfPushPreviewResult {
+export interface PublishPushPreviewResult {
   /** undocumented */
   channel: string;
   /**
@@ -1958,13 +1958,13 @@ export interface WharfPushPreviewResult {
    */
   sourceSize: number;
   /** Per-entry change counts (files, dirs, symlinks combined). */
-  comparison: WharfPushComparison;
+  comparison: PublishPushComparison;
   /**
    * Up to 20 changed files (NEW, MODIFIED, or DELETED), sorted by size
    * descending. Dirs and symlinks are excluded — they have no meaningful
    * size. Empty when nothing changed.
    */
-  topChangedFiles: WharfPushPreviewEntry[];
+  topChangedFiles: PublishPushPreviewEntry[];
 }
 
 /**
@@ -1972,16 +1972,16 @@ export interface WharfPushPreviewResult {
  * without creating a build or uploading anything. Hashes the source; same
  * cost as the diffing pass of a real push.
  */
-export const WharfPushPreview = createRequest<
-  WharfPushPreviewParams,
-  WharfPushPreviewResult
->("Wharf.PushPreview");
+export const PublishPushPreview = createRequest<
+  PublishPushPreviewParams,
+  PublishPushPreviewResult
+>("Publish.PushPreview");
 
 /**
- * WharfPushPreviewEntry is a single row in the "biggest changes" listing
+ * PublishPushPreviewEntry is a single row in the "biggest changes" listing
  * emitted with a push preview.
  */
-export interface WharfPushPreviewEntry {
+export interface PublishPushPreviewEntry {
   /** Path within the source container. */
   path: string;
   /** One of "new", "modified", "deleted". */
@@ -1995,13 +1995,13 @@ export interface WharfPushPreviewEntry {
 }
 
 /**
- * WharfPushComparison summarises how the source compares to the channel's
+ * PublishPushComparison summarises how the source compares to the channel's
  * previous build. Counts cover files, dirs, and symlinks together; byte
  * sums only reflect file sizes — dirs and symlinks contribute zero. New /
  * Modified / Same byte sums are taken from the source side; Deleted bytes
  * are taken from the previous build (those entries don't exist in source).
  */
-export interface WharfPushComparison {
+export interface PublishPushComparison {
   /** undocumented */
   new: number;
   /** undocumented */
@@ -2021,27 +2021,27 @@ export interface WharfPushComparison {
 }
 
 /**
- * Result for Wharf.ListChannels
+ * Result for Publish.ListChannels
  */
-export interface WharfListChannelsResult {
+export interface PublishListChannelsResult {
   /** Channels keyed by name */
-  channels: { [key: string]: WharfChannel };
+  channels: { [key: string]: PublishChannel };
 }
 
 /**
  * Lists all channels for a given push target via the wharf API.
  */
-export const WharfListChannels = createRequest<
-  WharfListChannelsParams,
-  WharfListChannelsResult
->("Wharf.ListChannels");
+export const PublishListChannels = createRequest<
+  PublishListChannelsParams,
+  PublishListChannelsResult
+>("Publish.ListChannels");
 
 /**
- * WharfChannel mirrors itchio.Channel — defined here so generous picks it
+ * PublishChannel mirrors itchio.Channel — defined here so generous picks it
  * up for the butlerd spec / TS bindings (the itchio.Channel definition lives
  * in go-itchio/endpoints_wharf.go, which is not part of the assimilated set).
  */
-export interface WharfChannel {
+export interface PublishChannel {
   /** Channel name, e.g. "win-64" */
   name: string;
   /** Platform tags for this channel */
@@ -2055,25 +2055,25 @@ export interface WharfChannel {
 }
 
 /**
- * Result for Wharf.GetChannel
+ * Result for Publish.GetChannel
  */
-export interface WharfGetChannelResult {
+export interface PublishGetChannelResult {
   /** undocumented */
-  channel: WharfChannel;
+  channel: PublishChannel;
 }
 
 /**
  * Returns information about a single channel.
  */
-export const WharfGetChannel = createRequest<
-  WharfGetChannelParams,
-  WharfGetChannelResult
->("Wharf.GetChannel");
+export const PublishGetChannel = createRequest<
+  PublishGetChannelParams,
+  PublishGetChannelResult
+>("Publish.GetChannel");
 
 /**
- * Result for Wharf.GetBuild
+ * Result for Publish.GetBuild
  */
-export interface WharfGetBuildResult {
+export interface PublishGetBuildResult {
   /** undocumented */
   build: Build;
 }
@@ -2081,16 +2081,16 @@ export interface WharfGetBuildResult {
 /**
  * Returns information about a single build by ID.
  */
-export const WharfGetBuild = createRequest<
-  WharfGetBuildParams,
-  WharfGetBuildResult
->("Wharf.GetBuild");
+export const PublishGetBuild = createRequest<
+  PublishGetBuildParams,
+  PublishGetBuildResult
+>("Publish.GetBuild");
 
 /**
  * Per-state counts plus editable project count, so the client can render
  * filter-tab badges (All / Live / Processing / Failed) without re-querying.
  */
-export interface WharfBuildTotals {
+export interface PublishBuildTotals {
   /** undocumented */
   all: number;
   /** undocumented */
@@ -2104,9 +2104,9 @@ export interface WharfBuildTotals {
 }
 
 /**
- * Result for Wharf.ListBuilds
+ * Result for Publish.ListBuilds
  */
-export interface WharfListBuildsResult {
+export interface PublishListBuildsResult {
   /**
    * Builds for the requested page, ordered newest first. Each carries
    * nested game and upload context.
@@ -2120,7 +2120,7 @@ export interface WharfListBuildsResult {
    * Counts across the unfiltered set, for tab badges. Only populated when
    * requested with includeTotals.
    */
-  totals?: WharfBuildTotals;
+  totals?: PublishBuildTotals;
 }
 
 /**
@@ -2129,10 +2129,10 @@ export interface WharfListBuildsResult {
  * itch.io API on every call (no local caching) so build state always
  * reflects the server's current view.
  */
-export const WharfListBuilds = createRequest<
-  WharfListBuildsParams,
-  WharfListBuildsResult
->("Wharf.ListBuilds");
+export const PublishListBuilds = createRequest<
+  PublishListBuildsParams,
+  PublishListBuildsResult
+>("Publish.ListBuilds");
 
 /**
  * undocumented
@@ -4237,9 +4237,9 @@ export interface TestDoubleParams {
 }
 
 /**
- * Params for Wharf.Push
+ * Params for Publish.Push
  */
-export interface WharfPushParams {
+export interface PublishPushParams {
   /** itch.io profile to authenticate as */
   profileId: number;
   /** Source path: directory or zip archive */
@@ -4268,9 +4268,9 @@ export interface WharfPushParams {
 }
 
 /**
- * Params for Wharf.PushPreview
+ * Params for Publish.PushPreview
  */
-export interface WharfPushPreviewParams {
+export interface PublishPushPreviewParams {
   /** itch.io profile to authenticate as */
   profileId: number;
   /** Source path: directory or zip archive */
@@ -4288,9 +4288,9 @@ export interface WharfPushPreviewParams {
 }
 
 /**
- * Payload for Wharf.Push.Progress
+ * Payload for Publish.Push.Progress
  */
-export interface WharfPushProgressNotification {
+export interface PublishPushProgressNotification {
   /**
    * 0..1; conservative estimate based on uploaded vs source size, since
    * patch size isn't known until the diff is fully written.
@@ -4325,15 +4325,15 @@ export interface WharfPushProgressNotification {
 }
 
 /**
- * Periodic progress update emitted while a Wharf.Push is in flight.
+ * Periodic progress update emitted while a Publish.Push is in flight.
  */
-export const WharfPushProgress =
-  createNotification<WharfPushProgressNotification>("Wharf.Push.Progress");
+export const PublishPushProgress =
+  createNotification<PublishPushProgressNotification>("Publish.Push.Progress");
 
 /**
- * Params for Wharf.ListChannels
+ * Params for Publish.ListChannels
  */
-export interface WharfListChannelsParams {
+export interface PublishListChannelsParams {
   /** undocumented */
   profileId: number;
   /** undocumented */
@@ -4341,9 +4341,9 @@ export interface WharfListChannelsParams {
 }
 
 /**
- * Params for Wharf.GetChannel
+ * Params for Publish.GetChannel
  */
-export interface WharfGetChannelParams {
+export interface PublishGetChannelParams {
   /** undocumented */
   profileId: number;
   /** undocumented */
@@ -4353,9 +4353,9 @@ export interface WharfGetChannelParams {
 }
 
 /**
- * Params for Wharf.GetBuild
+ * Params for Publish.GetBuild
  */
-export interface WharfGetBuildParams {
+export interface PublishGetBuildParams {
   /** undocumented */
   profileId: number;
   /** undocumented */
@@ -4363,9 +4363,9 @@ export interface WharfGetBuildParams {
 }
 
 /**
- * Params for Wharf.ListBuilds
+ * Params for Publish.ListBuilds
  */
-export interface WharfListBuildsParams {
+export interface PublishListBuildsParams {
   /** undocumented */
   profileId: number;
   /** Page number, 1-based. Defaults to 1. */

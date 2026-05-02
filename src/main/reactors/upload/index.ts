@@ -47,7 +47,7 @@ export default function (watcher: Watcher) {
 
     try {
       const res = await mcall(
-        messages.WharfPush,
+        messages.PublishPush,
         { profileId: profile.id, src, target, channel },
         (convo) => {
           hookLogging(convo, logger);
@@ -58,7 +58,7 @@ export default function (watcher: Watcher) {
             convo.cancel();
           }
           convo.onNotification(
-            messages.WharfPushProgress,
+            messages.PublishPushProgress,
             async ({
               progress,
               eta,
@@ -129,7 +129,7 @@ export default function (watcher: Watcher) {
 
     try {
       const res = await mcall(
-        messages.WharfPushPreview,
+        messages.PublishPushPreview,
         { profileId: profile.id, src, target, channel },
         (convo) => {
           hookLogging(convo, logger);
@@ -142,7 +142,7 @@ export default function (watcher: Watcher) {
             convo.cancel();
           }
           convo.onNotification(
-            messages.WharfPushProgress,
+            messages.PublishPushProgress,
             async ({ progress, eta, bps, readBytes, totalBytes }) => {
               store.dispatch(
                 actions.previewProgress({

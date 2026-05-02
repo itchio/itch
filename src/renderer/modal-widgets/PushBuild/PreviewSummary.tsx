@@ -1,6 +1,6 @@
 import {
-  WharfPushComparison,
-  WharfPushPreviewEntry,
+  PublishPushComparison,
+  PublishPushPreviewEntry,
 } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import React from "react";
@@ -178,8 +178,8 @@ interface Props {
   hasParent: boolean;
   parentBuildId: number;
   sourceSize: number;
-  comparison: WharfPushComparison;
-  topChangedFiles: WharfPushPreviewEntry[];
+  comparison: PublishPushComparison;
+  topChangedFiles: PublishPushPreviewEntry[];
 }
 
 class PreviewSummary extends React.PureComponent<Props> {
@@ -259,7 +259,7 @@ class PreviewSummary extends React.PureComponent<Props> {
     );
   }
 
-  renderChangedFiles(entries: WharfPushPreviewEntry[]) {
+  renderChangedFiles(entries: PublishPushPreviewEntry[]) {
     if (!entries || entries.length === 0) {
       return null;
     }

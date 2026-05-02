@@ -1,12 +1,12 @@
 import { darken, transparentize } from "polished";
 import React from "react";
 import * as messages from "common/butlerd/messages";
-import { WharfChannel } from "common/butlerd/messages";
+import { PublishChannel } from "common/butlerd/messages";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
 
-const FetchChannels = butlerCaller(messages.WharfListChannels);
+const FetchChannels = butlerCaller(messages.PublishListChannels);
 
 const Wrapper = styled.div`
   margin: 16px 0;
@@ -115,7 +115,7 @@ const Empty = styled.div`
   color: ${(props) => props.theme.secondaryText};
 `;
 
-function channelHeadLabel(ch: WharfChannel): string {
+function channelHeadLabel(ch: PublishChannel): string {
   const b = ch.head;
   if (!b) return "no builds yet";
   const v = b.userVersion?.trim();
@@ -152,7 +152,7 @@ export default class ChannelList extends React.PureComponent<Props, State> {
         <FetchChannels
           params={{ profileId, target }}
           render={({ result }) => {
-            const channels: WharfChannel[] = result?.channels
+            const channels: PublishChannel[] = result?.channels
               ? Object.values(result.channels).sort((a, b) =>
                   a.name.localeCompare(b.name)
                 )

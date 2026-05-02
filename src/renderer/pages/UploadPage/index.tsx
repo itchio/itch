@@ -8,7 +8,9 @@ import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import { rcall } from "renderer/butlerd/rcall";
 import butlerCaller from "renderer/hocs/butlerCaller";
+import { rendererLogger } from "renderer/logger";
 import { hookWithProps } from "renderer/hocs/hook";
 import {
   dispatchTabEvolve,
@@ -26,7 +28,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
-const FetchBuilds = butlerCaller(messages.WharfListBuilds);
+const FetchBuilds = butlerCaller(messages.PublishListBuilds);
 
 const Container = styled.div`
   flex: 1;
@@ -93,14 +95,143 @@ interface Props extends MeatProps {
   syntheticJobs: PushJob[];
 }
 
-class UploadPage extends React.PureComponent<Props> {
+interface State {
+  /** Per-build overlay populated by polling Publish.GetBuild on pending
+   *  builds. Merged on top of the cached PublishListBuilds result before
+   *  rendering so a row can transition Processing → Live without a list
+   *  refetch. Pruned on each list fetch so the list result becomes
+   *  authoritative again once it catches up. */
+  polledBuilds: { [buildId: number]: Build };
+  listRefreshSequence: number;
+}
+
+const POLL_INTERVAL_MS = 10_000;
+const logger = rendererLogger.child("UploadPage");
+
+function isPendingBuild(b: Build): boolean {
+  return (
+    b.state === messages.BuildState.Started ||
+    b.state === messages.BuildState.Processing
+  );
+}
+
+class UploadPage extends React.PureComponent<Props, State> {
+  override state: State = { polledBuilds: {}, listRefreshSequence: 0 };
+  /** Build IDs we're currently polling. Maintained outside React state
+   *  because changes don't drive rendering — only the polled results do. */
+  private pendingIds: Set<number> = new Set();
+  private listedBuildIds: Set<number> = new Set();
+  private pollTimer?: ReturnType<typeof setInterval>;
+  private ticking = false;
+  private mounted = false;
+
   override componentDidMount() {
+    this.mounted = true;
     dispatchTabPageUpdate(this.props, { label: ["sidebar.upload"] });
   }
+
+  override componentWillUnmount() {
+    this.mounted = false;
+    this.stopPolling();
+  }
+
+  handleResult = (result: messages.PublishListBuildsResult) => {
+    if (!this.mounted) return;
+    const buildIds = new Set<number>();
+    const pendingIds = new Set<number>();
+    for (const b of result?.builds ?? []) {
+      buildIds.add(b.id);
+      if (isPendingBuild(b)) pendingIds.add(b.id);
+    }
+    this.listedBuildIds = buildIds;
+    this.pendingIds = pendingIds;
+    this.setState((s) => {
+      const polledBuilds: { [buildId: number]: Build } = {};
+      for (const buildId of pendingIds) {
+        const b = s.polledBuilds[buildId];
+        if (b) {
+          polledBuilds[buildId] = b;
+        }
+      }
+      return { polledBuilds };
+    });
+    this.updatePolling();
+  };
+
+  updatePolling = () => {
+    if (this.pendingIds.size > 0 && !this.pollTimer) {
+      this.pollTimer = setInterval(this.tick, POLL_INTERVAL_MS);
+      // Don't wait a full interval for the first poll — kick one off
+      // immediately so a build that just transitioned out of pending is
+      // reflected without a 10s delay.
+      this.tick();
+    } else if (this.pendingIds.size === 0) {
+      this.stopPolling();
+    }
+  };
+
+  stopPolling = () => {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = undefined;
+    }
+  };
+
+  tick = async () => {
+    if (this.ticking) return;
+    this.ticking = true;
+    try {
+      const ids = [...this.pendingIds];
+      const profileId = this.props.profile.id;
+      const polled = await Promise.all(
+        ids.map(async (buildId) => {
+          try {
+            const res = await rcall(messages.PublishGetBuild, {
+              profileId,
+              buildId,
+            });
+            return res.build;
+          } catch (e) {
+            logger.warn(`Publish.GetBuild failed for ${buildId}: ${e}`);
+            return null;
+          }
+        })
+      );
+      if (!this.mounted) {
+        return;
+      }
+      const updates: { [id: number]: Build } = {};
+      let shouldRefreshList = false;
+      for (const b of polled) {
+        if (!b) continue;
+        if (this.listedBuildIds.has(b.id)) {
+          updates[b.id] = b;
+        }
+        if (!isPendingBuild(b)) {
+          this.pendingIds.delete(b.id);
+          shouldRefreshList = true;
+        }
+      }
+      if (Object.keys(updates).length > 0 || shouldRefreshList) {
+        this.setState((s) => ({
+          polledBuilds: { ...s.polledBuilds, ...updates },
+          listRefreshSequence: shouldRefreshList
+            ? s.listRefreshSequence + 1
+            : s.listRefreshSequence,
+        }));
+      }
+      if (this.pendingIds.size === 0) {
+        this.stopPolling();
+      }
+    } finally {
+      this.ticking = false;
+    }
+  };
 
   override render() {
     const { profile, tab, status, search, syntheticJobs, sequence } =
       this.props;
+    const { polledBuilds, listRefreshSequence } = this.state;
 
     return (
       <Page>
@@ -112,11 +243,14 @@ class UploadPage extends React.PureComponent<Props> {
             state: status || undefined,
             includeTotals: true,
           }}
-          sequence={sequence}
+          sequence={sequence + listRefreshSequence}
           errorsHandled
           loadingHandled
+          onResult={this.handleResult}
           render={({ result, loading, error }) => {
-            const builds = result?.builds ?? [];
+            const builds = (result?.builds ?? []).map(
+              (b) => polledBuilds[b.id] ?? b
+            );
             const totals = result?.totals;
 
             const q = (search || "").trim().toLowerCase();
