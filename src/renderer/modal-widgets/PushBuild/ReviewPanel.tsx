@@ -127,14 +127,15 @@ class ReviewPanel extends React.PureComponent<Props> {
         preview.status === "done" &&
         preview.comparison !== undefined &&
         preview.hasParent !== undefined &&
-        preview.parentBuildId !== undefined &&
         preview.sourceSize !== undefined &&
         preview.topChangedFiles !== undefined
       ) {
         return (
           <PreviewSummary
             hasParent={preview.hasParent}
-            parentBuildId={preview.parentBuildId}
+            // parentBuildId is only meaningful (and only read) when
+            // hasParent is true; the wire contract omits it otherwise.
+            parentBuildId={preview.parentBuildId ?? 0}
             sourceSize={preview.sourceSize}
             comparison={preview.comparison}
             topChangedFiles={preview.topChangedFiles}

@@ -1951,7 +1951,7 @@ export interface WharfPushPreviewResult {
    */
   hasParent: boolean;
   /** ID of the build the preview compared against. Absent when !HasParent. */
-  parentBuildId: number;
+  parentBuildId?: number;
   /**
    * Total uncompressed size of the source container, in bytes. Header
    * context for the comparison summary.

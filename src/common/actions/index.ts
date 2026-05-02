@@ -981,7 +981,8 @@ export const actions = wireActions({
   previewDone: action<{
     id: string;
     hasParent: boolean;
-    parentBuildId: number;
+    /** Absent when !hasParent (no previous build to compare against). */
+    parentBuildId?: number;
     sourceSize: number;
     comparison: WharfPushComparison;
     topChangedFiles: WharfPushPreviewEntry[];
