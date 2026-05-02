@@ -616,7 +616,7 @@
   "upload.preview.header": "Review",
   "upload.preview.placeholder": "Run a preview to see what would change before pushing.",
   "upload.preview.running": "Previewing changes…",
-  "upload.preview.failed": "Preview failed: {message}",
+  "upload.preview.failed": "Preview failed:",
   "upload.preview.cancelled": "Preview cancelled.",
   "upload.preview.compared_to": "Comparing against build #{parentBuildId}",
   "upload.preview.first_build": "First build on this channel",

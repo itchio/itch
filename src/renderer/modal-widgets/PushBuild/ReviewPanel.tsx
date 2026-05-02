@@ -59,6 +59,19 @@ const Banner = styled.div`
     background: rgba(255, 255, 255, 0.04);
     color: ${(props) => props.theme.secondaryText};
   }
+
+  pre {
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    max-height: 240px;
+    overflow: auto;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 90%;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 `;
 
 const ConfirmCallout = styled.div`
@@ -145,7 +158,8 @@ class ReviewPanel extends React.PureComponent<Props> {
       if (preview.status === "failed") {
         return (
           <Banner className="bad">
-            {T(["upload.preview.failed", { message: preview.message ?? "" }])}
+            {T(_("upload.preview.failed"))}
+            {preview.message ? <pre>{preview.message}</pre> : null}
           </Banner>
         );
       }
