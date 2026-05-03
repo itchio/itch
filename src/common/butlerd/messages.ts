@@ -4326,6 +4326,30 @@ export const PublishPushBuildAssigned =
   );
 
 /**
+ * Payload for Publish.Push.BuildFailed
+ */
+export interface PublishPushBuildFailedNotification {
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  channel: string;
+  /** Error message that was reported to the server. */
+  message: string;
+}
+
+/**
+ * Emitted if Publish.Push errors out after a build was assigned and the
+ * worker successfully marked the build as failed on the server. Lets the
+ * caller update its local view of the build to "failed" without having
+ * to poll. If the push fails before a build was assigned, no notification
+ * is emitted (only the RPC error is surfaced).
+ */
+export const PublishPushBuildFailed =
+  createNotification<PublishPushBuildFailedNotification>(
+    "Publish.Push.BuildFailed"
+  );
+
+/**
  * Payload for Publish.Push.Progress
  */
 export interface PublishPushProgressNotification {

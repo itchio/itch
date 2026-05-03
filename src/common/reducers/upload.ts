@@ -7,6 +7,34 @@ const initialState: UploadState = {
   jobOrder: [],
 };
 
+// Each selector below is memoized on (jobs, jobOrder) reference equality.
+// The reducer always returns a new state.jobs / state.jobOrder when either
+// changes, so ref-equality is sufficient to detect "nothing relevant
+// changed." This keeps connect() from re-rendering UploadPage on every
+// unrelated upload-state tick (e.g. preview state churn).
+
+const EMPTY_PUSH_JOBS: readonly PushJob[] = [];
+const EMPTY_BUILD_IDS: readonly number[] = [];
+const EMPTY_PUSH_JOBS_BY_ID: { readonly [buildId: number]: PushJob } = {};
+const MAX_STARTED_BUILD_IDS = 100;
+
+function memoizeOnJobs<T>(
+  compute: (s: UploadState) => T
+): (s: UploadState) => T {
+  let lastJobs: UploadState["jobs"] | undefined;
+  let lastOrder: UploadState["jobOrder"] | undefined;
+  let lastResult: T;
+  return (s) => {
+    if (s.jobs === lastJobs && s.jobOrder === lastOrder) {
+      return lastResult;
+    }
+    lastJobs = s.jobs;
+    lastOrder = s.jobOrder;
+    lastResult = compute(s);
+    return lastResult;
+  };
+}
+
 /**
  * Push jobs that may need a synthetic top-row — i.e. anything that hasn't
  * cleanly handed off to the server. Covers:
@@ -23,47 +51,48 @@ const initialState: UploadState = {
  * real row, and tab-filters by the job's local status so e.g. an
  * in-flight pushing job doesn't leak onto the Failed tab.
  */
-export function selectRowlessPushJobs(s: UploadState): PushJob[] {
-  return s.jobOrder
+export const selectRowlessPushJobs = memoizeOnJobs<PushJob[]>((s) => {
+  const out = s.jobOrder
     .map((id) => s.jobs[id])
     .filter((j): j is PushJob => !!j && j.status !== "processing");
-}
+  return out.length === 0 ? (EMPTY_PUSH_JOBS as PushJob[]) : out;
+});
 
 /**
  * Build IDs of all push jobs we know about, for opting them into
- * Publish.ListBuilds via startedBuildIds. Returns a stable empty array
- * when there are no in-flight pushes so consumers don't refetch on every
- * tick. Capped at 100 (the API's limit) — drops the oldest excess.
+ * Publish.ListBuilds via startedBuildIds. Capped at 100 (the API's limit)
+ * — keeps the newest by jobOrder position, drops the oldest excess.
  */
-const EMPTY_BUILD_IDS: number[] = [];
-const MAX_STARTED_BUILD_IDS = 100;
-export function selectPushJobBuildIds(s: UploadState): number[] {
+export const selectPushJobBuildIds = memoizeOnJobs<number[]>((s) => {
   const out: number[] = [];
   for (const id of s.jobOrder) {
     const j = s.jobs[id];
     if (j?.buildId) out.push(j.buildId);
   }
-  if (out.length === 0) return EMPTY_BUILD_IDS;
+  if (out.length === 0) return EMPTY_BUILD_IDS as number[];
   if (out.length > MAX_STARTED_BUILD_IDS) {
     out.length = MAX_STARTED_BUILD_IDS;
   }
   return out;
-}
+});
 
 /**
  * Push jobs keyed by their server-side buildId, for overlaying live push
  * progress / terminal state onto the matching server build row.
  */
-export function selectPushJobsByBuildId(s: UploadState): {
+export const selectPushJobsByBuildId = memoizeOnJobs<{
   [buildId: number]: PushJob;
-} {
+}>((s) => {
   const out: { [buildId: number]: PushJob } = {};
   for (const id of s.jobOrder) {
     const j = s.jobs[id];
     if (j?.buildId) out[j.buildId] = j;
   }
+  if (Object.keys(out).length === 0) {
+    return EMPTY_PUSH_JOBS_BY_ID as { [buildId: number]: PushJob };
+  }
   return out;
-}
+});
 
 /**
  * True iff any push is currently transferring data — used by the sidebar's

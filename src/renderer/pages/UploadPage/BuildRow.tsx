@@ -513,9 +513,15 @@ interface State {
 class BuildRow extends React.PureComponent<Props, State> {
   constructor(props: Props, context: any) {
     super(props, context);
-    // Rows with an attached push job start expanded so the user sees
-    // progress / error detail without having to click open.
-    this.state = { expanded: !!props.pushJob };
+    // Auto-expand only for cases where the user genuinely wants the
+    // detail open: synthetic-only rows (no server build, the row IS the
+    // job) and actively-uploading overlays. Don't auto-expand for
+    // already-handed-off or terminal overlays — re-mounts (search,
+    // filter, polling reorders) would otherwise force the row back open
+    // every time, even after the user collapsed it.
+    this.state = {
+      expanded: !props.build || props.pushJob?.status === "pushing",
+    };
   }
 
   override render() {
