@@ -239,6 +239,8 @@
   "notification.download_updated": "{{title}} was updated!",
   "notification.download_reverted": "{{title}} was switched to {{version}}!",
   "notification.download_healed": "{{title}} verified and repaired!",
+  "notification.push_processing":
+    "{{title}}: {{channel}} pushed, server is processing the build",
   "onboarding.caved.prealpha_reminder": "Keep in mind this is a pre-alpha",
   "onboarding.caved.title_pick": "Take your pick",
   "onboarding.caved.troubleshoot_advice":

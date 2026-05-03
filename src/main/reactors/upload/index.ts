@@ -2,6 +2,7 @@ import { Conversation } from "@itchio/butlerd";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { hookLogging } from "common/butlerd/utils";
+import { t } from "common/format/t";
 import { MAX_RECENT_PUSH_FOLDERS } from "common/reducers/preferences";
 import { isCancelled, RecentPushFolder } from "common/types";
 import { Watcher } from "common/util/watcher";
@@ -197,5 +198,19 @@ export default function (watcher: Watcher) {
     } else {
       pendingPreviewCancels.add(id);
     }
+  });
+
+  watcher.on(actions.pushDone, async (store, action) => {
+    const { jobId, channel } = action.payload;
+    const job = store.getState().upload.jobs[jobId];
+    if (!job) return;
+    const { i18n } = store.getState();
+    const title = job.gameTitle ?? job.target;
+    store.dispatch(
+      actions.notify({
+        body: t(i18n, ["notification.push_processing", { title, channel }]),
+        onClick: actions.navigate({ wind: "root", url: "itch://upload" }),
+      })
+    );
   });
 }
