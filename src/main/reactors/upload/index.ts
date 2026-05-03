@@ -58,6 +58,12 @@ export default function (watcher: Watcher) {
             convo.cancel();
           }
           convo.onNotification(
+            messages.PublishPushBuildAssigned,
+            async ({ buildId }) => {
+              store.dispatch(actions.pushBuildAssigned({ jobId, buildId }));
+            }
+          );
+          convo.onNotification(
             messages.PublishPushProgress,
             async ({
               progress,

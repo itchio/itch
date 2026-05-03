@@ -12,6 +12,9 @@ invalidators.set(messages.FetchCaves, [actions.commonsUpdated]);
 invalidators.set(messages.FetchCave, [actions.commonsUpdated]);
 invalidators.set(messages.PublishListChannels, [actions.pushDone]);
 invalidators.set(messages.PublishListBuilds, [
+  // Refetch as soon as we learn the server-side buildId so the in-flight
+  // synthetic row can hand off to the real build row mid-upload.
+  actions.pushBuildAssigned,
   actions.pushDone,
   actions.pushFailed,
 ]);

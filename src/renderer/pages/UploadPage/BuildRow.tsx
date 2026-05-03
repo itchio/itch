@@ -490,8 +490,12 @@ function formatPushedAt(date: Date | string | undefined): string {
 interface OwnProps {
   /** Server-side build, or null when the row is purely a synthetic in-flight push. */
   build: Build | null;
-  /** Synthetic push job for in-flight rows; for server rows pass undefined. */
-  syntheticJob?: PushJob;
+  /** Local push job matching this row. For rows with no server build it
+   *  drives every field; for server rows it overlays live progress / a
+   *  terminal status that the server hasn't caught up to yet. Match is by
+   *  buildId (set by Publish.Push.BuildAssigned), so no risk of attaching
+   *  a fresh push to a historical build on the same channel. */
+  pushJob?: PushJob;
   tab: string;
   onSetSearch: (search: string) => void;
 }
@@ -509,31 +513,30 @@ interface State {
 class BuildRow extends React.PureComponent<Props, State> {
   constructor(props: Props, context: any) {
     super(props, context);
-    // Synthetic in-flight rows start expanded so the user sees progress
-    // detail without having to click the row open.
-    this.state = { expanded: !!props.syntheticJob };
+    // Rows with an attached push job start expanded so the user sees
+    // progress / error detail without having to click open.
+    this.state = { expanded: !!props.pushJob };
   }
 
   override render() {
-    const { build, syntheticJob } = this.props;
+    const { build, pushJob } = this.props;
     const { expanded } = this.state;
 
-    // For synthetic in-flight rows we have only the job, not a full Build —
-    // render best-effort fields from the job payload (including the game
-    // snapshot the push modal stashed at dispatch time).
+    // Synthetic-only rows (no server build yet) fall back to fields the
+    // push modal stashed on the job at dispatch time.
     const game: Game | undefined = build?.game;
     const upload: Upload | undefined = build?.upload;
 
-    const projectTitle = game?.title ?? syntheticJob?.gameTitle ?? "";
-    const projectSlug = game ? targetForGame(game) : syntheticJob?.target ?? "";
+    const projectTitle = game?.title ?? pushJob?.gameTitle ?? "";
+    const projectSlug = game ? targetForGame(game) : pushJob?.target ?? "";
     const projectCoverUrl =
       game?.stillCoverUrl ||
       game?.coverUrl ||
-      syntheticJob?.gameStillCoverUrl ||
-      syntheticJob?.gameCoverUrl ||
+      pushJob?.gameStillCoverUrl ||
+      pushJob?.gameCoverUrl ||
       null;
-    const channelName = upload?.channelName ?? syntheticJob?.channel ?? "";
-    const target = syntheticJob?.target ?? projectSlug;
+    const channelName = upload?.channelName ?? pushJob?.channel ?? "";
+    const target = pushJob?.target ?? projectSlug;
     const userVersion = build?.userVersion?.trim() || null;
     const buildIdLabel = build ? `#${build.id}` : "";
     const archiveFile = findBuildFile(build?.files, BuildFileType.Archive);
@@ -543,14 +546,15 @@ class BuildRow extends React.PureComponent<Props, State> {
     const orderedFiles = orderedBuildFiles(build?.files);
     const platforms = upload?.platforms;
 
-    // Only synthetic rows show in-flight push progress. Server rows for
-    // historical/inactive builds on the same channel must NOT pick up an
-    // active push, even if its (target, channel) matches — the push will
-    // produce a brand-new build, surfaced via its own synthetic row.
-    const activeJob = syntheticJob ?? null;
+    // Push job match is by buildId (set by Publish.Push.BuildAssigned),
+    // so server rows can safely overlay live progress / terminal state.
+    const activeJob = pushJob ?? null;
     const isTerminal =
       activeJob?.status === "failed" || activeJob?.status === "cancelled";
-    const showProgressBar = !!activeJob && !isTerminal;
+    // Only show the progress bar while bytes are still flowing — once the
+    // push hands off to the server (status="processing"), the upload is
+    // done and a stuck 100% bar would just be noise.
+    const showProgressBar = activeJob?.status === "pushing";
 
     const butlerCmd = `butler push <dir> ${target}:${channelName}`;
 
@@ -609,8 +613,8 @@ class BuildRow extends React.PureComponent<Props, State> {
           <Cell>
             {build?.createdAt ? (
               <TimeAgo date={build.createdAt} />
-            ) : syntheticJob ? (
-              <TimeAgo date={new Date(syntheticJob.createdAt)} />
+            ) : pushJob ? (
+              <TimeAgo date={new Date(pushJob.createdAt)} />
             ) : (
               "—"
             )}
@@ -627,7 +631,7 @@ class BuildRow extends React.PureComponent<Props, State> {
                   {T(_("upload.expanded.filename"))}
                 </ExpandedLabel>
                 <ExpandedValue>
-                  {upload?.filename ?? syntheticJob?.src ?? "—"}
+                  {upload?.filename ?? pushJob?.src ?? "—"}
                 </ExpandedValue>
               </ExpandedField>
               <ExpandedField>
@@ -718,9 +722,9 @@ class BuildRow extends React.PureComponent<Props, State> {
 
   handleDismiss = (ev: React.MouseEvent) => {
     ev.stopPropagation();
-    const { syntheticJob, dispatch } = this.props;
-    if (syntheticJob) {
-      dispatch(actions.dismissPushJob({ jobId: syntheticJob.id }));
+    const { pushJob, dispatch } = this.props;
+    if (pushJob) {
+      dispatch(actions.dismissPushJob({ jobId: pushJob.id }));
     }
   };
 
@@ -833,12 +837,12 @@ class BuildRow extends React.PureComponent<Props, State> {
   handleKebab = (ev: React.MouseEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
-    const { build, syntheticJob, dispatch } = this.props;
+    const { build, pushJob, dispatch } = this.props;
     const target =
-      syntheticJob?.target ?? (build?.game ? targetForGame(build.game) : "");
-    const channel = syntheticJob?.channel ?? build?.upload?.channelName ?? "";
+      pushJob?.target ?? (build?.game ? targetForGame(build.game) : "");
+    const channel = pushJob?.channel ?? build?.upload?.channelName ?? "";
     const butlerCmd = `butler push <dir> ${target}:${channel}`;
-    const gameId = build?.game?.id ?? syntheticJob?.gameId;
+    const gameId = build?.game?.id ?? pushJob?.gameId;
 
     const template: MenuTemplate = [];
     if (gameId) {
@@ -878,19 +882,18 @@ class BuildRow extends React.PureComponent<Props, State> {
       });
     }
 
-    // Synthetic-only rows in a terminal state can be cleared from the
-    // dashboard. Once a buildId is set the row will merge with the real
-    // build, so removing it from job state alone wouldn't actually clear
-    // anything visible.
+    // Terminal push jobs can be cleared. For synthetic-only rows that
+    // removes the row entirely; for overlay rows on a server build it
+    // just clears the local error/cancellation overlay (the server build
+    // row stays).
     if (
-      syntheticJob &&
-      !syntheticJob.buildId &&
-      (syntheticJob.status === "failed" || syntheticJob.status === "cancelled")
+      pushJob &&
+      (pushJob.status === "failed" || pushJob.status === "cancelled")
     ) {
       template.push({ type: "separator" });
       template.push({
         localizedLabel: ["upload.menu.remove"],
-        action: actions.dismissPushJob({ jobId: syntheticJob.id }),
+        action: actions.dismissPushJob({ jobId: pushJob.id }),
       });
     }
 
@@ -920,7 +923,7 @@ class BuildRow extends React.PureComponent<Props, State> {
     ev.stopPropagation();
     const channel =
       this.props.build?.upload?.channelName ??
-      this.props.syntheticJob?.channel ??
+      this.props.pushJob?.channel ??
       "";
     if (!channel) return;
     this.props.onSetSearch(channel);

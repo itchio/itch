@@ -8,13 +8,61 @@ const initialState: UploadState = {
 };
 
 /**
- * Returns every push job in recency order. These power the synthetic rows
- * pinned to the top of the dashboard. Terminal failed/cancelled jobs stay
- * here until dismissed so the user sees the error; processing jobs are
- * filtered out by the consumer once the matching real Build appears.
+ * Push jobs that may need a synthetic top-row — i.e. anything that hasn't
+ * cleanly handed off to the server. Covers:
+ *   - jobs without a buildId (CreateBuild hasn't returned, or errored
+ *     before it),
+ *   - jobs still uploading (the list refetch with startedBuildIds may
+ *     not have landed yet),
+ *   - terminal jobs (failed / cancelled) whose server build the API
+ *     wouldn't surface on the active tab (e.g. push died mid-upload, the
+ *     server still has the build in "started" state, but the user is on
+ *     the Failed tab where started is filtered out).
+ *
+ * UploadPage dedupes against the current list so this never shadows a
+ * real row, and tab-filters by the job's local status so e.g. an
+ * in-flight pushing job doesn't leak onto the Failed tab.
  */
-export function selectActivePushJobs(s: UploadState): PushJob[] {
-  return s.jobOrder.map((id) => s.jobs[id]).filter((j): j is PushJob => !!j);
+export function selectRowlessPushJobs(s: UploadState): PushJob[] {
+  return s.jobOrder
+    .map((id) => s.jobs[id])
+    .filter((j): j is PushJob => !!j && j.status !== "processing");
+}
+
+/**
+ * Build IDs of all push jobs we know about, for opting them into
+ * Publish.ListBuilds via startedBuildIds. Returns a stable empty array
+ * when there are no in-flight pushes so consumers don't refetch on every
+ * tick. Capped at 100 (the API's limit) — drops the oldest excess.
+ */
+const EMPTY_BUILD_IDS: number[] = [];
+const MAX_STARTED_BUILD_IDS = 100;
+export function selectPushJobBuildIds(s: UploadState): number[] {
+  const out: number[] = [];
+  for (const id of s.jobOrder) {
+    const j = s.jobs[id];
+    if (j?.buildId) out.push(j.buildId);
+  }
+  if (out.length === 0) return EMPTY_BUILD_IDS;
+  if (out.length > MAX_STARTED_BUILD_IDS) {
+    out.length = MAX_STARTED_BUILD_IDS;
+  }
+  return out;
+}
+
+/**
+ * Push jobs keyed by their server-side buildId, for overlaying live push
+ * progress / terminal state onto the matching server build row.
+ */
+export function selectPushJobsByBuildId(s: UploadState): {
+  [buildId: number]: PushJob;
+} {
+  const out: { [buildId: number]: PushJob } = {};
+  for (const id of s.jobOrder) {
+    const j = s.jobs[id];
+    if (j?.buildId) out[j.buildId] = j;
+  }
+  return out;
 }
 
 /**
@@ -28,30 +76,6 @@ export function selectHasInFlightPush(s: UploadState): boolean {
     if (j && j.status === "pushing") return true;
   }
   return false;
-}
-
-/**
- * Returns the active push job for a given (target, channel) tuple, or null
- * if none. Used by dashboard rows to attach live progress to a row that
- * matches an in-flight push.
- */
-export function selectActivePushJobByTarget(
-  s: UploadState,
-  target: string,
-  channel: string
-): PushJob | null {
-  for (const id of s.jobOrder) {
-    const j = s.jobs[id];
-    if (
-      j &&
-      j.status === "pushing" &&
-      j.target === target &&
-      j.channel === channel
-    ) {
-      return j;
-    }
-  }
-  return null;
 }
 
 // History cap — long-running sessions push many builds; we never need more
@@ -139,6 +163,15 @@ export default reducer<UploadState>(initialState, (on) => {
       },
       jobOrder: [jobId, ...state.jobOrder],
     });
+  });
+
+  on(actions.pushBuildAssigned, (state, action) => {
+    const { jobId, buildId } = action.payload;
+    const job = state.jobs[jobId];
+    if (!job || job.status !== "pushing" || job.buildId === buildId) {
+      return state;
+    }
+    return updateJob(state, jobId, { buildId, updatedAt: Date.now() });
   });
 
   on(actions.pushProgress, (state, action) => {

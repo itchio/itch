@@ -4305,6 +4305,27 @@ export interface PublishPushPreviewParams {
 }
 
 /**
+ * Payload for Publish.Push.BuildAssigned
+ */
+export interface PublishPushBuildAssignedNotification {
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * Emitted once, as soon as the worker has obtained a build ID from the
+ * itch.io API (i.e. after CreateBuild succeeds, before any data flows).
+ * Lets the caller associate its in-flight push with the server-side
+ * build before the upload completes.
+ */
+export const PublishPushBuildAssigned =
+  createNotification<PublishPushBuildAssignedNotification>(
+    "Publish.Push.BuildAssigned"
+  );
+
+/**
  * Payload for Publish.Push.Progress
  */
 export interface PublishPushProgressNotification {
@@ -4393,4 +4414,12 @@ export interface PublishListBuildsParams {
   state?: string;
   /** If set, include aggregate totals in the response. */
   includeTotals?: boolean;
+  /**
+   * Build IDs in the "started" state to surface in the listing. Started
+   * builds are normally hidden (most are abandoned pushes); naming them
+   * here opts them in for the default and "processing" views, so the
+   * dashboard can show its own in-flight pushes without leaking other
+   * stale started builds. Server-capped at 100 IDs.
+   */
+  startedBuildIds?: number[];
 }

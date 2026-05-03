@@ -934,6 +934,13 @@ export const actions = wireActions({
     gameCoverUrl?: string;
     gameStillCoverUrl?: string;
   }>(),
+  /** Fires once per push, as soon as butler has the server-side build ID
+   *  (after CreateBuild, well before upload completes). Lets the dashboard
+   *  hand off the synthetic row to the real server build row early. */
+  pushBuildAssigned: action<{
+    jobId: string;
+    buildId: number;
+  }>(),
   pushProgress: action<{
     jobId: string;
     progress: number;

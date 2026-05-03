@@ -2,7 +2,11 @@ import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Build, Profile } from "common/butlerd/messages";
 import modals from "renderer/modals";
-import { selectActivePushJobs } from "common/reducers/upload";
+import {
+  selectPushJobBuildIds,
+  selectPushJobsByBuildId,
+  selectRowlessPushJobs,
+} from "common/reducers/upload";
 import { Dispatch, PushJob, RootState } from "common/types";
 import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
@@ -92,7 +96,14 @@ interface Props extends MeatProps {
   search: string;
   url: string;
 
-  syntheticJobs: PushJob[];
+  /** Push jobs without a buildId yet — rendered as synthetic rows on top. */
+  rowlessJobs: PushJob[];
+  /** Push jobs with a confirmed buildId, keyed by buildId — overlay onto
+   *  the matching server build row to surface live progress / errors. */
+  pushJobsByBuildId: { [buildId: number]: PushJob };
+  /** Build IDs of those overlay jobs, for opting them into the list query
+   *  (otherwise started-state builds aren't returned by /profile/builds). */
+  pushJobBuildIds: number[];
 }
 
 interface State {
@@ -229,8 +240,16 @@ class UploadPage extends React.PureComponent<Props, State> {
   };
 
   override render() {
-    const { profile, tab, status, search, syntheticJobs, sequence } =
-      this.props;
+    const {
+      profile,
+      tab,
+      status,
+      search,
+      rowlessJobs,
+      pushJobsByBuildId,
+      pushJobBuildIds,
+      sequence,
+    } = this.props;
     const { polledBuilds, listRefreshSequence } = this.state;
 
     return (
@@ -242,6 +261,11 @@ class UploadPage extends React.PureComponent<Props, State> {
             perPage: 50,
             state: status || undefined,
             includeTotals: true,
+            // Opt our in-flight pushes (state="started" until upload
+            // completes) into the listing so they render as real server
+            // rows from the moment CreateBuild returns.
+            startedBuildIds:
+              pushJobBuildIds.length > 0 ? pushJobBuildIds : undefined,
           }}
           sequence={sequence + listRefreshSequence}
           errorsHandled
@@ -258,11 +282,27 @@ class UploadPage extends React.PureComponent<Props, State> {
               ? builds.filter((b) => buildMatchesSearch(b, q))
               : builds;
 
-            // Synthetic rows: jobs not yet associated with a server-side
-            // build go on top.
-            const syntheticToShow = syntheticJobs.filter(
-              (j) => !builds.some((b) => b.id === j.buildId)
-            );
+            // Synthetic top-rows cover the windows where no real server
+            // row is available: pre-CreateBuild (no buildId), mid-upload
+            // (list refetch hasn't caught up to startedBuildIds yet), or
+            // a terminal local failure that the server still sees as
+            // started. Drop any whose server row is in the list (overlay
+            // covers them — dedupe against the unfiltered list so search
+            // hiding the server row doesn't unmask a synthetic), then
+            // tab-filter and search-filter so synthetic rows respect the
+            // same chips and query as real rows.
+            const syntheticToShow = rowlessJobs.filter((j) => {
+              if (j.buildId && builds.some((b) => b.id === j.buildId)) {
+                return false;
+              }
+              if (!jobMatchesStatusFilter(j, status)) {
+                return false;
+              }
+              if (q && !pushJobMatchesSearch(j, q)) {
+                return false;
+              }
+              return true;
+            });
 
             return (
               <>
@@ -331,7 +371,7 @@ class UploadPage extends React.PureComponent<Props, State> {
                         <BuildRow
                           key={`syn-${job.id}`}
                           build={null}
-                          syntheticJob={job}
+                          pushJob={job}
                           tab={tab}
                           onSetSearch={this.setSearch}
                         />
@@ -340,6 +380,7 @@ class UploadPage extends React.PureComponent<Props, State> {
                         <BuildRow
                           key={`${build.id}-${build.uploadId}`}
                           build={build}
+                          pushJob={pushJobsByBuildId[build.id]}
                           tab={tab}
                           onSetSearch={this.setSearch}
                         />
@@ -376,6 +417,19 @@ class UploadPage extends React.PureComponent<Props, State> {
   };
 }
 
+function jobMatchesStatusFilter(j: PushJob, status: StatusFilter): boolean {
+  switch (status) {
+    case "live":
+      return false;
+    case "processing":
+      return j.status === "pushing";
+    case "failed":
+      return j.status === "failed" || j.status === "cancelled";
+    default:
+      return true;
+  }
+}
+
 function buildMatchesSearch(build: Build, q: string): boolean {
   const title = build.game?.title?.toLowerCase() ?? "";
   const url = build.game?.url?.toLowerCase() ?? "";
@@ -387,6 +441,13 @@ function buildMatchesSearch(build: Build, q: string): boolean {
     channel.includes(q) ||
     version.includes(q)
   );
+}
+
+function pushJobMatchesSearch(j: PushJob, q: string): boolean {
+  const title = j.gameTitle?.toLowerCase() ?? "";
+  const target = j.target?.toLowerCase() ?? "";
+  const channel = j.channel?.toLowerCase() ?? "";
+  return title.includes(q) || target.includes(q) || channel.includes(q);
 }
 
 export default withProfile(
@@ -405,7 +466,11 @@ export default withProfile(
       url: map(
         (rs: RootState, props: any) => ambientTab(rs, props).location.url
       ),
-      syntheticJobs: map((rs: RootState) => selectActivePushJobs(rs.upload)),
+      rowlessJobs: map((rs: RootState) => selectRowlessPushJobs(rs.upload)),
+      pushJobsByBuildId: map((rs: RootState) =>
+        selectPushJobsByBuildId(rs.upload)
+      ),
+      pushJobBuildIds: map((rs: RootState) => selectPushJobBuildIds(rs.upload)),
     }))(UploadPage)
   )
 );
