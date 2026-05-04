@@ -137,12 +137,16 @@ const Channel = styled.button`
 const Version = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 0;
 `;
 
 const VersionLine = styled.div`
   font-weight: 600;
   color: ${(props) => props.theme.baseText};
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Cell = styled.div`
@@ -596,7 +600,12 @@ class BuildRow extends React.PureComponent<Props, State> {
             <span>{channelName}</span>
           </Channel>
           <Version>
-            <VersionLine>
+            <VersionLine
+              title={
+                userVersion ??
+                (build?.version ? `v${build.version}` : undefined)
+              }
+            >
               {userVersion ?? (build?.version ? `v${build.version}` : "—")}
             </VersionLine>
           </Version>
