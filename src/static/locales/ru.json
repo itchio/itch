@@ -678,9 +678,7 @@
     "upload.pick_game": "Проект:",
     "upload.pick_channel": "Канал",
     "upload.no_channels": "Пока каналов нет - впишите название ниже, чтобы создать.",
-    "upload.pick_source_hint": "Перетащите папку или .zip сюда, или выберите",
-    "upload.browse": "Обзор…",
-    "upload.change_source": "Изменить…",
+    "upload.pick_source_hint": "Перетащите папку или .zip сюда",
     "upload.push": "Загрузить сборку",
     "upload.push_without_preview": "Загрузить без предпросмотра",
     "upload.preview": "Предпросмотр",
@@ -706,5 +704,10 @@
     "upload.preview.header": "Изменения",
     "notification.push_processing": "{{title}}: {{channel}} загружено, сервер обрабатывает сборку",
     "upload.user_version": "Версия (необязательно):",
-    "upload.hidden_on_creation": "Пометить новый канал как скрытый"
+    "upload.hidden_on_creation": "Пометить новый канал как скрытый",
+    "upload.size.patch_optimized_hint": "Оптимизированный патч",
+    "upload.file_type.patch_optimized": "Оптимизированный патч",
+    "upload.file_type.patch_optimized_hint": "Оптимизированная версия патча, асинхронно сгенерированная после того, как сборка была опубликована.",
+    "upload.select_folder": "Выбрать папку",
+    "upload.select_zip": "Выбрать .zip"
 }
