@@ -856,19 +856,26 @@ class BuildRow extends React.PureComponent<Props, State> {
   };
 
   renderFileChip = (file: BuildFile) => {
+    const { build } = this.props;
     const failed = file.state === BuildFileState.Failed;
     const pending =
       file.state === BuildFileState.Created ||
       file.state === BuildFileState.Uploading;
     const className = failed ? "failed" : pending ? "muted" : "";
-    const meta: string[] = [];
-    if (file.size > 0) meta.push(fileSize(file.size));
-    if (file.state !== BuildFileState.Uploaded) {
-      meta.push(file.state);
-    }
     const isOptimizedPatch =
       file.type === BuildFileType.Patch &&
       file.subType === BuildFileSubType.Optimized;
+    // Optimized patches and archives for a build with a parent are generated
+    // on a remote server, not uploaded directly by the user, so report them
+    // as "processing" rather than "uploading".
+    const serverProcessed =
+      (build?.parentBuildId ?? -1) > 0 &&
+      (isOptimizedPatch || file.type === BuildFileType.Archive);
+    const meta: string[] = [];
+    if (file.size > 0) meta.push(fileSize(file.size));
+    if (file.state !== BuildFileState.Uploaded) {
+      meta.push(serverProcessed && pending ? "processing" : file.state);
+    }
     const typeSuffix = isOptimizedPatch ? "patch_optimized" : file.type;
     const typeKey = `upload.file_type.${typeSuffix}`;
     const hintKey = `upload.file_type.${typeSuffix}_hint`;
