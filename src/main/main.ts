@@ -31,7 +31,7 @@ import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
 import { mainLogger } from "main/logger";
 import { stopForwarding } from "@goosewobbler/electron-redux";
 
-const appUserModelId = "io.itch.itch";
+const appUserModelId = `io.itch.${env.appName}`;
 
 const registerSync = (
   syncHandlers: SyncIpcHandlers,
