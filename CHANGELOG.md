@@ -1,5 +1,23 @@
 # Changelog
 
+## [26.13.0] - 2026-05-18
+
+A follow-up to 26.12.0 with Upload page fixes and an Electron bump.
+
+### Upload
+
+- The source picker in the push dialog now has separate "Select folder" and "Select .zip" buttons, since a single file dialog can't pick both a folder and a file
+- Fixed drag and drop of a source folder or `.zip` onto the push dialog, which broke when Electron removed the `File.path` property; the path is now resolved via `webUtils.getPathForFile`
+- The build list toolbar now reflows for narrow window widths instead of overflowing
+
+### Electron
+
+- Upgraded Electron from 41 to 42.1.0
+
+### Translations
+
+- Synced translations
+
 ## [26.12.0] - 2026-05-14
 
 A small follow-up to 26.11.0 that opens the Upload page to all users and surfaces information about optimized patches.
