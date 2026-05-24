@@ -13,7 +13,6 @@ import { partitionForUser } from "common/util/partition-for-user";
 import {
   app,
   dialog,
-  globalShortcut,
   ipcMain,
   net,
   protocol,
@@ -192,10 +191,6 @@ export function main() {
         args: process.argv,
       })
     );
-
-    globalShortcut.register("Control+Alt+Backspace", function () {
-      store.dispatch(actions.forceCloseLastGame({}));
-    });
 
     // Emitted when the application is activated. Various actions can trigger
     // this event, such as launching the application for the first time,

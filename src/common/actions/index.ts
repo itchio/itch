@@ -701,7 +701,6 @@ export const actions = wireActions({
     caveId: string;
   }>(),
   recordGameInteraction: action<{}>(),
-  forceCloseLastGame: action<{}>(),
   forceCloseGameRequest: action<{
     /** the game we want to force-quit */
     game: Game;
