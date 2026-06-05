@@ -52,36 +52,63 @@ const NoResults = styled.p`
   padding: 8px 12px;
 `;
 
+const SearchMore = styled.div`
+  font-size: ${(props) => props.theme.fontSizes.smaller};
+  padding: 8px 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  .icon {
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    .icon {
+      opacity: 1;
+    }
+  }
+`;
+
 @watching
 class SearchResultsBar extends React.PureComponent<Props> {
   override render() {
-    const { open, games } = this.props;
+    const { open, games, query } = this.props;
     if (!open) {
       return null;
     }
 
     return (
       <ResultsContainer className={classNames("results-container", { open })}>
+        {query ? (
+          <SearchMore onMouseDown={this.onSearchMore}>
+            <span className="icon icon-search" />
+            {T(["search.query", { query }])}
+          </SearchMore>
+        ) : null}
         {this.resultsGrid(games)}
       </ResultsContainer>
     );
   }
 
-  resultList: Element;
-  onResultList = (el: Element) => {
-    this.resultList = el;
-  };
-
-  onOpenAsTab = () => {
-    const { dispatch } = this.props;
+  onSearchMore = () => {
+    const { dispatch, query } = this.props;
     dispatch(actions.closeSearch({}));
     dispatch(
       actions.navigate({
         wind: ambientWind(),
-        url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
+        url: `${urls.itchio}/search?q=${encodeURIComponent(query)}`,
       })
     );
   };
+
+  resultList: Element;
 
   subscribe(watcher: Watcher) {
     watcher.on(actions.searchFetched, async (store, action) => {

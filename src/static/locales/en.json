@@ -520,6 +520,7 @@
   "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",
   "search.open_as_tab": "Open as tab",
   "search.placeholder": "Search",
+  "search.query": "Search for '{{query}}' on itch.io",
   "sidebar.aw_snap": "Aw, snap!",
   "sidebar.loading": "Loading...",
   "sidebar.broken": "Out of order",
