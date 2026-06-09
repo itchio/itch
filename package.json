@@ -58,7 +58,7 @@
     "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
     "semver": "^7.3.4",
-    "shell-quote": "^1.7.2",
+    "shell-quote": "^1.8.4",
     "split2": "^4.2.0",
     "styled-components": "^5.3.11",
     "systeminformation": "^5.21.7",
