@@ -3,10 +3,12 @@ import { Profile } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
+import BundleStripe from "renderer/pages/LibraryPage/BundleStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
@@ -16,10 +18,13 @@ import ScanningIndicator from "renderer/pages/common/ScanningIndicator";
 
 const OwnedGameStripe = makeGameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = makeGameStripe(messages.FetchCaves);
+const FetchProfileOwnedBundles = butlerCaller(
+  messages.FetchProfileOwnedBundles
+);
 
 class LibraryPage extends React.PureComponent<Props> {
   override render() {
-    const { profile } = this.props;
+    const { profile, sequence } = this.props;
 
     return (
       <Page>
@@ -41,6 +46,13 @@ class LibraryPage extends React.PureComponent<Props> {
             renderTitleExtras={this.installedTitleExtras}
             linkId="library-installed"
           />
+          <FetchProfileOwnedBundles
+            params={{ profileId: profile.id, limit: 100 }}
+            sequence={sequence}
+            loadingHandled
+            errorsHandled
+            render={this.renderBundles}
+          />
         </ItemList>
       </Page>
     );
@@ -52,6 +64,19 @@ class LibraryPage extends React.PureComponent<Props> {
   installedTitleExtras = () => {
     return <ScanningIndicator />;
   };
+
+  renderBundles = FetchProfileOwnedBundles.renderCallback(({ result }) => {
+    if (!result || !result.items) {
+      return null;
+    }
+    return (
+      <>
+        {result.items.map((bk) => (
+          <BundleStripe key={bk.id} bundleKey={bk} />
+        ))}
+      </>
+    );
+  });
 
   override componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.library"] });

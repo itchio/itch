@@ -22,6 +22,7 @@ import profile from "main/reactors/profile";
 import navigation from "main/reactors/navigation";
 import tabSave from "main/reactors/tab-save";
 import commons from "main/reactors/commons";
+import bundles from "main/reactors/bundles";
 import purchases from "main/reactors/purchases";
 import url from "main/reactors/url";
 import tasks from "main/reactors/tasks";
@@ -64,6 +65,7 @@ export default function getWatcher(logger: Logger) {
   navigation(watcher);
   tabSave(watcher);
   commons(watcher);
+  bundles(watcher);
   purchases(watcher);
   url(watcher);
   tasks(watcher);

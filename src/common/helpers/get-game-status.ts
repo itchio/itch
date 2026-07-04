@@ -88,6 +88,22 @@ export interface GameStatus {
   update: GameUpdate;
 }
 
+/**
+ * Overlays ownership known from outside of commons (e.g. bundle ownership
+ * reported by Fetch.GameOwnership) on top of a computed GameStatus, so
+ * games owned through unmaterialized bundles show as installable instead
+ * of purchasable.
+ */
+export function withOwnedAccess(status: GameStatus): GameStatus {
+  if (status.access === Access.None) {
+    return rawWithOwnedAccess(status);
+  }
+  return status;
+}
+const rawWithOwnedAccess = memoize(300, (status: GameStatus): GameStatus => {
+  return { ...status, access: Access.Key };
+});
+
 function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   const { commons, tasks, downloads } = rs;
   const { profile } = rs.profile;

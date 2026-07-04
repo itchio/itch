@@ -1,6 +1,10 @@
 import { actions } from "common/actions";
+import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
-import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
+import getGameStatus, {
+  GameStatus,
+  withOwnedAccess,
+} from "common/helpers/get-game-status";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { Dispatch } from "redux";
@@ -8,6 +12,7 @@ import Filler from "renderer/basics/Filler";
 import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
 import MainAction from "renderer/basics/MainAction";
+import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 import StandardGameCover, {
@@ -16,6 +21,8 @@ import StandardGameCover, {
 } from "renderer/pages/common/StandardGameCover";
 import styled from "renderer/styles";
 import { _ } from "renderer/t";
+
+const FetchGameOwnership = butlerCaller(messages.FetchGameOwnership);
 
 const Spacer = styled.div`
   flex-basis: 16px;
@@ -46,7 +53,34 @@ const BrowserContextDiv = styled.div`
 
 class BrowserContextGame extends React.PureComponent<Props> {
   override render() {
-    const { game, status } = this.props;
+    const { game, profileId } = this.props;
+
+    if (!profileId) {
+      return this.renderContext(this.props.status);
+    }
+
+    // ownership can come from an owned bundle without a materialized
+    // download key, which commons (and thus getGameStatus) knows nothing
+    // about — layer Fetch.GameOwnership on top
+    return (
+      <FetchGameOwnership
+        params={{ profileId, gameId: game.id }}
+        loadingHandled
+        errorsHandled
+        render={this.renderWithOwnership}
+      />
+    );
+  }
+
+  renderWithOwnership = FetchGameOwnership.renderCallback(({ result }) => {
+    const { status } = this.props;
+    return this.renderContext(
+      result && result.owned ? withOwnedAccess(status) : status
+    );
+  });
+
+  renderContext(status: GameStatus) {
+    const { game } = this.props;
 
     return (
       <BrowserContextDiv
@@ -111,8 +145,10 @@ interface Props {
   dispatch: Dispatch<any>;
 
   status: GameStatus;
+  profileId: number;
 }
 
 export default hookWithProps(BrowserContextGame)((map) => ({
   status: map((rs, props) => getGameStatus(rs, props.game)),
+  profileId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
 }))(BrowserContextGame);

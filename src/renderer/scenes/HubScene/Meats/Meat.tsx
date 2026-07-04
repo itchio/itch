@@ -21,6 +21,7 @@ import GamePage from "renderer/pages/GamePage";
 import InstallPage from "renderer/pages/InstallPage";
 import FeaturedPage from "renderer/pages/FeaturedPage";
 import LibraryPage from "renderer/pages/LibraryPage";
+import BundlePage from "renderer/pages/BundlePage";
 import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
 import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
 import LocationsPage from "renderer/pages/LocationsPage";
@@ -191,7 +192,8 @@ class Meat extends React.PureComponent<Props, State> {
   };
 
   getConcrete(): React.ComponentType<MeatProps> {
-    const { isBrowser, internalPage, firstPathElement } = this.props;
+    const { isBrowser, internalPage, firstPathElement, secondPathElement } =
+      this.props;
     if (isBrowser) {
       return BrowserPage;
     }
@@ -203,6 +205,12 @@ class Meat extends React.PureComponent<Props, State> {
             return OwnedPage;
           case "installed":
             return InstalledPage;
+          case "bundles":
+            if (secondPathElement) {
+              return BundlePage;
+            } else {
+              return LibraryPage;
+            }
           default:
             return LibraryPage;
         }
@@ -264,6 +272,7 @@ interface Props extends MeatProps {
   isBrowser: boolean;
   internalPage: string;
   firstPathElement: string;
+  secondPathElement: string;
 }
 
 export default withTab(
@@ -275,6 +284,9 @@ export default withTab(
     ),
     firstPathElement: map(
       (rs, props) => ambientTab(rs, props).location.firstPathElement
+    ),
+    secondPathElement: map(
+      (rs, props) => ambientTab(rs, props).location.secondPathElement
     ),
   }))(Meat)
 );

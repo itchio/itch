@@ -436,7 +436,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
   onInstall = (ev: React.MouseEvent<HTMLElement>) => {
     this.close();
     doAsync(async () => {
-      const { dispatch } = this.props;
+      const { dispatch, profileId } = this.props;
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
       const upload = findWhere(uploads, { id: pickedUploadId });
@@ -454,6 +454,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
             build: upload.build,
             queueDownload: true,
             fastQueue: true,
+            // scopes bundle ownership materialization to the active profile
+            profileId,
           },
           [hookLogging(logger)]
         );
@@ -590,6 +592,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
 interface Props
   extends ModalWidgetProps<PlanInstallParams, PlanInstallResponse> {
   defaultInstallLocation: string;
+  profileId: number;
   dispatch: Dispatch;
 
   intl: IntlShape;
@@ -615,5 +618,6 @@ interface State {
 export default injectIntl(
   hook((map) => ({
     defaultInstallLocation: map((rs) => rs.preferences.defaultInstallLocation),
+    profileId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
   }))(PlanInstall)
 );

@@ -21,7 +21,7 @@ export function currentPage(tabInstance: TabInstance): TabPage | null {
 }
 
 export function windSpec(): WindSpec {
-  return ((window as unknown) as ExtendedWindow).windSpec;
+  return (window as unknown as ExtendedWindow).windSpec;
 }
 
 export function ambientWind(): string {
@@ -61,6 +61,10 @@ export function urlForUser(userId: number) {
 
 export function urlForCollection(collectionId: number) {
   return `itch://collections/${collectionId}`;
+}
+
+export function urlForBundle(bundleId: number) {
+  return `itch://library/bundles/${bundleId}`;
 }
 
 export function urlForInstallLocation(installLocationId: string) {

@@ -6,6 +6,8 @@
   "label.experimental": "Experimental",
   "collection.empty": "There are no games in this collection",
   "collection.item_count": "{{itemCount}} items",
+  "bundle.item_count": "{{itemCount}} games",
+  "bundle.info.acquired": "Acquired",
   "collection.summary": "A collection of {{itemCount}} items",
   "collections.empty": "You currently have no collections",
   "collections.empty_sub":
