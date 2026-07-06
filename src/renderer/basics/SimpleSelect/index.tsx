@@ -1,12 +1,12 @@
 import React from "react";
 import classNames from "classnames";
+import { lighten } from "polished";
 import styled, { css, singleLine } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
-import { first, findWhere, find } from "underscore";
+import { first, findWhere, find, findIndex, isEqual } from "underscore";
 import Filler from "renderer/basics/Filler";
-import Icon from "renderer/basics/Icon";
 import Floater from "renderer/basics/Floater";
 import { LocalizedString } from "common/types";
 
@@ -20,9 +20,14 @@ export const FloaterSpacer = styled.div`
   flex-shrink: 0;
 `;
 
+const SimpleSelectDiv = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
 const SimpleSelectButton = styled.button`
   cursor: default;
-  flex-grow: 1;
 
   background: ${(props) => props.theme.inputBackground};
   border: 1px solid ${(props) => props.theme.inputBorder};
@@ -32,12 +37,11 @@ const SimpleSelectButton = styled.button`
   text-align: left;
   padding: 0;
 
-  transition: border-color: 0.1s;
+  transition: border-color 0.1s;
 
   &:hover {
     border-color: ${(props) => props.theme.inputBorderFocused};
   }
-
 `;
 
 const wrapperPadding = 10;
@@ -60,14 +64,34 @@ const ValueWrapper = styled.div`
 
 const OptionWrapperDiv = styled.div`
   ${wrapperLike};
+  display: flex;
+  flex-flow: row;
+  align-items: center;
   background: ${(props) => props.theme.inputBackground};
 
+  /* selection is marked by the checkmark; backgrounds form a brightness
+     ladder so the keyboard cursor stays visible on the selected option */
   &.focused {
     background: ${(props) => props.theme.inputFocusedBackground};
   }
 
   &.selected {
     background: ${(props) => props.theme.inputSelectedBackground};
+  }
+
+  &.focused.selected {
+    background: ${(props) => lighten(0.1, props.theme.inputSelectedBackground)};
+  }
+`;
+
+const OptionCheckmark = styled.span`
+  flex-shrink: 0;
+  width: 1.5em;
+  font-size: 80%;
+  opacity: 0;
+
+  &.selected {
+    opacity: 1;
   }
 `;
 
@@ -123,7 +147,10 @@ const OptionsDiv = styled.div`
   position: absolute;
   top: 4px;
   left: 0;
-  right: 0;
+  /* at least as wide as the trigger, but grow so long options aren't cut */
+  min-width: 100%;
+  width: max-content;
+  max-width: 400px;
   padding: 4px 0;
   border-radius: 2px;
 
@@ -145,11 +172,17 @@ const DummyOption = styled.div`
 const searchClearThreshold = 2000; // 2 seconds
 const keyboardFocusTimeout = 250;
 
+// unique DOM ids for aria-controls/aria-activedescendant wiring
+let instanceSeed = 0;
+
 export default class SimpleSelect<
   OptionType extends BaseOptionType
 > extends React.PureComponent<Props<OptionType>, State<OptionType>> {
+  idPrefix: string;
+
   constructor(props: Props<OptionType>) {
     super(props);
+    this.idPrefix = `simple-select-${++instanceSeed}`;
     this.state = {
       open: false,
       focusedValue: first(props.options),
@@ -159,45 +192,82 @@ export default class SimpleSelect<
     };
   }
 
+  listboxId() {
+    return `${this.idPrefix}-listbox`;
+  }
+
+  optionId(index: number) {
+    return `${this.idPrefix}-option-${index}`;
+  }
+
+  // options arrays are often rebuilt by parent re-renders, so a stored
+  // option reference can go stale; match by value, not identity
+  indexOfOption(target: OptionType): number {
+    if (!target) {
+      return -1;
+    }
+    return findIndex(
+      this.props.options,
+      (x) => x === target || isEqual(x.value, target.value)
+    );
+  }
+
   override render() {
     const {
       value,
+      options,
       OptionComponent = DefaultOptionComponent,
       isLoading,
       className,
     } = this.props;
+    const { open, focusedValue } = this.state;
+
+    const focusedIndex = this.indexOfOption(focusedValue);
+
     return (
-      <SimpleSelectButton
-        className={className}
-        onClick={this.onToggle}
-        onKeyDown={this.onKeyDown}
-        onKeyPress={this.onKeyPress}
-        onBlur={this.onBlur}
-      >
-        <ValueWrapper>
-          {value ? (
-            <OptionComponent option={value} />
-          ) : (
-            <DummyOption>Select...</DummyOption>
-          )}
-          <Filler />
-          {isLoading ? (
-            <>
-              <Floater />
-              <FloaterSpacer />
-            </>
-          ) : null}
-          <Bar />
-          <IconWrapper>
-            <Icon icon="caret-down" />
-          </IconWrapper>
-        </ValueWrapper>
+      <SimpleSelectDiv className={className}>
+        <SimpleSelectButton
+          type="button"
+          role="combobox"
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-controls={this.listboxId()}
+          aria-activedescendant={
+            open && focusedIndex >= 0 ? this.optionId(focusedIndex) : undefined
+          }
+          onClick={this.onToggle}
+          onKeyDown={this.onKeyDown}
+          onBlur={this.onBlur}
+        >
+          <ValueWrapper>
+            {value ? (
+              <OptionComponent option={value} />
+            ) : (
+              <DummyOption>Select...</DummyOption>
+            )}
+            <Filler />
+            {isLoading ? (
+              <>
+                <Floater />
+                <FloaterSpacer />
+              </>
+            ) : null}
+            <Bar aria-hidden="true" />
+            <IconWrapper aria-hidden="true">
+              {/* not the Icon component: its aria-label would leak the
+                  icon's internal name into the combobox value */}
+              <span className="icon icon-caret-down" />
+            </IconWrapper>
+          </ValueWrapper>
+        </SimpleSelectButton>
         <OptionsAnchorDiv>{this.renderOptions()}</OptionsAnchorDiv>
-      </SimpleSelectButton>
+      </SimpleSelectDiv>
     );
   }
 
   onKeyDown = (ev: React.KeyboardEvent<HTMLElement>) => {
+    const { open } = this.state;
+
     if (
       ev.key === "ArrowUp" ||
       ev.key === "PageUp" ||
@@ -207,6 +277,11 @@ export default class SimpleSelect<
       ev.key === "End"
     ) {
       ev.preventDefault();
+      if (!open) {
+        this.open();
+        return;
+      }
+
       const { options } = this.props;
       let { focusedValue } = this.state;
       if (!focusedValue) {
@@ -216,7 +291,7 @@ export default class SimpleSelect<
       if (!focusedValue) {
         return;
       }
-      let currentIndex = options.indexOf(focusedValue);
+      let currentIndex = this.indexOfOption(focusedValue);
       let newIndex = currentIndex;
 
       if (ev.key === "ArrowUp") {
@@ -244,45 +319,93 @@ export default class SimpleSelect<
         focusedValue: newFocusedValue,
         lastKeyboardFocusAt: Date.now(),
       });
+      return;
     }
 
     if (ev.key === "Enter") {
       // prevent the button's synthesized click, which would immediately
       // toggle the menu right back open (or fire a spurious onChange)
       ev.preventDefault();
-      if (this.state.open) {
+      if (open) {
         this.close();
         this.props.onChange(this.state.focusedValue);
       } else {
         this.open();
       }
+      return;
+    }
+
+    if (ev.key === "Escape") {
+      if (open) {
+        ev.preventDefault();
+        this.close();
+      }
+      return;
+    }
+
+    // printable characters do type-ahead (preventDefault also swallows the
+    // space key's native button activation, which would toggle the menu)
+    if (ev.key.length === 1 && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+      ev.preventDefault();
+
+      const state = this.state;
+      const searchActive =
+        state.search !== "" &&
+        Date.now() - state.lastSearchAt <= searchClearThreshold;
+
+      // space acts like Enter (open/commit), unless it's continuing a
+      // type-ahead search for a label with a space in it
+      if (ev.key === " " && !searchActive) {
+        if (open) {
+          this.close();
+          this.props.onChange(this.state.focusedValue);
+        } else {
+          this.open();
+        }
+        return;
+      }
+
+      const prefix = searchActive ? state.search : "";
+      const search = (prefix + ev.key).toLowerCase();
+
+      const applySearch = () => {
+        this.setState({
+          search,
+          lastSearchAt: Date.now(),
+        });
+
+        const focusedValue = find(this.props.options, (x, i) =>
+          this.optionText(x, i).startsWith(search)
+        );
+        if (focusedValue) {
+          this.setState({ focusedValue, lastKeyboardFocusAt: Date.now() });
+        }
+      };
+
+      if (open) {
+        applySearch();
+      } else {
+        // open first so localized option text is in the DOM to match against
+        this.setState(
+          { open: true, focusedValue: this.props.value },
+          applySearch
+        );
+      }
     }
   };
 
-  onKeyPress = (ev: React.KeyboardEvent<HTMLElement>) => {
-    let search: string;
-
-    let state = this.state;
-    let prefix =
-      Date.now() - state.lastSearchAt > searchClearThreshold
-        ? ""
-        : state.search;
-    search = (prefix + ev.key).toLowerCase();
-
-    this.setState({
-      search,
-      lastSearchAt: Date.now(),
-    });
-
-    const focusedValue = find(
-      this.props.options,
-      (x) =>
-        typeof x.label === "string" && x.label.toLowerCase().startsWith(search)
-    );
-    if (focusedValue) {
-      this.setState({ focusedValue, lastKeyboardFocusAt: Date.now() });
+  // lower-cased display text of an option: plain string labels directly,
+  // localized labels via their rendered DOM text (only available when open)
+  optionText(option: OptionType, index: number): string {
+    if (typeof option.label === "string") {
+      return option.label.toLowerCase();
     }
-  };
+    const el = document.getElementById(this.optionId(index));
+    if (el) {
+      return el.textContent.trim().toLowerCase();
+    }
+    return "";
+  }
 
   renderOptions() {
     const { open } = this.state;
@@ -296,19 +419,30 @@ export default class SimpleSelect<
       OptionComponent = DefaultOptionComponent,
     } = this.props;
 
+    const focusedIndex = this.indexOfOption(focusedValue);
+    const selectedIndex = this.indexOfOption(value);
+
     return (
-      <OptionsDiv>
+      <OptionsDiv role="listbox" id={this.listboxId()}>
         {options.map((option, i) => {
-          const focused = focusedValue === option;
-          const selected = value === option;
+          const focused = i === focusedIndex;
+          const selected = i === selectedIndex;
           return (
             <OptionWrapper
               key={i}
+              id={this.optionId(i)}
+              role="option"
+              aria-selected={selected}
               className={classNames({ focused, selected })}
               data-value={JSON.stringify(option.value)}
+              onMouseDown={this.onOptionMouseDown}
               onClick={this.onOptionClick}
               onMouseEnter={this.onOptionMouseEnter}
             >
+              <OptionCheckmark
+                aria-hidden="true"
+                className={classNames("icon icon-checkmark", { selected })}
+              />
               <OptionComponent key={i} option={option} />
             </OptionWrapper>
           );
@@ -316,6 +450,13 @@ export default class SimpleSelect<
       </OptionsDiv>
     );
   }
+
+  onOptionMouseDown = (ev: React.MouseEvent<HTMLDivElement>) => {
+    // options live outside the trigger button now: without this, mousedown
+    // would blur the button and close the menu before the click lands.
+    // per-option (not on the listbox) so the scrollbar stays draggable
+    ev.preventDefault();
+  };
 
   onOptionClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     ev.stopPropagation();
@@ -334,14 +475,11 @@ export default class SimpleSelect<
 
   getValueForWrapper(el: HTMLElement) {
     let dataValue = JSON.parse(el.dataset.value) as any;
-    const { options, onChange } = this.props;
+    const { options } = this.props;
     return findWhere(options, { value: dataValue });
   }
 
   onToggle = () => {
-    this.setState((state) => ({
-      open: !state.open,
-    }));
     if (this.state.open) {
       this.close();
     } else {

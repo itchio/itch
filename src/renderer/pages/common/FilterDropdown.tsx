@@ -24,20 +24,24 @@ const FilterDropdownDiv = styled.div`
 // SimpleSelect is styled for forms (opaque input background, generous
 // min-width); strip that down so it reads as part of the filter bar.
 const FilterSelect = styled(SimpleSelect)`
-  background: none;
-  border: none;
-  color: inherit;
+  flex-grow: 0;
 
-  &:hover {
+  > button {
+    background: none;
     border: none;
-    cursor: pointer;
-  }
+    color: inherit;
 
-  /* value row */
-  > div:first-child {
-    min-width: 7em;
-    min-height: 0;
-    padding: 0.5em 0 0.5em 0.5em;
+    &:hover {
+      border: none;
+      cursor: pointer;
+    }
+
+    /* value row */
+    > div {
+      min-width: 7em;
+      min-height: 0;
+      padding: 0.5em 0 0.5em 0.5em;
+    }
   }
 
   ${Bar} {
