@@ -747,8 +747,8 @@ export interface FetchGameOwnershipResult {
   downloadKeyId?: number;
   /** Set when ownership is derived from a bundle key */
   bundleId?: number;
-  /** "download_key", "bundle", or empty */
-  source?: string;
+  /** How the profile owns the game; empty when not owned */
+  source?: GameOwnershipSource;
   /** True when the cached ownership answer may be out of date */
   stale?: boolean;
 }
@@ -762,6 +762,16 @@ export const FetchGameOwnership = createRequest<
   FetchGameOwnershipParams,
   FetchGameOwnershipResult
 >("Fetch.GameOwnership");
+
+/**
+ * How a profile owns a game
+ */
+export enum GameOwnershipSource {
+  // Owned via a materialized download key
+  DownloadKey = "download_key",
+  // Owned via a bundle key (download key not claimed yet)
+  Bundle = "bundle",
+}
 
 /**
  * Result for Fetch.ProfileBundleOwnerships
@@ -3680,6 +3690,12 @@ export interface FetchExpireAllParams {
 export interface GameFindUploadsParams {
   /** Which game to find uploads for */
   game: Game;
+  /**
+   * Profile to scope bundle ownership materialization to (this endpoint
+   * has install intent, so it may claim a download key for a bundle-owned
+   * game). When zero, falls back to any suitable profile.
+   */
+  profileId?: number;
 }
 
 /**
@@ -3760,6 +3776,12 @@ export interface InstallPlanParams {
   downloadSessionId?: string;
   /** undocumented */
   uploadId?: number;
+  /**
+   * Profile to scope bundle ownership materialization to (this endpoint
+   * has install intent, so it may claim a download key for a bundle-owned
+   * game). When zero, falls back to any suitable profile.
+   */
+  profileId?: number;
 }
 
 /**
@@ -3768,6 +3790,12 @@ export interface InstallPlanParams {
 export interface InstallGetUploadsParams {
   /** undocumented */
   gameId: number;
+  /**
+   * Profile to scope bundle ownership materialization to (this endpoint
+   * has install intent, so it may claim a download key for a bundle-owned
+   * game). When zero, falls back to any suitable profile.
+   */
+  profileId?: number;
 }
 
 /**

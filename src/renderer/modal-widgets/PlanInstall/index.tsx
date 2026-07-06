@@ -525,7 +525,10 @@ class PlanInstall extends React.PureComponent<Props, State> {
     doAsync(async () => {
       try {
         const { gameId } = this.state;
-        const res = await rcall(InstallGetUploads, { gameId });
+        const { profileId } = this.props;
+        // profileId scopes bundle ownership materialization to the active
+        // profile (this endpoint has install intent)
+        const res = await rcall(InstallGetUploads, { gameId, profileId });
         const pickedUploadId =
           uploadId || (res.uploads.length > 0 ? res.uploads[0].id : null);
         this.setState({

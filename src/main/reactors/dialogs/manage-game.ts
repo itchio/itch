@@ -45,7 +45,12 @@ export default function (watcher: Watcher) {
 
     try {
       try {
-        const { uploads } = await mcall(messages.GameFindUploads, { game });
+        const { profile } = store.getState().profile;
+        const { uploads } = await mcall(messages.GameFindUploads, {
+          game,
+          // scopes bundle ownership materialization to the active profile
+          profileId: profile ? profile.id : undefined,
+        });
         widgetParams.allUploads = uploads;
       } catch (e) {
         console.log(`Could not fetch compatible uploads: ${getErrorStack(e)}`);
