@@ -566,6 +566,8 @@ export const actions = wireActions({
 
   ownedKeysFetched: action<{}>(),
 
+  bundleOwnershipsSynced: action<{}>(),
+
   // tasks
 
   taskStarted: action<{

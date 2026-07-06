@@ -36,6 +36,9 @@ async function syncBundleOwnershipsNow(store: Store) {
     logger.info(
       `Synced ${freshRes.syncedBundles}/${freshRes.totalBundles} owned bundles`
     );
+    // Fetch.GameOwnership is local-only and can't refresh itself; any game
+    // page that got a stale negative before this sync needs a re-query.
+    store.dispatch(actions.bundleOwnershipsSynced({}));
   } catch (e) {
     logger.warn(`While syncing bundle ownerships: ${getErrorStack(e)}`);
   }
