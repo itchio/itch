@@ -8,6 +8,10 @@ export const SortsAndFilters = styled(FiltersContainerDiv)`
   flex-flow: row wrap;
   height: auto;
 
+  /* the base container clips, but dropdown filters (FilterDropdown) pop
+     their options out below the bar */
+  overflow: visible;
+
   padding: 0.4em 0.6em;
   font-weight: normal;
 `;
@@ -25,7 +29,7 @@ const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%,
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 
-const optionButtonLike = css`
+export const optionButtonLike = css`
   display: flex;
   flex-flow: row;
   align-items: center;

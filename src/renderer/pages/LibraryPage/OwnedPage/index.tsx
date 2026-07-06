@@ -9,6 +9,7 @@ import { withTab } from "renderer/hocs/withTab";
 import {
   FilterGroupGameClassification,
   FilterGroupInstalled,
+  FilterGroupPlatform,
 } from "renderer/pages/common/CommonFilters";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
@@ -26,8 +27,15 @@ const OwnedSeries = makeGameSeries(messages.FetchProfileOwnedKeys);
 
 class OwnedPage extends React.PureComponent<Props> {
   override render() {
-    const { profile, sortBy, sortDir, search, classification, installed } =
-      this.props;
+    const {
+      profile,
+      sortBy,
+      sortDir,
+      search,
+      classification,
+      installed,
+      platform,
+    } = this.props;
 
     return (
       <OwnedSeries
@@ -40,6 +48,7 @@ class OwnedPage extends React.PureComponent<Props> {
           filters: {
             classification,
             installed,
+            platform,
           },
         }}
         getRecord={this.getRecord}
@@ -67,6 +76,8 @@ class OwnedPage extends React.PureComponent<Props> {
       <FilterSpacer />
       <FilterGroupInstalled />
       <FilterSpacer />
+      <FilterGroupPlatform />
+      <FilterSpacer />
       <FilterGroupGameClassification />
     </SortsAndFilters>
   );
@@ -86,6 +97,7 @@ interface Props extends MeatProps {
   search: string;
   classification: GameClassification;
   installed: boolean;
+  platform: string;
 }
 
 export default withTab(
@@ -101,6 +113,9 @@ export default withTab(
       ),
       installed: map(
         (rs, props) => ambientTab(rs, props).location.query.installed === "true"
+      ),
+      platform: map(
+        (rs, props) => ambientTab(rs, props).location.query.platform
       ),
     }))(OwnedPage)
   )

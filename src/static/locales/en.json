@@ -755,6 +755,12 @@
   "filter_by.games.visibility.draft": "Draft",
   "filter_by.games.visibility.published": "Published",
 
+  "filter_by.games.platform.all": "All platforms",
+  "filter_by.games.platform.windows": "Windows",
+  "filter_by.games.platform.osx": "macOS",
+  "filter_by.games.platform.linux": "Linux",
+  "filter_by.games.platform.web": "Web",
+
   "game_stripe.view_all": "View all...",
 
   "log.level": "Level",

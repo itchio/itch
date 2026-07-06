@@ -422,6 +422,11 @@ export interface GameRecordsFilters {
   installed?: boolean;
   /** undocumented */
   owned?: boolean;
+  /**
+   * Only include games with a download tagged for this platform
+   * ("windows", "linux", "osx"), or web-playable games ("web").
+   */
+  platform?: string;
 }
 
 /**
@@ -577,6 +582,11 @@ export interface CollectionGamesFilters {
   installed: boolean;
   /** undocumented */
   classification: GameClassification;
+  /**
+   * Only include games with a download tagged for this platform
+   * ("windows", "linux", "osx"), or web-playable games ("web").
+   */
+  platform?: string;
 }
 
 /**
@@ -675,6 +685,11 @@ export interface ProfileOwnedKeysFilters {
   installed: boolean;
   /** undocumented */
   classification: GameClassification;
+  /**
+   * Only include games with a download tagged for this platform
+   * ("windows", "linux", "osx"), or web-playable games ("web").
+   */
+  platform?: string;
 }
 
 /**
@@ -725,6 +740,11 @@ export interface BundleGamesFilters {
   installed: boolean;
   /** undocumented */
   classification: GameClassification;
+  /**
+   * Only include games with a download tagged for this platform
+   * ("windows", "linux", "osx"), or web-playable games ("web").
+   */
+  platform?: string;
 }
 
 /**

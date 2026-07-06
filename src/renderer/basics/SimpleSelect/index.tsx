@@ -99,14 +99,14 @@ class OptionWrapper extends React.PureComponent<
   }
 }
 
-const Bar = styled.div`
+export const Bar = styled.div`
   height: auto;
   width: 1px;
   background: ${(props) => props.theme.inputBorderFocused};
   align-self: stretch;
 `;
 
-const IconWrapper = styled.div`
+export const IconWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -247,8 +247,15 @@ export default class SimpleSelect<
     }
 
     if (ev.key === "Enter") {
-      this.close();
-      this.props.onChange(this.state.focusedValue);
+      // prevent the button's synthesized click, which would immediately
+      // toggle the menu right back open (or fire a spurious onChange)
+      ev.preventDefault();
+      if (this.state.open) {
+        this.close();
+        this.props.onChange(this.state.focusedValue);
+      } else {
+        this.open();
+      }
     }
   };
 

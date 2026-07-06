@@ -11,7 +11,10 @@ import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
-import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
+import {
+  FilterGroupGameClassification,
+  FilterGroupPlatform,
+} from "renderer/pages/common/CommonFilters";
 import { FilterOption } from "renderer/pages/common/Filter";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
@@ -41,6 +44,7 @@ class BundlePage extends React.PureComponent<Props> {
       search,
       filterClassification,
       filterInstalled,
+      filterPlatform,
     } = this.props;
 
     return (
@@ -63,6 +67,7 @@ class BundlePage extends React.PureComponent<Props> {
             filters: {
               classification: filterClassification,
               installed: filterInstalled,
+              platform: filterPlatform,
             },
           }}
           getRecord={this.getRecord}
@@ -105,6 +110,8 @@ class BundlePage extends React.PureComponent<Props> {
           />
         </FilterGroup>
         <FilterSpacer />
+        <FilterGroupPlatform />
+        <FilterSpacer />
         <FilterGroupGameClassification />
       </SortsAndFilters>
     );
@@ -141,6 +148,7 @@ interface Props extends MeatProps {
   search: string;
   filterClassification: GameClassification;
   filterInstalled: boolean;
+  filterPlatform: string;
 }
 
 const hooked = hookWithProps(BundlePage)((map) => ({
@@ -155,6 +163,9 @@ const hooked = hookWithProps(BundlePage)((map) => ({
   ),
   filterInstalled: map(
     (rs, props) => !!ambientTab(rs, props).location.query.installed
+  ),
+  filterPlatform: map(
+    (rs, props) => ambientTab(rs, props).location.query.platform
   ),
 }))(BundlePage);
 export default withProfile(withTab(hooked));
