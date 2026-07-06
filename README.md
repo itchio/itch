@@ -194,8 +194,8 @@ The project includes integration tests that use ChromeDriver to control the Elec
 The integration tests download a specific ChromeDriver version that must match the Electron version used by the app. If you update the Electron version in `package.json`, you must also update `integration-tests/versions.go` to match:
 
 ```go
-const electronVersion = "42.1.0"  // Must match package.json electron version
-const chromeDriverVersionString = "ChromeDriver 148.0.7778.97"  // Chrome version for that Electron
+const electronVersion = "43.0.0"  // Must match package.json electron version
+const chromeDriverVersionString = "ChromeDriver 150.0.7871.46"  // Chrome version for that Electron
 ```
 
 To find the correct Chrome version for an Electron release, check the [Electron Releases](https://releases.electronjs.org/) page.
