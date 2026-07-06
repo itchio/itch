@@ -93,7 +93,7 @@
     "@types/yauzl": "^2.10.3",
     "cross-env": "^10.1.0",
     "electron": "^43.0.0",
-    "esbuild": "^0.27.0",
+    "esbuild": "^0.28.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^2.8.8",
