@@ -718,6 +718,16 @@ export const FetchProfileOwnedBundles = createRequest<
 >("Fetch.ProfileOwnedBundles");
 
 /**
+ * undocumented
+ */
+export interface BundleGamesFilters {
+  /** undocumented */
+  installed: boolean;
+  /** undocumented */
+  classification: GameClassification;
+}
+
+/**
  * Result for Fetch.BundleGames
  */
 export interface FetchBundleGamesResult {
@@ -3618,6 +3628,14 @@ export interface FetchBundleGamesParams {
   bundleId: number;
   /** Maximum number of games to return at a time. */
   limit?: number;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** Filters */
+  filters?: BundleGamesFilters;
+  /** undocumented */
+  reverse?: boolean;
   /** Used for pagination, if specified */
   cursor?: Cursor;
   /** If set, will force fresh data */
