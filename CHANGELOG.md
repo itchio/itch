@@ -1,5 +1,36 @@
 # Changelog
 
+## [26.15.0] - 2026-07-07
+
+This release adds a page for browsing and installing games from itch.io bundles you own, a platform filter on the collection, bundle, and library pages, accessibility improvements to the sort and filter dropdowns, and an Electron bump.
+
+### Bundles
+
+- Bundles you own now show up in your Library, each with its own page listing every game in the bundle
+- The bundle page can be sorted, searched by title, and filtered by platform, classification, and installed status
+- Games can be installed directly from the bundle page
+- Requires a version of butler with bundle support
+
+### Filtering
+
+- Added a platform filter (Windows, macOS, Linux, Web) to the collection, bundle, and library pages
+
+### Accessibility
+
+- The sort and filter dropdowns are now keyboard and screen reader friendly, with combobox/listbox roles and arrow-key navigation
+
+### Hotkeys
+
+- Removed the `Ctrl+Alt+Backspace` shortcut that force-killed the last running game ([#3453](https://github.com/itchio/itch/issues/3453))
+
+### Upload
+
+- Fixed the file labels shown for builds that are still processing
+
+### Electron
+
+- Upgraded Electron from 42.1.0 to 43.0.0
+
 ## [26.13.0] - 2026-05-18
 
 A follow-up to 26.12.0 with Upload page fixes and an Electron bump.
