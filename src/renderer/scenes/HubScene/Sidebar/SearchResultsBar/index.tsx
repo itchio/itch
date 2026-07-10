@@ -1,15 +1,14 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
-import { ambientWind } from "common/util/navigation";
+import { ambientWind, urlForSearch } from "common/util/navigation";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import GameSearchResult, {
   SetSearchHighlightFunc,
 } from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GameSearchResult";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { each, isEmpty } from "underscore";
 import { Game } from "common/butlerd/messages";
@@ -47,16 +46,58 @@ const ResultList = styled.div`
   font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
-const NoResults = styled.p`
+const LibrarySectionLabel = styled.div`
+  color: ${(props) => props.theme.secondaryText};
   font-size: ${(props) => props.theme.fontSizes.smaller};
-  padding: 8px 12px;
+  padding: 10px 12px 6px;
+  text-transform: uppercase;
+`;
+
+const LocalEmptyState = styled.div`
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
+  padding: 6px 12px 10px;
+`;
+
+const SearchOnItchio = styled.button`
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: inherit;
+  display: flex;
+  flex-shrink: 0;
+  font: inherit;
+  padding: 10px 12px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+
+  &.chosen,
+  &:hover {
+    background-color: ${(props) => props.theme.sidebarEntryFocusedBackground};
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  .icon {
+    color: ${(props) => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.smaller};
+    margin-left: 8px;
+  }
+
+  .query {
+    ${styles.singleLine};
+  }
 `;
 
 @watching
 class SearchResultsBar extends React.PureComponent<Props> {
   override render() {
-    const { open, games } = this.props;
-    if (!open) {
+    const { open, games, query } = this.props;
+    if (!open || !query) {
       return null;
     }
 
@@ -72,15 +113,20 @@ class SearchResultsBar extends React.PureComponent<Props> {
     this.resultList = el;
   };
 
-  onOpenAsTab = () => {
+  onSearchOnItchio = () => {
     const { dispatch } = this.props;
     dispatch(actions.closeSearch({}));
     dispatch(
       actions.navigate({
         wind: ambientWind(),
-        url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
+        url: urlForSearch(this.props.query),
       })
     );
+  };
+
+  onSearchOnItchioMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Keep the search input focused until this button's click handler runs.
+    event.preventDefault();
   };
 
   subscribe(watcher: Watcher) {
@@ -92,23 +138,43 @@ class SearchResultsBar extends React.PureComponent<Props> {
   }
 
   resultsGrid(games: Game[]) {
-    const { highlight, query, example, loading } = this.props;
-    const active = this.props.open;
+    const { highlight, query, loading } = this.props;
 
     const items: React.ReactElement<any>[] = [];
 
-    if (isEmpty(games)) {
+    items.push(
+      <SearchOnItchio
+        key="search-on-itchio"
+        className={classNames({ chosen: highlight === 0 })}
+        onClick={this.onSearchOnItchio}
+        onMouseDown={this.onSearchOnItchioMouseDown}
+        onMouseMove={() => this.props.setSearchHighlight(0)}
+      >
+        <span className="query">{T(["search.on_itchio", { query }])}</span>
+        <span className="icon icon-arrow-right" />
+      </SearchOnItchio>
+    );
+
+    items.push(
+      <LibrarySectionLabel key="library-label">
+        {T(["search.results.library"])}
+      </LibrarySectionLabel>
+    );
+
+    if (loading) {
       items.push(
-        <NoResults key="no-results">
-          {loading
-            ? T(["sidebar.loading"])
-            : query
-            ? T(["search.empty.no_results"])
-            : T(["search.empty.tagline", { example }])}
-        </NoResults>
+        <LocalEmptyState key="loading">
+          {T(["sidebar.loading"])}
+        </LocalEmptyState>
+      );
+    } else if (isEmpty(games)) {
+      items.push(
+        <LocalEmptyState key="no-local-results">
+          {T(["search.empty.no_local_results"])}
+        </LocalEmptyState>
       );
     } else {
-      let index = 0;
+      let index = 1;
       each(games, (game) => {
         items.push(
           <GameSearchResult
@@ -116,8 +182,6 @@ class SearchResultsBar extends React.PureComponent<Props> {
             game={game}
             index={index}
             chosen={index === highlight}
-            active={active}
-            loading={loading}
             setSearchHighlight={this.props.setSearchHighlight}
           />
         );
@@ -134,7 +198,6 @@ interface Props {
   highlight: number;
   query: string;
   games: Game[];
-  example: string;
   loading: boolean;
 
   dispatch: Dispatch;

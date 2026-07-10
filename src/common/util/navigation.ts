@@ -7,6 +7,7 @@ import {
   WindSpec,
   WindState,
 } from "common/types";
+import urls from "common/constants/urls";
 
 export function currentPage(tabInstance: TabInstance): TabPage | null {
   if (!tabInstance) {
@@ -69,4 +70,8 @@ export function urlForBundle(bundleId: number) {
 
 export function urlForInstallLocation(installLocationId: string) {
   return `itch://locations/${installLocationId}`;
+}
+
+export function urlForSearch(query: string) {
+  return `${urls.itchio}/search?q=${encodeURIComponent(query)}`;
 }

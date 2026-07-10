@@ -2,9 +2,8 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
-import searchExamples from "common/constants/search-examples";
 import { Dispatch } from "common/types";
-import { urlForGame } from "common/util/navigation";
+import { urlForGame, urlForSearch } from "common/util/navigation";
 import React from "react";
 import Floater from "renderer/basics/Floater";
 import { rcall } from "renderer/butlerd/rcall";
@@ -14,7 +13,7 @@ import watching, { Watcher } from "renderer/hocs/watching";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce, isEmpty, sample, size } from "underscore";
+import { debounce, size } from "underscore";
 import { injectIntl, IntlShape } from "react-intl";
 
 const SearchContainerContainer = styled.section`
@@ -79,30 +78,20 @@ class Search extends React.PureComponent<Props, State> {
       loading: false,
       highlight: 0,
       games: [],
-      example: pickExample(),
       query: "",
-      lastHighlightOffset: 0,
       enterPending: false,
     };
   }
 
-  trigger = debounce(() => {
-    if (!this.input) {
+  trigger = debounce((query: string) => {
+    if (!this.input || query !== this.input.value) {
       return;
     }
     const { profileId } = this.props;
-    const query = this.input.value;
-    if (query === this.state.query) {
-      this.setState({ loading: false });
-      return;
-    }
-
-    this.setState({ query });
 
     if (query == "") {
       this.setState({
         games: [],
-        example: pickExample(),
         loading: false,
       });
       return;
@@ -115,25 +104,22 @@ class Search extends React.PureComponent<Props, State> {
           profileId,
           query,
         });
-        this.setState({ games });
+        if (query === this.state.query) {
+          this.setState({ games });
+        }
       } catch {
-        this.setState({ games: [] });
+        if (query === this.state.query) {
+          this.setState({ games: [] });
+        }
       } finally {
+        if (query !== this.state.query) {
+          return;
+        }
         this.setState({ loading: false, highlight: 0 });
-        if (query == this.state.query && this.state.enterPending) {
+        if (this.state.enterPending) {
           this.setState({ enterPending: false });
-          this.setOpened(false);
-          if (this.input) {
-            this.input.blur();
-          }
-          if (!isEmpty(this.state.games)) {
-            const gameId = this.state.games[0].id;
-            this.props.dispatch(
-              actions.navigate({
-                wind: "root",
-                url: urlForGame(gameId),
-              })
-            );
+          if (this.state.open) {
+            this.openItchioSearch(query);
           }
         }
       }
@@ -148,36 +134,36 @@ class Search extends React.PureComponent<Props, State> {
     this.setOpened(false);
   };
 
-  onChange = (e: React.FormEvent<HTMLInputElement>) => {
-    this.setState({ loading: true });
-    this.trigger();
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.currentTarget.value;
+    this.setState({
+      query,
+      loading: query !== "",
+      highlight: 0,
+      enterPending: false,
+    });
+    this.trigger(query);
   };
 
   searchHighlightOffset(offset: number) {
     let highlight = this.state.highlight + offset;
-    const numGames = size(this.state.games);
+    const numResults = size(this.state.games) + (this.state.query ? 1 : 0);
 
-    if (numGames == 0) {
+    if (numResults == 0) {
       highlight = 0;
     } else {
-      if (highlight >= size(this.state.games)) {
-        highlight = size(this.state.games) - 1;
+      if (highlight >= numResults) {
+        highlight = numResults - 1;
       }
       if (highlight < 0) {
         highlight = 0;
       }
     }
 
-    this.setState({ highlight, lastHighlightOffset: Date.now() });
+    this.setState({ highlight });
   }
 
   setSearchHighlight = (index: number) => {
-    let msSinceLastHighlightSet = Date.now() - this.state.lastHighlightOffset;
-    if (msSinceLastHighlightSet < 500) {
-      // ignore
-      return;
-    }
-
     this.setState({ highlight: index });
   };
 
@@ -194,6 +180,12 @@ class Search extends React.PureComponent<Props, State> {
     } else if (key === "ArrowUp") {
       this.searchHighlightOffset(-1);
       // default behavior is to jump to start of input - don't
+    } else if (key === "Enter") {
+      if (this.state.loading) {
+        this.setState({ enterPending: true });
+      } else {
+        this.openHighlightedResult();
+      }
     } else {
       passthrough = true;
     }
@@ -206,23 +198,37 @@ class Search extends React.PureComponent<Props, State> {
     return true;
   };
 
-  onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const { key } = e;
-
-    if (key === "Escape") {
-      return;
-    } else if (key === "ArrowDown") {
-      return;
-    } else if (key === "ArrowUp") {
-      return;
-    } else if (key === "Enter") {
-      if (this.state.loading) {
-        this.setState({ enterPending: true });
-      }
+  openHighlightedResult = () => {
+    const { games, highlight } = this.state;
+    const game = games[highlight - 1];
+    if (!game) {
+      this.openItchioSearch();
       return;
     }
 
-    this.trigger();
+    this.setOpened(false);
+    if (this.input) {
+      this.input.blur();
+    }
+    this.props.dispatch(
+      actions.navigate({
+        wind: "root",
+        url: urlForGame(game.id),
+      })
+    );
+  };
+
+  openItchioSearch = (query = this.state.query) => {
+    this.setOpened(false);
+    if (this.input) {
+      this.input.blur();
+    }
+    this.props.dispatch(
+      actions.navigate({
+        wind: "root",
+        url: urlForSearch(query),
+      })
+    );
   };
 
   subscribe(watcher: Watcher) {
@@ -262,7 +268,6 @@ class Search extends React.PureComponent<Props, State> {
             type="search"
             placeholder={TString(intl, ["search.placeholder"]) + "..."}
             onKeyDown={this.onKeyDown}
-            onKeyUp={this.onKeyUp}
             onChange={this.onChange}
             onBlur={this.onBlur}
             onFocus={this.onFocus}
@@ -280,7 +285,6 @@ class Search extends React.PureComponent<Props, State> {
           )}
           <div className="relative-wrapper">
             <SearchResultsBar
-              example={this.state.example}
               games={this.state.games}
               loading={this.state.loading}
               open={this.state.open}
@@ -316,14 +320,8 @@ interface State {
   loading: boolean;
   open: boolean;
   games: Game[];
-  example: string;
   query: string;
-  lastHighlightOffset: number;
   enterPending: boolean;
-}
-
-function pickExample(): string {
-  return sample(searchExamples);
 }
 
 export default hook((map) => ({
