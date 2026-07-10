@@ -5,7 +5,7 @@ import styled, { css, singleLine } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
-import { first, findWhere, find, findIndex, isEqual } from "underscore";
+import { first, find, findIndex, isEqual } from "underscore";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import { LocalizedString } from "common/types";
@@ -476,7 +476,7 @@ export default class SimpleSelect<
   getValueForWrapper(el: HTMLElement) {
     let dataValue = JSON.parse(el.dataset.value) as any;
     const { options } = this.props;
-    return findWhere(options, { value: dataValue });
+    return options.find((o) => o.value === dataValue);
   }
 
   onToggle = () => {
