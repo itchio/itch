@@ -29,7 +29,7 @@ export interface StrategyResult {
   /** Absolute filesystem path of the target. */
   fullTargetPath: string;
   /** If a local file, result of dash configure */
-  candidate: Candidate;
+  candidate?: Candidate;
 }
 
 /**
@@ -393,8 +393,8 @@ export const SearchLocal = createRequest<SearchLocalParams, SearchLocalResult>(
  * Result for Fetch.Game
  */
 export interface FetchGameResult {
-  /** Game info */
-  game: Game;
+  /** Game info, null if the game is not known locally (yet) */
+  game?: Game;
   /** Marks that a request should be issued afterwards with 'Fresh' set */
   stale?: boolean;
 }
@@ -476,8 +476,8 @@ export const FetchGameRecords = createRequest<
  * Result for Fetch.DownloadKey
  */
 export interface FetchDownloadKeyResult {
-  /** undocumented */
-  downloadKey: DownloadKey;
+  /** Download key info, null if the profile owns no key for the game */
+  downloadKey?: DownloadKey;
   /** Marks that a request should be issued afterwards with 'Fresh' set */
   stale?: boolean;
 }
@@ -544,8 +544,8 @@ export const FetchGameUploads = createRequest<
  * Result for Fetch.User
  */
 export interface FetchUserResult {
-  /** User info */
-  user: User;
+  /** User info, null if the user is not known locally (yet) */
+  user?: User;
   /**
    * Marks that a request should be issued
    * afterwards with 'Fresh' set
@@ -580,8 +580,8 @@ export const FetchSale = createRequest<FetchSaleParams, FetchSaleResult>(
  * Result for Fetch.Collection
  */
 export interface FetchCollectionResult {
-  /** Collection info */
-  collection: Collection;
+  /** Collection info, null if the collection is not known locally (yet) */
+  collection?: Collection;
   /**
    * True if the info was from local DB and
    * it should be re-queried using "Fresh"
@@ -877,7 +877,7 @@ export interface DownloadKeySummary {
   /** Identifier of the game to which this download key grants access */
   gameId: number;
   /** Date this key was created at (often coincides with purchase time) */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
 }
 
 /**
@@ -888,8 +888,8 @@ export interface CaveSummary {
   id: string;
   /** undocumented */
   gameId: number;
-  /** undocumented */
-  lastTouchedAt: RFCDate;
+  /** Null if the cave was never played */
+  lastTouchedAt?: RFCDate;
   /** undocumented */
   secondsRun: number;
   /** undocumented */
@@ -922,10 +922,10 @@ export interface Cave {
  * CaveStats contains stats about cave usage and first install
  */
 export interface CaveStats {
-  /** Time the cave was first installed */
-  installedAt: RFCDate;
-  /** undocumented */
-  lastTouchedAt: RFCDate;
+  /** Time the cave was first installed, null while the install is still pending */
+  installedAt?: RFCDate;
+  /** Null if the cave was never played */
+  lastTouchedAt?: RFCDate;
   /** undocumented */
   secondsRun: number;
 }
@@ -978,8 +978,11 @@ export interface InstallLocationSummary {
   id: string;
   /** Absolute path on disk for this install location */
   path: string;
-  /** Information about the size used and available at this install location */
-  sizeInfo?: InstallLocationSizeInfo;
+  /**
+   * Information about the size used and available at this install location.
+   * Sizes that could not be determined are -1.
+   */
+  sizeInfo: InstallLocationSizeInfo;
 }
 
 /**
@@ -1033,8 +1036,8 @@ export const FetchCaves = createRequest<FetchCavesParams, FetchCavesResult>(
  * Result for Fetch.Cave
  */
 export interface FetchCaveResult {
-  /** undocumented */
-  cave: Cave;
+  /** Cave info, null if there is no cave with the given ID */
+  cave?: Cave;
 }
 
 /**
@@ -1089,8 +1092,8 @@ export interface InstallQueueResult {
   game: Game;
   /** undocumented */
   upload: Upload;
-  /** undocumented */
-  build: Build;
+  /** Build that will be installed, null for non-wharf uploads */
+  build?: Build;
   /** undocumented */
   installFolder: string;
   /** undocumented */
@@ -1116,8 +1119,8 @@ export interface InstallPlanResult {
   game: Game;
   /** undocumented */
   uploads: Upload[];
-  /** undocumented */
-  info: InstallPlanInfo;
+  /** Null when the game has no compatible uploads */
+  info?: InstallPlanInfo;
 }
 
 /**
@@ -1169,12 +1172,15 @@ export const InstallPlanUpload = createRequest<
 export interface InstallPlanInfo {
   /** undocumented */
   upload: Upload;
-  /** undocumented */
-  build: Build;
+  /** Null for non-wharf uploads */
+  build?: Build;
   /** undocumented */
   type: string;
-  /** undocumented */
-  diskUsage: DiskUsageInfo;
+  /**
+   * Null when planning failed before disk usage could be assessed
+   * (see Error / ErrorCode)
+   */
+  diskUsage?: DiskUsageInfo;
   /** undocumented */
   error?: string;
   /** undocumented */
@@ -1390,8 +1396,8 @@ export const InstallLocationsList = createRequest<
  * Result for Install.Locations.Add
  */
 export interface InstallLocationsAddResult {
-  /** undocumented */
-  installLocation: InstallLocationSummary;
+  /** Null when the install location already existed at the same path */
+  installLocation?: InstallLocationSummary;
 }
 
 /**
@@ -1691,12 +1697,12 @@ export enum DownloadReason {
 export interface Download {
   /** undocumented */
   id: string;
-  /** undocumented */
-  error: string;
-  /** undocumented */
-  errorMessage: string;
-  /** undocumented */
-  errorCode: number;
+  /** Only set if the download errored */
+  error?: string;
+  /** Only set if the download errored */
+  errorMessage?: string;
+  /** Only set if the download errored */
+  errorCode?: number;
   /** undocumented */
   reason: DownloadReason;
   /** undocumented */
@@ -1707,12 +1713,12 @@ export interface Download {
   game: Game;
   /** undocumented */
   upload: Upload;
-  /** undocumented */
-  build: Build;
+  /** Null for non-wharf uploads */
+  build?: Build;
   /** undocumented */
   startedAt: RFCDate;
-  /** undocumented */
-  finishedAt: RFCDate;
+  /** Null until the download finishes or errors */
+  finishedAt?: RFCDate;
   /** undocumented */
   stagingFolder: string;
 }
@@ -2226,8 +2232,8 @@ export interface PublishChannel {
  * Result for Publish.GetChannel
  */
 export interface PublishGetChannelResult {
-  /** undocumented */
-  channel: PublishChannel;
+  /** Null if the channel does not exist */
+  channel?: PublishChannel;
 }
 
 /**
@@ -2314,9 +2320,9 @@ export interface Host {
   /** os + arch, e.g. windows-i386, linux-amd64 */
   runtime: Runtime;
   /** wrapper tool (wine, etc.) that butler can launch itself */
-  wrapper: Wrapper;
+  wrapper?: Wrapper;
   /** undocumented */
-  remoteLaunchName: string;
+  remoteLaunchName?: string;
 }
 
 /**
@@ -2370,13 +2376,13 @@ export interface Candidate {
   /** Path is relative to the configured folder */
   path: string;
   /** Mode describes file permissions */
-  mode: number;
+  mode?: number;
   /** Depth is the number of path elements leading up to this candidate */
   depth: number;
   /** Flavor is the type of a candidate - native, html, jar etc. */
   flavor: Flavor;
   /** Arch describes the architecture of a candidate (where relevant) */
-  arch: Arch;
+  arch?: Arch;
   /** Size is the size of the candidate's file, in bytes */
   size: number;
   /** Spell contains raw output from <https://github.com/itchio/wizardry> */
@@ -2535,7 +2541,7 @@ export interface Game {
   /** Human-friendly title (may contain any character) */
   title: string;
   /** Human-friendly short description */
-  shortText: string;
+  shortText?: string;
   /** Downloadable game, html game, etc. */
   type: GameType;
   /** Classification: game, tool, comic, etc. */
@@ -2543,21 +2549,21 @@ export interface Game {
   /** Configuration for embedded (HTML5) games */
   embed?: GameEmbedData;
   /** Cover url (might be a GIF) */
-  coverUrl: string;
+  coverUrl?: string;
   /** Non-gif cover url, only set if main cover url is a GIF */
-  stillCoverUrl: string;
+  stillCoverUrl?: string;
   /** Date the game was created */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date the game was published, empty if not currently published */
-  publishedAt: RFCDate;
+  publishedAt?: RFCDate;
   /** Price in cents of a dollar */
-  minPrice: number;
+  minPrice?: number;
   /** Are payments accepted? */
-  canBeBought: boolean;
+  canBeBought?: boolean;
   /** Does this game have a demo available? */
-  hasDemo: boolean;
+  hasDemo?: boolean;
   /** Is this game part of the itch.io press system? */
-  inPressSystem: boolean;
+  inPressSystem?: boolean;
   /** Platforms this game is available for */
   platforms: Platforms;
   /** The user account this game is associated to */
@@ -2567,13 +2573,13 @@ export interface Game {
   /** The best current sale for this game */
   sale?: Sale;
   /** undocumented */
-  viewsCount: number;
+  viewsCount?: number;
   /** undocumented */
-  downloadsCount: number;
+  downloadsCount?: number;
   /** undocumented */
-  purchasesCount: number;
+  purchasesCount?: number;
   /** undocumented */
-  published: boolean;
+  published?: boolean;
 }
 
 /**
@@ -2582,11 +2588,11 @@ export interface Game {
  */
 export interface Platforms {
   /** undocumented */
-  windows: Architectures;
+  windows?: Architectures;
   /** undocumented */
-  linux: Architectures;
+  linux?: Architectures;
   /** undocumented */
-  osx: Architectures;
+  osx?: Architectures;
 }
 
 /**
@@ -2686,7 +2692,7 @@ export interface Upload {
   /** Storage (hosted, external, etc.) */
   storage: UploadStorage;
   /** Host (if external storage) */
-  host: string;
+  host?: string;
   /** Original file name (example: `Overland_x64.zip`) */
   filename: string;
   /** Human-friendly name set by developer (example: `Overland for Windows 64-bit`) */
@@ -2696,9 +2702,9 @@ export interface Upload {
   /** Name of the wharf channel for this upload, if it's a wharf-enabled upload */
   channelName: string;
   /** Latest build for this upload, if it's a wharf-enabled upload */
-  build: Build;
+  build?: Build;
   /** ID of the latest build for this upload, if it's a wharf-enabled upload */
-  buildId: number;
+  buildId?: number;
   /** Upload type: default, soundtrack, etc. */
   type: UploadType;
   /** Is this upload a pre-order placeholder? */
@@ -2708,9 +2714,9 @@ export interface Upload {
   /** Platforms this upload is compatible with */
   platforms: Platforms;
   /** Date this upload was created at */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date this upload was last updated at (order changed, display name set, etc.) */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
 }
 
 /**
@@ -2770,9 +2776,9 @@ export interface Collection {
   /** Human-friendly title for collection, for example `Couch coop games` */
   title: string;
   /** Date this collection was created at */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date this collection was last updated at (item added, title set, etc.) */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
   /**
    * Number of games in the collection. This might not be accurate
    * as some games might not be accessible to whoever is asking (project
@@ -2780,11 +2786,11 @@ export interface Collection {
    */
   gamesCount: number;
   /** Games in this collection, with additional info */
-  collectionGames: CollectionGame[];
+  collectionGames?: CollectionGame[];
   /** undocumented */
   userId: number;
   /** undocumented */
-  user: User;
+  user?: User;
 }
 
 /**
@@ -2794,7 +2800,7 @@ export interface CollectionGame {
   /** undocumented */
   collectionId: number;
   /** undocumented */
-  collection: Collection;
+  collection?: Collection;
   /** undocumented */
   gameId: number;
   /** undocumented */
@@ -2802,9 +2808,9 @@ export interface CollectionGame {
   /** undocumented */
   position: number;
   /** undocumented */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** undocumented */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
   /** undocumented */
   blurb: string;
   /** undocumented */
@@ -2824,20 +2830,25 @@ export interface Bundle {
   /** Canonical address of the bundle's page on itch.io */
   url: string;
   /** Cover url for the bundle (the social_banner image), if any */
-  coverUrl: string;
+  coverUrl?: string;
   /** Number of games in this bundle. */
   gamesCount: number;
+  /**
+   * Bumped by itch.io whenever the bundle's game list changes. Compare
+   * against a stored value to skip re-fetching an unchanged bundle.
+   */
+  version: number;
   /** Date the bundle was created at */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date the bundle was last updated at */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
   /**
    * Games in this bundle, with additional info. Not populated by the current
    * API but kept for hades relationship mapping; butler nulls this slice out
    * before persistence so the locally-paginated bundle_games table is not
    * clobbered by partial inline data.
    */
-  bundleGames: BundleGame[];
+  bundleGames?: BundleGame[];
 }
 
 /**
@@ -2847,7 +2858,7 @@ export interface BundleGame {
   /** undocumented */
   bundleId: number;
   /** undocumented */
-  bundle: Bundle;
+  bundle?: Bundle;
   /** undocumented */
   gameId: number;
   /** undocumented */
@@ -2855,11 +2866,11 @@ export interface BundleGame {
   /** undocumented */
   position: number;
   /** Minimum price for this game inside the bundle, in cents of a dollar. */
-  minPrice: number;
+  minPrice?: number;
   /** undocumented */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** undocumented */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
 }
 
 /**
@@ -2873,11 +2884,11 @@ export interface BundleKey {
   /** Identifier of the bundle this key grants access to */
   bundleId: number;
   /** Bundle this key grants access to */
-  bundle: Bundle;
+  bundle?: Bundle;
   /** Identifier of the purchase that granted this key */
   purchaseId: number;
   /** Date this key was created at (often coincides with purchase time) */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Identifier of the itch.io user to which this key belongs */
   ownerId: number;
 }
@@ -2893,11 +2904,11 @@ export interface DownloadKey {
   /** Identifier of the game to which this download key grants access */
   gameId: number;
   /** Game to which this download key grants access */
-  game: Game;
+  game?: Game;
   /** Date this key was created at (often coincides with purchase time) */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date this key was last updated at */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
   /** Identifier of the itch.io user to which this key belongs */
   ownerId: number;
 }
@@ -2934,16 +2945,16 @@ export interface Build {
    * is still processing or if processing has failed.
    */
   files: BuildFile[];
-  /** User who pushed the build */
-  user: User;
+  /** User who pushed the build (not preserved by butler's local database cache) */
+  user?: User;
   /** Upload this build belongs to (only populated by endpoints that nest it) */
-  upload: Upload;
+  upload?: Upload;
   /** Game this build belongs to (only populated by endpoints that nest it) */
-  game: Game;
+  game?: Game;
   /** Timestamp the build was created at */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Timestamp the build was last updated at */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
 }
 
 /**
@@ -2984,9 +2995,9 @@ export interface BuildFile {
   /** Subtype of this build file, usually indicates compression */
   subType: BuildFileSubType;
   /** Date this build file was created at */
-  createdAt: RFCDate;
+  createdAt?: RFCDate;
   /** Date this build file was last updated at */
-  updatedAt: RFCDate;
+  updatedAt?: RFCDate;
 }
 
 /**
@@ -3041,19 +3052,19 @@ export interface InstallEvent {
   /** undocumented */
   timestamp: RFCDate;
   /** undocumented */
-  heal: HealInstallEvent;
+  heal?: HealInstallEvent;
   /** undocumented */
-  install: InstallInstallEvent;
+  install?: InstallInstallEvent;
   /** undocumented */
-  upgrade: UpgradeInstallEvent;
+  upgrade?: UpgradeInstallEvent;
   /** undocumented */
-  ghostBusting: GhostBustingInstallEvent;
+  ghostBusting?: GhostBustingInstallEvent;
   /** undocumented */
-  patching: PatchingInstallEvent;
+  patching?: PatchingInstallEvent;
   /** undocumented */
-  problem: ProblemInstallEvent;
+  problem?: ProblemInstallEvent;
   /** undocumented */
-  fallback: FallbackInstallEvent;
+  fallback?: FallbackInstallEvent;
 }
 
 /**
@@ -3170,7 +3181,7 @@ export interface Receipt {
   /** The itch.io upload installed at this location */
   upload: Upload;
   /** The itch.io build installed at this location. Null for non-wharf upload. */
-  build: Build;
+  build?: Build;
   /** A list of installed files (slash-separated paths, relative to install folder) */
   files: string[];
   /** The installer used to install at this location */
@@ -3188,7 +3199,7 @@ export interface Manifest {
    * Prereqs describe libraries or frameworks that must be installed
    * prior to launching a game
    */
-  prereqs: Prereq[];
+  prereqs?: Prereq[];
 }
 
 /**
@@ -3207,19 +3218,19 @@ export interface Action {
   /** file path (relative to manifest or absolute), URL, etc. */
   path: string;
   /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
-  icon: string;
+  icon?: string;
   /** command-line arguments */
-  args: string[];
+  args?: string[];
   /** sandbox opt-in */
-  sandbox: boolean;
+  sandbox?: boolean;
   /** requested API scope */
-  scope: string;
+  scope?: string;
   /** don't redirect stdout/stderr, open in new console window */
-  console: boolean;
+  console?: boolean;
   /** platform to restrict this action to */
-  platform: Platform;
+  platform?: Platform;
   /** localized action name */
-  locales: { [key: string]: ActionLocale };
+  locales?: { [key: string]: ActionLocale };
 }
 
 /**
@@ -3257,7 +3268,7 @@ export interface Runtime {
   /** undocumented */
   is64: boolean;
   /** undocumented */
-  arch: string;
+  arch?: string;
 }
 
 /**
@@ -4028,10 +4039,10 @@ export interface TaskStartedNotification {
   reason: TaskReason;
   /** Is this task a download? An install? */
   type: TaskType;
-  /** The game this task is dealing with */
-  game: Game;
-  /** The upload this task is dealing with */
-  upload: Upload;
+  /** The game this task is dealing with, absent for uninstall tasks */
+  game?: Game;
+  /** The upload this task is dealing with, absent for uninstall tasks */
+  upload?: Upload;
   /** The build this task is dealing with (if any) */
   build?: Build;
   /** Total size in bytes */
@@ -4267,8 +4278,8 @@ export interface SnoozeCaveParams {
 export interface GameUpdateChoice {
   /** Upload to be installed */
   upload: Upload;
-  /** Build to be installed (may be nil) */
-  build: Build;
+  /** Build to be installed, null for non-wharf uploads */
+  build?: Build;
   /** How confident we are that this is the right upgrade */
   confidence: number;
 }

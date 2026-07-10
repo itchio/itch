@@ -1,4 +1,4 @@
-import { Architectures } from "common/butlerd/messages";
+import { Architectures, Platforms } from "common/butlerd/messages";
 
 interface PlatformData {
   icon: string;
@@ -21,12 +21,8 @@ const data: PlatformDataMap = {
 export default data;
 
 export type PlatformHolder = {
-  platforms: {
-    windows: Architectures;
-    linux: Architectures;
-    osx: Architectures;
-  };
-  type: "html" | any;
+  platforms: Platforms;
+  type?: "html" | any;
 };
 
 export function hasPlatforms(target: PlatformHolder): boolean {
