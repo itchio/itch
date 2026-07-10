@@ -34,8 +34,6 @@ export default function (watcher: Watcher) {
         sniffedLanguage: app.getLocale(),
         homePath: app.getPath("home"),
         userDataPath: app.getPath("userData"),
-        proxy: null,
-        proxySource: null,
         quitting: false,
       };
       store.dispatch(actions.systemAssessed({ system }));
@@ -55,14 +53,14 @@ export default function (watcher: Watcher) {
           cache: false,
         });
 
-        const envSettings: string =
+        const envSettings: string | undefined =
           process.env.https_proxy ||
           process.env.HTTPS_PROXY ||
           process.env.http_proxy ||
           process.env.HTTP_PROXY;
 
         let proxySettings = {
-          proxy: null as string,
+          proxy: undefined as string | undefined,
           source: "os" as ProxySource,
         };
 
@@ -73,7 +71,12 @@ export default function (watcher: Watcher) {
             source: "env",
           };
           testProxy = true;
-          store.dispatch(actions.proxySettingsDetected(proxySettings));
+          store.dispatch(
+            actions.proxySettingsDetected({
+              proxy: envSettings,
+              source: "env",
+            })
+          );
         }
         await applyProxySettings(netSession, proxySettings);
       } catch (e) {

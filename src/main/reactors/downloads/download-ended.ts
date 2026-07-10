@@ -15,7 +15,7 @@ export default function (watcher: Watcher) {
     const { readyNotification } = prefs;
 
     if (readyNotification) {
-      let notificationMessage: string = null;
+      let notificationMessage: string | null = null;
       let notificationOptions: any = {
         title: download.game.title,
       };

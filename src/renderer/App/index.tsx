@@ -64,7 +64,7 @@ class App extends React.PureComponent<Props, State> {
   static getDerivedStateFromProps(
     props: App["props"],
     state: App["state"]
-  ): App["state"] {
+  ): App["state"] | null {
     if (
       props.locale !== state.locale ||
       !isEqual(props.localeMessages, state.localeMessages) ||

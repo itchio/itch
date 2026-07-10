@@ -618,7 +618,7 @@ class Modals extends React.PureComponent<Props, State> {
 }
 
 interface Props {
-  modal: Modal;
+  modal: Modal | undefined;
   intl: IntlShape;
   dispatch: Dispatch;
 }

@@ -28,10 +28,17 @@ const setTrayMenu = memoize(1, function (template: MenuTemplate, store: Store) {
     template
   );
   const menu = Menu.buildFromTemplate(fleshedOut);
+  if (!menu) {
+    // not running in electron (e.g. tests), nothing to set
+    return;
+  }
 
   if (process.platform === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
-    app.dock.setMenu(menu);
+    const { dock } = app;
+    if (dock) {
+      dock.setMenu(menu);
+    }
   } else {
     getTray(store).setContextMenu(menu);
   }
@@ -111,7 +118,9 @@ async function refreshTray(store: Store) {
 export default function (watcher: Watcher) {
   watcher.on(actions.notify, async (store, action) => {
     const { onClick } = action.payload;
-    rememberNotificationAction(onClick);
+    if (onClick) {
+      rememberNotificationAction(onClick);
+    }
   });
 
   async function scheduleRefreshTray(store: Store, action: any) {

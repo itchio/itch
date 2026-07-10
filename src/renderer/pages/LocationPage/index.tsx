@@ -15,6 +15,14 @@ const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 class LocationPage extends React.PureComponent<Props> {
   override render() {
     const { installLocationId } = this.props;
+    if (!installLocationId) {
+      // no id in the URL: same terminal state as a failed lookup
+      return (
+        <Page>
+          <LocationContents location={null} />
+        </Page>
+      );
+    }
 
     return (
       <Page>
@@ -47,17 +55,17 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
   tab: string;
 
-  installLocationId: string;
-  sortBy: string;
-  sortDir: string;
+  installLocationId: string | undefined;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
 }
 
 export default withTab(
   hookWithProps(LocationPage)((map) => ({
     installLocationId: map(
-      (rs, props) => ambientTab(rs, props).location.firstPathElement
+      (rs, props) => ambientTab(rs, props).location?.firstPathElement
     ),
-    sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-    sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+    sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+    sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   }))(LocationPage)
 );

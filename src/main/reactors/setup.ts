@@ -160,7 +160,8 @@ interface ButlerIncarnation {
   id: number;
   instance: Instance;
   closed: boolean;
-  client: Client;
+  /** null until the instance has yielded its endpoint */
+  client: Client | null;
 }
 
 let butlerInstanceSeed = 1;
@@ -226,7 +227,7 @@ async function refreshButlerd(store: Store) {
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
   initialButlerdResolve();
 
-  if (previousIncarnation) {
+  if (previousIncarnation && previousIncarnation.client) {
     await previousIncarnation.client.call(messages.MetaShutdown, {});
   }
   previousIncarnation = incarnation;

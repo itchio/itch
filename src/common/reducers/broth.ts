@@ -3,10 +3,10 @@ import reducer from "common/reducers/reducer";
 
 import { BrothState } from "common/types";
 
-const initialState = {
+const initialState: BrothState = {
   packageNames: [],
   packages: {},
-} as BrothState;
+};
 
 export default reducer<BrothState>(initialState, (on) => {
   on(actions.packagesListed, (state, action) => {
@@ -52,7 +52,7 @@ export default reducer<BrothState>(initialState, (on) => {
           ...state.packages,
           [name]: {
             ...oldPackage,
-            progressInfo: null,
+            progressInfo: undefined,
             stage,
           },
         },
@@ -72,7 +72,7 @@ export default reducer<BrothState>(initialState, (on) => {
           ...state.packages,
           [name]: {
             ...oldPackage,
-            progressInfo: null,
+            progressInfo: undefined,
             stage: "need-restart",
             availableVersion,
           },

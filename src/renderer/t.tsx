@@ -33,10 +33,14 @@ export function TString(intl: IntlShape, input: any): string {
   }
 }
 
-interface I18nVariables {
-  [key: string]: string | number;
+// intersection rather than a single interface: `defaultValue` is pulled
+// out before the rest is passed as format values, so it may be absent
+// without weakening the index signature to `| undefined`
+type I18nVariables = {
   defaultValue?: string;
-}
+} & {
+  [key: string]: string | number;
+};
 
 export let _ = (key: string, variables?: I18nVariables): LocalizedString => {
   return [key, variables];

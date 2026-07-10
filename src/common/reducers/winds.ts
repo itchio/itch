@@ -8,16 +8,20 @@ const initialState: WindsState = {};
 const windOpenedType = actions.windOpened({} as any).type;
 const windClosedType = actions.windClosed({} as any).type;
 
-export default function (state: WindsState, action: Action<any>) {
+export default function (
+  state: WindsState | undefined,
+  action: Action<any>
+): WindsState {
   if (typeof state === "undefined") {
     return initialState;
   }
 
   if (action) {
     if (action.type === windOpenedType) {
-      const { wind } = action.payload as typeof actions.windOpened["payload"];
+      const { wind } = action.payload as (typeof actions.windOpened)["payload"];
 
-      let windState = windReducer(undefined, null);
+      // dummy action: lets each sub-reducer return its initial state
+      let windState = windReducer(undefined, { type: "" });
       windState = windReducer(windState, action);
 
       return {
@@ -27,7 +31,7 @@ export default function (state: WindsState, action: Action<any>) {
     }
 
     if (action.type === windClosedType) {
-      const { wind } = action.payload as typeof actions.windClosed["payload"];
+      const { wind } = action.payload as (typeof actions.windClosed)["payload"];
       return omit(state, wind);
     }
 

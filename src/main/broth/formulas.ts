@@ -8,7 +8,7 @@ import ospath from "path";
 import { MinimalContext } from "main/context";
 
 export interface FormulaSpec {
-  sanityCheck?: (
+  sanityCheck: (
     ctx: MinimalContext,
     logger: Logger,
     versionPrefix: string

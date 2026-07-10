@@ -107,7 +107,7 @@ class ShowError extends React.PureComponent<Props, State> {
     super(props, context);
     const { showSendReport } = props.modal.widgetParams;
     this.state = {
-      sendReport: showSendReport,
+      sendReport: !!showSendReport,
     };
     props.updatePayload({
       sendReport: this.state.sendReport,

@@ -19,7 +19,7 @@ export function fleshOutTemplate(
       return node;
     }
 
-    const { localizedLabel, role = null, enabled = true } = input;
+    const { localizedLabel, role, enabled = true } = input;
 
     if (localizedLabel) {
       node.label = t(i18n, localizedLabel);

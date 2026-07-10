@@ -9,7 +9,7 @@ interface UploadButton {
   label: LocalizedString;
   tags: ModalButtonTag[];
   icon: string;
-  timeAgo: {
+  timeAgo?: {
     date: Date | string;
   };
 }
@@ -46,9 +46,11 @@ export function makeUploadButton(
     }
   }
 
-  const timeAgo = {
-    date: upload.updatedAt,
-  };
+  const timeAgo = upload.updatedAt
+    ? {
+        date: upload.updatedAt,
+      }
+    : undefined;
 
   const icon = uploadIcon(upload) || "download";
   return { label, tags, icon, timeAgo };

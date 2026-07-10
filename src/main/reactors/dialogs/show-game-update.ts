@@ -42,14 +42,17 @@ export default function (watcher: Watcher) {
           message: dialogMessage,
           detail: dialogDetail,
           bigButtons: map(update.choices, (choice) => {
-            const spec: ModalButtonSpec = {
-              ...makeUploadButton(choice.upload, { showSize: false }),
-              action: actions.queueGameUpdate({ update, choice }),
-            };
-            spec.tags.push({
+            const uploadButton = makeUploadButton(choice.upload, {
+              showSize: false,
+            });
+            uploadButton.tags.push({
               icon: choice.confidence > 0.5 ? "like" : "neutral",
               label: ` ${(choice.confidence * 100).toFixed()}%`,
             });
+            const spec: ModalButtonSpec = {
+              ...uploadButton,
+              action: actions.queueGameUpdate({ update, choice }),
+            };
             return spec;
           }),
           buttons: dialogButtons,

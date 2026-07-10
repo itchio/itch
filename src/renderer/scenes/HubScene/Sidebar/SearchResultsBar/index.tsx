@@ -116,8 +116,8 @@ class SearchResultsBar extends React.PureComponent<Props> {
     );
   }
 
-  resultList: Element;
-  onResultList = (el: Element) => {
+  resultList: Element | null = null;
+  onResultList = (el: Element | null) => {
     this.resultList = el;
   };
 

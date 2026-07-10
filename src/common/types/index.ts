@@ -34,7 +34,7 @@ export interface Action<T extends Object> {
 interface Watcher {
   addSub(sub: Watcher): void;
   removeSub(sub: Watcher): void;
-  on<T>(
+  on<T extends Object>(
     actionCreator: (payload: T) => Action<T>,
     reactor: (store: Store, action: Action<T>) => Promise<void> | void
   ): void;
@@ -175,7 +175,8 @@ export interface PackagesState {
 }
 
 export interface ButlerdState {
-  startedAt: number;
+  /** null until butlerd has been started */
+  startedAt: number | null;
   endpoint?: Endpoint;
 }
 
@@ -292,8 +293,8 @@ export interface Modal extends ModalBase {
   /** name of modal widget to render */
   widget?: keyof typeof modalShape;
 
-  /** parameters to pass to React component */
-  widgetParams?: {};
+  /** parameters to pass to React component (null for naked modals) */
+  widgetParams?: {} | null;
 }
 
 export interface ModalUpdate {
@@ -388,12 +389,12 @@ export interface SetupOperation {
 export interface SetupState {
   done: boolean;
   errors: string[];
-  blockingOperation: SetupOperation;
+  blockingOperation: SetupOperation | null;
 }
 
 export interface ProfileState {
-  /** collection freshness information */
-  profile: Profile;
+  /** null until the user has logged in */
+  profile: Profile | null;
   login: ProfileLoginState;
 
   itchioUris: string[];
@@ -412,8 +413,9 @@ export interface WindState {
 }
 
 export interface NativeWindowState {
-  /** id of the electron BrowserWindow the window is displayed in */
-  id: number;
+  /** id of the electron BrowserWindow the window is displayed in,
+   * null before the window is opened and after it's destroyed */
+  id: number | null;
 
   /** true if window has focus */
   focused: boolean;
@@ -430,7 +432,7 @@ export interface NativeWindowState {
 
 export interface ProfileLoginState {
   error?: Error;
-  blockingOperation: SetupOperation;
+  blockingOperation: SetupOperation | null;
   lastUsername?: string;
   oauthURL?: string;
 }
@@ -449,8 +451,9 @@ export interface WindPropertiesState {
   /** what the window was opened on */
   initialURL: string;
 
-  /** the window's role */
-  role: WindRole;
+  /** the window's role, null only in the initial state (windOpened is
+   * applied before the wind state is stored) */
+  role: WindRole | null;
 }
 
 export interface I18nResourceSet {
@@ -551,8 +554,8 @@ export interface PreferencesState {
   /** show the advanced section of settings */
   showAdvanced: boolean;
 
-  /** language picked by the user */
-  lang: string;
+  /** language picked by the user, absent until they pick one */
+  lang?: string;
 
   /** if true, user's already seen the 'minimize to tray' notification */
   gotMinimizeNotification: boolean;
@@ -585,7 +588,7 @@ export interface PreferencesState {
   enableTabs: boolean;
 
   /** the last version of the app we've successfully run a setup of, see https://github.com/itchio/itch/issues/1997 */
-  lastSuccessfulSetupVersion: string;
+  lastSuccessfulSetupVersion?: string;
 
   /** whether or not we've already imported appdata as an install location */
   importedOldInstallLocations: boolean;
@@ -675,7 +678,7 @@ export interface OpenAtLoginError {
 
 export interface StatusState {
   messages: LocalizedString[];
-  openAtLoginError: OpenAtLoginError;
+  openAtLoginError: OpenAtLoginError | null;
   reduxLoggingEnabled: boolean;
 }
 
@@ -740,7 +743,7 @@ export interface OpenTabPayload extends NavigatePayload {
   wind: string;
 
   /** the id of the new tab to open (generated) */
-  tab?: string;
+  tab: string;
 }
 
 export interface OpenContextMenuBase {
@@ -915,7 +918,7 @@ export interface TabInstanceStatus {
   /** true if we can navigate forward */
   canGoForward: boolean;
   /** current favicon of the tab */
-  favicon: string;
+  favicon?: string;
   /** current icon of the tab */
   icon?: string;
   /** current label, maybe empty if we've just navigated */
@@ -933,6 +936,9 @@ export interface TabDataSave {
 
   /** current index of history shown */
   currentIndex: number;
+
+  /** label the tab had when saved, restored into TabInstance.savedLabel */
+  savedLabel?: LocalizedString;
 }
 
 export type TaskName = "install-queue" | "install" | "uninstall" | "launch";

@@ -115,6 +115,9 @@ export default function (watcher: Watcher) {
           hookLogging(convo, logger);
         }
       );
+      if (!installLocation) {
+        return;
+      }
       store.dispatch(
         actions.updatePreferences({
           defaultInstallLocation: installLocation.id,

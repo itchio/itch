@@ -2,14 +2,14 @@ import { SetupState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
-const initialState = {
+const initialState: SetupState = {
   done: false,
   errors: [],
   blockingOperation: {
     icon: "moon",
     message: ["login.status.dependency_check"],
   },
-} as SetupState;
+};
 
 export default reducer<SetupState>(initialState, (on) => {
   on(actions.setupStatus, (state, action) => {

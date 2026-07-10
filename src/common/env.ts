@@ -5,7 +5,8 @@ interface AppLike {
 
 const isDev = (app: AppLike) => {
   const isEnvSet = "ELECTRON_IS_DEV" in process.env;
-  const getFromEnv = Number.parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
+  const getFromEnv =
+    Number.parseInt(process.env.ELECTRON_IS_DEV ?? "", 10) === 1;
   return isEnvSet ? getFromEnv : !app.isPackaged;
 };
 

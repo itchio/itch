@@ -34,8 +34,16 @@ export async function readdir(dir: string): Promise<string[]> {
  */
 export async function readFile(
   file: string,
+  opts: ReadFileOpts & { encoding: "utf8" }
+): Promise<string>;
+export async function readFile(
+  file: string,
+  opts: ReadFileOpts & { encoding: null }
+): Promise<Buffer>;
+export async function readFile(
+  file: string,
   opts: ReadFileOpts
-): Promise<string> {
+): Promise<string | Buffer> {
   return await fs.readFile(file, opts);
 }
 
@@ -81,7 +89,7 @@ export async function promised(stream: EventEmitter): Promise<any> {
 /**
  * `mkdir -p`
  */
-export async function mkdir(dir: string): Promise<string> {
+export async function mkdir(dir: string): Promise<string | undefined> {
   return await fs.mkdir(dir, { recursive: true });
 }
 

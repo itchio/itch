@@ -3,10 +3,9 @@ import reducer from "common/reducers/reducer";
 
 import { ButlerdState } from "common/types";
 
-const initialState = {
+const initialState: ButlerdState = {
   startedAt: null,
-  endpoint: null,
-} as ButlerdState;
+};
 
 export default reducer<ButlerdState>(initialState, (on) => {
   on(actions.gotButlerdEndpoint, (state, action) => {

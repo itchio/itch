@@ -7,7 +7,7 @@ import { Store, TabDataSave } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { filter, map } from "underscore";
+import { map } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -41,8 +41,7 @@ export async function saveTabs(store: Store) {
   }
   const { tab, openTabs } = navigation;
   const profileId = profile.id;
-  let items: TabDataSave[];
-  items = map(openTabs, (id) => {
+  const items: TabDataSave[] = map(openTabs, (id): TabDataSave | null => {
     const ti = tabInstances[id];
     if (!ti) {
       return null;
@@ -52,8 +51,7 @@ export async function saveTabs(store: Store) {
     const { history, currentIndex } = ti;
     const savedLabel = sp.label();
     return { id, history, currentIndex, savedLabel };
-  });
-  items = filter(items, (x) => !!x);
+  }).filter((x): x is TabDataSave => !!x);
 
   const snapshot: Snapshot = { current: tab, items };
 

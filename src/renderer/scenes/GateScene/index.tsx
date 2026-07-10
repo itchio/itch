@@ -52,8 +52,8 @@ class GateScene extends React.PureComponent<Props> {
 
 interface Props {
   stage: "setup" | "login";
-  errors: string[];
-  blockingOperation: SetupOperation;
+  errors: string[] | null;
+  blockingOperation: SetupOperation | null;
 }
 
 export default hook((map) => ({

@@ -6,7 +6,7 @@ import env from "common/env";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
-export const initialState = {
+export const initialState: PreferencesState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
@@ -15,15 +15,21 @@ export const initialState = {
   closeToTray: true,
   readyNotification: true,
   showAdvanced: false,
+  lang: undefined,
+  gotMinimizeNotification: false,
   openAtLogin: false,
   openAsHidden: false,
   manualGameUpdates: false,
   preventDisplaySleep: true,
   preferOptimizedPatches: false,
+  layout: "grid",
   disableBrowser: env.integrationTests ? true : false,
+  disableHardwareAcceleration: false,
   enableTabs: false,
+  lastSuccessfulSetupVersion: undefined,
+  importedOldInstallLocations: false,
   recentPushFolders: [],
-} as PreferencesState;
+};
 
 export const MAX_RECENT_PUSH_FOLDERS = 5;
 

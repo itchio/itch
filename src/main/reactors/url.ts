@@ -87,13 +87,25 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
-    const url = store.getState().profile.profile.user.url;
+    const { profile } = store.getState().profile;
+    if (!profile) {
+      return;
+    }
+    const url = profile.user.url;
     store.dispatch(actions.navigate({ wind: "root", url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
-    const url = store.getState().profile.profile.user.url;
+    const { profile } = store.getState().profile;
+    if (!profile) {
+      return;
+    }
+    const url = profile.user.url;
     const host = urlParser.parse(url).hostname;
+    if (!host) {
+      logger.warn(`Could not extract hostname from profile URL (${url})`);
+      return;
+    }
     const slug = /^[^.]+/.exec(host);
     store.dispatch(
       actions.navigate({
@@ -129,11 +141,15 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
   const parsedURL = urlParser.parse(url);
   if (parsedURL.hostname === "install") {
     doAsync(async () => {
-      const queryParams = querystring.parse(parsedURL.query);
+      const queryParams = querystring.parse(parsedURL.query || "");
       const gameId = parseInt(queryParams["game_id"] as string, 10);
       const uploadId = parseInt(queryParams["upload_id"] as string, 10);
       logger.info(`Should queue install because of URL: ${url}`);
       const { game } = await mcall(messages.FetchGame, { gameId });
+      if (!game) {
+        logger.warn(`Could not fetch game ${gameId}, not queuing install`);
+        return;
+      }
       await queueInstall(store, game, uploadId);
     });
     return true;

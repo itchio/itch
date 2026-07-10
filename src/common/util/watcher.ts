@@ -8,13 +8,13 @@ import debounce from "common/util/debounce";
 import { Logger } from "common/logger";
 import { actions } from "common/actions";
 
-interface IReactor<T> {
+interface IReactor<T extends Object> {
   (store: Store, action: Action<T>): Promise<void>;
 }
 
 interface Schedule {
   (f: () => void): void;
-  dispatch?: (a: Action<any>) => void;
+  dispatch: (a: Action<any>) => void;
 }
 type Selector = (rs: RootState) => void;
 type SelectorMaker = (store: Store, schedule: Schedule) => Selector;
@@ -41,7 +41,7 @@ export class Watcher {
    * on every tick if the state has changed since the last tick
    */
   onStateChange({ makeSelector }: { makeSelector: SelectorMaker }) {
-    let oldRs: RootState = null;
+    let oldRs: RootState | null = null;
     let selector: Selector;
 
     const actionName = "tick";
@@ -53,7 +53,7 @@ export class Watcher {
       oldRs = rs;
 
       if (!selector) {
-        const schedule: Schedule = (f) => {
+        const scheduleFn = (f: () => void) => {
           setImmediate(() => {
             try {
               f();
@@ -64,9 +64,11 @@ export class Watcher {
             }
           });
         };
-        schedule.dispatch = (action: Action<any>) => {
-          schedule(() => store.dispatch(action));
-        };
+        const schedule: Schedule = Object.assign(scheduleFn, {
+          dispatch: (action: Action<any>) => {
+            scheduleFn(() => store.dispatch(action));
+          },
+        });
         selector = makeSelector(store, schedule);
       }
 
@@ -81,22 +83,22 @@ export class Watcher {
   /**
    * Registers a reactor for a given action
    */
-  on<T>(
+  on<T extends Object>(
     actionCreator: (payload: T) => Action<T>,
     reactor: (store: Store, action: Action<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
-    const type = actionCreator(({} as any) as T).type;
+    const type = actionCreator({} as any as T).type;
     this.addWatcher(type, reactor);
   }
 
-  onDebounced<T>(
+  onDebounced<T extends Object>(
     actionCreator: (payload: T) => Action<T>,
     ms: number,
     reactor: (store: Store, action: Action<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
-    const type = actionCreator(({} as any) as T).type;
+    const type = actionCreator({} as any as T).type;
     this.addWatcher(type, debounce(reactor, ms));
   }
 

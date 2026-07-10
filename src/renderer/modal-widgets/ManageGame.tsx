@@ -203,20 +203,29 @@ class ManageGame extends React.PureComponent<Props> {
   }
 
   onInstall = (ev: React.MouseEvent<HTMLElement>) => {
-    const uploadId = parseInt(ev.currentTarget.dataset.uploadId, 10);
+    const { uploadId } = ev.currentTarget.dataset;
+    if (!uploadId) {
+      return;
+    }
     const params = this.props.modal.widgetParams;
     const { game } = params;
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
         wind: ambientWind(),
-        action: actions.queueGameInstall({ game, uploadId }),
+        action: actions.queueGameInstall({
+          game,
+          uploadId: parseInt(uploadId, 10),
+        }),
       })
     );
   };
 
   onManage = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = ev.currentTarget.dataset.caveId;
+    if (!caveId) {
+      return;
+    }
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({

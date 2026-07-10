@@ -124,8 +124,10 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           const { cave } = await rcall(messages.FetchCave, {
             caveId,
           });
-          dispatch(actions.queueLaunch({ cave }));
-          return;
+          if (cave) {
+            dispatch(actions.queueLaunch({ cave }));
+            return;
+          }
         } catch {}
       }
 
@@ -151,7 +153,20 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
       );
     }
 
-    if (!progress && !caveId) {
+    if (caveId) {
+      return (
+        <>
+          <ProgressContainer>
+            <EnormousIcon icon="play2" />
+          </ProgressContainer>
+          <TitleBlock>
+            <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
+          </TitleBlock>
+        </>
+      );
+    }
+
+    if (!progress) {
       return (
         <>
           <ProgressContainer>
@@ -165,24 +180,14 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
     return (
       <>
         <ProgressContainer>
-          {caveId ? (
-            <EnormousIcon icon="play2" />
-          ) : (
-            <LoadingCircle progress={progress.progress} huge />
-          )}
+          <LoadingCircle progress={progress.progress} huge />
         </ProgressContainer>
-        {caveId ? (
-          <TitleBlock>
-            <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
-          </TitleBlock>
-        ) : (
-          <TitleBlock>
-            <DownloadProgressSpan
-              {...progress}
-              downloadsPaused={downloadsPaused}
-            />
-          </TitleBlock>
-        )}
+        <TitleBlock>
+          <DownloadProgressSpan
+            {...progress}
+            downloadsPaused={downloadsPaused}
+          />
+        </TitleBlock>
       </>
     );
   }
@@ -216,7 +221,7 @@ interface Props {
   kind: Kind;
   taskName?: TaskName;
   caveId?: string | null;
-  progress?: ProgressInfo;
+  progress?: ProgressInfo | null;
 
   downloadsPaused: boolean;
   dispatch: Dispatch;

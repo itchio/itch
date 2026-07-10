@@ -35,7 +35,7 @@ export async function unzip(opts: UnzipOpts) {
 
   const extractEntry = async (
     entry: yauzl.Entry,
-    err: Error,
+    err: Error | null,
     src: NodeJS.ReadableStream
   ) => {
     if (err) {

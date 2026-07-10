@@ -62,7 +62,7 @@ class Meats extends React.PureComponent<Props> {
               <MeatTab
                 key={tab}
                 data-id={tab}
-                data-url={ti.location.url}
+                data-url={ti.location ? ti.location.url : undefined}
                 data-resource={ti.resource ? ti.resource.value : null}
                 className={classNames("meat-tab", { visible })}
               >
@@ -104,7 +104,8 @@ interface Props {
   tab: string;
   openTabs: string[];
   tabInstances: TabInstances;
-  profile: Profile;
+  /** null until login; this component renders nothing in that case */
+  profile: Profile | null;
 }
 
 export default hook((map) => ({

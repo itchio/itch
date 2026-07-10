@@ -65,7 +65,7 @@ async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
   }
 
   const currentEndpoint = store.getState().butlerd.endpoint;
-  if (!isEqual(c.endpoint, currentEndpoint)) {
+  if (currentEndpoint && !isEqual(c.endpoint, currentEndpoint)) {
     parentLogger.warn(
       `(butlerd) Endpoint changed (${c.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
     );

@@ -83,7 +83,7 @@ export default function (watcher: Watcher) {
             message: t(store.getState().i18n, formatError(e)),
             detail: isInternalError(e)
               ? ["game.install.could_not_launch.detail"]
-              : null,
+              : undefined,
             widgetParams: {
               rawError: e,
               log,

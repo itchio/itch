@@ -4,11 +4,11 @@ import reducer from "common/reducers/reducer";
 import { rest } from "underscore";
 import { actions } from "common/actions";
 
-const initialState = {
+const initialState: StatusState = {
   messages: [],
   openAtLoginError: null,
   reduxLoggingEnabled: false,
-} as StatusState;
+};
 
 export default reducer<StatusState>(initialState, (on) => {
   on(actions.statusMessage, (state, action) => {
@@ -28,7 +28,7 @@ export default reducer<StatusState>(initialState, (on) => {
   });
 
   on(actions.openAtLoginError, (state, action) => {
-    const error = action.payload;
+    const { error } = action.payload;
     return {
       ...state,
       openAtLoginError: error,

@@ -88,10 +88,10 @@ class Layout extends React.PureComponent<Props> {
   }
 
   main() {
-    const { ready } = this.props;
-    if (ready) {
+    const { ready, profile } = this.props;
+    if (ready && profile) {
       return (
-        <ProfileProvider value={this.props.profile}>
+        <ProfileProvider value={profile}>
           <HubScene />
         </ProfileProvider>
       );
@@ -141,7 +141,7 @@ interface Props {
   ready: boolean;
   maximized: boolean;
   focused: boolean;
-  profile: Profile;
+  profile: Profile | null;
 
   intl: IntlShape;
 }

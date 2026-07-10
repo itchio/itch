@@ -31,7 +31,8 @@ export type RecordComponentProps<Item, Record, ExtraProps> = {
 export interface BaseSeriesProps<Params, Item, Record> {
   label?: LocalizedString;
   params: Params;
-  getRecord: (item: Item) => Record;
+  /** items without a record are skipped by renderItems */
+  getRecord: (item: Item) => Record | undefined;
   getKey?: (item: Item) => any;
 
   renderMainFilters?: () => JSX.Element | null;

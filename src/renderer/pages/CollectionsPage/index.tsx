@@ -110,9 +110,9 @@ interface Props extends MeatProps {
 }
 
 const hooked = hookWithProps(CollectionsPage)((map) => ({
-  url: map((rs, props) => ambientTab(rs, props).location.url),
-  sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-  sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
-  search: map((rs, props) => ambientTab(rs, props).location.query.search),
+  url: map((rs, props) => ambientTab(rs, props).location?.url),
+  sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+  sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
+  search: map((rs, props) => ambientTab(rs, props).location?.query.search),
 }))(CollectionsPage);
 export default withTab(withProfile(hooked));

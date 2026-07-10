@@ -9,7 +9,7 @@ interface AssertPresenceResult {
   code: number;
   stdout: string;
   stderr: string;
-  parsed: string;
+  parsed: string | null;
 }
 
 export async function assertPresence(
@@ -47,7 +47,7 @@ export async function assertPresence(
     );
   }
 
-  let parsed: string = null;
+  let parsed: string | null = null;
   if (parser) {
     let matches = parser.exec(stdout + "\n" + stderr);
     if (matches) {

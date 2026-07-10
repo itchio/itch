@@ -31,21 +31,21 @@ export function hookWebContentsContextMenu(
         label: t(i18n, _("web.context_menu.cut")),
         // needed because of macOS limitation:
         // https://github.com/electron/electron/issues/5860
-        role: can("Cut") ? "cut" : null,
+        role: can("Cut") ? "cut" : undefined,
         enabled: can("Cut"),
         visible: props.isEditable,
       },
       {
         id: "copy",
         label: t(i18n, _("web.context_menu.copy")),
-        role: can("Copy") ? "copy" : null,
+        role: can("Copy") ? "copy" : undefined,
         enabled: can("Copy"),
         visible: props.isEditable || hasText,
       },
       {
         id: "paste",
         label: t(i18n, _("web.context_menu.paste")),
-        role: editFlags.canPaste ? "paste" : null,
+        role: editFlags.canPaste ? "paste" : undefined,
         enabled: editFlags.canPaste,
         visible: props.isEditable,
       },

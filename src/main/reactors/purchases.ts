@@ -5,7 +5,9 @@ import { actions } from "common/actions";
 
 function buildLoginAndReturnUrl(returnTo: string): string {
   const parsed = url.parse(returnTo);
-  const hostname = url.subdomainToDomain(parsed.hostname);
+  const hostname = parsed.hostname
+    ? url.subdomainToDomain(parsed.hostname)
+    : parsed.hostname;
 
   let urlOpts: Partial<url.UrlWithParsedQuery> = {
     hostname,

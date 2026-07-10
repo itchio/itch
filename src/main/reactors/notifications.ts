@@ -35,10 +35,8 @@ export default function (watcher: Watcher) {
     if (Notification.isSupported()) {
       const n = new Notification({
         title,
-        subtitle: null,
         body,
-        icon: icon ? nativeImage.createFromPath(icon) : null,
-        actions: null,
+        icon: icon ? nativeImage.createFromPath(icon) : undefined,
       });
       if (onClick) {
         n.on("click", (e) => {

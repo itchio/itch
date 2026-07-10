@@ -32,8 +32,8 @@ export default function (watcher: Watcher) {
 
     store.dispatch(
       actions.clearBrowsingData({
-        cache: response.cache,
-        cookies: response.cookies,
+        cache: response.cache ?? false,
+        cookies: response.cookies ?? false,
       })
     );
   });

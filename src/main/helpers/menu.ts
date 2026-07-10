@@ -3,7 +3,7 @@ import electron from "electron";
 export const Menu = {
   buildFromTemplate(
     template: Electron.MenuItemConstructorOptions[]
-  ): Electron.Menu {
+  ): Electron.Menu | null {
     if (!process.type) {
       return null;
     }
@@ -11,7 +11,7 @@ export const Menu = {
     return electron.Menu.buildFromTemplate(template);
   },
 
-  setApplicationMenu(menu: Electron.Menu) {
+  setApplicationMenu(menu: Electron.Menu | null) {
     if (!process.type) {
       return;
     }

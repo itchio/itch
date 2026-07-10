@@ -46,7 +46,7 @@ function processLocaleResources(resources: I18nResources): I18nResources {
 async function doDownloadLocale(
   lang: string,
   resources: I18nResources,
-  { implicit }: { implicit: boolean }
+  { implicit }: { implicit?: boolean }
 ): Promise<I18nResources> {
   if (!upgradesEnabled) {
     if (!implicit) {

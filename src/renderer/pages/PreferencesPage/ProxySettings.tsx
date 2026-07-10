@@ -41,8 +41,8 @@ const ProxySettingsSpan = styled.span`
 `;
 
 interface Props {
-  proxy: string;
-  proxySource: ProxySource;
+  proxy: string | undefined;
+  proxySource: ProxySource | undefined;
 }
 
 export default hook((map) => ({

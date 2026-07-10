@@ -21,23 +21,24 @@ const tabOpenedType = actions.tabOpened({} as any).type;
 const tabsClosedType = actions.tabsClosed({} as any).type;
 const loggedOutType = actions.loggedOut({} as any).type;
 
-export default function (state: TabInstances, action: Action<any>) {
+export default function (
+  state: TabInstances | undefined,
+  action: Action<any>
+): TabInstances {
   if (typeof state === "undefined") {
     return initialState();
   }
 
   if (action) {
     if (action.type === windOpenedType) {
-      const {
-        initialURL,
-      } = action.payload as typeof actions.windOpened["payload"];
+      const { initialURL } =
+        action.payload as (typeof actions.windOpened)["payload"];
       return initialState(initialURL);
     }
 
     if (action.type === tabsRestoredType) {
-      const {
-        snapshot,
-      } = action.payload as typeof actions.tabsRestored["payload"];
+      const { snapshot } =
+        action.payload as (typeof actions.tabsRestored)["payload"];
 
       let newState: TabInstances = {};
 
@@ -65,7 +66,7 @@ export default function (state: TabInstances, action: Action<any>) {
     }
 
     if (action.type === tabOpenedType) {
-      const { tab } = action.payload as typeof actions.tabOpened["payload"];
+      const { tab } = action.payload as (typeof actions.tabOpened)["payload"];
 
       let tabState = tabReducer(undefined, null);
       tabState = tabReducer(tabState, action);
@@ -78,7 +79,8 @@ export default function (state: TabInstances, action: Action<any>) {
 
     if (action.type === tabsClosedType) {
       const { tabs } = action.payload;
-      return omit(state, ...tabs);
+      // underscore types rest-key omit as Partial, but it only removes keys
+      return omit(state, ...tabs) as TabInstances;
     }
 
     if (action.type === loggedOutType) {

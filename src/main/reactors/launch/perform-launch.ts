@@ -46,13 +46,15 @@ export async function performLaunch(
 
   const { store } = ctx;
   const taskId = ctx.getTaskId();
-  store.dispatch(
-    actions.taskProgress({
-      id: taskId,
-      progress: -1,
-      stage: "prepare",
-    })
-  );
+  if (taskId) {
+    store.dispatch(
+      actions.taskProgress({
+        id: taskId,
+        progress: -1,
+        stage: "prepare",
+      })
+    );
+  }
 
   // TODO: have butler check morphing and queue a heal if needed
   const { appVersion } = store.getState().system;
@@ -62,7 +64,7 @@ export async function performLaunch(
   const prereqsDir = paths.prereqsPath();
 
   // TODO: extract that to another module
-  let prereqsModal: TypedModal<any, any>;
+  let prereqsModal: TypedModal<any, any> | null = null;
   let prereqsStateParams: PrereqsStateParams;
 
   function closePrereqsModal() {
@@ -79,7 +81,7 @@ export async function performLaunch(
     prereqsModal = null;
   }
 
-  let powerSaveBlockerId: number = null;
+  let powerSaveBlockerId: number | null = null;
 
   let cancelled = false;
   let launchConvo: Conversation;
@@ -194,14 +196,16 @@ export async function performLaunch(
               title: ["grid.item.installing"],
               message: "",
               widgetParams: prereqsStateParams,
-              buttons: [
-                {
-                  id: "modal-cancel",
-                  label: ["prompt.action.cancel"],
-                  action: actions.abortTask({ id: ctx.getTaskId() }),
-                  className: "secondary",
-                },
-              ],
+              buttons: taskId
+                ? [
+                    {
+                      id: "modal-cancel",
+                      label: ["prompt.action.cancel"],
+                      action: actions.abortTask({ id: taskId }),
+                      className: "secondary",
+                    },
+                  ]
+                : [],
               unclosable: true,
             });
             store.dispatch(actions.openModal(prereqsModal));

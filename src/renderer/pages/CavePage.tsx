@@ -57,9 +57,11 @@ interface Props extends MeatProps {
 
 export default withTab(
   hookWithProps(CavePage)((map) => ({
-    caveId: map((rs, props) => ambientTab(rs, props).location.firstPathElement),
+    caveId: map(
+      (rs, props) => ambientTab(rs, props).location?.firstPathElement
+    ),
     actionName: map(
-      (rs, props) => ambientTab(rs, props).location.secondPathElement
+      (rs, props) => ambientTab(rs, props).location?.secondPathElement
     ),
   }))(CavePage)
 );

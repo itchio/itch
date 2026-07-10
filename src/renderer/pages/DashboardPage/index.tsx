@@ -126,14 +126,16 @@ interface Props extends MeatProps {
 export default withProfile(
   withTab(
     hookWithProps(DashboardPage)((map) => ({
-      sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-      sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
-      search: map((rs, props) => ambientTab(rs, props).location.query.search),
+      sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+      sortDir: map(
+        (rs, props) => ambientTab(rs, props).location?.query.sortDir
+      ),
+      search: map((rs, props) => ambientTab(rs, props).location?.query.search),
       visibility: map(
-        (rs, props) => ambientTab(rs, props).location.query.visibility
+        (rs, props) => ambientTab(rs, props).location?.query.visibility
       ),
       paidStatus: map(
-        (rs, props) => ambientTab(rs, props).location.query.paidStatus
+        (rs, props) => ambientTab(rs, props).location?.query.paidStatus
       ),
     }))(DashboardPage)
   )

@@ -298,6 +298,9 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     const chromeStore = (await import("renderer/store")).default;
     const butlerState = chromeStore.getState().broth.packages["butler"];
+    if (!butlerState.version || !butlerState.versionPrefix) {
+      return;
+    }
     dispatch(
       actions.packageGotVersionPrefix({
         name: "butler",

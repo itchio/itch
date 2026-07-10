@@ -27,6 +27,10 @@ class SearchControl extends React.PureComponent<Props> {
 
   setSearch = debounce((search: string) => {
     const { url } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to evolve
+      return;
+    }
     dispatchTabEvolve(this.props, {
       replace: true,
       url: urlWithParams(url, { search }),
@@ -39,16 +43,16 @@ interface Props {
   dispatch: Dispatch;
   intl: IntlShape;
 
-  url: string;
-  defaultValue: string;
+  url: string | undefined;
+  defaultValue: string | undefined;
 }
 
 export default withTab(
   injectIntl(
     hookWithProps(SearchControl)((map) => ({
-      url: map((rs, props) => ambientTab(rs, props).location.url),
+      url: map((rs, props) => ambientTab(rs, props).location?.url),
       defaultValue: map(
-        (rs, props) => ambientTab(rs, props).location.query.search
+        (rs, props) => ambientTab(rs, props).location?.query.search
       ),
     }))(SearchControl)
   )

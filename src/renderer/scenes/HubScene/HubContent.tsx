@@ -27,7 +27,8 @@ class HubContent extends React.PureComponent<Props> {
 }
 
 interface Props {
-  profile: Profile;
+  /** null until login; this component renders nothing in that case */
+  profile: Profile | null;
 }
 
 export default hook((map) => ({

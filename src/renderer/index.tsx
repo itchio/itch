@@ -91,7 +91,7 @@ start();
 
 document.addEventListener("drop", (event) => {
   event.preventDefault();
-  const urls = event.dataTransfer.getData("text/uri-list");
+  const urls = event.dataTransfer?.getData("text/uri-list");
   if (urls) {
     urls.split("\n").forEach((url) => {
       store.dispatch(actions.navigate({ wind: ambientWind(), url }));

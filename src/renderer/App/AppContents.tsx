@@ -27,7 +27,10 @@ class AppContents extends React.PureComponent<Props> {
     this.handleClickCapture(e, e.target as HTMLElement);
   };
 
-  handleClickCapture(e: React.MouseEvent<HTMLElement>, target: HTMLElement) {
+  handleClickCapture(
+    e: React.MouseEvent<HTMLElement>,
+    target: HTMLElement | null
+  ) {
     if (!target) {
       return;
     }

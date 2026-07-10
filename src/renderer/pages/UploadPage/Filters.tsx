@@ -82,7 +82,7 @@ interface OwnProps {
 
 interface MappedProps {
   status: StatusFilter;
-  url: string;
+  url: string | undefined;
   dispatch: Dispatch;
 }
 
@@ -109,6 +109,10 @@ class Filters extends React.PureComponent<Props> {
 
   setStatus = (status: StatusFilter) => {
     const { dispatch, tab, url } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to evolve
+      return;
+    }
     dispatch(
       actions.evolveTab({
         wind: ambientWind(),
@@ -122,12 +126,12 @@ class Filters extends React.PureComponent<Props> {
 
 export default hookWithProps(Filters)((map) => ({
   status: map((rs: RootState, props: OwnProps) => {
-    const q = ambientTab(rs, props).location.query;
-    const s = (q.status ?? "") as StatusFilter;
+    const q = ambientTab(rs, props).location?.query;
+    const s = (q?.status ?? "") as StatusFilter;
     if (s === "live" || s === "processing" || s === "failed") return s;
     return "" as StatusFilter;
   }),
   url: map(
-    (rs: RootState, props: OwnProps) => ambientTab(rs, props).location.url
+    (rs: RootState, props: OwnProps) => ambientTab(rs, props).location?.url
   ),
 }))(Filters);

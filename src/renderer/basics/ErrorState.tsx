@@ -11,7 +11,7 @@ const ButlerErrorDiv = styled.div`
   }
 `;
 
-const ErrorState = ({ error }: { error: Error }) => {
+const ErrorState = ({ error }: { error: Error | null | undefined }) => {
   if (!error) {
     return null;
   }

@@ -6,7 +6,7 @@ import { Store } from "common/types";
 import { Logger } from "common/logger";
 
 export const itchSetupLock = {
-  reason: null as string,
+  reason: null as string | null,
   async with(
     logger: Logger,
     reason: string,

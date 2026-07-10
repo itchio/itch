@@ -30,7 +30,8 @@ class LanguageSettings extends React.PureComponent<Props> {
     const { dispatch, locales, lang, sniffedLang } = this.props;
 
     let autoLang: BaseOptionType = {
-      label: ["preferences.language.auto", { language: sniffedLang }],
+      // "en" is the app-wide fallback, see main/reactors/i18n.ts
+      label: ["preferences.language.auto", { language: sniffedLang || "en" }],
       value: "__",
     };
     const options: BaseOptionType[] = [autoLang, ...locales];
@@ -100,7 +101,7 @@ interface Props {
 
   locales: LocaleInfo[];
   lang: string;
-  sniffedLang: string;
+  sniffedLang: string | undefined;
   downloading: RootState["i18n"]["downloading"];
 }
 

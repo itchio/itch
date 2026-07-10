@@ -1,9 +1,4 @@
-import {
-  Subtract,
-  EvolveTabPayload,
-  Dispatch,
-  QueryParams,
-} from "common/types";
+import { Subtract, EvolveTabPayload, Dispatch } from "common/types";
 import { actions } from "common/actions";
 import { ambientWind } from "common/util/navigation";
 
@@ -71,7 +66,7 @@ export function dispatchTabEvolve(
 
 export function dispatchTabPageUpdate(
   props: TabProps,
-  page: typeof actions.tabPageUpdate["payload"]["page"]
+  page: (typeof actions.tabPageUpdate)["payload"]["page"]
 ) {
   const { tab, dispatch } = props;
   dispatch(
@@ -125,7 +120,7 @@ export function dispatchTabGoBack(props: TabProps) {
 
 export function dispatchOpenTabBackHistory(
   props: TabProps,
-  payload: Subtract<typeof actions.openTabBackHistory["payload"], ScopeFields>
+  payload: Subtract<(typeof actions.openTabBackHistory)["payload"], ScopeFields>
 ) {
   const { tab, dispatch } = props;
   dispatch(
@@ -140,7 +135,7 @@ export function dispatchOpenTabBackHistory(
 export function dispatchOpenTabForwardHistory(
   props: TabProps,
   payload: Subtract<
-    typeof actions.openTabForwardHistory["payload"],
+    (typeof actions.openTabForwardHistory)["payload"],
     ScopeFields
   >
 ) {
@@ -154,7 +149,11 @@ export function dispatchOpenTabForwardHistory(
   );
 }
 
-export function urlWithParams(url: string, params: QueryParams): string {
+export function urlWithParams(
+  url: string,
+  // falsy values (including undefined) delete the param
+  params: { [key: string]: string | undefined }
+): string {
   const parsed = new URL(url);
   for (const k of Object.keys(params)) {
     const v = params[k];

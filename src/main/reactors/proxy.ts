@@ -33,8 +33,6 @@ export async function applyProxySettings(
   const proxyRules = system.proxy;
 
   await session.setProxy({
-    pacScript: null,
     proxyRules,
-    proxyBypassRules: null,
   });
 }

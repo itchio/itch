@@ -92,16 +92,18 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
   logger.debug(`spawning ${command} :: ${args.join(" ::: ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
-  let cbErr: Error = null;
+  let cbErr: Error | null = null;
 
   if (onToken) {
-    child.stdout.pipe(split2(split)).on("data", (tok: string) => {
-      try {
-        onToken(tok);
-      } catch (err) {
-        cbErr = asError(err);
-      }
-    });
+    child.stdout
+      .pipe(split ? split2(split) : split2())
+      .on("data", (tok: string) => {
+        try {
+          onToken(tok);
+        } catch (err) {
+          cbErr = asError(err);
+        }
+      });
   }
 
   if (onErrToken) {

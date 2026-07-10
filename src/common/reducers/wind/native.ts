@@ -3,13 +3,13 @@ import { NativeWindowState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
-const initialState = {
+const initialState: NativeWindowState = {
   id: null,
   focused: false,
   fullscreen: false,
   htmlFullscreen: false,
   maximized: false,
-} as NativeWindowState;
+};
 
 export default reducer<NativeWindowState>(initialState, (on) => {
   on(actions.windOpened, (state, action) => {

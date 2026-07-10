@@ -2,9 +2,11 @@ import { LocalizedString, TaskName } from "common/types";
 import { Operation, OperationType } from "common/helpers/get-game-status";
 import { DownloadReason } from "common/butlerd/messages";
 
-export function formatOperation(op: Operation): LocalizedString {
+export function formatOperation(op: Operation): LocalizedString | null {
   if (op.type === OperationType.Task) {
-    return formatTask(op.name, op.stage);
+    // operations of type Task always carry a name at runtime (see
+    // rawGetGameStatus), but the Operation type doesn't guarantee it yet
+    return op.name ? formatTask(op.name, op.stage) : null;
   } else if (op.type === OperationType.Download) {
     return ["grid.item.downloading"];
   } else {
@@ -22,7 +24,10 @@ export function taskIcon(name: TaskName) {
   }
 }
 
-export function formatTask(name: TaskName, stage?: string): LocalizedString {
+export function formatTask(
+  name: TaskName,
+  stage?: string | null
+): LocalizedString {
   if (name === "launch") {
     switch (stage) {
       case "prepare":
@@ -40,7 +45,7 @@ export function formatTask(name: TaskName, stage?: string): LocalizedString {
 
 export function formatReason(
   reason: DownloadReason | undefined
-): LocalizedString {
+): LocalizedString | null {
   switch (reason) {
     case "install":
       return ["download.reason.install"];
@@ -53,7 +58,7 @@ export function formatReason(
   }
 }
 
-export function formatOutcome(reason: DownloadReason): LocalizedString {
+export function formatOutcome(reason: DownloadReason): LocalizedString | null {
   switch (reason) {
     case "install":
       return ["download.outcome.installed"];

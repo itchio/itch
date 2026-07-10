@@ -81,6 +81,9 @@ class LocationContents extends React.PureComponent<Props> {
 
   onBrowse = () => {
     const { dispatch, location } = this.props;
+    if (!location) {
+      return;
+    }
     dispatch(
       actions.browseInstallLocation({
         id: location.id,
@@ -90,7 +93,7 @@ class LocationContents extends React.PureComponent<Props> {
 
   renderLocationInfo() {
     const { location } = this.props;
-    if (!location.sizeInfo) {
+    if (!location?.sizeInfo) {
       return null;
     }
     return (
@@ -110,16 +113,16 @@ interface Props {
   tab: string;
   dispatch: Dispatch;
 
-  sortBy: string;
-  sortDir: string;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
 }
 
 export default withTab(
   hookWithProps(LocationContents)((map) => ({
     installLocationId: map(
-      (rs, props) => ambientTab(rs, props).location.firstPathElement
+      (rs, props) => ambientTab(rs, props).location?.firstPathElement
     ),
-    sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-    sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+    sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+    sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   }))(LocationContents)
 );

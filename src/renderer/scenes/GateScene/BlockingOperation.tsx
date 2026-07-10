@@ -73,7 +73,12 @@ class BlockingOperation extends React.PureComponent<Props> {
       );
     }
 
-    const { bps = 0, eta = 0 } = progressInfo ? progressInfo : {};
+    const {
+      bps = 0,
+      eta = 0,
+      doneBytes = 0,
+      totalBytes = 0,
+    } = progressInfo ? progressInfo : {};
 
     return (
       <BlockingOperationDiv>
@@ -86,10 +91,9 @@ class BlockingOperation extends React.PureComponent<Props> {
           ) : null}
           {T(message)}
         </div>
-        {!!progressInfo && progressInfo.doneBytes > 0 ? (
+        {doneBytes > 0 ? (
           <div className="progress">
-            {fileSize(progressInfo.doneBytes)} /{" "}
-            {fileSize(progressInfo.totalBytes)}
+            {fileSize(doneBytes)} / {fileSize(totalBytes)}
             {bps !== 0 || eta !== 0 ? (
               <>
                 {" @ "}
@@ -145,7 +149,7 @@ class BlockingOperation extends React.PureComponent<Props> {
           message: ["login.status.setup_failure", { error: "" }],
           widgetParams: {
             rawError: blockingOperation.rawError,
-            log: blockingOperation.log,
+            log: blockingOperation.log || "",
             forceDetails: true,
             showSendReport: true,
           },

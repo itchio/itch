@@ -166,12 +166,12 @@ class Log extends React.PureComponent<Props, State> {
                 let previousEntry = entries[i - 1];
                 if (x.time) {
                   const currDate = new Date(x.time);
-                  const prevDate = previousEntry
-                    ? new Date(previousEntry.time)
-                    : null;
+                  const prevDate =
+                    previousEntry && previousEntry.time
+                      ? new Date(previousEntry.time)
+                      : null;
                   if (
-                    !previousEntry ||
-                    !previousEntry.time ||
+                    !prevDate ||
                     currDate.getUTCDate() != prevDate.getUTCDate() ||
                     currDate.getUTCMonth() != prevDate.getUTCMonth() ||
                     currDate.getUTCFullYear() != currDate.getUTCFullYear()
@@ -225,9 +225,9 @@ class Log extends React.PureComponent<Props, State> {
     }));
   };
 
-  tbody: HTMLElement;
+  tbody: HTMLTableSectionElement | null;
 
-  gotBody = (tbody: HTMLElement) => {
+  gotBody = (tbody: HTMLTableSectionElement | null) => {
     this.tbody = tbody;
     this.scrollDown();
   };

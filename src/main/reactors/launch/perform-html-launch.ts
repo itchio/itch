@@ -48,7 +48,7 @@ export async function performHTMLLaunch(
 
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
-    title: game ? game.title : null,
+    title: game.title,
     width,
     height,
     center: true,
@@ -67,7 +67,7 @@ export async function performHTMLLaunch(
       nodeIntegration: false,
       sandbox: false,
       // hooks up keyboard shortcuts, etc.
-      preload: noPreload ? null : getInjectPath("game"),
+      preload: noPreload ? undefined : getInjectPath("game"),
       // stores cookies etc. in persistent session to save progress
       session: gameSession,
       // disable CORS to allow access to the itch.io API from an

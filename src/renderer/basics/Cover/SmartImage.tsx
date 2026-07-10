@@ -11,13 +11,17 @@ class Image extends React.PureComponent<Props> {
     this.props.onLoadStart();
   }
 
-  override componentDidUpdate(props: Props, state: any, snapshot: Props) {
+  override componentDidUpdate(
+    props: Props,
+    state: any,
+    snapshot: Props | null
+  ) {
     if (snapshot && snapshot.src !== props.src) {
       this.props.onLoadStart();
     }
   }
 
-  override getSnapshotBeforeUpdate(prevProps: Props): Props {
+  override getSnapshotBeforeUpdate(prevProps: Props): Props | null {
     if (prevProps.src !== this.props.src) {
       return prevProps;
     }

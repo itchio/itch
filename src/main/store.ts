@@ -75,15 +75,20 @@ const initialState = {} as any;
 const enhancers = [syncMain, applyMiddleware(...middleware)];
 
 const hack: { store: Store | null } = { store: null };
-hack.store = createStore(
-  (state: RootState, action: AnyAction) => {
+const store = createStore(
+  (state: RootState | undefined, action: AnyAction) => {
     // redux's own actions (@@INIT etc.) have no payload; ours always do
     const res = reducer(state, action as Action<any>);
-    route(watcher, hack.store, action as Action<any>);
+    if (hack.store) {
+      // hack.store is null only during createStore's own initial
+      // dispatch (@@INIT), which no reactor listens to anyway
+      route(watcher, hack.store, action as Action<any>);
+    }
     return res;
   },
   initialState,
   compose(...enhancers)
 ) as Store;
+hack.store = store;
 
-export default hack.store;
+export default store;

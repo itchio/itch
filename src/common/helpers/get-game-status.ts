@@ -112,6 +112,11 @@ const rawWithOwnedAccess = memoize(300, (status: GameStatus): GameStatus => {
 function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   const { commons, tasks, downloads } = rs;
   const { profile } = rs.profile;
+  if (!profile) {
+    // game status is only queried from logged-in views; reading
+    // profile.user below would have thrown anyway
+    throw new Error("getGameStatus called before login");
+  }
 
   let downloadKeys = getByIds(
     commons.downloadKeys,

@@ -28,7 +28,7 @@ const ScanningIndicatorDiv = styled.div`
 class ScanningIndicator extends React.PureComponent<Props> {
   override render() {
     const { progress } = this.props;
-    const active = progress !== null;
+    const active = progress != null;
 
     return (
       <ScanningIndicatorDiv className={classNames({ active })}>
@@ -45,7 +45,7 @@ class ScanningIndicator extends React.PureComponent<Props> {
 }
 
 interface Props {
-  progress: number | null;
+  progress: number | null | undefined;
 }
 
 export default hook((map) => ({

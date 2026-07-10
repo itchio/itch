@@ -52,7 +52,7 @@ export default function (watcher: Watcher) {
     const zoom = nw?.webContents?.getZoomFactor?.() ?? 1;
     const menu = Menu.buildFromTemplate(convertTemplate(store, template));
     menu.popup({
-      window: nw,
+      window: nw ?? undefined,
       x: Math.round(clientX * zoom),
       y: Math.round(clientY * zoom),
     });
@@ -72,8 +72,9 @@ function convertTemplate(
       opts.label = t(i18n, item.localizedLabel);
     }
     if (item.action) {
+      const { action } = item;
       opts.click = () => {
-        store.dispatch(item.action);
+        store.dispatch(action);
       };
     }
     if (item.type) {

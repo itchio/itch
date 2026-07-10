@@ -46,6 +46,9 @@ export async function registerItchCaveProtocol(
 
   gameSession.protocol.handle(WEBGAME_PROTOCOL, (request) => {
     const urlPath = url.parse(request.url).pathname;
+    if (!urlPath) {
+      return new Response(null, { status: 404 });
+    }
     const decodedPath = decodeURI(urlPath);
     const rootlessPath = decodedPath.replace(/^\//, "");
     const filePath = join(fileRoot, rootlessPath);

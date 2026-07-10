@@ -40,7 +40,8 @@ interface TypedModalBase<Params> extends ModalBase {
 export interface TypedModal<Params, Response> extends Modal {
   widgetParams: Params;
   widget?: any;
-  __response: Response;
+  /** phantom type carrier, always undefined at runtime */
+  __response?: Response;
   /** always assigned by make() */
   id: string;
 }
@@ -50,7 +51,8 @@ interface TypedModalUpdateBase<Params> extends ModalUpdate {
 }
 
 export interface TypedModalUpdate<Params> extends TypedModalUpdateBase<Params> {
-  __params: Params;
+  /** phantom type carrier, always undefined at runtime */
+  __params?: Params;
 }
 
 export type ModalWidgetSpec<Params, Response> = {
@@ -67,21 +69,24 @@ export type ModalWidgetProps<Params, Response> = {
   updatePayload: (response: Response) => void;
 };
 
-interface ModalWidgets {
-  [key: string]: ModalWidgetSpec<any, any>;
+interface ModalWidgetFactories {
+  [key: string]: (key: string) => ModalWidgetSpec<any, any>;
 }
+
+type WiredWidgets<T extends ModalWidgetFactories> = {
+  [K in keyof T]: ReturnType<T[K]>;
+};
 
 function widget<Params, Response>(
   uuid: () => string
-): ModalWidgetSpec<Params, Response> {
-  let spec: ModalWidgetSpec<Params, Response>;
-  spec = {
-    key: null,
+): (key: string) => ModalWidgetSpec<Params, Response> {
+  return (key) => ({
+    key,
     action: (payload) => actions.modalResponse(payload),
     make: (base) => {
       return {
         ...base,
-        widget: spec.key,
+        widget: key,
         __response: undefined,
         id: uuid(),
       };
@@ -92,15 +97,15 @@ function widget<Params, Response>(
         __params: undefined,
       };
     },
-  };
-  return spec;
+  });
 }
 
-function wireWidgets<T extends ModalWidgets>(mws: T): T {
+function wireWidgets<T extends ModalWidgetFactories>(mws: T): WiredWidgets<T> {
+  const res = {} as any;
   for (const k of Object.keys(mws)) {
-    mws[k].key = k;
+    res[k] = mws[k](k);
   }
-  return mws;
+  return res as WiredWidgets<T>;
 }
 
 export const prepModals = (uuid: () => string) => {

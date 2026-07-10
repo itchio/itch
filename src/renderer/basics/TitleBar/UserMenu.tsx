@@ -47,15 +47,15 @@ const UserMenuButton = styled.button`
 
 class UserMenu extends React.PureComponent<Props> {
   override render() {
-    if (!this.props.me) {
+    const { me } = this.props;
+    if (!me) {
       return null; // cf. #1405
     }
 
-    return this.me();
+    return this.me(me);
   }
 
-  me() {
-    const { me } = this.props;
+  me(me: User) {
     const { username, displayName } = me;
     const coverUrl = getUserCoverURL(me);
 
@@ -88,9 +88,9 @@ class UserMenu extends React.PureComponent<Props> {
 
 interface Props {
   dispatch: Dispatch;
-  me: User;
+  me: User | null;
 }
 
 export default hook((map) => ({
-  me: map((rs) => rs.profile.profile.user),
+  me: map((rs) => (rs.profile.profile ? rs.profile.profile.user : null)),
 }))(UserMenu);

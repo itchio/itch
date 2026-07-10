@@ -27,6 +27,9 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
 
   override componentDidMount() {
     const { userId } = this.props;
+    if (userId == null) {
+      return;
+    }
 
     electron.getUserCacheSize(userId).then((cacheSize) => {
       this.setState({
@@ -67,7 +70,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
       this.state;
 
     // chrome sometimes return negative values (-2 B)
-    const shownCacheSize = cacheSize < 0 ? 0 : cacheSize;
+    const shownCacheSize = cacheSize == null || cacheSize < 0 ? 0 : cacheSize;
 
     return (
       <ModalWidgetDiv>
@@ -160,17 +163,17 @@ const ClearBrowsingDataList = styled.div`
 
 interface Props
   extends ModalWidgetProps<ClearBrowsingDataParams, ClearBrowsingDataResponse> {
-  userId: number;
+  userId: number | null;
 }
 
 interface State {
-  fetchedCacheSize?: boolean;
+  fetchedCacheSize: boolean;
   cacheSize?: number;
 
-  clearCache?: boolean;
-  clearCookies?: boolean;
+  clearCache: boolean;
+  clearCookies: boolean;
 }
 
 export default hook((map) => ({
-  userId: map((rs) => rs.profile.profile.id),
+  userId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
 }))(ClearBrowsingData);

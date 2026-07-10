@@ -70,12 +70,11 @@ class PrimeDownload extends React.PureComponent<Props> {
   });
 
   renderGameForTask = FetchGame.renderCallback(({ result }) => {
-    if (result) {
-      const { game } = result;
-      const { task } = this.props;
+    const { task } = this.props;
+    if (result && result.game && task) {
       return (
         <PrimeDownloadContents
-          game={game}
+          game={result.game}
           kind="task"
           caveId={task.caveId}
           taskName={task.name}
@@ -87,16 +86,16 @@ class PrimeDownload extends React.PureComponent<Props> {
 }
 
 interface Props {
-  task: Task;
+  task: Task | undefined;
   dispatch: Dispatch;
-  download: Download;
-  progress: DownloadProgress;
+  download: Download | undefined;
+  progress: DownloadProgress | null;
 }
 
 export default hook((map) => ({
   task: map((rs) => getActiveTask(rs.tasks)),
   download: map((rs) => getActiveDownload(rs.downloads)),
-  progress: map((rs): DownloadProgress => {
+  progress: map((rs): DownloadProgress | null => {
     const active = getActiveDownload(rs.downloads);
     if (active) {
       return rs.downloads.progresses[active.id];

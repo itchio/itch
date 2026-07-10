@@ -105,6 +105,12 @@ class Search extends React.PureComponent<Props, State> {
       return;
     }
 
+    if (!profileId) {
+      // search only mounts in the (logged-in) hub scene, so this
+      // shouldn't happen - but don't fire a profile-less local search
+      return;
+    }
+
     doAsync(async () => {
       this.setState({ loading: true });
       try {
@@ -326,7 +332,7 @@ class Search extends React.PureComponent<Props, State> {
 }
 
 interface Props {
-  profileId: number;
+  profileId: number | null;
   dispatch: Dispatch;
   intl: IntlShape;
 }
@@ -407,5 +413,5 @@ function buildSections(
 }
 
 export default hook((map) => ({
-  profileId: map((rs) => rs.profile.profile.id),
+  profileId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
 }))(injectIntl(Search));

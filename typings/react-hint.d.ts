@@ -6,7 +6,9 @@ declare module "react-hint" {
 
   interface Props {
     events?: boolean;
-    onRenderContent: (target: HTMLElement, content: any) => JSX.Element;
+    // null means "no tooltip content"; react-hint renders the result
+    // directly as a React child, where null is valid
+    onRenderContent: (target: HTMLElement, content: any) => JSX.Element | null;
   }
 
   function ReactHintFactory(r: any): React.ComponentType<Props> {}

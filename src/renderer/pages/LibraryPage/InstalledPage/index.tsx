@@ -80,13 +80,11 @@ interface Props extends MeatProps {
 
 export default withTab(
   hookWithProps(InstalledPage)((map) => ({
-    sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-    sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
-    search: map((rs, props) => ambientTab(rs, props).location.query.search),
+    sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+    sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
+    search: map((rs, props) => ambientTab(rs, props).location?.query.search),
     classification: map(
-      (rs, props) =>
-        ambientTab(rs, props).location.query
-          .classification as GameClassification
+      (rs, props) => ambientTab(rs, props).location?.query.classification
     ),
   }))(InstalledPage)
 );

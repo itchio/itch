@@ -18,14 +18,19 @@ interface FilterOptionProps {
   label: LocalizedString;
 
   active: boolean;
-  url: string;
+  url: string | undefined;
 }
 
 const base = (props: FilterOptionProps) => {
   const { url, active, optionKey, optionValue, label } = props;
+  if (!url) {
+    // tab hasn't derived a location yet, nothing to link to
+    return null;
+  }
   let href: string;
   if (active) {
-    href = urlWithParams(url, { [optionKey]: undefined });
+    // empty values are dropped from the URL by urlWithParams
+    href = urlWithParams(url, { [optionKey]: "" });
   } else {
     href = urlWithParams(url, { [optionKey]: optionValue });
   }
@@ -48,10 +53,10 @@ const base = (props: FilterOptionProps) => {
   );
 };
 const hooked = hookWithProps(base)((map) => ({
-  url: map((rs, props) => ambientTab(rs, props).location.url),
+  url: map((rs, props) => ambientTab(rs, props).location?.url),
   active: map(
     (rs, props) =>
-      ambientTab(rs, props).location.query[props.optionKey] ===
+      ambientTab(rs, props).location?.query[props.optionKey] ===
       props.optionValue
   ),
 }))(base);

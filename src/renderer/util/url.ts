@@ -28,7 +28,7 @@ export function transformUrl(original: string): string {
 
   // add http: if needed
   let parsed = url.parse(req);
-  if (!isWellKnownProtocol(parsed.protocol)) {
+  if (!parsed.protocol || !isWellKnownProtocol(parsed.protocol)) {
     req = "http://" + original;
     parsed = url.parse(req);
     if (!parsed.hostname) {

@@ -115,7 +115,7 @@ interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  url: string;
+  url: string | undefined;
   sleepy: boolean;
   loading: boolean;
 
@@ -128,7 +128,7 @@ interface Props extends MeatProps {
 
 export default withTab(
   hookWithProps(BrowserPage)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location.url),
+    url: map((rs, props) => ambientTab(rs, props).location?.url),
     sleepy: map((rs, props) => ambientTab(rs, props).sleepy),
     loading: map((rs, props) => ambientTab(rs, props).loading),
 
@@ -137,7 +137,9 @@ export default withTab(
     disableBrowser: map((rs) => rs.preferences.disableBrowser),
 
     partition: map((rs, props) =>
-      partitionForUser(String(rs.profile.profile.id))
+      // partitionForUser falls back to an "anonymous" partition
+      // when there's no profile (empty user id)
+      partitionForUser(String(rs.profile.profile?.id ?? ""))
     ),
   }))(BrowserPage)
 );

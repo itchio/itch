@@ -48,6 +48,9 @@ class BundleStripe extends React.PureComponent<Props> {
   renderTitleExtras = () => {
     const { bundleKey } = this.props;
     const bundle = bundleKey.bundle;
+    if (!bundle) {
+      return null;
+    }
     return (
       <>
         <BundleInfoSpacer />

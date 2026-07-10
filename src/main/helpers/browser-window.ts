@@ -5,7 +5,7 @@ const fakeWindow = {
 } as Electron.BrowserWindow;
 
 export const BrowserWindow = {
-  fromId(id: number): electron.BrowserWindow {
+  fromId(id: number): electron.BrowserWindow | null {
     if (!process.type) {
       return fakeWindow;
     }

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { User } from "common/butlerd/messages";
 import { selectHasInFlightPush } from "common/reducers/upload";
 import {
   ambientNavigation,
@@ -258,8 +257,6 @@ class Sidebar extends React.PureComponent<Props, State> {
 }
 
 interface Props {
-  me: User;
-
   tab: string;
   openTabs: string[];
   enableTabs: boolean;
@@ -274,8 +271,6 @@ interface State {
 }
 
 export default hook((map) => ({
-  me: map((rs) => rs.profile.profile.user),
-
   tab: map((rs) => ambientNavigation(rs).tab),
   openTabs: map((rs) => ambientNavigation(rs).openTabs),
   enableTabs: map((rs) => rs.preferences.enableTabs),

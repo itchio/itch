@@ -65,6 +65,10 @@ class AppLogPage extends React.PureComponent<Props, State> {
           const filePath = filePaths[0];
           console.log(`Opening external log`, filePath);
           const { url } = this.props;
+          if (!url) {
+            // tab hasn't derived a location yet, nothing to evolve
+            return;
+          }
           dispatchTabEvolve(this.props, {
             replace: true,
             url: urlWithParams(url, { file: filePath }),
@@ -82,7 +86,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
     return (
       <AppLogDiv>
         <AppLogContentDiv>
-          <ErrorState error={error} />
+          {error ? <ErrorState error={error} /> : null}
           {log ? (
             <Log
               log={log || ""}
@@ -178,19 +182,19 @@ class AppLogPage extends React.PureComponent<Props, State> {
 interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
-  url: string;
+  url: string | undefined;
   file?: string;
 }
 
 interface State {
   loading: boolean;
-  error: Error;
-  log: string;
+  error: Error | null;
+  log: string | null;
 }
 
 export default withTab(
   hookWithProps(AppLogPage)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location.url),
-    file: map((rs, props) => ambientTab(rs, props).location.query.file),
+    url: map((rs, props) => ambientTab(rs, props).location?.url),
+    file: map((rs, props) => ambientTab(rs, props).location?.query.file),
   }))(AppLogPage)
 );

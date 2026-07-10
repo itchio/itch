@@ -60,7 +60,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
       );
     }
 
-    static getRecordCallback(f: (item: Item) => Record) {
+    static getRecordCallback(f: (item: Item) => Record | undefined) {
       return f;
     }
 

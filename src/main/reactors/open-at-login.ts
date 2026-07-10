@@ -65,7 +65,7 @@ async function updateOpenAtLoginState(
         const desktopFilePath = await findInstalledDesktopFile(desktopFileName);
         if (!desktopFilePath) {
           store.dispatch(
-            actions.openAtLoginError({ cause: "no_desktop_file" })
+            actions.openAtLoginError({ error: { cause: "no_desktop_file" } })
           );
           return;
         }
@@ -95,8 +95,10 @@ async function updateOpenAtLoginState(
         );
         store.dispatch(
           actions.openAtLoginError({
-            cause: "error",
-            message: getErrorMessage(err),
+            error: {
+              cause: "error",
+              message: getErrorMessage(err),
+            },
           })
         );
         return;
@@ -124,7 +126,7 @@ async function updateOpenAtLoginState(
         }
       }
 
-      store.dispatch(actions.openAtLoginError(null));
+      store.dispatch(actions.openAtLoginError({ error: null }));
     }
   } else {
     // macOS, Windows

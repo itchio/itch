@@ -186,7 +186,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
     return null;
   }
 
-  formatPackageVersion(v: string): string {
+  formatPackageVersion(v: string | undefined): string {
     if (!v) {
       return "∅";
     }

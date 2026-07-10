@@ -2,10 +2,9 @@ import { ProfileLoginState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
-const initialState = {
-  errors: [],
+const initialState: ProfileLoginState = {
   blockingOperation: null,
-} as ProfileLoginState;
+};
 
 export default reducer<ProfileLoginState>(initialState, (on) => {
   on(actions.initiateOAuthLogin, (state, action) => {
@@ -25,12 +24,9 @@ export default reducer<ProfileLoginState>(initialState, (on) => {
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,
-      errors: [],
       blockingOperation: {
         icon: "heart-filled",
         message: ["login.status.login"],
-        bps: 0,
-        eta: 0,
       },
     };
   });
@@ -50,7 +46,6 @@ export default reducer<ProfileLoginState>(initialState, (on) => {
     return {
       ...state,
       blockingOperation: null,
-      picking: false,
     };
   });
 

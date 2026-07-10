@@ -51,7 +51,7 @@ interface Props {
   tab: string;
   dispatch: Dispatch;
   intl: IntlShape;
-  url: string;
+  url: string | undefined;
   search: string;
 }
 
@@ -102,6 +102,10 @@ class UploadSearch extends React.PureComponent<Props, State> {
 
   setSearch = debounce((search: string) => {
     const { url } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to evolve
+      return;
+    }
     dispatchTabEvolve(this.props, {
       replace: true,
       url: urlWithParams(url, { search }),
@@ -112,9 +116,9 @@ class UploadSearch extends React.PureComponent<Props, State> {
 export default withTab(
   injectIntl(
     hookWithProps(UploadSearch)((map) => ({
-      url: map((rs, props) => ambientTab(rs, props).location.url),
+      url: map((rs, props) => ambientTab(rs, props).location?.url),
       search: map(
-        (rs, props) => ambientTab(rs, props).location.query.search ?? ""
+        (rs, props) => ambientTab(rs, props).location?.query.search ?? ""
       ),
     }))(UploadSearch)
   )

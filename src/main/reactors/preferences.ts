@@ -24,7 +24,11 @@ export default function (watcher: Watcher) {
   watcher.on(actions.clearBrowsingData, async (store, action) => {
     const promises: Promise<any>[] = [];
 
-    const userId = store.getState().profile.profile.id;
+    const { profile } = store.getState().profile;
+    if (!profile) {
+      return;
+    }
+    const userId = profile.id;
     const partition = partitionForUser(String(userId));
     const ourSession = session.fromPartition(partition, { cache: true });
 
@@ -40,8 +44,7 @@ export default function (watcher: Watcher) {
       promises.push(
         ourSession.clearStorageData({
           storages: ["cookies"],
-          // for all origins
-          origin: null,
+          // omitting `origin` clears them for all origins
         })
       );
     }

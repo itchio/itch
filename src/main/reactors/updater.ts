@@ -160,7 +160,7 @@ export default function (watcher: Watcher) {
 
 function dispatchUpdateNotification(
   store: Store,
-  cave: Cave,
+  cave: Cave | undefined,
   result: CheckUpdateResult
 ) {
   if (!result) {
@@ -176,6 +176,10 @@ function dispatchUpdateNotification(
         ],
       })
     );
+    return;
+  }
+
+  if (!cave) {
     return;
   }
 

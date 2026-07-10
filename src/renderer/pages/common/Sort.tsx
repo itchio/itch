@@ -12,6 +12,10 @@ import { T } from "renderer/t";
 
 const SortOptionBase = (props: SortOptionsProps) => {
   const { url, active, reverse, sortBy, label } = props;
+  if (!url) {
+    // tab hasn't derived a location yet, nothing to link to
+    return null;
+  }
   let href: string;
 
   let baseClass = `sortby--${sortBy}`;
@@ -24,7 +28,8 @@ const SortOptionBase = (props: SortOptionsProps) => {
       href = urlWithParams(url, { sortBy, sortDir: "reverse" });
     } else {
       baseClass = `${baseClass}--disable`;
-      href = urlWithParams(url, { sortBy: undefined, sortDir: undefined });
+      // empty values are dropped from the URL by urlWithParams
+      href = urlWithParams(url, { sortBy: "", sortDir: "" });
     }
   }
 
@@ -50,18 +55,18 @@ interface SortOptionsProps {
   tab: string;
   dispatch: Dispatch;
 
-  url: string;
+  url: string | undefined;
   active: boolean;
   reverse: boolean;
 }
 
 const hooked = hookWithProps(SortOptionBase)((map) => ({
-  url: map((rs, props) => ambientTab(rs, props).location.url),
+  url: map((rs, props) => ambientTab(rs, props).location?.url),
   active: map(
-    (rs, props) => ambientTab(rs, props).location.query.sortBy === props.sortBy
+    (rs, props) => ambientTab(rs, props).location?.query.sortBy === props.sortBy
   ),
   reverse: map(
-    (rs, props) => ambientTab(rs, props).location.query.sortDir === "reverse"
+    (rs, props) => ambientTab(rs, props).location?.query.sortDir === "reverse"
   ),
 }))(SortOptionBase);
 export const SortOption = withTab(hooked);

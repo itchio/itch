@@ -42,12 +42,12 @@ import {
   WindRole,
 } from "common/types";
 
-export interface ActionCreator<PayloadType> {
+export interface ActionCreator<PayloadType extends Object> {
   payload: PayloadType;
   (payload: PayloadType): Action<PayloadType>;
 }
 
-function action<PayloadType>(): ActionCreator<PayloadType> {
+function action<PayloadType extends Object>(): ActionCreator<PayloadType> {
   const ret =
     (type: string) =>
     (payload: PayloadType): Action<PayloadType> => {
@@ -60,7 +60,7 @@ function action<PayloadType>(): ActionCreator<PayloadType> {
   return ret as any;
 }
 
-export function dispatcher<T, U>(
+export function dispatcher<T, U extends Object>(
   dispatch: Dispatch,
   actionCreator: (payload: T) => Action<U>
 ) {
@@ -598,7 +598,7 @@ export const actions = wireActions({
     id: string;
 
     /** an error, if any */
-    err: string;
+    err: string | null;
   }>(),
   abortTask: action<{
     /** id of the task to abort */
@@ -806,7 +806,10 @@ export const actions = wireActions({
     /** Whether to wipe cookies (will log out user) */
     cookies: boolean;
   }>(),
-  openAtLoginError: action<OpenAtLoginError>(),
+  openAtLoginError: action<{
+    /** null clears any previous error */
+    error: OpenAtLoginError | null;
+  }>(),
 
   // internal
 

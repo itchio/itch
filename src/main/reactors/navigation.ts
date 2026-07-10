@@ -162,7 +162,7 @@ export default function (watcher: Watcher) {
       store.dispatch(
         actions.evolveTab({
           tab,
-          replace,
+          replace: replace ?? false,
           wind,
           url,
           resource,
@@ -183,7 +183,7 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    let andFocus: string = null;
+    let andFocus: string | undefined;
 
     const nav = rs.winds[wind].navigation;
     if (nav.openTabs.length === 1) {
@@ -340,7 +340,8 @@ function makeSubWatcher(rs: RootState) {
       makeSelector: (store, schedule) =>
         createSelector(
           (rs: RootState) => rs.winds[wind].navigation.tab,
-          (tab) => schedule.dispatch(actions.tabChanged({ wind, tab }))
+          (tab) =>
+            schedule(() => store.dispatch(actions.tabChanged({ wind, tab })))
         ),
     });
 
@@ -351,7 +352,7 @@ function makeSubWatcher(rs: RootState) {
           (rs: RootState) => rs.winds[wind].tabInstances,
           (rs: RootState) => rs.winds[wind].navigation.tab,
           (openTabs, tabInstances, tab) =>
-            schedule.dispatch(actions.tabsChanged({ wind }))
+            schedule(() => store.dispatch(actions.tabsChanged({ wind })))
         ),
     });
   }

@@ -91,6 +91,9 @@ const BuildListDiv = styled.div.withConfig({
 `;
 
 function monthFor(b: Build): number {
+  if (!b.updatedAt) {
+    return 0;
+  }
   const date = new Date(b.updatedAt);
   return date.getUTCFullYear() * 12 + date.getUTCMonth();
 }
@@ -109,14 +112,16 @@ class SwitchVersionCave extends React.PureComponent<Props> {
         const month = monthFor(build);
         if (month != lastMonth) {
           const monthDate = build.updatedAt;
-          buildElements.push(
-            <div key={`month-${month}`} className="builds--month">
-              <CustomDate
-                date={new Date(monthDate)}
-                format={MONTH_YEAR_FORMAT}
-              />
-            </div>
-          );
+          if (monthDate) {
+            buildElements.push(
+              <div key={`month-${month}`} className="builds--month">
+                <CustomDate
+                  date={new Date(monthDate)}
+                  format={MONTH_YEAR_FORMAT}
+                />
+              </div>
+            );
+          }
           lastMonth = month;
         }
         buildElements.push(this.renderBuild(index, build));
@@ -153,15 +158,20 @@ class SwitchVersionCave extends React.PureComponent<Props> {
         <div className="filler" />
         <div className="spacer" />
         <div className="timeago" data-rh={JSON.stringify({ date: updatedAt })}>
-          <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
+          {updatedAt ? (
+            <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
+          ) : null}
         </div>
       </button>
     );
   }
 
   onClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
-    const index = parseInt(ev.currentTarget.dataset.index, 10);
-    const res: SwitchVersionCaveResponse = { index };
+    const { index } = ev.currentTarget.dataset;
+    if (!index) {
+      return;
+    }
+    const res: SwitchVersionCaveResponse = { index: parseInt(index, 10) };
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({

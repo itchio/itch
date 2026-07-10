@@ -112,7 +112,7 @@ class StandardGameCover extends React.PureComponent<Props> {
             <CoverInfo className="cover-hover">
               <DarkBox>
                 <DarkTitle>{game.title}</DarkTitle>
-                <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
+                <Desc>{truncate(game.shortText ?? "", { length: 70 })}</Desc>
                 <Filler />
                 <PlatformIcons target={game} />
               </DarkBox>

@@ -74,7 +74,8 @@ interface GenericProps<Params, Item> {
   href: string;
   params: Params;
   renderTitleExtras?: () => JSX.Element | null;
-  getGame: (item: Item) => Game;
+  /** items without a game are skipped when rendering */
+  getGame: (item: Item) => Game | undefined;
 
   dispatch: Dispatch;
   tab: string;
@@ -227,7 +228,9 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
     return t;
   }
   let augmentedResult: ResultType & {
-    getGameCallback(f: (item: Item) => Game): (item: Item) => Game;
+    getGameCallback(
+      f: (item: Item) => Game | undefined
+    ): (item: Item) => Game | undefined;
   } = Object.assign(result, { getGameCallback: identity });
   return augmentedResult;
 }
@@ -238,7 +241,7 @@ export function makeStripeCallbacks<Params, Res extends FetchRes<any>>(
   type Item = Res["items"][0];
 
   return {
-    getGame(f: (item: Item) => Game) {
+    getGame(f: (item: Item) => Game | undefined) {
       return f;
     },
   };

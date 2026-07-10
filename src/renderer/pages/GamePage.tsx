@@ -58,6 +58,6 @@ interface Props extends MeatProps {
 
 export default withTab(
   hookWithProps(GamePage)((map) => ({
-    gameId: map((rs, props) => ambientTab(rs, props).location.firstPathNumber),
+    gameId: map((rs, props) => ambientTab(rs, props).location?.firstPathNumber),
   }))(GamePage)
 );

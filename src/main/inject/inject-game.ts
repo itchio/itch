@@ -21,10 +21,13 @@ declare function atob(b64: string): string;
     const url = urlParser.parse(window.location.href);
     console.log("Parsed url: ", url);
 
-    const parsedQuery = querystring.parse(url.query);
+    const parsedQuery = querystring.parse(url.query || "");
     console.log("Referrer query: ", parsedQuery);
 
     const itchObjectBase64 = parsedQuery.itchObject;
+    if (!itchObjectBase64) {
+      throw new Error("Missing itchObject in query string");
+    }
     const jsonSource = atob(
       Array.isArray(itchObjectBase64) ? itchObjectBase64[0] : itchObjectBase64
     );

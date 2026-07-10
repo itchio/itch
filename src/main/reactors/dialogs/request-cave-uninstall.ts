@@ -9,6 +9,9 @@ export default function (watcher: Watcher) {
     const { caveId } = action.payload;
 
     const { cave } = await mcall(messages.FetchCave, { caveId });
+    if (!cave) {
+      return;
+    }
     const { game } = cave;
 
     // FIXME: i18n - plus, that's generally bad

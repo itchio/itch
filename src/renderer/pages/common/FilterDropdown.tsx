@@ -100,6 +100,10 @@ class FilterDropdownBase extends React.PureComponent<FilterDropdownProps> {
 
   onChange = (option: BaseOptionType) => {
     const { url, optionKey } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to evolve
+      return;
+    }
     dispatchTabEvolve(this.props, {
       replace: true,
       url: urlWithParams(url, { [optionKey]: option.value || undefined }),
@@ -120,14 +124,14 @@ interface FilterDropdownProps {
   allLabel: LocalizedString;
   options: FilterDropdownOption[];
 
-  url: string;
-  value: string;
+  url: string | undefined;
+  value: string | undefined;
 }
 
 const hooked = hookWithProps(FilterDropdownBase)((map) => ({
-  url: map((rs, props) => ambientTab(rs, props).location.url),
+  url: map((rs, props) => ambientTab(rs, props).location?.url),
   value: map(
-    (rs, props) => ambientTab(rs, props).location.query[props.optionKey]
+    (rs, props) => ambientTab(rs, props).location?.query[props.optionKey]
   ),
 }))(FilterDropdownBase);
 export const FilterDropdown = withTab(hooked);

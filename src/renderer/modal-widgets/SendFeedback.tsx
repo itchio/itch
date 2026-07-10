@@ -387,6 +387,9 @@ class ReportIssue extends React.PureComponent<Props, State> {
   onViewReport = () => {
     const { dispatch } = this.props;
     const { reportURL } = this.state;
+    if (!reportURL) {
+      return;
+    }
     dispatch(
       actions.openInExternalBrowser({
         url: reportURL,

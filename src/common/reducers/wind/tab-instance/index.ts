@@ -93,7 +93,9 @@ const selector = (state: TabInstance): TabInstance => {
 
   const { history, currentIndex } = state;
   const page = history[currentIndex];
-  let location: TabInstanceLocation = page ? urlToLocation(page.url) : null;
+  let location: TabInstanceLocation | undefined = page
+    ? urlToLocation(page.url)
+    : undefined;
   let resource: TabInstanceResource | undefined;
   if (page && page.resource) {
     let resourceElements = page.resource.split("/");
@@ -107,16 +109,13 @@ const selector = (state: TabInstance): TabInstance => {
   let status: TabInstanceStatus = {
     canGoBack: currentIndex > 0,
     canGoForward: currentIndex < history.length - 1,
-    favicon: page ? page.favicon : null,
-    icon: null, // TODO
-    label: null, // TODO
-    lazyLabel: null, // TODO
+    favicon: page ? page.favicon : undefined,
   };
   if (location) {
     status.icon = internalPageToIcon(location.internalPage);
   }
   if (page) {
-    status.label = page ? page.label : null;
+    status.label = page.label;
     if (status.label) {
       status.lazyLabel = status.label;
     } else {
@@ -278,8 +277,15 @@ const baseReducer = reducer<TabInstance>(initialState, (on) => {
   });
 });
 
-export default function (state: TabInstance, action: Action<any>): TabInstance {
-  state = baseReducer(state, action);
-  state = selector(state);
-  return state;
+export default function (
+  state: TabInstance | undefined,
+  action: Action<any> | null
+): TabInstance {
+  if (typeof state === "undefined") {
+    return selector(initialState);
+  }
+  if (action) {
+    state = baseReducer(state, action);
+  }
+  return selector(state);
 }

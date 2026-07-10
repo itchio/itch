@@ -34,7 +34,7 @@ const CODE_MIN_LENGTH = CODE_LENGTH;
 const CODE_MAX_LENGTH = CODE_LENGTH;
 
 class TwoFactorInput extends React.PureComponent<Props, State> {
-  input?: HTMLInputElement;
+  input: HTMLInputElement | null = null;
 
   constructor(props: Props, context: any) {
     super(props, context);
@@ -84,7 +84,7 @@ class TwoFactorInput extends React.PureComponent<Props, State> {
     );
   }
 
-  gotInput = (input: HTMLInputElement) => {
+  gotInput = (input: HTMLInputElement | null) => {
     this.input = input;
   };
 
@@ -96,6 +96,9 @@ class TwoFactorInput extends React.PureComponent<Props, State> {
 
   onChange = () => {
     const { input } = this;
+    if (!input) {
+      return;
+    }
     this.setState({
       valid: input.value.length === 6,
     });
@@ -111,6 +114,9 @@ class TwoFactorInput extends React.PureComponent<Props, State> {
     }
 
     const { input } = this;
+    if (!input) {
+      return;
+    }
     const { dispatch } = this.props;
     let response: TwoFactorInputResponse = {
       totpCode: input.value,

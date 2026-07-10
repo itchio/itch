@@ -61,7 +61,7 @@ export class Package implements PackageLike {
   private name: string;
   private channel: string;
   private baseURL: string;
-  private semverConstraint: string;
+  private semverConstraint: string | null = null;
 
   constructor(store: Store, prefix: string, name: string) {
     this.store = store;
@@ -231,7 +231,7 @@ export class Package implements PackageLike {
     );
   }
 
-  getCurrentVersionPrefix(): string {
+  getCurrentVersionPrefix(): string | undefined {
     return this.store.getState().broth.packages[this.name].versionPrefix;
   }
 

@@ -61,7 +61,7 @@ class OwnedPage extends React.PureComponent<Props> {
 
   getRecord = OwnedSeries.getRecordCallback((dk) => dk.game);
   renderItemExtras = OwnedSeries.renderItemExtrasCallback((cave) => (
-    <StandardMainAction game={cave.game} />
+    <>{cave.game ? <StandardMainAction game={cave.game} /> : null}</>
   ));
   renderMainFilters = () => <SearchControl />;
   renderExtraFilters = () => (
@@ -103,19 +103,20 @@ interface Props extends MeatProps {
 export default withTab(
   withProfile(
     hookWithProps(OwnedPage)((map) => ({
-      sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-      sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
-      search: map((rs, props) => ambientTab(rs, props).location.query.search),
+      sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+      sortDir: map(
+        (rs, props) => ambientTab(rs, props).location?.query.sortDir
+      ),
+      search: map((rs, props) => ambientTab(rs, props).location?.query.search),
       classification: map(
-        (rs, props) =>
-          ambientTab(rs, props).location.query
-            .classification as GameClassification
+        (rs, props) => ambientTab(rs, props).location?.query.classification
       ),
       installed: map(
-        (rs, props) => ambientTab(rs, props).location.query.installed === "true"
+        (rs, props) =>
+          ambientTab(rs, props).location?.query.installed === "true"
       ),
       platform: map(
-        (rs, props) => ambientTab(rs, props).location.query.platform
+        (rs, props) => ambientTab(rs, props).location?.query.platform
       ),
     }))(OwnedPage)
   )

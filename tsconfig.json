@@ -15,7 +15,7 @@
       "vendor/*": ["./src/vendor/*"]
     },
 
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

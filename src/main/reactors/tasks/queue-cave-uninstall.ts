@@ -19,6 +19,9 @@ export default function (watcher: Watcher) {
     // TODO: figure if we really need that. asTask wants a gameId
     // but do we really need it? how used is asTask anyway?
     const { cave } = await mcall(messages.FetchCave, { caveId });
+    if (!cave) {
+      return;
+    }
 
     await asTask({
       name: "uninstall",

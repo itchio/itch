@@ -95,7 +95,7 @@ interface Props extends MeatProps {
 
   status: StatusFilter;
   search: string;
-  url: string;
+  url: string | undefined;
 
   /** Push jobs without a buildId yet — rendered as synthetic rows on top. */
   rowlessJobs: PushJob[];
@@ -399,9 +399,14 @@ class UploadPage extends React.PureComponent<Props, State> {
   }
 
   setSearch = (search: string) => {
+    const { url } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to evolve
+      return;
+    }
     dispatchTabEvolve(this.props, {
       replace: true,
-      url: urlWithParams(this.props.url, { search }),
+      url: urlWithParams(url, { search }),
     });
   };
 
@@ -456,17 +461,17 @@ export default withProfile(
   withTab(
     hookWithProps(UploadPage)((map) => ({
       status: map((rs: RootState, props: any) => {
-        const q = ambientTab(rs, props).location.query;
-        const s = (q.status ?? "") as StatusFilter;
+        const q = ambientTab(rs, props).location?.query;
+        const s = (q?.status ?? "") as StatusFilter;
         if (s === "live" || s === "processing" || s === "failed") return s;
         return "" as StatusFilter;
       }),
       search: map(
         (rs: RootState, props: any) =>
-          ambientTab(rs, props).location.query.search ?? ""
+          ambientTab(rs, props).location?.query.search ?? ""
       ),
       url: map(
-        (rs: RootState, props: any) => ambientTab(rs, props).location.url
+        (rs: RootState, props: any) => ambientTab(rs, props).location?.url
       ),
       rowlessJobs: map((rs: RootState) => selectRowlessPushJobs(rs.upload)),
       pushJobsByBuildId: map((rs: RootState) =>

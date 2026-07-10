@@ -36,19 +36,25 @@ const registerSync = (
   syncHandlers: SyncIpcHandlers,
   asyncHandlers: AsyncIpcHandlers
 ): void => {
-  Object.entries(syncHandlers).forEach(([eventName, callback]): void => {
-    ipcMain.on(eventName, (event: IpcMainEvent, arg: any): void => {
-      event.returnValue = callback(arg);
-    });
-  });
-  Object.entries(asyncHandlers).forEach(([eventName, callback]): void => {
-    ipcMain.handle(
-      eventName,
-      (event: IpcMainInvokeEvent, arg: any): ReturnType<typeof callback> => {
-        return callback(arg);
-      }
-    );
-  });
+  // handlers are looked up dynamically by event name, so the argument
+  // type can't be tied to a specific handler here
+  Object.entries(syncHandlers).forEach(
+    ([eventName, callback]: [string, (arg: any) => any]): void => {
+      ipcMain.on(eventName, (event: IpcMainEvent, arg: any): void => {
+        event.returnValue = callback(arg);
+      });
+    }
+  );
+  Object.entries(asyncHandlers).forEach(
+    ([eventName, callback]: [string, (arg: any) => Promise<any>]): void => {
+      ipcMain.handle(
+        eventName,
+        (event: IpcMainInvokeEvent, arg: any): Promise<any> => {
+          return callback(arg);
+        }
+      );
+    }
+  );
 };
 
 // App lifecycle
@@ -138,10 +144,10 @@ export function main() {
       },
       {
         showOpenDialog: async (options: OpenDialogOptions) => {
-          const { filePaths } = await dialog.showOpenDialog(
-            BrowserWindow.getFocusedWindow(),
-            options
-          );
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          const { filePaths } = focusedWindow
+            ? await dialog.showOpenDialog(focusedWindow, options)
+            : await dialog.showOpenDialog(options);
           return filePaths;
         },
         getUserCacheSize: (userId: number) => {

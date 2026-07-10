@@ -24,8 +24,9 @@ export class MinimalContext {
   private stoppers: Stopper[] = [];
   private dead = false;
   private cancelPromise: Promise<void>;
-  private resolveCancelPromise: () => void = null;
-  private taskId: string = null;
+  // assigned in the constructor: the Promise executor runs synchronously
+  private resolveCancelPromise!: () => void;
+  private taskId: string | null = null;
 
   constructor() {
     this.cancelPromise = new Promise<void>((resolve) => {
@@ -87,7 +88,7 @@ export class MinimalContext {
     this.taskId = taskId;
   }
 
-  getTaskId(): string {
+  getTaskId(): string | null {
     return this.taskId;
   }
 

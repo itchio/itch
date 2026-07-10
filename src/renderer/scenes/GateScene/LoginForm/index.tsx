@@ -431,9 +431,9 @@ interface Props {
   showSaved: () => void;
 
   dispatch: Dispatch;
-  lastUsername: string | null;
-  error: Error | null;
-  oauthURL: string | null;
+  lastUsername: string | undefined;
+  error: Error | undefined;
+  oauthURL: string | undefined;
 }
 
 interface State {

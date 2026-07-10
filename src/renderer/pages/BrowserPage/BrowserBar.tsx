@@ -24,6 +24,10 @@ class BrowserBar extends React.PureComponent<Props> {
 
   onMore = (ev: React.MouseEvent<HTMLElement>) => {
     const { dispatch, tab, url } = this.props;
+    if (!url) {
+      // tab hasn't derived a location yet, nothing to act on
+      return;
+    }
     const { clientX, clientY } = ev;
     dispatch(
       actions.popupContextMenu({
@@ -57,13 +61,13 @@ interface Props {
   tab: string;
   dispatch: Dispatch;
 
-  url: string;
+  url: string | undefined;
   loading: boolean;
 }
 
 export default withTab(
   hookWithProps(BrowserBar)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location.url),
+    url: map((rs, props) => ambientTab(rs, props).location?.url),
     loading: map((rs, props) => ambientTab(rs, props).loading),
   }))(BrowserBar)
 );

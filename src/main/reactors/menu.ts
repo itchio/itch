@@ -66,7 +66,7 @@ interface AllTemplates {
 
 function computeMenuTemplate(
   appVersion: string,
-  profile: Profile,
+  profile: Profile | null,
   enableTabs: boolean,
   runtime: Runtime
 ) {
@@ -474,7 +474,7 @@ function computeMenuTemplate(
 function setItchAppMenu(
   nativeIDsPayload: string,
   runtime: Runtime,
-  menu: Electron.Menu
+  menu: Electron.Menu | null
 ) {
   if (runtime.platform === "osx") {
     Menu.setApplicationMenu(menu);

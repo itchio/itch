@@ -1,6 +1,6 @@
 import "electron";
 
-export function openAppDevTools(bw: Electron.BrowserWindow) {
+export function openAppDevTools(bw: Electron.BrowserWindow | null) {
   if (bw) {
     const wc = bw.webContents;
     if (wc && !wc.isDestroyed()) {

@@ -17,7 +17,7 @@ import { getNativeWindow } from "main/reactors/winds";
 
 const logger = mainLogger.child(__filename);
 
-const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
+const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS || "0", 10) > 1;
 
 type WebContentsCallback<T> = (wc: Electron.WebContents) => T;
 
@@ -66,9 +66,17 @@ export default function (watcher: Watcher) {
   watcher.on(actions.tabGotWebContents, async (store, action) => {
     const { wind, tab, webContentsId } = action.payload;
     const rs = store.getState();
-    const initialURL = rs.winds[wind].tabInstances[tab].location.url;
+    const initialURL = rs.winds[wind].tabInstances[tab].location?.url;
+    if (!initialURL) {
+      logger.warn(`Tab ${tab} has no location yet, not hooking web contents`);
+      return;
+    }
 
     const wc = webContents.fromId(webContentsId);
+    if (!wc) {
+      logger.warn(`Could not find webContents ${webContentsId} for tab ${tab}`);
+      return;
+    }
     storeWebContents(wind, tab, wc);
 
     logger.debug(`Loading url '${initialURL}'`);
@@ -161,7 +169,10 @@ export default function (watcher: Watcher) {
         wc.openDevTools({ mode: "detach" });
       });
     } else {
-      openAppDevTools(BrowserWindow.getFocusedWindow());
+      const bw = BrowserWindow.getFocusedWindow();
+      if (bw) {
+        openAppDevTools(bw);
+      }
     }
   });
 
@@ -367,11 +378,11 @@ async function hookWebContents(
   }
 
   const didNavigate = (url: string, navMode?: NavMode) => {
-    let resource = null;
+    let resource: string | undefined;
     const result = parseWellKnownUrl(url);
     if (result) {
       url = result.url;
-      resource = result.resource;
+      resource = result.resource ?? undefined;
       logger.debug(`Parsed well-known url: ${url} => ${resource}`);
     }
 

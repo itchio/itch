@@ -12,6 +12,9 @@ export default function (watcher: Watcher) {
     const { cave } = await mcall(messages.FetchCave, {
       caveId,
     });
+    if (!cave) {
+      return;
+    }
 
     const widgetParams = {
       cave,

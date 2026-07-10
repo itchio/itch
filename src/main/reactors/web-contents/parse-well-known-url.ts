@@ -5,11 +5,11 @@ const DOWNLOAD_URL_RE = /^.*\/download\/[a-zA-Z0-9]*$/;
 const logger = mainLogger.child(__filename);
 
 export interface WellKnownUrlResult {
-  resource: string;
+  resource: string | null;
   url: string;
 }
 
-export function parseWellKnownUrl(url: string): WellKnownUrlResult {
+export function parseWellKnownUrl(url: string): WellKnownUrlResult | null {
   try {
     const u = new URL(url);
     if (u.hostname === "itch.io") {

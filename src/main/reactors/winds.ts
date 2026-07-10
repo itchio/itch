@@ -112,7 +112,7 @@ async function createRootWindow(store: Store) {
 
   if (process.platform === "darwin") {
     try {
-      app.dock.setIcon(getIconPath());
+      app.dock?.setIcon(getIconPath());
     } catch (err) {
       logger.warn(`Could not set dock icon: ${getErrorStack(err)}`);
     }
@@ -339,7 +339,7 @@ export default function (watcher: Watcher) {
   watcher.on(actions.windBoundsChanged, async (store, action) => {
     const { wind, bounds } = action.payload;
     const nativeWindow = getNativeWindow(store.getState(), wind);
-    if (nativeWindow.isMaximized()) {
+    if (!nativeWindow || nativeWindow.isMaximized()) {
       // don't store bounds when maximized
       return;
     }
@@ -360,7 +360,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.quitWhenMain, async (store, action) => {
-    const mainId = getNativeState(store.getState(), "root").id;
+    const mainId = getNativeState(store.getState(), "root")?.id;
     const focused = BrowserWindow.getFocusedWindow();
 
     if (focused) {
@@ -802,7 +802,10 @@ function hookNativeWindow(
   });
 }
 
-export function getNativeState(rs: RootState, wind: string): NativeWindowState {
+export function getNativeState(
+  rs: RootState,
+  wind: string
+): NativeWindowState | null {
   const w = rs.winds[wind];
   if (w) {
     return w.native;
@@ -810,9 +813,12 @@ export function getNativeState(rs: RootState, wind: string): NativeWindowState {
   return null;
 }
 
-export function getNativeWindow(rs: RootState, wind: string): BrowserWindow {
+export function getNativeWindow(
+  rs: RootState,
+  wind: string
+): BrowserWindow | null {
   const ns = getNativeState(rs, wind);
-  if (ns) {
+  if (ns && ns.id !== null) {
     return BrowserWindow.fromId(ns.id);
   }
   return null;

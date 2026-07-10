@@ -1,10 +1,10 @@
 import { Action } from "common/types";
 
-interface ActionCreator<Payload> {
+interface ActionCreator<Payload extends Object> {
   (payload: Payload): Action<Payload>;
 }
 
-interface ActionReducer<State, Payload> {
+interface ActionReducer<State, Payload extends Object> {
   (state: State, action: Action<Payload>): State;
 }
 
@@ -13,7 +13,7 @@ interface ActionReducers<State> {
 }
 
 interface RegisterReducer<State> {
-  <Payload>(
+  <Payload extends Object>(
     actionCreator: ActionCreator<Payload>,
     reducer: ActionReducer<State, Payload>
   ): void;
@@ -27,11 +27,11 @@ function reducer<State>(
   initialState: State,
   cb: ActionHandlerCallback<State>,
   defaultReducer?: ActionReducer<State, any>
-): ActionReducer<State, State> {
+): (rs: State | undefined, action: Action<any>) => State {
   const actionReducers: ActionReducers<State> = {};
 
   cb(
-    <Payload>(
+    <Payload extends Object>(
       actionCreator: ActionCreator<Payload>,
       reducer: ActionReducer<State, Payload>
     ) => {
@@ -46,7 +46,7 @@ function reducer<State>(
     }
   );
 
-  return (rs: State, action: Action<any>) => {
+  return (rs: State | undefined, action: Action<any>) => {
     if (typeof rs === "undefined") {
       return initialState;
     }
