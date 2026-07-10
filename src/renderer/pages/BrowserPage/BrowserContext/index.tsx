@@ -38,6 +38,9 @@ class BrowserContext extends React.PureComponent<Props> {
   }
 
   renderFetchContents = FetchGame.renderCallback(({ result }) => {
+    if (!result || !result.game) {
+      return null;
+    }
     return <BrowserContextGame game={result.game} />;
   });
 }

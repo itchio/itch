@@ -84,7 +84,10 @@ class Meat extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
+  static getDerivedStateFromProps(
+    props: Props,
+    state: State
+  ): Partial<State> | null {
     if (props.url !== state.lastURL) {
       return {
         hasError: false,
@@ -191,7 +194,7 @@ class Meat extends React.PureComponent<Props, State> {
     );
   };
 
-  getConcrete(): React.ComponentType<MeatProps> {
+  getConcrete(): React.ComponentType<MeatProps> | null {
     const { isBrowser, internalPage, firstPathElement, secondPathElement } =
       this.props;
     if (isBrowser) {
@@ -261,32 +264,32 @@ interface State {
   loading: boolean;
   error?: any;
   info?: any;
-  lastURL: string;
+  lastURL: string | null | undefined;
 }
 
 interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  url: string;
-  isBrowser: boolean;
-  internalPage: string;
-  firstPathElement: string;
-  secondPathElement: string;
+  url: string | undefined;
+  isBrowser: boolean | undefined;
+  internalPage: string | undefined;
+  firstPathElement: string | undefined;
+  secondPathElement: string | undefined;
 }
 
 export default withTab(
   hookWithProps(Meat)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location.url),
-    isBrowser: map((rs, props) => ambientTab(rs, props).location.isBrowser),
+    url: map((rs, props) => ambientTab(rs, props).location?.url),
+    isBrowser: map((rs, props) => ambientTab(rs, props).location?.isBrowser),
     internalPage: map(
-      (rs, props) => ambientTab(rs, props).location.internalPage
+      (rs, props) => ambientTab(rs, props).location?.internalPage
     ),
     firstPathElement: map(
-      (rs, props) => ambientTab(rs, props).location.firstPathElement
+      (rs, props) => ambientTab(rs, props).location?.firstPathElement
     ),
     secondPathElement: map(
-      (rs, props) => ambientTab(rs, props).location.secondPathElement
+      (rs, props) => ambientTab(rs, props).location?.secondPathElement
     ),
   }))(Meat)
 );

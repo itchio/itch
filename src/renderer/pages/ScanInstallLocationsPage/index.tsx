@@ -111,7 +111,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
     this.state = {
       stage: Stage.Scanning,
       progress: 0,
-      game: null,
+      game: undefined,
       games: [],
       numItems: 0,
       didImport: false,
@@ -336,7 +336,8 @@ interface Props extends MeatProps {
 interface State {
   stage: Stage;
   progress: number;
-  game: Game;
+  /** undefined until the scan yields its first game */
+  game: Game | undefined;
   games: Game[];
   numItems: number;
   didImport: boolean;

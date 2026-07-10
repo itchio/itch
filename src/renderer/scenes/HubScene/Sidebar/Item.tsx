@@ -162,7 +162,7 @@ class Item extends React.PureComponent<Props> {
 
     const progressColor = "white";
     const progressStyle = {
-      width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
+      width: `${Math.max(0, Math.min(1, progress || 0)) * 100}%`,
       backgroundColor: progressColor,
     };
 
@@ -206,21 +206,21 @@ class Item extends React.PureComponent<Props> {
 
 interface Props {
   tab: string;
-  url: string;
-  resource: string;
-  label: LocalizedString;
+  url: string | null;
+  resource: string | null | undefined;
+  label: LocalizedString | null | undefined;
   active: boolean;
-  count?: number;
-  sublabel?: LocalizedString;
-  progress?: number;
+  count: number;
+  sublabel: LocalizedString | null;
+  progress: number | null;
 
-  icon?: string;
+  icon: string | null | undefined;
   iconImage?: string;
 
-  loading: boolean;
+  loading: boolean | undefined;
 
   onClick?: () => void;
-  onClose?: () => void;
+  onClose?: (() => void) | null;
   onExplore?: (tabId: string) => void;
   tabInstance?: TabInstance;
 }

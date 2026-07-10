@@ -60,7 +60,7 @@ class LocationsPage extends React.PureComponent<Props> {
               >
                 <FilterOptionIcon icon="search" />
                 {T(["preferences.scan_install_locations"])}
-                {scanningLocations ? (
+                {scanningLocations && locationScanProgress != null ? (
                   <>
                     <Spacer />
                     <LoadingCircle progress={locationScanProgress} />
@@ -82,7 +82,7 @@ class LocationsPage extends React.PureComponent<Props> {
     }
   );
 
-  renderList = (result: InstallLocationsListResult) => {
+  renderList = (result: InstallLocationsListResult | undefined) => {
     if (!result || isEmpty(result.installLocations)) {
       return null;
     }
@@ -119,7 +119,7 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
   tab: string;
   scanningLocations: boolean;
-  locationScanProgress: number;
+  locationScanProgress: number | null | undefined;
 }
 
 export default withTab(

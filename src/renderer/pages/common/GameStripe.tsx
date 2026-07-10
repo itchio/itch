@@ -91,7 +91,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
   const Call = butlerCaller(rc);
   type Item = Res["items"][0];
 
-  const hasItems = (result: Res): boolean => {
+  const hasItems = (result: Res | undefined): boolean => {
     if (!result) {
       return false;
     }
@@ -131,7 +131,11 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       </>
     ));
 
-    renderTitle(loading: boolean, result: Res, error: any): JSX.Element {
+    renderTitle(
+      loading: boolean,
+      result: Res | undefined,
+      error: any
+    ): JSX.Element {
       const {
         linkId,
         href,
@@ -153,7 +157,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       );
     }
 
-    renderError(result: Res, error: Error) {
+    renderError(result: Res | undefined, error: Error | undefined) {
       if (!error) {
         return null;
       }
@@ -164,7 +168,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       return <ErrorState error={error} />;
     }
 
-    renderItems(result: Res): JSX.Element | null {
+    renderItems(result: Res | undefined): JSX.Element | null {
       if (!result) {
         return null;
       }
@@ -223,9 +227,8 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
     return t;
   }
   let augmentedResult: ResultType & {
-    getGameCallback?(f: (item: Item) => Game): (item: Item) => Game;
-  } = result;
-  augmentedResult.getGameCallback = identity;
+    getGameCallback(f: (item: Item) => Game): (item: Item) => Game;
+  } = Object.assign(result, { getGameCallback: identity });
   return augmentedResult;
 }
 

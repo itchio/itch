@@ -121,7 +121,7 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
 @watching
 class NavigationBar extends React.PureComponent<Props, State> {
   fresh = true;
-  browserAddress: HTMLInputElement | HTMLElement;
+  browserAddress: HTMLInputElement | HTMLElement | null = null;
 
   // event handlers
   goBack = () => {
@@ -251,7 +251,11 @@ class NavigationBar extends React.PureComponent<Props, State> {
     );
   }
 
-  renderURL(url: string): JSX.Element | null {
+  renderURL(url: string | undefined): JSX.Element | null {
+    if (!url) {
+      return null;
+    }
+
     let isHTTP = HTTP_RE.test(url);
     let isHTTPS = HTTPS_RE.test(url);
     let isItch = ITCH_RE.test(url);
@@ -281,7 +285,9 @@ class NavigationBar extends React.PureComponent<Props, State> {
     return <>{url}</>;
   }
 
-  onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
+  onBrowserAddress = (
+    browserAddress: HTMLElement | HTMLInputElement | null
+  ) => {
     this.browserAddress = browserAddress;
 
     if (!browserAddress) {
@@ -355,24 +361,26 @@ interface Props {
   loading: boolean;
   showAddressBar?: boolean;
 
-  url: string;
-  internalPage: string;
-  canGoBack: string;
-  canGoForward: string;
+  url: string | undefined;
+  internalPage: string | undefined;
+  canGoBack: boolean | undefined;
+  canGoForward: boolean | undefined;
 }
 
 interface State {
-  url: string;
+  url: string | null | undefined;
   editingAddress: boolean;
 }
 
 export default withTab(
   hookWithProps(NavigationBar)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location.url),
+    url: map((rs, props) => ambientTab(rs, props).location?.url),
     internalPage: map(
-      (rs, props) => ambientTab(rs, props).location.internalPage
+      (rs, props) => ambientTab(rs, props).location?.internalPage
     ),
-    canGoBack: map((rs, props) => ambientTab(rs, props).status.canGoBack),
-    canGoForward: map((rs, props) => ambientTab(rs, props).status.canGoForward),
+    canGoBack: map((rs, props) => ambientTab(rs, props).status?.canGoBack),
+    canGoForward: map(
+      (rs, props) => ambientTab(rs, props).status?.canGoForward
+    ),
   }))(NavigationBar)
 );

@@ -26,14 +26,18 @@ interface StaleResult {
 
 interface GenericState<Result> {
   loading: boolean;
-  error: Error;
-  result: Result;
+  /** undefined until a fetch fails; cleared again on success */
+  error: Error | undefined;
+  /** undefined until the first fetch succeeds */
+  result: Result | undefined;
 }
 
 interface ButlerCallerArgs<Params, Result> {
   loading: boolean;
-  error: Error;
-  result: Result;
+  error: Error | undefined;
+  /** undefined until the first fetch succeeds - render is called in that
+   * state whenever loadingHandled/errorsHandled are set, so guard it */
+  result: Result | undefined;
 }
 
 export function renderNoop(): JSX.Element | null {
@@ -58,8 +62,8 @@ const butlerCaller = <Params, Result>(
   class Caller extends React.PureComponent<CallerProps, State> {
     static displayName = `ButlerCall(${method.name})`;
     fetchID = 0;
-    invalidators: ActionList;
-    watcher: Watcher;
+    invalidators: ActionList | undefined;
+    watcher: Watcher | undefined;
 
     constructor(props: Props, context: any) {
       super(props, context);
@@ -73,7 +77,7 @@ const butlerCaller = <Params, Result>(
 
     override componentDidMount() {
       this.queueFetch();
-      if (this.invalidators) {
+      if (this.invalidators && this.props.__store) {
         this.watcher = new Watcher(new Logger(devNull));
         this.props.__store.watcher.addSub(this.watcher);
         for (const invalidatingAction of this.invalidators) {
@@ -85,7 +89,7 @@ const butlerCaller = <Params, Result>(
     }
 
     override componentWillUnmount() {
-      if (this.watcher) {
+      if (this.watcher && this.props.__store) {
         this.props.__store.watcher.removeSub(this.watcher);
       }
     }
@@ -134,7 +138,7 @@ const butlerCaller = <Params, Result>(
       if (this.props.onResult) {
         this.props.onResult(r);
       }
-      this.setState({ result: r, error: null, loading: false });
+      this.setState({ result: r, error: undefined, loading: false });
     };
 
     private setError = (e: any) => {

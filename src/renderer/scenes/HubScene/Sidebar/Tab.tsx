@@ -48,41 +48,44 @@ class Tab extends React.PureComponent<Props> {
     const { location, status } = tabInstance;
     let loading = tabInstance.loading;
 
-    const url = location.url;
+    const url = location ? location.url : null;
     const resource = tabInstance.resource ? tabInstance.resource.value : null;
-    const label = status.lazyLabel;
-    let icon = status.icon;
+    const label = status ? status.lazyLabel : null;
+    let icon = status ? status.icon : null;
     let count = 0;
-    let progress: number = null;
-    let sublabel: LocalizedString = null;
+    let progress: number | null = null;
+    let sublabel: LocalizedString | null = null;
 
     if (tab === "itch://downloads") {
       const { downloads } = this.props;
-      count = size(getPendingDownloads(downloads));
-      const activeDownload = getActiveDownload(downloads);
-      if (activeDownload) {
-        const downloadProgress = downloads.progresses[activeDownload.id];
-        if (downloads.paused) {
-          icon = "stopwatch";
-          sublabel = ["grid.item.downloads_paused"];
-        } else if (downloadProgress && downloadProgress.eta) {
-          progress = downloadProgress.progress;
-          const title = activeDownload.game.title;
-          const { intl } = this.props;
-          const formatted = formatDurationAsMessage(downloadProgress.eta);
-          const humanDuration = intl.formatMessage(
-            {
-              id: formatted.id,
-            },
-            formatted.values
-          );
-          sublabel = `${title} — ${humanDuration}`;
+      if (downloads) {
+        count = size(getPendingDownloads(downloads));
+        const activeDownload = getActiveDownload(downloads);
+        if (activeDownload) {
+          const downloadProgress = downloads.progresses[activeDownload.id];
+          if (downloads.paused) {
+            icon = "stopwatch";
+            sublabel = ["grid.item.downloads_paused"];
+          } else if (downloadProgress && downloadProgress.eta) {
+            progress = downloadProgress.progress;
+            const title = activeDownload.game.title;
+            const { intl } = this.props;
+            const formatted = formatDurationAsMessage(downloadProgress.eta);
+            const humanDuration = intl.formatMessage(
+              {
+                id: formatted.id,
+              },
+              formatted.values
+            );
+            sublabel = `${title} — ${humanDuration}`;
+          }
         }
       }
     }
 
-    let gameOverride: Game = null;
-    let { onClick, onClose } = this;
+    let gameOverride: Game | null = null;
+    let { onClick } = this;
+    let onClose: (() => void) | null = this.onClose;
     if (!sortable) {
       onClose = null;
     }
@@ -105,7 +108,7 @@ class Tab extends React.PureComponent<Props> {
       loading,
     };
 
-    if (sortable) {
+    if (sortable && index !== undefined) {
       return <SortableItem key={tab} index={index} props={props} />;
     } else {
       return <Item key={tab} {...props} />;

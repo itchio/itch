@@ -16,12 +16,15 @@ export default function DownloadProgressSpan({
   downloadsPaused,
   onlyBPS,
   onlyETA,
-}: Props): JSX.Element {
+}: Props): JSX.Element | null {
   if (downloadsPaused) {
     return <>{T(["grid.item.downloads_paused"])}</>;
   }
 
   if (onlyBPS) {
+    if (bps === undefined) {
+      return null;
+    }
     return (
       <>
         {fileSize(bps)}
@@ -31,11 +34,14 @@ export default function DownloadProgressSpan({
   }
 
   if (onlyETA) {
+    if (eta === undefined) {
+      return null;
+    }
     return <FormattedDuration secs={eta} />;
   }
 
-  const hasBPS = bps > 0;
-  const hasETA = eta > 0;
+  const hasBPS = bps !== undefined && bps > 0;
+  const hasETA = eta !== undefined && eta > 0;
   return (
     <span>
       {hasBPS ? (

@@ -142,14 +142,14 @@ export class Space {
     return url.toString();
   }
 
-  queryParam(name: string): string {
+  queryParam(name: string): string | null {
     if (this._query) {
       return this._query.get(name);
     }
     return null;
   }
 
-  resource(): string {
+  resource(): string | undefined {
     return this._page.resource;
   }
 
@@ -173,21 +173,21 @@ export class Space {
     return this._protocol;
   }
 
-  internalPage(): string {
+  internalPage(): string | null {
     if (this._protocol === "itch:") {
       return this._hostname;
     }
     return null;
   }
 
-  firstPathElement(): string {
+  firstPathElement(): string | null {
     if (this._pathElements) {
       return this._pathElements[0];
     }
     return null;
   }
 
-  firstPathNumber(): number {
+  firstPathNumber(): number | null {
     if (this._pathElements) {
       return parseInt(this._pathElements[0], 10);
     }
@@ -226,11 +226,11 @@ export class Space {
     return "";
   }
 
-  isSleepy(): boolean {
+  isSleepy(): boolean | undefined {
     return this._instance.sleepy;
   }
 
-  isLoading(): boolean {
+  isLoading(): boolean | undefined {
     return this._instance.loading;
   }
 
@@ -275,7 +275,9 @@ export class Space {
 
 const fallbackIcon = "moon";
 
-export function internalPageToIcon(internalPage: string | undefined): string {
+export function internalPageToIcon(
+  internalPage: string | null | undefined
+): string {
   switch (internalPage) {
     case "featured":
       return "itchio";

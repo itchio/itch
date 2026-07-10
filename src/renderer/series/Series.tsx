@@ -40,7 +40,7 @@ export interface BaseSeriesProps<Params, Item, Record> {
 
 interface GenericProps<Params, Item, Record, ExtraProps>
   extends BaseSeriesProps<Params, Item, Record> {
-  fallbackGetKey?: (r: Record) => any;
+  fallbackGetKey: (r: Record) => any;
   RecordComponent: React.ComponentType<
     RecordComponentProps<Item, Record, ExtraProps>
   >;
@@ -54,8 +54,9 @@ interface GenericProps<Params, Item, Record, ExtraProps>
 }
 
 interface GenericState<Params> {
-  cursors: string[];
-  lastParams: Params;
+  /** the first page's cursor is always null */
+  cursors: (string | null)[];
+  lastParams: Params | null;
 }
 
 const LoadMoreContainer = styled.div`
@@ -87,7 +88,7 @@ export function makeSeries<
 >(rc: RequestCreator<Params, Res>) {
   const Call = butlerCaller(rc);
 
-  const hasItems = (result: Res): boolean => {
+  const hasItems = (result: Res | undefined): boolean => {
     if (!result) {
       return false;
     }
@@ -100,7 +101,8 @@ export function makeSeries<
 
   class NextPageButton extends React.PureComponent<{
     cursor: string;
-    gotLoadMore: (el: HTMLDivElement) => void;
+    // wired as a ref callback, so React calls it with null on unmount
+    gotLoadMore: (el: HTMLDivElement | null) => void;
     loadNextPage: (cursor: string) => void;
   }> {
     override render() {
@@ -119,11 +121,11 @@ export function makeSeries<
   }
 
   type PageProps = {
-    cursor: string;
+    cursor: string | null;
     limit: number;
     isLast: boolean;
-    gotLoadMore?: (loadMore: HTMLDivElement) => void;
-    loadNextPage?: (cursor: string) => void;
+    gotLoadMore: (loadMore: HTMLDivElement | null) => void;
+    loadNextPage: (cursor: string) => void;
   } & Pick<
     Props,
     | "params"
@@ -159,7 +161,7 @@ export function makeSeries<
       );
     });
 
-    renderNextPage(result: Res, loading: boolean) {
+    renderNextPage(result: Res | undefined, loading: boolean) {
       const { gotLoadMore, loadNextPage, isLast } = this.props;
 
       if (result && result.nextCursor && isLast) {
@@ -183,7 +185,7 @@ export function makeSeries<
       return null;
     }
 
-    renderError(result: Res, error: Error) {
+    renderError(result: Res | undefined, error: Error | undefined) {
       if (!error) {
         return null;
       }
@@ -194,8 +196,8 @@ export function makeSeries<
       return <ErrorState error={error} />;
     }
 
-    renderItems(result: Res, loading: boolean): JSX.Element | null {
-      if (!hasItems(result)) {
+    renderItems(result: Res | undefined, loading: boolean): JSX.Element | null {
+      if (!result || !hasItems(result)) {
         if (loading) {
           return null;
         } else {
@@ -244,7 +246,7 @@ export function makeSeries<
   }
 
   class Series extends React.PureComponent<Props, State> {
-    restoreScrollInterval: number;
+    restoreScrollInterval: number | null = null;
 
     constructor(props: Props, context: any) {
       super(props, context);
@@ -262,8 +264,10 @@ export function makeSeries<
             const { scrollTop } = this.itemList;
             if (scrollTop === props.restoredScrollTop) {
               console.log(`Done adjusting, final scrollTop = ${scrollTop}`);
-              clearInterval(this.restoreScrollInterval);
-              this.restoreScrollInterval = null;
+              if (this.restoreScrollInterval) {
+                clearInterval(this.restoreScrollInterval);
+                this.restoreScrollInterval = null;
+              }
             }
           }
         }, 160);
@@ -280,7 +284,7 @@ export function makeSeries<
     static getDerivedStateFromProps(
       props: Props,
       state: State
-    ): Partial<State> {
+    ): Partial<State> | null {
       if (!equal(props.params, state.lastParams)) {
         return {
           cursors: [null],
@@ -294,7 +298,7 @@ export function makeSeries<
     override getSnapshotBeforeUpdate(
       prevProps: Props,
       prevState: State
-    ): Snapshot {
+    ): Snapshot | null {
       if (!equal(this.props.params, prevProps.params)) {
         return {
           resetScroll: true,
@@ -306,7 +310,7 @@ export function makeSeries<
     override componentDidUpdate(
       props: Props,
       state: State,
-      snapshot: Snapshot
+      snapshot: Snapshot | null
     ) {
       if (snapshot && snapshot.resetScroll && this.itemList) {
         console.log(`resetting scrollTop!`);
@@ -368,8 +372,8 @@ export function makeSeries<
       );
     }
 
-    itemList: HTMLElement;
-    gotItemList = (itemList: HTMLElement) => {
+    itemList: HTMLElement | null = null;
+    gotItemList = (itemList: HTMLElement | null) => {
       this.itemList = itemList;
     };
 
@@ -401,8 +405,8 @@ export function makeSeries<
       dispatchTabPageUpdate(this.props, { scrollTop });
     }, 100);
 
-    loadMore: HTMLDivElement;
-    gotLoadMore = (loadMore: HTMLDivElement) => {
+    loadMore: HTMLDivElement | null = null;
+    gotLoadMore = (loadMore: HTMLDivElement | null) => {
       this.loadMore = loadMore;
     };
 

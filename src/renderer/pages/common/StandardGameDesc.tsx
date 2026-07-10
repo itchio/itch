@@ -9,7 +9,7 @@ const StandardGameDesc = ({
   game,
   children,
 }: {
-  game: Game;
+  game: Game | undefined;
   children?: any;
 }) => {
   if (!game) {
