@@ -14,7 +14,7 @@ interface InstallErrorParams {
   log: string;
   game: Game;
   retryAction: () => Action<any>;
-  stopAction: () => Action<any>;
+  stopAction: () => Action<any> | null;
 }
 
 export async function showInstallErrorModal(params: InstallErrorParams) {
@@ -68,7 +68,10 @@ export async function showInstallErrorModal(params: InstallErrorParams) {
   const res = await promisedModal(store, typedModal);
 
   if (res) {
-    store.dispatch(stopAction());
+    const stop = stopAction();
+    if (stop) {
+      store.dispatch(stop);
+    }
     if (allowReport && res.sendReport) {
       store.dispatch(
         actions.sendFeedback({

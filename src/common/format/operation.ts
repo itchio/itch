@@ -38,7 +38,9 @@ export function formatTask(name: TaskName, stage?: string): LocalizedString {
   }
 }
 
-export function formatReason(reason: DownloadReason): LocalizedString {
+export function formatReason(
+  reason: DownloadReason | undefined
+): LocalizedString {
   switch (reason) {
     case "install":
       return ["download.reason.install"];

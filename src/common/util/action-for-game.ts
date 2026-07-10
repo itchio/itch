@@ -10,7 +10,7 @@ import { classificationActions } from "common/constants/classification-actions";
  */
 export function actionForGame(
   game: Game,
-  cave: CaveSummary | null
+  cave: CaveSummary | null | undefined
 ): ClassificationAction {
   // FIXME: we're not using the cave at all here - we probably should.
   return classificationActions[game.classification] || "launch";

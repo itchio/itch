@@ -6,7 +6,7 @@ import FormattedDuration from "renderer/basics/FormattedDuration";
 
 interface Props {
   game: Game;
-  cave: CaveSummary;
+  cave: CaveSummary | undefined;
   short?: boolean;
   secondsRun?: number;
 }

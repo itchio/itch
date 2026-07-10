@@ -39,7 +39,7 @@ class MainAction extends React.PureComponent<Props> {
           <LoadingCircle
             bare
             wide={wide}
-            progress={progress > 0 ? progress : 0.1}
+            progress={progress !== null && progress > 0 ? progress : 0.1}
           />
         );
       }

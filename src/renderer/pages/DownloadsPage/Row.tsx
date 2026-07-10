@@ -331,12 +331,20 @@ class DownloadRow extends React.PureComponent<Props> {
       );
     }
 
-    const { progress = 0, bps, eta } = status.operation;
+    if (!operation) {
+      // unfinished rows always have a pending download, so getGameStatus
+      // always finds an operation for them; this is unreachable
+      return null;
+    }
+
+    // progress is null while a download exists but progress info
+    // hasn't arrived yet; treat that as 0 like the renderer always has
+    const progress = operation.progress ?? 0;
+    const { bps, eta } = operation;
 
     const progressInnerStyle: React.CSSProperties = {};
     const positiveProgress = progress > 0;
-    const hasNonDownloadTask =
-      operation && operation.type !== OperationType.Download;
+    const hasNonDownloadTask = operation.type !== OperationType.Download;
     const indeterminate =
       (first || hasNonDownloadTask) && !downloadsPaused && !positiveProgress;
     if (indeterminate) {
@@ -361,10 +369,10 @@ class DownloadRow extends React.PureComponent<Props> {
           />
         </div>
         <div className="control--status">
-          {this.renderStatus()}
+          {this.renderStatus(operation)}
           <Filler />
           <>
-            {!operation.paused && first && eta >= 0 && bps ? (
+            {!operation.paused && first && eta != null && eta >= 0 && bps ? (
               <>
                 <Spacer />
                 <DownloadProgressSpan
@@ -437,9 +445,8 @@ class DownloadRow extends React.PureComponent<Props> {
     );
   }
 
-  renderStatus() {
-    const { status, first } = this.props;
-    const { operation } = status;
+  renderStatus(operation: Operation) {
+    const { first } = this.props;
 
     if (operation.paused || !first) {
       return T(["grid.item.queued"]);
@@ -474,7 +481,7 @@ class DownloadRow extends React.PureComponent<Props> {
 
     return (
       <>
-        <LoadingCircle progress={op.progress} />
+        <LoadingCircle progress={op.progress ?? 0} />
         {T(formatOperation(op))}
       </>
     );

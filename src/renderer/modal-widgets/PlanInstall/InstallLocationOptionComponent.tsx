@@ -11,7 +11,8 @@ export const InstallLocationOptionAdd = "_add";
 export interface InstallLocationOption {
   value: string;
   label: LocalizedString;
-  location: InstallLocationSummary;
+  /** null for the "add install location" pseudo-option */
+  location: InstallLocationSummary | null;
 }
 
 export default function InstallLocationOptionComponent(

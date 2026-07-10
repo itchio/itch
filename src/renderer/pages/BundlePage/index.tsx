@@ -57,7 +57,7 @@ class BundlePage extends React.PureComponent<Props> {
         />
 
         <BundleGameSeries
-          label={null}
+          label={undefined}
           params={{
             profileId: profile.id,
             bundleId,
@@ -153,19 +153,19 @@ interface Props extends MeatProps {
 
 const hooked = hookWithProps(BundlePage)((map) => ({
   bundleId: map((rs, props) =>
-    parseInt(ambientTab(rs, props).location.secondPathElement, 10)
+    parseInt(ambientTab(rs, props).location?.secondPathElement ?? "", 10)
   ),
-  sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
-  sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
-  search: map((rs, props) => ambientTab(rs, props).location.query.search),
+  sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
+  sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
+  search: map((rs, props) => ambientTab(rs, props).location?.query.search),
   filterClassification: map(
-    (rs, props) => ambientTab(rs, props).location.query.classification
+    (rs, props) => ambientTab(rs, props).location?.query.classification
   ),
   filterInstalled: map(
-    (rs, props) => !!ambientTab(rs, props).location.query.installed
+    (rs, props) => !!ambientTab(rs, props).location?.query.installed
   ),
   filterPlatform: map(
-    (rs, props) => ambientTab(rs, props).location.query.platform
+    (rs, props) => ambientTab(rs, props).location?.query.platform
   ),
 }))(BundlePage);
 export default withProfile(withTab(hooked));

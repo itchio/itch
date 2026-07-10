@@ -583,8 +583,8 @@ export const actions = wireActions({
     /** identifier of the game the task is tied to */
     gameId: number;
 
-    /** identifier of the cave the task is tied to */
-    caveId: string;
+    /** identifier of the cave the task is tied to, if any */
+    caveId: string | null;
   }>(),
   taskProgress: action<
     ProgressInfo & {

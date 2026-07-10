@@ -7,7 +7,7 @@ import { T } from "renderer/t";
 
 interface Props {
   game: Game;
-  cave: CaveSummary;
+  cave: CaveSummary | undefined;
   short?: boolean;
   className?: string;
 }

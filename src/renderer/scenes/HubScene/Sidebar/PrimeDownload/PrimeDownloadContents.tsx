@@ -215,7 +215,7 @@ interface Props {
   game: Game;
   kind: Kind;
   taskName?: TaskName;
-  caveId?: string;
+  caveId?: string | null;
   progress?: ProgressInfo;
 
   downloadsPaused: boolean;

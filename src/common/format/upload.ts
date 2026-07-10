@@ -21,7 +21,7 @@ export function formatUploadTitleFancy(u: Upload): string {
   return "?";
 }
 
-export function formatBuildVersionInfo(b: Build): string {
+export function formatBuildVersionInfo(b: Build | undefined): string | null {
   if (!b) {
     return null;
   }

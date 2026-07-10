@@ -19,7 +19,7 @@ interface AsTaskOpts {
   store: Store;
   name: TaskName;
   gameId: number;
-  caveId: string;
+  caveId: string | null;
 
   /** Where the task actually performs its duty */
   work: (ctx: Context, logger: RecordingLogger) => Promise<void>;

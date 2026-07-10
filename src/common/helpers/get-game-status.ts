@@ -73,10 +73,11 @@ export interface Operation {
   reason?: DownloadReason;
   active: boolean;
   paused: boolean;
-  progress: number;
-  bps?: number;
-  eta?: number;
-  stage?: string;
+  /** null when a download exists but progress info hasn't arrived yet */
+  progress: number | null;
+  bps?: number | null;
+  eta?: number | null;
+  stage?: string | null;
 }
 
 export interface GameStatus {
@@ -193,7 +194,7 @@ function rawGetGameStatus(
   if (game.userId == profileId) {
     access = Access.Edit;
   } else {
-    const hasPrice = game.minPrice > 0;
+    const hasPrice = (game.minPrice ?? 0) > 0;
     if (!hasPrice) {
       if (game.canBeBought) {
         access = Access.Pwyw;

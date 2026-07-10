@@ -3,7 +3,8 @@ import React from "react";
 import { FormattedRelativeTime } from "react-intl";
 
 interface Props {
-  date: Date | string;
+  /** null/undefined dates render nothing */
+  date: Date | string | null | undefined;
   className?: string;
   before?: string | JSX.Element;
 }

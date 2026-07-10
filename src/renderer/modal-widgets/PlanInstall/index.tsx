@@ -186,7 +186,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
       error,
     } = this.state;
 
-    let canInstall = !error && !busy && uploads && uploads.length > 0;
+    // install requires the picked upload to actually resolve - a stale or
+    // invalid pickedUploadId must not enable the button
+    let pickedUpload = uploads
+      ? findWhere(uploads, { id: pickedUploadId })
+      : undefined;
+    let canInstall = !error && !busy && !!pickedUpload;
     let locationOptions = installLocations.map((il) => {
       let label = il.sizeInfo
         ? `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`
@@ -273,7 +278,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             icon="install"
             primary
             onClick={this.onInstall}
-            id={canInstall ? "modal-install-now" : null}
+            id={canInstall ? "modal-install-now" : undefined}
           >
             {T(["grid.item.install"])}
           </Button>
@@ -362,7 +367,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const requiredSpace = info ? info.diskUsage.neededFreeSpace : -1;
+    // diskUsage is only absent when planning failed, in which case we render
+    // the error branch instead of this one
+    const requiredSpace = info.diskUsage ? info.diskUsage.neededFreeSpace : -1;
     const freeSpace = installLocation.sizeInfo
       ? installLocation.sizeInfo.freeSize
       : -1;
@@ -439,7 +446,17 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const { dispatch, profileId } = this.props;
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
-      const upload = findWhere(uploads, { id: pickedUploadId });
+      // underscore's findWhere tolerates a missing list at runtime (returns
+      // undefined); `?? []` formalizes that
+      const upload = findWhere(uploads ?? [], { id: pickedUploadId });
+      if (!upload) {
+        // canInstall prevents this, but the modal is already closed by the
+        // time we get here - bail rather than queue a broken install
+        rendererLogger.warn(
+          `No upload matching ${pickedUploadId}, not queuing install`
+        );
+        return;
+      }
       const logger = recordingLogger(rendererLogger);
       logger.info(`Queuing install for ${game.url}...`);
       try {
@@ -455,7 +472,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
             queueDownload: true,
             fastQueue: true,
             // scopes bundle ownership materialization to the active profile
-            profileId,
+            // (null when logged out; omitted on the wire, butler falls back)
+            profileId: profileId ?? undefined,
           },
           [hookLogging(logger)]
         );
@@ -528,9 +546,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
         const { profileId } = this.props;
         // profileId scopes bundle ownership materialization to the active
         // profile (this endpoint has install intent)
-        const res = await rcall(InstallGetUploads, { gameId, profileId });
+        const res = await rcall(InstallGetUploads, {
+          gameId,
+          profileId: profileId ?? undefined,
+        });
         const pickedUploadId =
-          uploadId || (res.uploads.length > 0 ? res.uploads[0].id : null);
+          uploadId || (res.uploads.length > 0 ? res.uploads[0].id : undefined);
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
@@ -595,7 +616,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
 interface Props
   extends ModalWidgetProps<PlanInstallParams, PlanInstallResponse> {
   defaultInstallLocation: string;
-  profileId: number;
+  /** null when no profile is logged in */
+  profileId: number | null;
   dispatch: Dispatch;
 
   intl: IntlShape;
@@ -606,7 +628,8 @@ interface State {
   busy: boolean;
   infoBusy?: boolean;
   gameId: number;
-  game?: Game;
+  /** always set: seeded from widgetParams in the constructor */
+  game: Game;
   uploads?: Upload[];
   info?: InstallPlanInfo;
   error?: Error;

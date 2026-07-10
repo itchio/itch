@@ -618,8 +618,8 @@ export interface Task {
   /** id of the game this task is for (which game we're launching, etc.) */
   gameId: number;
 
-  /** id of the cave this task is for */
-  caveId: string;
+  /** id of the cave this task is for, if any */
+  caveId: string | null;
 
   /** bytes per second at which task is being processed, if applicable */
   bps?: number;

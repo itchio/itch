@@ -9,7 +9,7 @@ import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 import modals from "main/modals";
-import { isEmpty, map } from "underscore";
+import { map } from "underscore";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";
 import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-modal";
@@ -34,7 +34,7 @@ export default function (watcher: Watcher) {
       ).items;
     }
 
-    if (isEmpty(caves)) {
+    if (!caves || caves.length === 0) {
       logger.info(
         `No cave for ${game.title} (#${game.id}), attempting install`
       );

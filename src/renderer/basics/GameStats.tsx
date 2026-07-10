@@ -75,7 +75,8 @@ const GameStats = ({ game, status }: Props) => {
       </GameStatsDiv>
     );
   } else {
-    const { minPrice } = game;
+    // minPrice is omitted by butlerd when it's 0; missing means free
+    const minPrice = game.minPrice ?? 0;
     const currency = "USD";
     const { sale } = game;
     const showPlatforms = classAction === "launch" && hasPlatforms(game);

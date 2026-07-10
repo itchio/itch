@@ -151,7 +151,7 @@ export const prepModals = (uuid: () => string) => {
 
     adminWipeBlessing: widget<{}, {}>(uuid),
 
-    naked: widget<{}, {}>(uuid),
+    naked: widget<{} | null, {}>(uuid),
 
     confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(uuid),
 
