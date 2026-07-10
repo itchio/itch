@@ -4,14 +4,13 @@ import { Dispatch } from "common/types";
 import { ambientWind, urlForSearch } from "common/util/navigation";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
-import watching, { Watcher } from "renderer/hocs/watching";
-import GameSearchResult, {
+import SearchResult, {
+  LocalSearchSection,
   SetSearchHighlightFunc,
-} from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GameSearchResult";
+} from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/SearchResult";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { each, isEmpty } from "underscore";
-import { Game } from "common/butlerd/messages";
 
 const ResultsContainer = styled.div`
   background: ${(props) => props.theme.sidebarBackground};
@@ -46,11 +45,21 @@ const ResultList = styled.div`
   font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
-const LibrarySectionLabel = styled.div`
+const SectionLabel = styled.div`
   color: ${(props) => props.theme.secondaryText};
-  font-size: ${(props) => props.theme.fontSizes.smaller};
-  padding: 10px 12px 6px;
+  font-size: ${(props) => props.theme.fontSizes.small};
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 12px 6px;
   text-transform: uppercase;
+
+  /* the first label sits right under the "Search itch.io" row's own
+     border, so don't double up */
+  &:first-of-type {
+    border-top: none;
+    padding-top: 10px;
+  }
 `;
 
 const LocalEmptyState = styled.div`
@@ -93,17 +102,16 @@ const SearchOnItchio = styled.button`
   }
 `;
 
-@watching
 class SearchResultsBar extends React.PureComponent<Props> {
   override render() {
-    const { open, games, query } = this.props;
+    const { open, query } = this.props;
     if (!open || !query) {
       return null;
     }
 
     return (
       <ResultsContainer className={classNames("results-container", { open })}>
-        {this.resultsGrid(games)}
+        {this.resultsGrid()}
       </ResultsContainer>
     );
   }
@@ -112,6 +120,12 @@ class SearchResultsBar extends React.PureComponent<Props> {
   onResultList = (el: Element) => {
     this.resultList = el;
   };
+
+  override componentDidUpdate(prevProps: Props) {
+    if (this.props.query !== prevProps.query && this.resultList) {
+      this.resultList.scrollTop = 0;
+    }
+  }
 
   onSearchOnItchio = () => {
     const { dispatch } = this.props;
@@ -129,16 +143,8 @@ class SearchResultsBar extends React.PureComponent<Props> {
     event.preventDefault();
   };
 
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.searchFetched, async (store, action) => {
-      if (this.resultList) {
-        this.resultList.scrollTop = 0;
-      }
-    });
-  }
-
-  resultsGrid(games: Game[]) {
-    const { highlight, query, loading } = this.props;
+  resultsGrid() {
+    const { highlight, query, loading, sections } = this.props;
 
     const items: React.ReactElement<any>[] = [];
 
@@ -155,19 +161,13 @@ class SearchResultsBar extends React.PureComponent<Props> {
       </SearchOnItchio>
     );
 
-    items.push(
-      <LibrarySectionLabel key="library-label">
-        {T(["search.results.library"])}
-      </LibrarySectionLabel>
-    );
-
     if (loading) {
       items.push(
         <LocalEmptyState key="loading">
           {T(["sidebar.loading"])}
         </LocalEmptyState>
       );
-    } else if (isEmpty(games)) {
+    } else if (isEmpty(sections)) {
       items.push(
         <LocalEmptyState key="no-local-results">
           {T(["search.empty.no_local_results"])}
@@ -175,21 +175,28 @@ class SearchResultsBar extends React.PureComponent<Props> {
       );
     } else {
       let index = 1;
-      each(games, (game) => {
+      each(sections, (section) => {
         items.push(
-          <GameSearchResult
-            key={`game-${game.id}`}
-            game={game}
-            index={index}
-            chosen={index === highlight}
-            setSearchHighlight={this.props.setSearchHighlight}
-          />
+          <SectionLabel key={section.labelKey}>
+            {T([section.labelKey])}
+          </SectionLabel>
         );
-        index++;
+        each(section.results, (result) => {
+          items.push(
+            <SearchResult
+              key={`${result.kind}-${result.id}`}
+              result={result}
+              index={index}
+              chosen={index === highlight}
+              setSearchHighlight={this.props.setSearchHighlight}
+            />
+          );
+          index++;
+        });
       });
     }
 
-    return <ResultList>{items}</ResultList>;
+    return <ResultList ref={this.onResultList}>{items}</ResultList>;
   }
 }
 
@@ -197,7 +204,7 @@ interface Props {
   open: boolean;
   highlight: number;
   query: string;
-  games: Game[];
+  sections: LocalSearchSection[];
   loading: boolean;
 
   dispatch: Dispatch;

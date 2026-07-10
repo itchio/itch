@@ -366,6 +366,30 @@ export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
 );
 
 /**
+ * Result for Search.Local
+ */
+export interface SearchLocalResult {
+  /** Locally-cached games matching the query */
+  games: Game[];
+  /** Bundles owned by the profile matching the query */
+  bundles: Bundle[];
+  /** Collections in the profile's collection list matching the query */
+  collections: Collection[];
+}
+
+/**
+ * Searches butler's local database for games, bundles, and collections.
+ * Does not perform any API requests.
+ *
+ * Games are searched across everything locally cached. Bundles and
+ * collections are scoped to the given profile: only bundles the profile
+ * owns and collections in the profile's collection list are returned.
+ */
+export const SearchLocal = createRequest<SearchLocalParams, SearchLocalResult>(
+  "Search.Local"
+);
+
+/**
  * Result for Fetch.Game
  */
 export interface FetchGameResult {
@@ -3414,6 +3438,16 @@ export interface SearchGamesParams {
  */
 export interface SearchUsersParams {
   /** undocumented */
+  profileId: number;
+  /** undocumented */
+  query: string;
+}
+
+/**
+ * Params for Search.Local
+ */
+export interface SearchLocalParams {
+  /** Profile whose owned bundles and collections are searched */
   profileId: number;
   /** undocumented */
   query: string;

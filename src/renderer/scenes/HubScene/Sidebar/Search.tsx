@@ -1,9 +1,13 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import { Game } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
-import { urlForGame, urlForSearch } from "common/util/navigation";
+import {
+  urlForBundle,
+  urlForCollection,
+  urlForGame,
+  urlForSearch,
+} from "common/util/navigation";
 import React from "react";
 import Floater from "renderer/basics/Floater";
 import { rcall } from "renderer/butlerd/rcall";
@@ -11,9 +15,13 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
+import {
+  LocalSearchResult,
+  LocalSearchSection,
+} from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/SearchResult";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce, size } from "underscore";
+import { debounce, isEmpty } from "underscore";
 import { injectIntl, IntlShape } from "react-intl";
 
 const SearchContainerContainer = styled.section`
@@ -77,7 +85,7 @@ class Search extends React.PureComponent<Props, State> {
       open: false,
       loading: false,
       highlight: 0,
-      games: [],
+      sections: [],
       query: "",
       enterPending: false,
     };
@@ -91,7 +99,7 @@ class Search extends React.PureComponent<Props, State> {
 
     if (query == "") {
       this.setState({
-        games: [],
+        sections: [],
         loading: false,
       });
       return;
@@ -100,16 +108,16 @@ class Search extends React.PureComponent<Props, State> {
     doAsync(async () => {
       this.setState({ loading: true });
       try {
-        const { games } = await rcall(messages.SearchGames, {
+        const res = await rcall(messages.SearchLocal, {
           profileId,
           query,
         });
         if (query === this.state.query) {
-          this.setState({ games });
+          this.setState({ sections: buildSections(res, query) });
         }
       } catch {
         if (query === this.state.query) {
-          this.setState({ games: [] });
+          this.setState({ sections: [] });
         }
       } finally {
         if (query !== this.state.query) {
@@ -145,9 +153,17 @@ class Search extends React.PureComponent<Props, State> {
     this.trigger(query);
   };
 
+  flatResults(): LocalSearchResult[] {
+    const out: LocalSearchResult[] = [];
+    for (const section of this.state.sections) {
+      out.push(...section.results);
+    }
+    return out;
+  }
+
   searchHighlightOffset(offset: number) {
     let highlight = this.state.highlight + offset;
-    const numResults = size(this.state.games) + (this.state.query ? 1 : 0);
+    const numResults = this.flatResults().length + (this.state.query ? 1 : 0);
 
     if (numResults == 0) {
       highlight = 0;
@@ -199,9 +215,9 @@ class Search extends React.PureComponent<Props, State> {
   };
 
   openHighlightedResult = () => {
-    const { games, highlight } = this.state;
-    const game = games[highlight - 1];
-    if (!game) {
+    const { highlight } = this.state;
+    const result = this.flatResults()[highlight - 1];
+    if (!result) {
       this.openItchioSearch();
       return;
     }
@@ -213,7 +229,7 @@ class Search extends React.PureComponent<Props, State> {
     this.props.dispatch(
       actions.navigate({
         wind: "root",
-        url: urlForGame(game.id),
+        url: result.url,
       })
     );
   };
@@ -285,7 +301,7 @@ class Search extends React.PureComponent<Props, State> {
           )}
           <div className="relative-wrapper">
             <SearchResultsBar
-              games={this.state.games}
+              sections={this.state.sections}
               loading={this.state.loading}
               open={this.state.open}
               query={this.state.query}
@@ -319,9 +335,75 @@ interface State {
   highlight: number;
   loading: boolean;
   open: boolean;
-  games: Game[];
+  sections: LocalSearchSection[];
   query: string;
   enterPending: boolean;
+}
+
+function buildSections(
+  res: messages.SearchLocalResult,
+  query: string
+): LocalSearchSection[] {
+  const sections: LocalSearchSection[] = [];
+
+  if (!isEmpty(res.games)) {
+    sections.push({
+      labelKey: "search.results.games",
+      results: res.games.map((game) => ({
+        kind: "game" as const,
+        id: game.id,
+        title: game.title,
+        coverUrl: game.coverUrl,
+        stillCoverUrl: game.stillCoverUrl,
+        subtitle:
+          game.shortText && game.shortText !== "" ? game.shortText : undefined,
+        url: urlForGame(game.id),
+      })),
+    });
+  }
+
+  if (!isEmpty(res.bundles)) {
+    sections.push({
+      labelKey: "search.results.bundles",
+      results: res.bundles.map((bundle) => ({
+        kind: "bundle" as const,
+        id: bundle.id,
+        title: bundle.title,
+        coverUrl: bundle.coverUrl,
+        subtitle: ["bundle.item_count", { itemCount: bundle.gamesCount }],
+        url: urlForBundle(bundle.id),
+      })),
+    });
+  }
+
+  if (!isEmpty(res.collections)) {
+    sections.push({
+      labelKey: "search.results.collections",
+      results: res.collections.map((collection) => ({
+        kind: "collection" as const,
+        id: collection.id,
+        title: collection.title,
+        subtitle: [
+          "collection.item_count",
+          { itemCount: collection.gamesCount },
+        ],
+        url: urlForCollection(collection.id),
+      })),
+    });
+  }
+
+  // order sections by their best match, mirroring butler's per-list
+  // ranking: match tier (exact, prefix, substring), then title length.
+  // Each list arrives pre-ranked, so its first result is its best. Ties
+  // keep the games/bundles/collections order (sort is stable).
+  const q = query.toLowerCase();
+  const score = (section: LocalSearchSection): number => {
+    const title = section.results[0].title;
+    const t = title.toLowerCase();
+    const tier = t === q ? 0 : t.startsWith(q) ? 1 : 2;
+    return tier * 1000 + Math.min(title.length, 999);
+  };
+  return sections.sort((a, b) => score(a) - score(b));
 }
 
 export default hook((map) => ({

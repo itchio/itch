@@ -1,16 +1,32 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { Game } from "common/butlerd/messages";
-import { ambientWind, urlForGame } from "common/util/navigation";
+import { Dispatch, LocalizedString } from "common/types";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Cover from "renderer/basics/Cover";
 import { whenClickNavigates } from "renderer/helpers/whenClickNavigates";
 import { hook } from "renderer/hocs/hook";
 import styled, * as styles from "renderer/styles";
-import { Dispatch } from "common/types";
 import { T } from "renderer/t";
 
-const GameSearchResultDiv = styled.div`
+export type LocalSearchResultKind = "game" | "bundle" | "collection";
+
+export interface LocalSearchResult {
+  kind: LocalSearchResultKind;
+  id: number;
+  title: string;
+  coverUrl?: string;
+  stillCoverUrl?: string;
+  subtitle?: LocalizedString;
+  url: string;
+}
+
+export interface LocalSearchSection {
+  labelKey: string;
+  results: LocalSearchResult[];
+}
+
+const SearchResultDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -73,7 +89,22 @@ const ShortText = styled.span`
   ${styles.singleLine};
 `;
 
-class GameSearchResult extends React.PureComponent<Props> {
+const IconPlaceholder = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${(props) => props.theme.secondaryText};
+  font-size: 24px;
+`;
+
+const iconForKind: Record<LocalSearchResultKind, string> = {
+  game: "gamepad",
+  bundle: "grid",
+  collection: "video_collection",
+};
+
+class SearchResult extends React.PureComponent<Props> {
   private divRef = React.createRef<HTMLDivElement>();
 
   override componentDidUpdate() {
@@ -83,42 +114,38 @@ class GameSearchResult extends React.PureComponent<Props> {
   }
 
   override render() {
-    const { game, chosen } = this.props;
-    const { title, stillCoverUrl, coverUrl } = game;
-
-    const resultClasses = classNames("game-search-result", {
-      chosen: chosen,
-    });
+    const { result, chosen } = this.props;
 
     return (
-      <GameSearchResultDiv
+      <SearchResultDiv
         ref={this.divRef}
-        className={resultClasses}
+        className={classNames("search-result", { chosen })}
         onMouseDown={this.onClick}
         onMouseMove={this.onMouseMove}
-        data-game-id={game.id}
       >
         <SectionDiv>
           <TitleDiv>
-            <Title>{title}</Title>
+            <Title>{result.title}</Title>
           </TitleDiv>
-          <ShortText>
-            {game.shortText && game.shortText !== ""
-              ? game.shortText
-              : T(["search.results.game.no_description"])}
-          </ShortText>
+          {result.subtitle ? <ShortText>{T(result.subtitle)}</ShortText> : null}
         </SectionDiv>
         <div className="cover-container">
-          <Cover
-            hover={false}
-            showGifMarker={false}
-            className="cover"
-            gameId={game.id}
-            coverUrl={coverUrl}
-            stillCoverUrl={stillCoverUrl}
-          />
+          {result.coverUrl ? (
+            <Cover
+              hover={false}
+              showGifMarker={false}
+              className="cover"
+              gameId={result.kind === "game" ? result.id : 0}
+              coverUrl={result.coverUrl}
+              stillCoverUrl={result.stillCoverUrl}
+            />
+          ) : (
+            <IconPlaceholder
+              className={`icon icon-${iconForKind[result.kind]}`}
+            />
+          )}
         </div>
-      </GameSearchResultDiv>
+      </SearchResultDiv>
     );
   }
 
@@ -128,11 +155,11 @@ class GameSearchResult extends React.PureComponent<Props> {
         ev.preventDefault();
       }
 
-      const { game, dispatch } = this.props;
+      const { result, dispatch } = this.props;
       dispatch(
         actions.navigate({
           wind: ambientWind(),
-          url: urlForGame(game.id),
+          url: result.url,
           background,
         })
       );
@@ -148,11 +175,11 @@ class GameSearchResult extends React.PureComponent<Props> {
 export type SetSearchHighlightFunc = (index: number) => void;
 
 interface Props {
-  game: Game;
+  result: LocalSearchResult;
   chosen: boolean;
   index: number;
   dispatch: Dispatch;
   setSearchHighlight: SetSearchHighlightFunc;
 }
 
-export default hook()(GameSearchResult);
+export default hook()(SearchResult);
