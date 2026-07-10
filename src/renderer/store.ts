@@ -1,5 +1,5 @@
 import reducer from "common/reducers";
-import { ChromeStore, RootState, Store } from "common/types";
+import { Action, ChromeStore, RootState, Store } from "common/types";
 import route from "common/util/route";
 import shouldLogAction from "common/util/should-log-action";
 import { Watcher } from "common/util/watcher";
@@ -38,8 +38,9 @@ const enhancers = [syncRenderer, applyMiddleware(...middleware)];
 const initialState = {} as any;
 hack.store = createStore(
   (state: RootState, action: AnyAction) => {
-    const res = reducer(state, action);
-    route(watcher, hack.store, action);
+    // redux's own actions (@@INIT etc.) have no payload; ours always do
+    const res = reducer(state, action as Action<any>);
+    route(watcher, hack.store, action as Action<any>);
     return res;
   },
   initialState,

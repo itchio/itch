@@ -28,7 +28,7 @@ export interface Dispatch {
 
 export interface Action<T extends Object> {
   type: string;
-  payload?: T;
+  payload: T;
 }
 
 interface Watcher {

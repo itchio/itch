@@ -18,26 +18,29 @@ import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { RootState, Store } from "common/types";
+import { Action, RootState, Store } from "common/types";
 import { mainLogger } from "main/logger";
 import { syncMain } from "@goosewobbler/electron-redux";
 
-const crashGetter = (store: MiddlewareAPI<any>) => (
-  next: (action: any) => any
-) => (action: any) => {
-  try {
-    if (action && !action.type) {
-      throw new Error(
-        `refusing to dispatch action with null type: ${JSON.stringify(action)}`
+const crashGetter =
+  (store: MiddlewareAPI<any>) =>
+  (next: (action: any) => any) =>
+  (action: any) => {
+    try {
+      if (action && !action.type) {
+        throw new Error(
+          `refusing to dispatch action with null type: ${JSON.stringify(
+            action
+          )}`
+        );
+      }
+      return next(action);
+    } catch (e) {
+      console.log(
+        `Uncaught redux: for action ${action.type}: ${getErrorStack(e)}`
       );
     }
-    return next(action);
-  } catch (e) {
-    console.log(
-      `Uncaught redux: for action ${action.type}: ${getErrorStack(e)}`
-    );
-  }
-};
+  };
 
 const middleware: Middleware[] = [];
 middleware.push(crashGetter);
@@ -74,8 +77,9 @@ const enhancers = [syncMain, applyMiddleware(...middleware)];
 const hack: { store: Store | null } = { store: null };
 hack.store = createStore(
   (state: RootState, action: AnyAction) => {
-    const res = reducer(state, action);
-    route(watcher, hack.store, action);
+    // redux's own actions (@@INIT etc.) have no payload; ours always do
+    const res = reducer(state, action as Action<any>);
+    route(watcher, hack.store, action as Action<any>);
     return res;
   },
   initialState,

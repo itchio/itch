@@ -1,10 +1,10 @@
-import { Reducer, Action } from "redux";
+import { Action } from "common/types";
 
 function derived<T>(
-  reducer: Reducer<any>,
+  reducer: (state: T, action: Action<any>) => T,
   derivedReducer: (state: any) => any
-): Reducer<T> {
-  return (state: T, action: Action) => {
+): (state: T, action: Action<any>) => T {
+  return (state: T, action: Action<any>) => {
     const reducerFields = reducer(state, action);
     if (state) {
       return {
