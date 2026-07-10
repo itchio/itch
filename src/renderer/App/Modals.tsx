@@ -604,7 +604,7 @@ class Modals extends React.PureComponent<Props, State> {
     return onClick;
   }
 
-  renderWidget(widget: string, modal: Modal): JSX.Element {
+  renderWidget(widget: string, modal: Modal): JSX.Element | null {
     const Component = modalWidgets[widget];
     if (!Component) {
       return null;

@@ -152,8 +152,14 @@ export async function request(
         } else {
           reqBody = querystring.stringify(data);
         }
+        if (typeof reqBody !== "string") {
+          // JSON.stringify returns undefined for undefined/functions/symbols
+          throw new Error(`could not serialize ${typeof data} request body`);
+        }
       } catch (e) {
         reject(new RequestFormattingFailure(getErrorMessage(e)));
+        req.abort();
+        return;
       }
 
       req.setHeader("content-type", "application/x-www-form-urlencoded");

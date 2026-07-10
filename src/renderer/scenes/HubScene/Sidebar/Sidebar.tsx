@@ -243,7 +243,10 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   }
 
-  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
+  static getDerivedStateFromProps(
+    props: Props,
+    state: State
+  ): Partial<State> | null {
     if (!equal(props.openTabs, state.openTabs)) {
       return {
         openTabs: props.openTabs,

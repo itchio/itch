@@ -119,7 +119,7 @@ class DownloadsPage extends React.PureComponent<Props> {
     dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
   };
 
-  renderFirstItem(firstItem: Download): JSX.Element {
+  renderFirstItem(firstItem: Download): JSX.Element | null {
     if (!firstItem) {
       return null;
     }
@@ -135,7 +135,7 @@ class DownloadsPage extends React.PureComponent<Props> {
     );
   }
 
-  renderQueuedItems(queuedItems: Download[]): JSX.Element {
+  renderQueuedItems(queuedItems: Download[]): JSX.Element | null {
     if (isEmpty(queuedItems)) {
       return null;
     }
@@ -152,7 +152,7 @@ class DownloadsPage extends React.PureComponent<Props> {
     );
   }
 
-  renderUpdates(): JSX.Element {
+  renderUpdates(): JSX.Element | null {
     const { updates, updateCheckHappening, updateCheckProgress } = this.props;
 
     if (isEmpty(updates) && !updateCheckHappening) {
@@ -212,7 +212,7 @@ class DownloadsPage extends React.PureComponent<Props> {
     dispatch(actions.setDownloadsPaused({ paused: !downloadsPaused }));
   };
 
-  renderRecentActivity(): JSX.Element {
+  renderRecentActivity(): JSX.Element | null {
     const { finishedItems, dispatch } = this.props;
 
     if (isEmpty(finishedItems)) {

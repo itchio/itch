@@ -13,7 +13,7 @@ import { ReactReduxContext } from "react-redux";
 
 interface GenericProps<Params, Result> {
   params: Params;
-  render: (args: ButlerCallerArgs<Params, Result>) => JSX.Element;
+  render: (args: ButlerCallerArgs<Params, Result>) => JSX.Element | null;
   errorsHandled?: boolean;
   loadingHandled?: boolean;
   sequence?: number;
@@ -36,7 +36,7 @@ interface ButlerCallerArgs<Params, Result> {
   result: Result;
 }
 
-export function renderNoop(): JSX.Element {
+export function renderNoop(): JSX.Element | null {
   return null;
 }
 
@@ -187,7 +187,7 @@ const butlerCaller = <Params, Result>(
     }
 
     static renderCallback(
-      f: (args: ButlerCallerArgs<Params, Result>) => JSX.Element
+      f: (args: ButlerCallerArgs<Params, Result>) => JSX.Element | null
     ) {
       return f;
     }

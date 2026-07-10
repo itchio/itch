@@ -12,10 +12,11 @@ export enum Phase {
 
 class State {
   private phase: Phase;
-  private convo: Conversation;
+  private convo: Conversation | null;
 
   constructor() {
     this.phase = Phase.IDLE;
+    this.convo = null;
   }
 
   async cancel() {

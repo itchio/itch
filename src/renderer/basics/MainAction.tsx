@@ -22,9 +22,9 @@ class MainAction extends React.PureComponent<Props> {
     const { wide } = this.props;
     const { cave, access, operation, update } = this.props.status;
     let translucent = false;
-    let iconComponent: JSX.Element;
-    let icon: string;
-    let label: LocalizedString;
+    let iconComponent: JSX.Element | undefined;
+    let icon: string | undefined;
+    let label: LocalizedString | undefined;
     let primary = false;
 
     if (operation) {

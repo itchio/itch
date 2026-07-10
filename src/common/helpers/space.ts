@@ -275,7 +275,7 @@ export class Space {
 
 const fallbackIcon = "moon";
 
-export function internalPageToIcon(internalPage: string): string {
+export function internalPageToIcon(internalPage: string | undefined): string {
   switch (internalPage) {
     case "featured":
       return "itchio";

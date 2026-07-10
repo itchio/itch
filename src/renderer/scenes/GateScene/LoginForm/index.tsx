@@ -347,7 +347,7 @@ class LoginForm extends React.PureComponent<Props, State> {
     });
   };
 
-  renderError(): JSX.Element {
+  renderError(): JSX.Element | null {
     const err = this.props.error;
     if (!err) {
       return null;

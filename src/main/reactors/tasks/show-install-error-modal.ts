@@ -19,7 +19,7 @@ interface InstallErrorParams {
 
 export async function showInstallErrorModal(params: InstallErrorParams) {
   let buttons: ModalButtonSpec[] = [];
-  let detail: LocalizedString;
+  let detail: LocalizedString | undefined;
   let shouldRetry = true;
   let forceDetails = false;
 

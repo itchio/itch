@@ -162,7 +162,7 @@ class Log extends React.PureComponent<Props, State> {
             ) : null}
             {entries.map((x, i) => {
               if (x.hasOwnProperty("msg")) {
-                let jumpElement: JSX.Element;
+                let jumpElement: JSX.Element | undefined;
                 let previousEntry = entries[i - 1];
                 if (x.time) {
                   const currDate = new Date(x.time);

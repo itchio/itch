@@ -59,9 +59,9 @@ function urlToLocation(url: string): TabInstanceLocation {
   if (pathname) {
     pathElements = pathname.replace(/^\//, "").split("/");
   }
-  let internalPage: string;
-  let firstPathElement: string;
-  let secondPathElement: string;
+  let internalPage: string | undefined;
+  let firstPathElement: string | undefined;
+  let secondPathElement: string | undefined;
   let firstPathNumber: number;
   let isBrowser = true;
   if (protocol === "itch:") {
@@ -94,7 +94,7 @@ const selector = (state: TabInstance): TabInstance => {
   const { history, currentIndex } = state;
   const page = history[currentIndex];
   let location: TabInstanceLocation = page ? urlToLocation(page.url) : null;
-  let resource: TabInstanceResource;
+  let resource: TabInstanceResource | undefined;
   if (page && page.resource) {
     let resourceElements = page.resource.split("/");
     resource = {

@@ -103,10 +103,8 @@ export async function downloadToFile(
 
 // cf. https://github.com/itchio/httpkit/blob/50f60be27c88c7d8a3cdc01ea2029d465a830ceb/htfs/file.go
 let httpStatusesThatWarrantARetry = [
-  429 /* Too Many Requests */,
-  500 /* Internal Server Error */,
-  502 /* Bad Gateway */,
-  503 /* Service Unavailable */,
+  429 /* Too Many Requests */, 500 /* Internal Server Error */,
+  502 /* Bad Gateway */, 503 /* Service Unavailable */,
 ];
 
 export async function downloadToFileWithRetry(
@@ -118,7 +116,7 @@ export async function downloadToFileWithRetry(
   let tries = 0;
   const maxTries = 8;
 
-  let lastError: Error;
+  let lastError!: Error;
   while (tries < maxTries) {
     if (tries > 0) {
       logger.warn(`Downloading file, try ${tries}`);

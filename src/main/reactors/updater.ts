@@ -119,7 +119,7 @@ export default function (watcher: Watcher) {
     logger.info(`Looking for updates for cave ${caveId}`);
     const { cave } = await mcall(messages.FetchCave, { caveId });
 
-    let res: CheckUpdateResult;
+    let res!: CheckUpdateResult;
     try {
       // cf. https://github.com/itchio/itch/issues/2128
       await mcall(messages.CavesSetPinned, {

@@ -121,7 +121,7 @@ async function loadLocale(store: Store, lang: string) {
   if (upgradesEnabled) {
     const remote = remoteFileName(lang);
     try {
-      let payload: string;
+      let payload: string | undefined;
       try {
         logger.debug(`Reading remote locale file ${local}`);
         payload = await readFile(remote);

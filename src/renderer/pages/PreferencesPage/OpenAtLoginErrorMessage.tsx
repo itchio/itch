@@ -11,7 +11,7 @@ const OpenAtLoginErrorMessage = () => {
     return null;
   }
 
-  let cause: JSX.Element | string;
+  let cause: JSX.Element | string | undefined;
 
   if (openAtLoginError.cause === "no_desktop_file") {
     cause = T([

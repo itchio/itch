@@ -63,7 +63,8 @@ async function driverPoll(store: Store) {
     switch (state.getPhase()) {
       case Phase.IDLE: {
         state.setPhase(Phase.STARTING);
-        let driveConvo: Conversation;
+        // stays undefined if mcall rejects before starting the conversation
+        let driveConvo: Conversation | undefined;
         try {
           await mcall(messages.DownloadsDrive, {}, (convo) => {
             hookLogging(convo, logger);
@@ -119,7 +120,10 @@ async function driverPoll(store: Store) {
             logger.error(`${getErrorStack(e)}`);
           }
         } finally {
-          if (state.isConvoCurrent(driveConvo)) {
+          // no driveConvo means our call failed before a conversation was
+          // created; nothing else can have taken over (phase was STARTING),
+          // so go back to idle rather than staying stuck in STARTING
+          if (!driveConvo || state.isConvoCurrent(driveConvo)) {
             state.setPhase(Phase.IDLE);
             logger.debug(`Going back to idle after Downloads.Drive call`);
           } else {

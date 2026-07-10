@@ -866,14 +866,14 @@ export interface TabInstanceLocation {
   /** "https:", "itch:", etc. */
   protocol: string;
 
-  /** "new-tab", "applog", etc. */
-  internalPage: string;
+  /** "new-tab", "applog", etc. - only set for itch: URLs */
+  internalPage?: string;
 
   /** in "itch://games/3", "3" as string */
-  firstPathElement: string;
+  firstPathElement?: string;
 
   /** in "itch://caves/:caveId/launch", "launch" as string */
-  secondPathElement: string;
+  secondPathElement?: string;
 
   /** in "itch://games/3", 3 as number */
   firstPathNumber: number;

@@ -189,7 +189,7 @@ class SecretSettings extends React.PureComponent<Props> {
     );
 
     doAsync(async () => {
-      let e: Error;
+      let e: Error | undefined;
       try {
         await rcall(FakeRequest, {});
       } catch (ee) {

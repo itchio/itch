@@ -80,12 +80,16 @@ export interface Operation {
 }
 
 export interface GameStatus {
-  downloadKey: DownloadKeySummary;
-  cave: CaveSummary;
+  /** undefined if the profile owns no key for this game */
+  downloadKey: DownloadKeySummary | undefined;
+  /** undefined if the game is not installed */
+  cave: CaveSummary | undefined;
   numCaves: number;
   access: Access;
-  operation: Operation;
-  update: GameUpdate;
+  /** null if no task or download is in progress */
+  operation: Operation | null;
+  /** undefined if no update is available (or the game is not installed) */
+  update: GameUpdate | undefined;
 }
 
 /**
@@ -113,16 +117,14 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
     commons.downloadKeyIdsByGameId[game.id]
   );
 
-  let cave: CaveSummary;
+  let cave: CaveSummary | undefined;
   let numCaves = 0;
-  if (!cave) {
-    if (caveId) {
-      cave = commons.caves[caveId];
-    } else {
-      let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
-      numCaves = size(caves);
-      cave = first(caves);
-    }
+  if (caveId) {
+    cave = commons.caves[caveId];
+  } else {
+    let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+    numCaves = size(caves);
+    cave = first(caves);
   }
   const downloadKey = first(downloadKeys);
 
@@ -130,7 +132,7 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   const task = first(tasks.tasksByGameId[game.id]);
 
   const pendingDownloads = getPendingForGame(downloads, game.id);
-  let download: Download;
+  let download: Download | undefined;
   if (caveId) {
     download = findWhere(pendingDownloads, { caveId });
   } else {
@@ -139,7 +141,7 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
 
   let isActiveDownload = false;
   let areDownloadsPaused = false;
-  let downloadProgress: DownloadProgress;
+  let downloadProgress: DownloadProgress | undefined;
   if (download) {
     const activeDownload = getActiveDownload(downloads);
     isActiveDownload = download.id === activeDownload.id;
@@ -147,7 +149,7 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
     downloadProgress = downloads.progresses[download.id];
   }
 
-  let update: GameUpdate;
+  let update: GameUpdate | undefined;
   if (cave) {
     update = rs.gameUpdates.updates[cave.id];
   }
@@ -174,14 +176,14 @@ export default getGameStatus;
 
 function rawGetGameStatus(
   game: Game,
-  cave: CaveSummary,
+  cave: CaveSummary | undefined,
   numCaves: number,
-  downloadKey: DownloadKeySummary,
+  downloadKey: DownloadKeySummary | undefined,
   pressUser: boolean,
-  task: Task,
-  download: Download,
-  downloadProgress: DownloadProgress,
-  update: GameUpdate,
+  task: Task | undefined,
+  download: Download | undefined,
+  downloadProgress: DownloadProgress | undefined,
+  update: GameUpdate | undefined,
   isDownloadActive: boolean,
   areDownloadsPaused: boolean,
   profileId: number
@@ -214,7 +216,7 @@ function rawGetGameStatus(
     }
   }
 
-  let operation: Operation = null;
+  let operation: Operation | null = null;
 
   if (task) {
     operation = {

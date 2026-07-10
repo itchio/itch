@@ -159,7 +159,7 @@ class StandardGameCover extends React.PureComponent<Props> {
 
 interface Props {
   dispatch: Dispatch;
-  game: Game;
+  game: Game | undefined;
   showInfo?: boolean;
   className?: string;
   showGifMarker?: boolean;

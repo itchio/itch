@@ -16,8 +16,8 @@ import { renderNoop } from "renderer/hocs/butlerCaller";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
 
 interface GenericExtraProps<Item> {
-  renderDescExtras?: (item: Item) => JSX.Element;
-  renderItemExtras?: (item: Item) => JSX.Element;
+  renderDescExtras?: (item: Item) => JSX.Element | null;
+  renderItemExtras?: (item: Item) => JSX.Element | null;
 }
 
 interface GameSeriesProps<Params, Item>

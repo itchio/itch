@@ -19,7 +19,7 @@ const logger = mainLogger.child(__filename);
 export default function (watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game, caveId } = action.payload;
-    let caves: Cave[];
+    let caves: Cave[] | undefined;
 
     if (caveId) {
       const { cave } = await mcall(messages.FetchCave, { caveId });

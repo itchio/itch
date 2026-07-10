@@ -34,8 +34,8 @@ export interface BaseSeriesProps<Params, Item, Record> {
   getRecord: (item: Item) => Record;
   getKey?: (item: Item) => any;
 
-  renderMainFilters?: () => JSX.Element;
-  renderExtraFilters?: () => JSX.Element;
+  renderMainFilters?: () => JSX.Element | null;
+  renderExtraFilters?: () => JSX.Element | null;
 }
 
 interface GenericProps<Params, Item, Record, ExtraProps>
@@ -194,7 +194,7 @@ export function makeSeries<
       return <ErrorState error={error} />;
     }
 
-    renderItems(result: Res, loading: boolean): JSX.Element {
+    renderItems(result: Res, loading: boolean): JSX.Element | null {
       if (!hasItems(result)) {
         if (loading) {
           return null;

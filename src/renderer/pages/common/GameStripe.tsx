@@ -73,7 +73,7 @@ interface GenericProps<Params, Item> {
   title: LocalizedString;
   href: string;
   params: Params;
-  renderTitleExtras?: () => JSX.Element;
+  renderTitleExtras?: () => JSX.Element | null;
   getGame: (item: Item) => Game;
 
   dispatch: Dispatch;
@@ -164,7 +164,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       return <ErrorState error={error} />;
     }
 
-    renderItems(result: Res): JSX.Element {
+    renderItems(result: Res): JSX.Element | null {
       if (!result) {
         return null;
       }
@@ -241,7 +241,7 @@ export function makeStripeCallbacks<Params, Res extends FetchRes<any>>(
   };
 }
 
-function renderNoop(): JSX.Element {
+function renderNoop(): JSX.Element | null {
   return null;
 }
 

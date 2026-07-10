@@ -43,7 +43,7 @@ class LocationSummary extends React.PureComponent<Props> {
   getGame = LocationStripe.getGameCallback((cave) => cave.game);
   renderTitleExtras = () => {
     const { location } = this.props;
-    let installedSize: string;
+    let installedSize: string | undefined;
     if (location && location.sizeInfo && location.sizeInfo.installedSize > 0) {
       installedSize = fileSize(location.sizeInfo.installedSize);
     }

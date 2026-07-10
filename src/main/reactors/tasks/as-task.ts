@@ -55,7 +55,7 @@ async function asTask(opts: AsTaskOpts) {
 
   getCurrentTasks()[id] = ctx;
 
-  let err: Error;
+  let err: Error | undefined;
 
   const { work, onError, onCancel } = opts;
 

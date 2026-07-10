@@ -251,7 +251,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
     );
   }
 
-  renderURL(url: string): JSX.Element {
+  renderURL(url: string): JSX.Element | null {
     let isHTTP = HTTP_RE.test(url);
     let isHTTPS = HTTPS_RE.test(url);
     let isItch = ITCH_RE.test(url);
@@ -338,7 +338,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   static getDerivedStateFromProps(
     props: Readonly<Props>,
     state: State
-  ): Partial<State> {
+  ): Partial<State> | null {
     if (props.url !== state.url) {
       return {
         url: props.url,

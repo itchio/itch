@@ -31,10 +31,7 @@ class PrimeDownload extends React.PureComponent<Props> {
     const { download, progress } = this.props;
     if (download) {
       const { game } = download;
-      let caveId: string;
-      if (download.finishedAt) {
-        caveId = download.caveId;
-      }
+      const caveId = download.finishedAt ? download.caveId : undefined;
       return (
         <PrimeDownloadContents
           game={game}
