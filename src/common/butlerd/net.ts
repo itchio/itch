@@ -50,29 +50,28 @@ function makeEndpointKey(endpoint: Endpoint): string {
 }
 
 async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
-  let c: Client;
-  let endpoint = store.getState().butlerd.endpoint;
-  if (!endpoint) {
-    endpoint = await getEndpoint(store, parentLogger);
-  }
-  const endpointKey = makeEndpointKey(endpoint);
-  const foundClient = clients[endpointKey];
-  if (foundClient) {
-    c = foundClient;
-  } else {
-    c = makeClient(endpoint, parentLogger);
-    clients[endpointKey] = c;
-  }
+  while (true) {
+    const endpoint = await getEndpoint(store, parentLogger);
+    const endpointKey = makeEndpointKey(endpoint);
+    let c = clients[endpointKey];
+    if (!c) {
+      c = makeClient(endpoint, parentLogger);
+      clients[endpointKey] = c;
+    }
 
-  const currentEndpoint = store.getState().butlerd.endpoint;
-  if (currentEndpoint && !isEqual(c.endpoint, currentEndpoint)) {
+    // the endpoint may have been cleared or replaced while we were
+    // setting up (butlerd restart); if so, start over against the
+    // current one instead of returning a client for a dead endpoint
+    const currentEndpoint = store.getState().butlerd.endpoint;
+    if (isEqual(endpoint, currentEndpoint)) {
+      return c;
+    }
     parentLogger.warn(
-      `(butlerd) Endpoint changed (${c.endpoint.tcp.address} => ${currentEndpoint.tcp.address}), making fresh client`
+      `(butlerd) Endpoint changed (${endpoint.tcp.address} => ${
+        currentEndpoint ? currentEndpoint.tcp.address : "<none>"
+      }), retrying`
     );
-    c = makeClient(endpoint, parentLogger);
-    clients[endpointKey] = c;
   }
-  return c;
 }
 
 export async function call<Params, Res>(
