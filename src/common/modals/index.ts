@@ -41,6 +41,8 @@ export interface TypedModal<Params, Response> extends Modal {
   widgetParams: Params;
   widget?: any;
   __response: Response;
+  /** always assigned by make() */
+  id: string;
 }
 
 interface TypedModalUpdateBase<Params> extends ModalUpdate {

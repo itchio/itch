@@ -13,7 +13,7 @@ export function formatError(
     const { code, data } = re.rpcError;
     if (data && data.apiError && apiErrorPrefix) {
       const { messages } = data.apiError;
-      const message = first(messages) as string;
+      const message = first(messages ?? []);
       if (message) {
         const snakeCaseMessage = message.replace(/\s/g, "_").toLowerCase();
         return [

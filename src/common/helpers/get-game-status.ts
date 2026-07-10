@@ -145,7 +145,7 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   let downloadProgress: DownloadProgress | undefined;
   if (download) {
     const activeDownload = getActiveDownload(downloads);
-    isActiveDownload = download.id === activeDownload.id;
+    isActiveDownload = download.id === activeDownload?.id;
     areDownloadsPaused = downloads.paused;
     downloadProgress = downloads.progresses[download.id];
   }

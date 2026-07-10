@@ -119,7 +119,7 @@ class DownloadsPage extends React.PureComponent<Props> {
     dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
   };
 
-  renderFirstItem(firstItem: Download): JSX.Element | null {
+  renderFirstItem(firstItem: Download | undefined): JSX.Element | null {
     if (!firstItem) {
       return null;
     }

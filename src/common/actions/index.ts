@@ -139,8 +139,9 @@ export const actions = wireActions({
   modalClosed: action<{
     wind: string;
 
-    /** id of the modal that was just closed */
-    id: string;
+    /** id of the modal that was just closed, undefined when closing
+     * the frontmost modal of a wind that had none */
+    id: string | undefined;
 
     /** if there was a response, it's here */
     response: any;

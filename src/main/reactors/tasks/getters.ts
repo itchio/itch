@@ -2,7 +2,9 @@ import { Task, TasksState } from "common/types";
 import { first, values } from "underscore";
 import { memoize } from "common/util/lru-memoize";
 
-export const getActiveTask = memoize(1, function (tasks: TasksState): Task {
+export const getActiveTask = memoize(1, function (tasks: TasksState):
+  | Task
+  | undefined {
   return first(getRunningTasks(tasks));
 });
 

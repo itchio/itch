@@ -98,13 +98,13 @@ const OptionCheckmark = styled.span`
 class OptionWrapper extends React.PureComponent<
   React.HTMLAttributes<HTMLDivElement>
 > {
-  el: HTMLElement;
+  el: HTMLElement | null = null;
 
   override render() {
     return <OptionWrapperDiv {...this.props} ref={this.gotEl} />;
   }
 
-  gotEl = (el: HTMLElement) => {
+  gotEl = (el: HTMLElement | null) => {
     this.el = el;
     if (this.el) {
       this.updateScroll();
@@ -117,7 +117,7 @@ class OptionWrapper extends React.PureComponent<
 
   updateScroll() {
     const { className } = this.props;
-    if (/focused/.test(className)) {
+    if (this.el && /focused/.test(className ?? "")) {
       (this.el as any).scrollIntoViewIfNeeded();
     }
   }
@@ -202,7 +202,7 @@ export default class SimpleSelect<
 
   // options arrays are often rebuilt by parent re-renders, so a stored
   // option reference can go stale; match by value, not identity
-  indexOfOption(target: OptionType): number {
+  indexOfOption(target: OptionType | undefined): number {
     if (!target) {
       return -1;
     }
@@ -328,7 +328,9 @@ export default class SimpleSelect<
       ev.preventDefault();
       if (open) {
         this.close();
-        this.props.onChange(this.state.focusedValue);
+        if (this.state.focusedValue != null) {
+          this.props.onChange(this.state.focusedValue);
+        }
       } else {
         this.open();
       }
@@ -358,7 +360,9 @@ export default class SimpleSelect<
       if (ev.key === " " && !searchActive) {
         if (open) {
           this.close();
-          this.props.onChange(this.state.focusedValue);
+          if (this.state.focusedValue != null) {
+            this.props.onChange(this.state.focusedValue);
+          }
         } else {
           this.open();
         }
@@ -461,7 +465,10 @@ export default class SimpleSelect<
   onOptionClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     ev.stopPropagation();
     const { onChange } = this.props;
-    onChange(this.getValueForWrapper(ev.currentTarget));
+    const value = this.getValueForWrapper(ev.currentTarget);
+    if (value) {
+      onChange(value);
+    }
     this.close();
   };
 
@@ -474,7 +481,7 @@ export default class SimpleSelect<
   };
 
   getValueForWrapper(el: HTMLElement) {
-    let dataValue = JSON.parse(el.dataset.value) as any;
+    let dataValue = JSON.parse(el.dataset.value ?? "null") as any;
     const { options } = this.props;
     return options.find((o) => o.value === dataValue);
   }
@@ -504,7 +511,8 @@ type OnChange<OptionType> = (value: OptionType) => void;
 
 interface Props<OptionType> {
   options: OptionType[];
-  value: OptionType;
+  /** undefined when nothing is selected (yet) */
+  value: OptionType | undefined;
   onChange: OnChange<OptionType>;
   isLoading?: boolean;
   OptionComponent?: React.ComponentType<OptionComponentProps<OptionType>>;
@@ -513,7 +521,8 @@ interface Props<OptionType> {
 
 interface State<OptionType> {
   open: boolean;
-  focusedValue: OptionType;
+  /** undefined when there are no options to focus */
+  focusedValue: OptionType | undefined;
   search: string;
   lastSearchAt: number;
   lastKeyboardFocusAt: number;

@@ -8,10 +8,11 @@ import { actions } from "common/actions";
 import derivedReducer from "common/reducers/derived-reducer";
 import reducer from "common/reducers/reducer";
 
-const initialState = {
+const initialState: TasksState = {
   tasks: {},
+  tasksByGameId: {},
   finishedTasks: [],
-} as TasksState;
+};
 
 const baseReducer = reducer<TasksState>(initialState, (on) => {
   on(actions.taskStarted, (state, action) => {
@@ -64,7 +65,7 @@ const selector = createStructuredSelector<
   Partial<TasksState>,
   Partial<TasksState>
 >({
-  tasksByGameId: (state) => groupBy(state.tasks, "gameId"),
+  tasksByGameId: (state) => groupBy(state.tasks ?? {}, "gameId"),
 });
 
 export default derivedReducer<TasksState>(baseReducer, selector);
