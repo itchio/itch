@@ -101,6 +101,10 @@ document.addEventListener("drop", (event) => {
 
 // Catch unhandled form submissions that would navigate away from the app
 document.addEventListener("submit", (event) => {
+  if (event.defaultPrevented) {
+    // handled by a form's onSubmit (e.g. the login form)
+    return;
+  }
   console.error(
     "Unhandled form submission intercepted. This likely indicates a button " +
       'inside a form is missing type="button". Form:',
