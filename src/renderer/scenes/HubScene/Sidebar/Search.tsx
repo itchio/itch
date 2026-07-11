@@ -77,7 +77,7 @@ const SearchContainer = styled.div`
 
 @watching
 class Search extends React.PureComponent<Props, State> {
-  input: HTMLInputElement;
+  input: HTMLInputElement | null = null;
 
   constructor(props: Search["props"], context: any) {
     super(props, context);

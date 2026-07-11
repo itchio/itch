@@ -2,6 +2,7 @@ import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { GameClassification, Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
+import { classificationFromQuery } from "common/helpers/classification-from-query";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
@@ -143,12 +144,12 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 
   bundleId: number;
-  sortBy: string;
-  sortDir: string;
-  search: string;
-  filterClassification: GameClassification;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
+  search: string | undefined;
+  filterClassification: GameClassification | undefined;
   filterInstalled: boolean;
-  filterPlatform: string;
+  filterPlatform: string | undefined;
 }
 
 const hooked = hookWithProps(BundlePage)((map) => ({
@@ -158,8 +159,10 @@ const hooked = hookWithProps(BundlePage)((map) => ({
   sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
   sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   search: map((rs, props) => ambientTab(rs, props).location?.query.search),
-  filterClassification: map(
-    (rs, props) => ambientTab(rs, props).location?.query.classification
+  filterClassification: map((rs, props) =>
+    classificationFromQuery(
+      ambientTab(rs, props).location?.query.classification
+    )
   ),
   filterInstalled: map(
     (rs, props) => !!ambientTab(rs, props).location?.query.installed

@@ -119,9 +119,6 @@ interface Props {
 
 export default withTab(
   hookWithProps(LocationContents)((map) => ({
-    installLocationId: map(
-      (rs, props) => ambientTab(rs, props).location?.firstPathElement
-    ),
     sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
     sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   }))(LocationContents)

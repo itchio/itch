@@ -103,8 +103,9 @@ const SectionDiv = styled.div`
 const parentLogger = rendererLogger.child("ScanInstallLocationsPage");
 
 class ScanInstallLocations extends React.PureComponent<Props, State> {
-  resolve: (val?: any) => void;
-  reject: (e: Error) => void;
+  /** set once the confirm-import prompt is shown */
+  resolve: ((val?: any) => void) | null = null;
+  reject: ((e: Error) => void) | null = null;
 
   constructor(props: Props, context: any) {
     super(props, context);
@@ -281,7 +282,9 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
   }
 
   onConfirm = () => {
-    this.resolve();
+    if (this.resolve) {
+      this.resolve();
+    }
   };
 
   onClose = () => {

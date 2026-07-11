@@ -66,19 +66,29 @@ export enum OperationType {
   Task,
 }
 
-export interface Operation {
-  type: OperationType;
-  name?: TaskName;
-  id?: string;
-  reason?: DownloadReason;
+interface OperationBase {
   active: boolean;
   paused: boolean;
   /** null when a download exists but progress info hasn't arrived yet */
   progress: number | null;
   bps?: number | null;
   eta?: number | null;
+}
+
+export interface TaskOperation extends OperationBase {
+  type: OperationType.Task;
+  name: TaskName;
+  stage?: string;
+}
+
+export interface DownloadOperation extends OperationBase {
+  type: OperationType.Download;
+  id: string;
+  reason: DownloadReason;
   stage?: string | null;
 }
+
+export type Operation = TaskOperation | DownloadOperation;
 
 export interface GameStatus {
   /** undefined if the profile owns no key for this game */
@@ -228,6 +238,7 @@ function rawGetGameStatus(
     operation = {
       type: OperationType.Task,
       name: task.name,
+      stage: task.stage,
       active: true,
       paused: false,
       progress: task.progress,

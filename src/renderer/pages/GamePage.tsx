@@ -2,6 +2,7 @@ import * as messages from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
+import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -17,6 +18,11 @@ const FetchGame = butlerCaller(messages.FetchGame);
 class GamePage extends React.PureComponent<Props> {
   override render() {
     const { gameId } = this.props;
+    if (gameId === undefined || Number.isNaN(gameId)) {
+      // no numeric game id in the URL: the fetch would have failed anyway,
+      // show the same error state without the round-trip
+      return <ErrorState error={new Error("Missing game id in URL")} />;
+    }
 
     return (
       <FetchGame
@@ -53,7 +59,7 @@ interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  gameId: number;
+  gameId: number | undefined;
 }
 
 export default withTab(

@@ -27,7 +27,8 @@ const LogoIndicatorDiv = styled.div`
 `;
 
 class LogoIndicator extends React.PureComponent<Props> {
-  vivus: Vivus;
+  /** set asynchronously by Vivus's onReady callback */
+  vivus: Vivus | null = null;
 
   override render() {
     return <LogoIndicatorDiv id="logo-indicator-div" ref={this.gotEl} />;

@@ -145,7 +145,7 @@ interface Props {
   dispatch: Dispatch<any>;
 
   status: GameStatus;
-  profileId: number;
+  profileId: number | null;
 }
 
 export default hookWithProps(BrowserContextGame)((map) => ({

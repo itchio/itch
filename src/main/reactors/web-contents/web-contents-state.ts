@@ -26,16 +26,3 @@ export function forgetWebContents(wind: string, tab: string) {
   }
   delete webContents[wind][tab];
 }
-
-export function webContentsToTab(wc: WebContents): string | null {
-  for (const wind of Object.keys(webContents)) {
-    const tabs = webContents[wind];
-    for (const tab of Object.keys(tabs)) {
-      const tbv = webContents[wind][tab];
-      if (tbv === wc) {
-        return tab;
-      }
-    }
-  }
-  return null;
-}

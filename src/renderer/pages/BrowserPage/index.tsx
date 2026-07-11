@@ -46,8 +46,6 @@ const WebviewShell = styled.div`
 `;
 
 class BrowserPage extends React.PureComponent<Props> {
-  canvas: HTMLCanvasElement;
-
   constructor(props: BrowserPage["props"], context: any) {
     super(props, context);
   }
@@ -88,8 +86,8 @@ class BrowserPage extends React.PureComponent<Props> {
     }
   }
 
-  wv: Electron.WebviewTag;
-  gotWebview = (wv: Electron.WebviewTag) => {
+  wv: Electron.WebviewTag | null = null;
+  gotWebview = (wv: Electron.WebviewTag | null) => {
     this.wv = wv;
     if (wv) {
       wv.addEventListener("dom-ready", this.wcDomReady);
@@ -116,11 +114,11 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 
   url: string | undefined;
-  sleepy: boolean;
-  loading: boolean;
+  sleepy: boolean | undefined;
+  loading: boolean | undefined;
 
-  proxy: string;
-  proxySource: ProxySource;
+  proxy: string | undefined;
+  proxySource: ProxySource | undefined;
   disableBrowser: boolean;
 
   partition: string;

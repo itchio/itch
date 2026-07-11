@@ -1,5 +1,6 @@
 import * as messages from "common/butlerd/messages";
 import { GameClassification, Profile } from "common/butlerd/messages";
+import { classificationFromQuery } from "common/helpers/classification-from-query";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
@@ -92,12 +93,12 @@ interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  sortBy: string;
-  sortDir: string;
-  search: string;
-  classification: GameClassification;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
+  search: string | undefined;
+  classification: GameClassification | undefined;
   installed: boolean;
-  platform: string;
+  platform: string | undefined;
 }
 
 export default withTab(
@@ -108,8 +109,10 @@ export default withTab(
         (rs, props) => ambientTab(rs, props).location?.query.sortDir
       ),
       search: map((rs, props) => ambientTab(rs, props).location?.query.search),
-      classification: map(
-        (rs, props) => ambientTab(rs, props).location?.query.classification
+      classification: map((rs, props) =>
+        classificationFromQuery(
+          ambientTab(rs, props).location?.query.classification
+        )
       ),
       installed: map(
         (rs, props) =>

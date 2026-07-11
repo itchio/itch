@@ -77,10 +77,8 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
   let statusItems: MenuTemplate = [];
 
   const itemForOperation = (operation: Operation): MenuItem => {
-    // formatOperation returns null for nameless operations; the resulting
-    // item then has no label, matching what we've always rendered
-    const localizedLabel = formatOperation(operation) ?? undefined;
-    if (operation.name === "launch") {
+    const localizedLabel = formatOperation(operation);
+    if (operation.type === OperationType.Task && operation.name === "launch") {
       return {
         localizedLabel,
         submenu: [

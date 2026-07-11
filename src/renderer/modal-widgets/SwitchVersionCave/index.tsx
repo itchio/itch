@@ -157,7 +157,10 @@ class SwitchVersionCave extends React.PureComponent<Props> {
         <div className="version--raw">{`#${b.id}`}</div>
         <div className="filler" />
         <div className="spacer" />
-        <div className="timeago" data-rh={JSON.stringify({ date: updatedAt })}>
+        <div
+          className="timeago"
+          data-rh={updatedAt ? JSON.stringify({ date: updatedAt }) : undefined}
+        >
           {updatedAt ? (
             <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
           ) : null}

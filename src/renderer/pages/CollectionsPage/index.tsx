@@ -103,10 +103,10 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
   profile: Profile;
 
-  sortBy: string;
-  sortDir: string;
-  url: string;
-  search: string;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
+  url: string | undefined;
+  search: string | undefined;
 }
 
 const hooked = hookWithProps(CollectionsPage)((map) => ({

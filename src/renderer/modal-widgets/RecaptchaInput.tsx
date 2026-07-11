@@ -38,7 +38,7 @@ const WidgetDiv = styled.div`
 
 @watching
 class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
-  webview: Electron.WebviewTag;
+  webview: Electron.WebviewTag | null = null;
 
   constructor(props: RecaptchaInput["props"], context: any) {
     super(props, context);
@@ -81,7 +81,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
     );
   }
 
-  gotWebview = (wv: Electron.WebviewTag) => {
+  gotWebview = (wv: Electron.WebviewTag | null) => {
     this.webview = wv;
 
     if (!this.webview) {

@@ -16,7 +16,7 @@
     },
 
     "strictNullChecks": true,
-    "strictPropertyInitialization": false,
+    "strictPropertyInitialization": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,

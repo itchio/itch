@@ -2,6 +2,7 @@ import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { GameClassification, Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
+import { classificationFromQuery } from "common/helpers/classification-from-query";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
@@ -43,6 +44,13 @@ class CollectionPage extends React.PureComponent<Props> {
       filterInstalled,
       filterPlatform,
     } = this.props;
+
+    if (collectionId === undefined) {
+      // the tab has no parsed location (yet) — there's no collection to
+      // fetch; previously this would fire butlerd requests that failed
+      // validation
+      return null;
+    }
 
     return (
       <>
@@ -139,13 +147,13 @@ interface Props extends MeatProps {
   profile: Profile;
   dispatch: Dispatch;
 
-  collectionId: number;
-  sortBy: string;
-  sortDir: string;
-  search: string;
-  filterClassification: GameClassification;
+  collectionId: number | undefined;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
+  search: string | undefined;
+  filterClassification: GameClassification | undefined;
   filterInstalled: boolean;
-  filterPlatform: string;
+  filterPlatform: string | undefined;
 }
 
 const hooked = hookWithProps(CollectionPage)((map) => ({
@@ -155,8 +163,10 @@ const hooked = hookWithProps(CollectionPage)((map) => ({
   sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
   sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   search: map((rs, props) => ambientTab(rs, props).location?.query.search),
-  filterClassification: map(
-    (rs, props) => ambientTab(rs, props).location?.query.classification
+  filterClassification: map((rs, props) =>
+    classificationFromQuery(
+      ambientTab(rs, props).location?.query.classification
+    )
   ),
   filterInstalled: map(
     (rs, props) => !!ambientTab(rs, props).location?.query.installed

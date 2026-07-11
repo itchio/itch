@@ -1,4 +1,4 @@
-import { Store, Action } from "common/types";
+import { Store } from "common/types";
 import { Tray, nativeImage } from "electron";
 import { getImagePath } from "main/util/resources";
 import env from "main/env";
@@ -7,9 +7,6 @@ import { release } from "os";
 import { mainLogger } from "main/logger";
 
 let tray: Electron.Tray;
-
-// used to glue balloon click with notification callbacks
-let lastNotificationAction: Action<any>;
 
 export function getTray(store: Store): Electron.Tray {
   if (!tray) {
@@ -42,15 +39,6 @@ export function getTray(store: Store): Electron.Tray {
     tray.on("double-click", () => {
       store.dispatch(actions.focusWind({ wind: "root" }));
     });
-    tray.on("balloon-click", () => {
-      if (lastNotificationAction) {
-        store.dispatch(lastNotificationAction);
-      }
-    });
   }
   return tray;
-}
-
-export function rememberNotificationAction(action: Action<any>) {
-  lastNotificationAction = action;
 }

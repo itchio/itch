@@ -26,7 +26,7 @@ const Select = styled.select`
  * A drop-down you can select from
  */
 class SelectRow extends React.PureComponent<Props> {
-  element: HTMLSelectElement;
+  element: HTMLSelectElement | null = null;
 
   constructor(props: SelectRow["props"], context: any) {
     super(props, context);
@@ -57,7 +57,7 @@ class SelectRow extends React.PureComponent<Props> {
     );
   }
 
-  gotElement = (element: HTMLSelectElement) => {
+  gotElement = (element: HTMLSelectElement | null) => {
     this.element = element;
   };
 

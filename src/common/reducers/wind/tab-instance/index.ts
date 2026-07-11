@@ -109,7 +109,6 @@ const selector = (state: TabInstance): TabInstance => {
   let status: TabInstanceStatus = {
     canGoBack: currentIndex > 0,
     canGoForward: currentIndex < history.length - 1,
-    favicon: page ? page.favicon : undefined,
   };
   if (location) {
     status.icon = internalPageToIcon(location.internalPage);

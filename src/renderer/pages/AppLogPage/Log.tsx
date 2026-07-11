@@ -174,7 +174,7 @@ class Log extends React.PureComponent<Props, State> {
                     !prevDate ||
                     currDate.getUTCDate() != prevDate.getUTCDate() ||
                     currDate.getUTCMonth() != prevDate.getUTCMonth() ||
-                    currDate.getUTCFullYear() != currDate.getUTCFullYear()
+                    currDate.getUTCFullYear() != prevDate.getUTCFullYear()
                   ) {
                     jumpElement = (
                       <tr key={`${i}-jump`}>
@@ -225,7 +225,7 @@ class Log extends React.PureComponent<Props, State> {
     }));
   };
 
-  tbody: HTMLTableSectionElement | null;
+  tbody: HTMLTableSectionElement | null = null;
 
   gotBody = (tbody: HTMLTableSectionElement | null) => {
     this.tbody = tbody;

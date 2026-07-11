@@ -124,7 +124,9 @@ export default function (watcher: Watcher) {
     });
     if (space.protocol() == "mailto:") {
       logger.debug(`Is mailto link, opening as external and skipping tab open`);
-      shell.openExternal(space.suffix);
+      // openExternal wants the full url including the mailto: protocol;
+      // space.suffix comes from the resource and was always undefined here
+      shell.openExternal(url);
       return;
     }
 

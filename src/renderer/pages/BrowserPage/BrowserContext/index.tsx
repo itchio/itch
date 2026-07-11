@@ -49,7 +49,7 @@ interface Props {
   tab: string;
   dispatch: Dispatch;
 
-  gameId: number;
+  gameId: number | null | undefined;
   sequence: number;
 }
 

@@ -25,9 +25,6 @@ const GateSceneDiv = styled.div`
 `;
 
 class GateScene extends React.PureComponent<Props> {
-  username: HTMLInputElement;
-  password: HTMLInputElement;
-
   override render() {
     return (
       <GateSceneDiv>
@@ -51,14 +48,10 @@ class GateScene extends React.PureComponent<Props> {
 }
 
 interface Props {
-  stage: "setup" | "login";
-  errors: string[] | null;
   blockingOperation: SetupOperation | null;
 }
 
 export default hook((map) => ({
-  stage: map((rs) => (rs.setup.done ? "login" : "setup")),
-  errors: map((rs) => (rs.setup.done ? null : rs.setup.errors)),
   blockingOperation: map((rs) =>
     rs.setup.done
       ? rs.profile.login.blockingOperation

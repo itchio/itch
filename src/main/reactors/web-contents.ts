@@ -255,7 +255,9 @@ export default function (watcher: Watcher) {
 
     withWebContents(store, wind, tab, (wc) => {
       const url = Space.fromState(rs, wind, tab).url();
-      loadURL(wc, url);
+      if (url) {
+        loadURL(wc, url);
+      }
     });
   });
 

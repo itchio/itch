@@ -6,10 +6,7 @@ const logger = mainLogger.child(__filename);
 import * as _ from "underscore";
 
 import { actions } from "common/actions";
-import {
-  getTray,
-  rememberNotificationAction,
-} from "main/reactors/tray-persistent-state";
+import { getTray } from "main/reactors/tray-persistent-state";
 
 import { Store, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
@@ -116,13 +113,6 @@ async function refreshTray(store: Store) {
 }
 
 export default function (watcher: Watcher) {
-  watcher.on(actions.notify, async (store, action) => {
-    const { onClick } = action.payload;
-    if (onClick) {
-      rememberNotificationAction(onClick);
-    }
-  });
-
   async function scheduleRefreshTray(store: Store, action: any) {
     try {
       await refreshTray(store);

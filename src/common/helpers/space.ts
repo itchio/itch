@@ -25,15 +25,17 @@ const spaceFromInstance = (tab: string, dataIn: TabInstance) =>
  */
 export class Space {
   tab: string;
-  prefix: string;
-  suffix: string;
+  /** only set when the page has a resource */
+  prefix: string | undefined;
+  suffix: string | undefined;
   private _instance: TabInstance;
   private _page: TabPage;
-  private _protocol: string;
-  private _hostname: string;
-  private _pathname: string;
-  private _pathElements: string[];
-  private _query: URLSearchParams;
+  /** only set when the page has a parseable url */
+  private _protocol: string | undefined;
+  private _hostname: string | undefined;
+  private _pathname: string | undefined;
+  private _pathElements: string[] | undefined;
+  private _query: URLSearchParams | undefined;
 
   constructor(tab: string, instanceIn: TabInstance) {
     this.tab = tab;
@@ -121,7 +123,8 @@ export class Space {
     });
   }
 
-  url(): string {
+  /** undefined when the tab instance has no current page */
+  url(): string | undefined {
     return this._page.url;
   }
 
@@ -154,10 +157,11 @@ export class Space {
   }
 
   numericId(): number {
-    return parseInt(this.suffix, 10);
+    // NaN when there's no suffix, same as parseInt(undefined) gave
+    return parseInt(this.suffix ?? "", 10);
   }
 
-  stringId(): string {
+  stringId(): string | undefined {
     return this.suffix;
   }
 
@@ -169,13 +173,14 @@ export class Space {
     return this._protocol !== "itch:";
   }
 
-  protocol(): string {
+  protocol(): string | undefined {
     return this._protocol;
   }
 
   internalPage(): string | null {
     if (this._protocol === "itch:") {
-      return this._hostname;
+      // _hostname is always set alongside _protocol
+      return this._hostname ?? null;
     }
     return null;
   }

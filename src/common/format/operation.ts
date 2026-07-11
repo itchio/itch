@@ -2,16 +2,11 @@ import { LocalizedString, TaskName } from "common/types";
 import { Operation, OperationType } from "common/helpers/get-game-status";
 import { DownloadReason } from "common/butlerd/messages";
 
-export function formatOperation(op: Operation): LocalizedString | null {
+export function formatOperation(op: Operation): LocalizedString {
   if (op.type === OperationType.Task) {
-    // operations of type Task always carry a name at runtime (see
-    // rawGetGameStatus), but the Operation type doesn't guarantee it yet
-    return op.name ? formatTask(op.name, op.stage) : null;
-  } else if (op.type === OperationType.Download) {
-    return ["grid.item.downloading"];
-  } else {
-    return null;
+    return formatTask(op.name, op.stage);
   }
+  return ["grid.item.downloading"];
 }
 
 export function taskIcon(name: TaskName) {

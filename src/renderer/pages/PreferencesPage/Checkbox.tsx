@@ -7,10 +7,13 @@ import Label from "renderer/pages/PreferencesPage/Label";
 class Checkbox extends React.PureComponent<Props> {
   override render() {
     const { active, children, label } = this.props;
+    // an unset optional preference used to render an uncontrolled
+    // checkbox (checked={undefined}); treat it as unchecked instead
+    const checked = !!active;
 
     return (
-      <Label active={active}>
-        <input type="checkbox" checked={active} onChange={this.onChange} />
+      <Label active={checked}>
+        <input type="checkbox" checked={checked} onChange={this.onChange} />
         <span> {label} </span>
         {children}
       </Label>
@@ -27,14 +30,24 @@ class Checkbox extends React.PureComponent<Props> {
   };
 }
 
+/** preference keys that hold booleans, the only ones a checkbox can edit */
+type BooleanPreferenceKey = {
+  [K in keyof PreferencesState]-?: NonNullable<
+    PreferencesState[K]
+  > extends boolean
+    ? K
+    : never;
+}[keyof PreferencesState];
+
 interface Props {
-  name: keyof PreferencesState;
+  name: BooleanPreferenceKey;
   label: string | JSX.Element;
   children?: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
   dispatch: Dispatch;
-  active: boolean;
+  /** undefined when an optional boolean preference is unset */
+  active: boolean | undefined;
 }
 
 export default hookWithProps(Checkbox)((map) => ({

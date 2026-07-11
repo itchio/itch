@@ -6,6 +6,7 @@ import { Dispatch } from "redux";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import { dispatchTabEvolve } from "renderer/hocs/tab-utils";
 import { actions } from "common/actions";
@@ -15,6 +16,11 @@ const FetchCave = butlerCaller(messages.FetchCave);
 class CavePage extends React.PureComponent<Props> {
   override render() {
     const { caveId } = this.props;
+    if (!caveId) {
+      // no cave id in the URL: the fetch would have failed anyway,
+      // show the same error state without the round-trip
+      return <ErrorState error={new Error("Missing cave id in URL")} />;
+    }
 
     return (
       <FetchCave
@@ -51,8 +57,8 @@ interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  caveId: string;
-  actionName: string;
+  caveId: string | undefined;
+  actionName: string | undefined;
 }
 
 export default withTab(

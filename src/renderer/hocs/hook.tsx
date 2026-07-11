@@ -28,45 +28,40 @@ function identity<T>(t: T) {
 }
 
 export function hook<DerivedProps = {}>(
-  makeSelectors?: (
-    f: MakeSelectorFunc
-  ) => { [K in keyof DerivedProps]: Selector<RootState, DerivedProps[K]> }
+  makeSelectors?: (f: MakeSelectorFunc) => {
+    [K in keyof DerivedProps]: Selector<RootState, DerivedProps[K]>;
+  }
 ): InferableComponentEnhancerWithProps<DerivedProps & DispatchProp<any>, {}> {
   if (!makeSelectors) {
     return connect();
   }
   const selectors = makeSelectors(identity);
   // FIXME: dirty typing workaround, seems to work in practice
-  return (connect(
+  return connect(
     createStructuredSelector<RootState, DerivedProps>(selectors)
-  ) as unknown) as any;
+  ) as unknown as any;
 }
 
 export function hookWithProps<InputProps>(
   inputComponent: React.ComponentType<InputProps>
 ) {
-  return function <DerivedProps>(
-    makeSelectors: (
-      f: MakeParametricSelectorFunc<InputProps>
-    ) => {
-      [K in keyof DerivedProps]: ParametricSelector<
-        RootState,
-        InputProps,
-        DerivedProps[K]
-      >;
+  // each mapper must produce exactly what the component's prop declares —
+  // this is what keeps derived props from silently lying about nullability
+  return function <K extends keyof InputProps>(
+    makeSelectors: (f: MakeParametricSelectorFunc<InputProps>) => {
+      [P in K]: ParametricSelector<RootState, InputProps, InputProps[P]>;
     }
   ) {
     const selectors = makeSelectors(identity);
-    // wowee, there sure is a bunch of type fuckery here
-    return function <
-      Props /* extends InputProps & DerivedProps & DispatchProp<any> */
-    >(
-      component: React.ComponentType<Props>
+    return function (
+      component: React.ComponentType<InputProps>
     ): React.ComponentType<
-      Subtract<InputProps, DerivedProps & DispatchProp<any>>
+      Subtract<InputProps, Pick<InputProps, K> & DispatchProp<any>>
     > {
       return connect(
-        createStructuredSelector<RootState, InputProps, DerivedProps>(selectors)
+        createStructuredSelector<RootState, InputProps, Pick<InputProps, K>>(
+          selectors
+        )
       )(component as any) as any;
     };
   };

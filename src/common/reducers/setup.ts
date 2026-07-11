@@ -4,7 +4,6 @@ import reducer from "common/reducers/reducer";
 
 const initialState: SetupState = {
   done: false,
-  errors: [],
   blockingOperation: {
     icon: "moon",
     message: ["login.status.dependency_check"],
@@ -16,7 +15,6 @@ export default reducer<SetupState>(initialState, (on) => {
     const blockingOperation = action.payload;
     return {
       ...state,
-      errors: [],
       blockingOperation,
     };
   });
@@ -40,7 +38,6 @@ export default reducer<SetupState>(initialState, (on) => {
     return {
       ...state,
       done: true,
-      errors: [],
       blockingOperation: null,
     };
   });

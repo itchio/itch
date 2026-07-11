@@ -12,7 +12,7 @@ class BrowserBar extends React.PureComponent<Props> {
   override render() {
     const { loading } = this.props;
     return (
-      <FiltersContainer loading={loading}>
+      <FiltersContainer loading={!!loading}>
         <IconButton
           icon="more_vert"
           hint={_("browser.more_menu")}
@@ -62,7 +62,7 @@ interface Props {
   dispatch: Dispatch;
 
   url: string | undefined;
-  loading: boolean;
+  loading: boolean | undefined;
 }
 
 export default withTab(

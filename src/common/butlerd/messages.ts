@@ -605,7 +605,7 @@ export interface CollectionGamesFilters {
   /** undocumented */
   installed: boolean;
   /** undocumented */
-  classification: GameClassification;
+  classification?: GameClassification;
   /**
    * Only include games with a download tagged for this platform
    * ("windows", "linux", "osx"), or web-playable games ("web").
@@ -659,10 +659,10 @@ export const FetchProfileCollections = createRequest<
  * undocumented
  */
 export interface ProfileGameFilters {
-  /** undocumented */
-  visibility: string;
-  /** undocumented */
-  paidStatus: string;
+  /** "draft" or "published"; absent means both */
+  visibility?: string;
+  /** "paid" or "free"; absent means both */
+  paidStatus?: string;
 }
 
 /**
@@ -708,7 +708,7 @@ export interface ProfileOwnedKeysFilters {
   /** undocumented */
   installed: boolean;
   /** undocumented */
-  classification: GameClassification;
+  classification?: GameClassification;
   /**
    * Only include games with a download tagged for this platform
    * ("windows", "linux", "osx"), or web-playable games ("web").
@@ -763,7 +763,7 @@ export interface BundleGamesFilters {
   /** undocumented */
   installed: boolean;
   /** undocumented */
-  classification: GameClassification;
+  classification?: GameClassification;
   /**
    * Only include games with a download tagged for this platform
    * ("windows", "linux", "osx"), or web-playable games ("web").

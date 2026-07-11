@@ -51,7 +51,7 @@ interface GenericProps<Params, Item, Record, ExtraProps>
   tab: string;
 
   sequence: number;
-  restoredScrollTop: number;
+  restoredScrollTop: number | undefined;
 }
 
 interface GenericState<Params> {
@@ -257,13 +257,14 @@ export function makeSeries<
       };
 
       if (props.restoredScrollTop) {
-        console.log(`Aiming for scrollTop ${props.restoredScrollTop}`);
+        const { restoredScrollTop } = props;
+        console.log(`Aiming for scrollTop ${restoredScrollTop}`);
         this.restoreScrollInterval = window.setInterval(() => {
           if (this.itemList) {
-            this.itemList.scrollTop = props.restoredScrollTop;
+            this.itemList.scrollTop = restoredScrollTop;
 
             const { scrollTop } = this.itemList;
-            if (scrollTop === props.restoredScrollTop) {
+            if (scrollTop === restoredScrollTop) {
               console.log(`Done adjusting, final scrollTop = ${scrollTop}`);
               if (this.restoreScrollInterval) {
                 clearInterval(this.restoreScrollInterval);

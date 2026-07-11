@@ -116,11 +116,11 @@ interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
 
-  sortBy: string;
-  sortDir: string;
-  search: string;
-  visibility: string;
-  paidStatus: string;
+  sortBy: string | undefined;
+  sortDir: string | undefined;
+  search: string | undefined;
+  visibility: string | undefined;
+  paidStatus: string | undefined;
 }
 
 export default withProfile(

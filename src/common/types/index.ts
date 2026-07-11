@@ -388,7 +388,6 @@ export interface SetupOperation {
 
 export interface SetupState {
   done: boolean;
-  errors: string[];
   blockingOperation: SetupOperation | null;
 }
 
@@ -629,6 +628,10 @@ export interface Task {
 
   /** estimated time remaining for task, in seconds, if available */
   eta?: number;
+
+  /** current stage of the task (e.g. launch: prepare/run/clean), merged
+   * in from ProgressInfo by the taskProgress reducer */
+  stage?: string;
 }
 
 export interface TasksState {
@@ -917,8 +920,6 @@ export interface TabInstanceStatus {
   canGoBack: boolean;
   /** true if we can navigate forward */
   canGoForward: boolean;
-  /** current favicon of the tab */
-  favicon?: string;
   /** current icon of the tab */
   icon?: string;
   /** current label, maybe empty if we've just navigated */

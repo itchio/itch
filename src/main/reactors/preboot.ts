@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { NET_PARTITION_NAME } from "common/constants/net";
 import env from "main/env";
 import { elapsed } from "common/format/datetime";
-import { ProxySource, SystemState } from "common/types";
+import { ProxySettings, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { app, session, protocol } from "electron";
 import { mainLogger } from "main/logger";
@@ -59,16 +59,16 @@ export default function (watcher: Watcher) {
           process.env.http_proxy ||
           process.env.HTTP_PROXY;
 
-        let proxySettings = {
-          proxy: undefined as string | undefined,
-          source: "os" as ProxySource,
+        let proxySettings: ProxySettings = {
+          proxy: undefined,
+          proxySource: "os",
         };
 
         if (envSettings) {
           logger.info(`Got proxy settings from environment: ${envSettings}`);
           proxySettings = {
             proxy: envSettings,
-            source: "env",
+            proxySource: "env",
           };
           testProxy = true;
           store.dispatch(
