@@ -29,8 +29,7 @@ const base = (props: FilterOptionProps) => {
   }
   let href: string;
   if (active) {
-    // empty values are dropped from the URL by urlWithParams
-    href = urlWithParams(url, { [optionKey]: "" });
+    href = urlWithParams(url, { [optionKey]: undefined });
   } else {
     href = urlWithParams(url, { [optionKey]: optionValue });
   }

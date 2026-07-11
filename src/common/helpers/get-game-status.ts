@@ -123,8 +123,7 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   const { commons, tasks, downloads } = rs;
   const { profile } = rs.profile;
   if (!profile) {
-    // game status is only queried from logged-in views; reading
-    // profile.user below would have thrown anyway
+    // game status is only ever queried from logged-in views
     throw new Error("getGameStatus called before login");
   }
 

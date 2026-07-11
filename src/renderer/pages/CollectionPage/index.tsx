@@ -46,9 +46,7 @@ class CollectionPage extends React.PureComponent<Props> {
     } = this.props;
 
     if (collectionId === undefined) {
-      // the tab has no parsed location (yet) — there's no collection to
-      // fetch; previously this would fire butlerd requests that failed
-      // validation
+      // the tab has no parsed location (yet)
       return null;
     }
 
@@ -169,7 +167,7 @@ const hooked = hookWithProps(CollectionPage)((map) => ({
     )
   ),
   filterInstalled: map(
-    (rs, props) => !!ambientTab(rs, props).location?.query.installed
+    (rs, props) => ambientTab(rs, props).location?.query.installed === "true"
   ),
   filterPlatform: map(
     (rs, props) => ambientTab(rs, props).location?.query.platform

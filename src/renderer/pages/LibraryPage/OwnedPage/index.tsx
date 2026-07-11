@@ -84,10 +84,6 @@ class OwnedPage extends React.PureComponent<Props> {
   );
 }
 
-interface State {
-  search: string;
-}
-
 interface Props extends MeatProps {
   profile: Profile;
   tab: string;

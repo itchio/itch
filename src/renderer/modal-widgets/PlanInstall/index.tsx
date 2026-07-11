@@ -446,12 +446,10 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const { dispatch, profileId } = this.props;
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
-      // underscore's findWhere tolerates a missing list at runtime (returns
-      // undefined); `?? []` formalizes that
       const upload = findWhere(uploads ?? [], { id: pickedUploadId });
       if (!upload) {
         // canInstall prevents this, but the modal is already closed by the
-        // time we get here - bail rather than queue a broken install
+        // time we get here
         rendererLogger.warn(
           `No upload matching ${pickedUploadId}, not queuing install`
         );

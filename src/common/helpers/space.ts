@@ -128,23 +128,6 @@ export class Space {
     return this._page.url;
   }
 
-  urlWithParams(newParams: { [key: string]: any }): string {
-    const params = new URLSearchParams(this._query);
-    for (const k of Object.keys(newParams)) {
-      const v = newParams[k];
-      if (v) {
-        params.set(k, v);
-      } else {
-        params.delete(k);
-      }
-    }
-    const url = new URL(
-      `${this._protocol}//${this._hostname}${this._pathname}`
-    );
-    url.search = params.toString();
-    return url.toString();
-  }
-
   queryParam(name: string): string | null {
     if (this._query) {
       return this._query.get(name);
@@ -157,7 +140,6 @@ export class Space {
   }
 
   numericId(): number {
-    // NaN when there's no suffix, same as parseInt(undefined) gave
     return parseInt(this.suffix ?? "", 10);
   }
 

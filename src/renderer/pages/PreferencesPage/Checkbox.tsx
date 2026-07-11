@@ -7,8 +7,6 @@ import Label from "renderer/pages/PreferencesPage/Label";
 class Checkbox extends React.PureComponent<Props> {
   override render() {
     const { active, children, label } = this.props;
-    // an unset optional preference used to render an uncontrolled
-    // checkbox (checked={undefined}); treat it as unchecked instead
     const checked = !!active;
 
     return (

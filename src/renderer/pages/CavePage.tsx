@@ -17,8 +17,6 @@ class CavePage extends React.PureComponent<Props> {
   override render() {
     const { caveId } = this.props;
     if (!caveId) {
-      // no cave id in the URL: the fetch would have failed anyway,
-      // show the same error state without the round-trip
       return <ErrorState error={new Error("Missing cave id in URL")} />;
     }
 

@@ -55,9 +55,9 @@ interface Props {
 
 export default withTab(
   hookWithProps(BrowserContext)((map) => ({
-    sequence: map((props, rs) => ambientTab(props, rs).sequence),
-    gameId: map((props, rs) => {
-      const { resource } = ambientTab(props, rs);
+    sequence: map((rs, props) => ambientTab(rs, props).sequence),
+    gameId: map((rs, props) => {
+      const { resource } = ambientTab(rs, props);
       if (resource && resource.prefix === "games") {
         return resource.numericId;
       }

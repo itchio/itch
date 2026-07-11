@@ -48,6 +48,11 @@ class BundlePage extends React.PureComponent<Props> {
       filterPlatform,
     } = this.props;
 
+    if (bundleId === undefined) {
+      // the tab has no parsed location (yet)
+      return null;
+    }
+
     return (
       <>
         <FetchProfileOwnedBundles
@@ -143,7 +148,8 @@ interface Props extends MeatProps {
   profile: Profile;
   dispatch: Dispatch;
 
-  bundleId: number;
+  /** undefined when the url carries no parseable bundle id */
+  bundleId: number | undefined;
   sortBy: string | undefined;
   sortDir: string | undefined;
   search: string | undefined;
@@ -153,9 +159,11 @@ interface Props extends MeatProps {
 }
 
 const hooked = hookWithProps(BundlePage)((map) => ({
-  bundleId: map((rs, props) =>
-    parseInt(ambientTab(rs, props).location?.secondPathElement ?? "", 10)
-  ),
+  bundleId: map((rs, props) => {
+    const raw = ambientTab(rs, props).location?.secondPathElement;
+    const n = raw ? parseInt(raw, 10) : NaN;
+    return Number.isNaN(n) ? undefined : n;
+  }),
   sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
   sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
   search: map((rs, props) => ambientTab(rs, props).location?.query.search),
@@ -165,7 +173,7 @@ const hooked = hookWithProps(BundlePage)((map) => ({
     )
   ),
   filterInstalled: map(
-    (rs, props) => !!ambientTab(rs, props).location?.query.installed
+    (rs, props) => ambientTab(rs, props).location?.query.installed === "true"
   ),
   filterPlatform: map(
     (rs, props) => ambientTab(rs, props).location?.query.platform

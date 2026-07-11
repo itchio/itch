@@ -187,7 +187,9 @@ class Meat extends React.PureComponent<Props, State> {
           wind: "root",
           title: _("prompt.show_error.generic_message"),
           widgetParams: {
-            log: `While rendering ${this.props.url}, caught:\n${e.stack}`,
+            log: `While rendering ${this.props.url}, caught:\n${
+              e && e.stack ? e.stack : String(e)
+            }`,
           },
         })
       )

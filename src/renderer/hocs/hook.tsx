@@ -45,8 +45,7 @@ export function hook<DerivedProps = {}>(
 export function hookWithProps<InputProps>(
   inputComponent: React.ComponentType<InputProps>
 ) {
-  // each mapper must produce exactly what the component's prop declares —
-  // this is what keeps derived props from silently lying about nullability
+  // each mapper must produce exactly what the component's prop declares
   return function <K extends keyof InputProps>(
     makeSelectors: (f: MakeParametricSelectorFunc<InputProps>) => {
       [P in K]: ParametricSelector<RootState, InputProps, InputProps[P]>;

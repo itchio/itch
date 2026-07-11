@@ -25,7 +25,6 @@ class InstallPage extends React.PureComponent<Props> {
       logger.warn("no URL for install page tab, not handling itchio URI");
     }
     if (gameId === undefined) {
-      // previously this navigated to itch://games/NaN
       logger.warn(
         "missing or unparseable game_id in install page URL, not navigating"
       );

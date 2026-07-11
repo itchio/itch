@@ -156,9 +156,13 @@ class Log extends React.PureComponent<Props, State> {
         <LogTable>
           <tbody ref={this.gotBody}>
             {hasMore ? (
-              <div style={{ margin: "20px" }}>
-                <Button onClick={this.onLoadMore} label="Load more..." />
-              </div>
+              <tr>
+                <td colSpan={numColumns}>
+                  <div style={{ margin: "20px" }}>
+                    <Button onClick={this.onLoadMore} label="Load more..." />
+                  </div>
+                </td>
+              </tr>
             ) : null}
             {entries.map((x, i) => {
               if (x.hasOwnProperty("msg")) {
@@ -192,9 +196,9 @@ class Log extends React.PureComponent<Props, State> {
                 }
 
                 return (
-                  <>
+                  <React.Fragment key={i}>
                     {jumpElement}
-                    <tr key={i}>
+                    <tr>
                       <td className="timecol">
                         <FormattedTime value={x.time} />
                       </td>
@@ -203,7 +207,7 @@ class Log extends React.PureComponent<Props, State> {
                       </td>
                       <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
                     </tr>
-                  </>
+                  </React.Fragment>
                 );
               } else {
                 return (

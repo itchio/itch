@@ -60,8 +60,7 @@ async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
     }
 
     // the endpoint may have been cleared or replaced while we were
-    // setting up (butlerd restart); if so, start over against the
-    // current one instead of returning a client for a dead endpoint
+    // setting up (butlerd restart); if so, start over
     const currentEndpoint = store.getState().butlerd.endpoint;
     if (isEqual(endpoint, currentEndpoint)) {
       return c;

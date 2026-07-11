@@ -25,7 +25,7 @@ class BrothComponents extends React.Component<Props> {
           {T(["menu.help.check_for_update"])}
         </CheckUpdatesButton>
         {packageNames.map((name) => (
-          <BrothComponent name={name} />
+          <BrothComponent key={name} name={name} />
         ))}
       </div>
     );

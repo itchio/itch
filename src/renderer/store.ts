@@ -42,7 +42,7 @@ const store = createStore(
     const res = reducer(state, action as Action<any>);
     if (hack.store) {
       // hack.store is null only during createStore's own initial
-      // dispatch (@@INIT), which no reactor listens to anyway
+      // @@INIT dispatch
       route(watcher, hack.store, action as Action<any>);
     }
     return res;

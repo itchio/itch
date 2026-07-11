@@ -19,8 +19,6 @@ class GamePage extends React.PureComponent<Props> {
   override render() {
     const { gameId } = this.props;
     if (gameId === undefined || Number.isNaN(gameId)) {
-      // no numeric game id in the URL: the fetch would have failed anyway,
-      // show the same error state without the round-trip
       return <ErrorState error={new Error("Missing game id in URL")} />;
     }
 

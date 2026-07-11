@@ -28,8 +28,7 @@ const SortOptionBase = (props: SortOptionsProps) => {
       href = urlWithParams(url, { sortBy, sortDir: "reverse" });
     } else {
       baseClass = `${baseClass}--disable`;
-      // empty values are dropped from the URL by urlWithParams
-      href = urlWithParams(url, { sortBy: "", sortDir: "" });
+      href = urlWithParams(url, { sortBy: undefined, sortDir: undefined });
     }
   }
 

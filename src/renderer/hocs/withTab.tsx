@@ -9,9 +9,7 @@ const spaceContext = React.createContext<string | undefined>(undefined);
 export const TabProvider = spaceContext.Provider;
 export const TabConsumer = spaceContext.Consumer;
 
-// Contract: withTab consumers only mount under a TabProvider (see
-// HubScene/Meats). The throw below formalizes the crash that already
-// happened downstream when that contract was broken.
+// withTab consumers only mount under a TabProvider (see HubScene/Meats)
 export const withTab =
   <P extends TabContextProps>(Component: React.ComponentType<P>) =>
   (props: Subtract<P, TabContextProps>) =>
