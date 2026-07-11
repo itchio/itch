@@ -120,6 +120,8 @@ class SearchResult extends React.PureComponent<Props> {
       <SearchResultDiv
         ref={this.divRef}
         className={classNames("search-result", { chosen })}
+        data-result-kind={result.kind}
+        data-result-id={result.id}
         onMouseDown={this.onClick}
         onMouseMove={this.onMouseMove}
       >

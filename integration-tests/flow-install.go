@@ -14,7 +14,7 @@ func installFlow(r *runner) {
 	must(r.setValue("#search", testGameName))
 
 	r.logf("opening it")
-	var gameResultSelector = fmt.Sprintf(".results-container .game-search-result[data-game-id='%d']", testGameID)
+	var gameResultSelector = fmt.Sprintf(".results-container .search-result[data-result-kind='game'][data-result-id='%d']", testGameID)
 	must(r.click(gameResultSelector))
 
 	mainWindowHandle := r.mustGetSingleWindowHandle()
