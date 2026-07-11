@@ -31,6 +31,6 @@ jobs:
       if: always()
       with:
         name: integration-test-screenshots
-        path: integration-tests/screenshots/
+        path: screenshots/
         if-no-files-found: ignore
         retention-days: 1
