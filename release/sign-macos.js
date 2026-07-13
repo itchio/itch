@@ -30,7 +30,9 @@ async function main() {
 
   if (!arch || !ARCHES[arch]) {
     throw new Error(
-      `Missing/wrong --arch argument (should be one of ${Object.keys(ARCHES).join(", ")})`
+      `Missing/wrong --arch argument (should be one of ${Object.keys(
+        ARCHES
+      ).join(", ")})`
     );
   }
 
@@ -74,12 +76,12 @@ async function signApp(appBundle, electronVersion) {
     const { sign } = await import("@electron/osx-sign");
     await sign({
       app: appBundle,
-      hardenedRuntime: true,
-      entitlements: entitlementsPath,
-      entitlementsInherit: entitlementsPath,
-      gatekeeperAssess: false,
       platform: "darwin",
       version: electronVersion,
+      optionsForFile: () => ({
+        hardenedRuntime: true,
+        entitlements: entitlementsPath,
+      }),
     });
   });
 

@@ -15,12 +15,12 @@ async function syncStrings() {
 
   // This repo is the source of truth for English strings. Push en.json into
   // itch-i18n first so translators on Weblate see the latest keys.
-  $(`cp -fv '${localLocales}/en.json' '${i18nLocales}/en.json'`, {silent: false});
+  $(`cp -fv '${localLocales}/en.json' '${i18nLocales}/en.json'`);
 
   // Then pull every locale back from itch-i18n. en.json round-trips
   // unchanged; the rest are translator output that this repo consumes.
-  $(`rm -rf '${localLocales}'`, {silent: false});
-  $(`cp -rfv '${i18nLocales}' '${localLocales}'`, {silent: false});
+  $(`rm -rf '${localLocales}'`);
+  $(`cp -rfv '${i18nLocales}' '${localLocales}'`);
 }
 
 syncStrings();
