@@ -19,6 +19,7 @@ npm-debug.log
 /.tscache
 /.awcache
 *.map
+*.tsbuildinfo
 *.tmp.txt
 /butler
 *.exe
@@ -57,4 +58,3 @@ npm-debug.log
 
 # golang-specific stuff
 /gopath
-

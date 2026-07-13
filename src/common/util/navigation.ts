@@ -22,7 +22,7 @@ export function currentPage(tabInstance: TabInstance): TabPage | null {
 }
 
 export function windSpec(): WindSpec {
-  return (window as unknown as ExtendedWindow).windSpec;
+  return (globalThis as unknown as ExtendedWindow).windSpec;
 }
 
 export function ambientWind(): string {

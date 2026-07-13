@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "types": ["node"]
+  },
+  "include": [
+    "src/main/**/*",
+    "src/common/**/*",
+    "src/declarations.d.ts",
+    "typings/**/*"
+  ],
+  "exclude": ["src/main/inject/**/*"]
+}

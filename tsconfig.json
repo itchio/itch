@@ -1,27 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "es2021",
-    "moduleResolution": "bundler",
-    "module": "esnext",
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-
-    "strict": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-
-    "paths": {
-      "common/*": ["./src/common/*"],
-      "renderer/*": ["./src/renderer/*"],
-      "main/*": ["./src/main/*"],
-      "vendor/*": ["./src/vendor/*"]
-    },
-
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "experimentalDecorators": true
-  },
-  "include": ["src/**/*", "typings/**/*"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.main.json" },
+    { "path": "./tsconfig.preload.json" },
+    { "path": "./tsconfig.renderer.json" }
+  ]
 }

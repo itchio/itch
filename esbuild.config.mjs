@@ -15,6 +15,7 @@ const aliases = {
 
 // Main process config
 export const mainConfig = {
+  tsconfig: "tsconfig.main.json",
   entryPoints: {
     main: "src/main/index.ts",
     "inject-game": "src/main/inject/inject-game.ts",
@@ -50,6 +51,7 @@ const browserAliases = {
 
 // Renderer process config
 export const rendererConfig = {
+  tsconfig: "tsconfig.renderer.json",
   entryPoints: {
     renderer: "src/renderer/index.tsx",
   },
