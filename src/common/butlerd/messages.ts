@@ -960,7 +960,7 @@ export interface CaveSettings {
    * nil = inherit global, true = force on, false = force off
    */
   sandbox?: boolean;
-  /** Override sandbox runner type (bubblewrap, firejail, flatpak, fuji, auto). */
+  /** Override sandbox runner type (bubblewrap, firejail, fuji, auto). */
   sandboxType?: SandboxType;
   /** Override network restriction within the sandbox. */
   sandboxNoNetwork?: boolean;
@@ -1818,7 +1818,6 @@ export enum SandboxType {
   Auto = "auto",
   Bubblewrap = "bubblewrap",
   Firejail = "firejail",
-  Flatpak = "flatpak",
   Fuji = "fuji",
 }
 
