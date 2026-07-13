@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
 
-// Path aliases matching tsconfig paths (baseUrl: src)
+// Path aliases matching tsconfig paths
 const aliases = {
   common: path.resolve(__dirname, "src/common"),
   renderer: path.resolve(__dirname, "src/renderer"),

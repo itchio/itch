@@ -108,8 +108,8 @@
     "compile": "cross-env NODE_ENV=production node build.mjs",
     "clean": "rm -rf artifacts dist prefix build .chromedriver *.log.txt",
     "integration-tests": "node release/test.js --detect-osarch",
-    "ts-check": "tsc --noEmit --skipLibCheck",
-    "ts-watch": "tsc --noEmit --skipLibCheck --watch",
+    "ts-check": "tsc",
+    "ts-watch": "tsc --watch",
     "release": "node release/push-tag.js",
     "prepare": "husky"
   },

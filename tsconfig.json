@@ -3,9 +3,12 @@
     "target": "es2021",
     "moduleResolution": "bundler",
     "module": "esnext",
-    "importHelpers": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
+
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
 
     "paths": {
@@ -15,13 +18,10 @@
       "vendor/*": ["./src/vendor/*"]
     },
 
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "experimentalDecorators": true,
-
-    "sourceMap": true
-  }
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*", "typings/**/*"]
 }
