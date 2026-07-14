@@ -7,6 +7,7 @@ import {
   formatBuildVersionInfo,
 } from "common/format/upload";
 import { ManageCaveParams, ManageCaveResponse } from "common/modals/types";
+import { actionForGame } from "common/util/action-for-game";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
@@ -14,11 +15,6 @@ import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
 import Icon from "renderer/basics/Icon";
 import LastPlayed from "renderer/basics/LastPlayed";
-import RowButton, {
-  BigButtonContent,
-  BigButtonRow,
-  Tag,
-} from "renderer/basics/RowButton";
 import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
@@ -33,32 +29,55 @@ import Filler from "renderer/basics/Filler";
 import { getCaveSummary } from "common/butlerd/utils";
 
 const CaveItem = styled.div`
-  padding: 4px;
-
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-
-  .time-ago,
-  .total-playtime {
-    color: ${(props) => props.theme.secondaryText} !important;
-  }
+  align-items: center;
+  gap: 20px;
 `;
 
 const CaveDetails = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 12px;
 `;
 
 const CaveDetailsRow = styled.div`
-  padding: 8px 0;
-
   display: flex;
   flex-direction: row;
   align-items: center;
 
   &.smaller {
     font-size: 90%;
+  }
+`;
+
+/* label reads as secondary, the value it introduces reads as primary —
+   so the block scans as four facts, not four sentences */
+const MetaGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  max-width: 420px;
+
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
+
+  .time-ago,
+  .total-playtime {
+    color: ${(props) => props.theme.baseText};
+    font-weight: bold;
+  }
+`;
+
+const MetaItem = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+
+  label {
+    font-weight: normal;
   }
 `;
 
@@ -75,12 +94,50 @@ const SpacerLarge = styled.div`
 const CaveItemBigActions = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  gap: 8px;
+  align-self: stretch;
+`;
 
-  & > * {
-    margin-right: 4px;
+const QuickAction = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+
+  padding: 11px 14px;
+  background: ${(props) => props.theme.itemBackground};
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: ${(props) => props.theme.borderRadii.explanation};
+  color: ${(props) => props.theme.baseText};
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: #262626;
+    border-color: rgba(255, 255, 255, 0.12);
   }
+`;
+
+const QuickActionIcon = styled(Icon)`
+  flex-shrink: 0;
+  font-size: 19px;
+  color: ${(props) => props.theme.secondaryText};
+`;
+
+const QuickActionLabel = styled.div`
+  min-width: 0;
+`;
+
+const QuickActionTitle = styled.div`
+  font-weight: bold;
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+`;
+
+const QuickActionSubtitle = styled.div`
+  margin-top: 4px;
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.small};
 `;
 
 const Title = styled.div`
@@ -89,10 +146,6 @@ const Title = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-`;
-
-const FileSize = styled.div`
-  font-weight: normal;
 `;
 
 const ManageCaveDiv = styled(ModalWidgetDiv)`
@@ -110,6 +163,12 @@ class ManageCave extends React.PureComponent<Props> {
 
     const u = cave.upload;
     const caveSummary = getCaveSummary(cave);
+    const hasLastPlayed = Boolean(caveSummary.lastTouchedAt);
+    // mirrors what TotalPlaytime renders — without this the grid would show a
+    // stopwatch icon with nothing next to it for a game that's never been played
+    const hasPlaytime =
+      caveSummary.secondsRun > 0 &&
+      actionForGame(game, caveSummary) === "launch";
     return (
       <CaveItem key={cave.id}>
         <div
@@ -144,30 +203,36 @@ class ManageCave extends React.PureComponent<Props> {
                 </CaveDetailsRow>
               </>
             ) : null}
-            <CaveDetailsRow className="smaller">
-              <Icon icon="tag" />
-              <Spacer />
-              {T(["table.column.published"])}
-              <Spacer />
-              {u ? <TimeAgo date={u.createdAt} /> : null}
-              <SpacerLarge />
-              <Icon icon="install" />
-              <Spacer />
-              {T(["table.column.installed"])}
-              <Spacer />
-              <TimeAgo date={cave.stats.installedAt} />
-            </CaveDetailsRow>
-            <CaveDetailsRow className="smaller">
-              <Icon icon="history" />
-              <Spacer />
-              <LastPlayed game={game} cave={caveSummary} />
-              <SpacerLarge />
-              <Icon icon="stopwatch" />
-              <Spacer />
-              <TotalPlaytime game={game} cave={caveSummary} />
-            </CaveDetailsRow>
+            <MetaGrid>
+              <MetaItem>
+                <Icon icon="tag" />
+                <span>
+                  {T(["table.column.published"])}{" "}
+                  {u ? <TimeAgo date={u.createdAt} /> : null}
+                </span>
+              </MetaItem>
+              <MetaItem>
+                <Icon icon="install" />
+                <span>
+                  {T(["table.column.installed"])}{" "}
+                  <TimeAgo date={cave.stats.installedAt} />
+                </span>
+              </MetaItem>
+              {hasLastPlayed ? (
+                <MetaItem>
+                  <Icon icon="history" />
+                  <LastPlayed game={game} cave={caveSummary} />
+                </MetaItem>
+              ) : null}
+              {hasPlaytime ? (
+                <MetaItem>
+                  <Icon icon="stopwatch" />
+                  <TotalPlaytime game={game} cave={caveSummary} />
+                </MetaItem>
+              ) : null}
+            </MetaGrid>
           </CaveDetails>
-          <div style={{ width: "60px" }}>
+          <div style={{ width: "80px" }}>
             <Cover
               hover={false}
               gameId={game.id}
@@ -177,37 +242,39 @@ class ManageCave extends React.PureComponent<Props> {
           </div>
         </div>
         <CaveItemBigActions>
-          <RowButton icon="folder-open" onClick={this.onExplore}>
-            <BigButtonContent>
-              <BigButtonRow>{T(showInExplorerString())}</BigButtonRow>
-              <BigButtonRow>
-                <Tag>{cave.installInfo.installFolder}</Tag>
+          <QuickAction type="button" onClick={this.onExplore}>
+            <QuickActionIcon icon="folder-open" />
+            <QuickActionLabel>
+              <QuickActionTitle>{T(showInExplorerString())}</QuickActionTitle>
+              <QuickActionSubtitle>
+                {cave.installInfo.installFolder}
                 {cave.installInfo.installedSize ? (
-                  <Tag>
-                    <FileSize>
-                      {fileSize(cave.installInfo.installedSize)}
-                    </FileSize>
-                  </Tag>
+                  <>
+                    {" · "}
+                    {fileSize(cave.installInfo.installedSize)}
+                  </>
                 ) : null}
-              </BigButtonRow>
-            </BigButtonContent>
-          </RowButton>
-          <RowButton icon="repeat" onClick={this.onUpdateCheck}>
-            <BigButtonContent>
-              <BigButtonRow>{T(["grid.item.check_for_update"])}</BigButtonRow>
-            </BigButtonContent>
-          </RowButton>
+              </QuickActionSubtitle>
+            </QuickActionLabel>
+          </QuickAction>
+          <QuickAction type="button" onClick={this.onUpdateCheck}>
+            <QuickActionIcon icon="repeat" />
+            <QuickActionLabel>
+              <QuickActionTitle>
+                {T(["grid.item.check_for_update"])}
+              </QuickActionTitle>
+            </QuickActionLabel>
+          </QuickAction>
 
-          {u ? (
-            <>
-              {u.channelName == "" ? (
-                ""
-              ) : (
-                <RowButton icon="shuffle" onClick={this.onSwitchVersion}>
+          {u && u.channelName !== "" ? (
+            <QuickAction type="button" onClick={this.onSwitchVersion}>
+              <QuickActionIcon icon="shuffle" />
+              <QuickActionLabel>
+                <QuickActionTitle>
                   {T(["grid.item.revert_to_version"])}
-                </RowButton>
-              )}
-            </>
+                </QuickActionTitle>
+              </QuickActionLabel>
+            </QuickAction>
           ) : null}
         </CaveItemBigActions>
         <CaveLaunchSettings caveId={cave.id} />

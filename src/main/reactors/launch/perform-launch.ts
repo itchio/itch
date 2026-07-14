@@ -79,7 +79,13 @@ export async function performLaunch(
           );
         }
 
-        const sandbox = caveSettings.sandbox ?? preferences.isolateApps;
+        // an explicit per-game choice wins outright, including over a manifest
+        // opt-in. a global "on" forces the sandbox on too. only when the game
+        // says nothing *and* the global preference is off do we send no
+        // preference at all, which leaves a manifest free to opt in itself.
+        const sandbox =
+          caveSettings.sandbox ??
+          (preferences.isolateApps ? true : /* no preference */ undefined);
 
         const launchParams: messages.LaunchParams = {
           caveId: cave.id,
@@ -87,7 +93,10 @@ export async function performLaunch(
           sandbox,
         };
 
-        if (process.platform === "linux" && sandbox) {
+        // sent even when we're not asking for a sandbox: butler ignores these
+        // unless one runs, and a game's manifest can opt into a sandbox we
+        // didn't ask for — in which case these overrides should still apply
+        if (process.platform === "linux") {
           const sandboxOptions: messages.SandboxOptions = {};
 
           const sandboxType =

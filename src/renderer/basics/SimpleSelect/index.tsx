@@ -219,6 +219,7 @@ export default class SimpleSelect<
       OptionComponent = DefaultOptionComponent,
       isLoading,
       className,
+      ariaLabelledBy,
     } = this.props;
     const { open, focusedValue } = this.state;
 
@@ -231,6 +232,7 @@ export default class SimpleSelect<
           role="combobox"
           aria-expanded={open}
           aria-haspopup="listbox"
+          aria-labelledby={ariaLabelledBy}
           aria-controls={this.listboxId()}
           aria-activedescendant={
             open && focusedIndex >= 0 ? this.optionId(focusedIndex) : undefined
@@ -517,6 +519,8 @@ interface Props<OptionType> {
   isLoading?: boolean;
   OptionComponent?: React.ComponentType<OptionComponentProps<OptionType>>;
   className?: string;
+  /** id of the element labelling this select, for screen readers */
+  ariaLabelledBy?: string;
 }
 
 interface State<OptionType> {

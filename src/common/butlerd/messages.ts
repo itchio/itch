@@ -4293,7 +4293,10 @@ export interface LaunchParams {
   prereqsDir: string;
   /** Force installing all prerequisites, even if they're already marked as installed */
   forcePrereqs?: boolean;
-  /** Enable sandbox (regardless of manifest opt-in) */
+  /**
+   * Sandbox preference for this launch. When omitted, the manifest may enable
+   * sandboxing. An explicit value overrides the manifest preference.
+   */
   sandbox?: boolean;
   /** Sandbox configuration options. Only applied when sandbox is enabled. */
   sandboxOptions?: SandboxOptions;

@@ -268,18 +268,18 @@
   "onboarding.owned.title_warm_welcome": "You made it!",
   "outlinks.open_dashboard": "Open dashboard",
   "outlinks.manage_collections": "Manage collections",
-  "sandbox.setup.title": "itch.io sandbox setup",
+  "sandbox.setup.title": "itch sandbox setup",
   "sandbox.setup.proceed": "Proceed",
   "sandbox.setup.windows.message":
-    "In order to run games in the itch.io sandbox, a one-time setup procedure needs to be run as Administrator.",
+    "In order to run games in the itch sandbox, a one-time setup procedure needs to be run as Administrator.",
   "sandbox.setup.windows.detail":
     "After clicking 'Proceed', a permission prompt may pop up, asking you for your approval. This will add an `itch-player` user account to shield your games from the rest of your system.",
   "sandbox.setup.linux.message":
-    "In order to run games in the itch.io sandbox, a setup script has to be run as root.",
+    "In order to run games in the itch sandbox, a setup script has to be run as root.",
   "sandbox.setup.linux.detail":
     "After clicking 'Proceed', a prompt will pop up, asking for your password. This is only needed when the sandbox is first used or updated, and your password is never remembered.",
   "preferences.security": "Security & privacy",
-  "preferences.security.sandbox.title": "Enable itch.io sandbox",
+  "preferences.security.sandbox.title": "Enable itch sandbox",
   "preferences.security.sandbox.type.label": "Sandbox type",
   "preferences.security.sandbox.type.auto": "Auto",
   "preferences.security.sandbox.no_network.title":
@@ -287,7 +287,7 @@
   "preferences.security.sandbox.allow_env.label":
     "Allowed environment variable names (comma or whitespace separated)",
   "preferences.security.sandbox.description":
-    "The itch.io sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch.io sandbox is much safer.",
+    "The itch sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch sandbox is much safer.",
   "preferences.security.sandbox.save_warning":
     "Changing sandbox settings may affect access to existing game save files.",
   "preferences.install_location.add": "Add location",
@@ -512,13 +512,25 @@
   "prompt.uninstall.uninstall": "Uninstall now",
   "manage_cave.launch_settings": "Launch settings",
   "manage_cave.launch_settings.use_default": "Default",
+  "manage_cave.launch_settings.sandbox": "Sandbox",
+  "manage_cave.launch_settings.sandbox.off":
+    "The sandbox is turned off for this game, so these settings won't apply.",
+  "manage_cave.launch_settings.sandbox.inactive":
+    "The sandbox is off by default, so these settings won't apply unless the game asks to be sandboxed.",
   "manage_cave.launch_settings.sandbox.enabled": "Enabled",
   "manage_cave.launch_settings.sandbox.disabled": "Disabled",
   "manage_cave.launch_settings.network.label": "Network access in sandbox",
   "manage_cave.launch_settings.network.allowed": "Allowed",
   "manage_cave.launch_settings.network.blocked": "Blocked",
-  "manage_cave.launch_settings.extra_args.label":
-    "Extra launch arguments (whitespace separated)",
+  "manage_cave.launch_settings.allow_env.label":
+    "Allowed environment variable names",
+  "manage_cave.launch_settings.allow_env.hint":
+    "Comma or whitespace separated",
+  "manage_cave.launch_settings.allow_env.placeholder": "e.g. LANG DISPLAY",
+  "manage_cave.launch_settings.extra_args": "Extra launch arguments",
+  "manage_cave.launch_settings.extra_args.hint": "Whitespace separated",
+  "manage_cave.launch_settings.extra_args.placeholder":
+    "e.g. --fullscreen --skip-intro",
   "prompt.url_install.credit": "A {{classification}} by {{username}}",
   "prompt.url_install.message": "Do you want to install {{title}}?",
   "prompt.url_install.title": "Install request",
