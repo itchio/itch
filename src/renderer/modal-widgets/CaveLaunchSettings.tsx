@@ -189,6 +189,8 @@ const CommandRow = styled(StandaloneRow)`
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
+  margin-top: 0;
+  margin-bottom: 8px;
 `;
 
 const CommandInput = styled.textarea`
@@ -302,18 +304,6 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
       <LaunchSettingsDiv>
         <SectionHeading>{T(["manage_cave.launch_settings"])}</SectionHeading>
 
-        <Group>
-          <GroupHeader>
-            <GroupIcon aria-hidden="true">
-              <span className="icon icon-security" />
-            </GroupIcon>
-            <GroupTitle>
-              <Label>{T(["manage_cave.launch_settings.sandbox"])}</Label>
-            </GroupTitle>
-          </GroupHeader>
-          <GroupRows>{this.renderSandboxRows(settings)}</GroupRows>
-        </Group>
-
         <CommandRow>
           <SettingLabel>
             <Label as="label" htmlFor={this.fieldId("command-template")}>
@@ -350,6 +340,18 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
             </SaveError>
           ) : null}
         </CommandRow>
+
+        <Group>
+          <GroupHeader>
+            <GroupIcon aria-hidden="true">
+              <span className="icon icon-security" />
+            </GroupIcon>
+            <GroupTitle>
+              <Label>{T(["manage_cave.launch_settings.sandbox"])}</Label>
+            </GroupTitle>
+          </GroupHeader>
+          <GroupRows>{this.renderSandboxRows(settings)}</GroupRows>
+        </Group>
       </LaunchSettingsDiv>
     );
   }
