@@ -138,5 +138,7 @@
     "table.column.name": "名称",
     "grid.item.status.installed": "已安装",
     "grid.item.manage": "管理",
-    "grid.item.not_compatible": "在此平台不可用"
+    "grid.item.not_compatible": "在此平台不可用",
+    "grid.item.probe": "检查失败原因",
+    "grid.item.retry": "请再次尝试下载/安装/启动此项目"
 }

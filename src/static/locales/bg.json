@@ -704,7 +704,7 @@
     "upload.cancel": "Отказ",
     "upload.preview.header": "Преглед",
     "upload.preview.placeholder": "Направете предварителен преглед преди изпращането, за да видите какво ще се промени.",
-    "upload.preview.running": "Преглеждане на променете…",
+    "upload.preview.running": "Преглеждане на промените…",
     "upload.size.patch_optimized_hint": "Оптимизирана кръпка",
     "upload.file_type.patch_optimized": "Оптимизирана кръпка",
     "upload.file_type.patch_optimized_hint": "Оптимизирана версия на кръпката, която се създава асинхронно след публикуването на компилацията.",

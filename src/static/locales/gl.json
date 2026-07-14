@@ -74,5 +74,6 @@
     "game.install.visit_web_page": "Visitar a páxina web",
     "grid.criterion.search": "Buscar...",
     "grid.criterion.filter": "Filtrar...",
-    "grid.criterion.filter_by": "Filtrar por: "
+    "grid.criterion.filter_by": "Filtrar por: ",
+    "menu.edit.select_all": "Seleccionar todo"
 }

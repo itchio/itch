@@ -527,10 +527,13 @@
   "manage_cave.launch_settings.allow_env.hint":
     "Comma or whitespace separated",
   "manage_cave.launch_settings.allow_env.placeholder": "e.g. LANG DISPLAY",
-  "manage_cave.launch_settings.extra_args": "Extra launch arguments",
-  "manage_cave.launch_settings.extra_args.hint": "Whitespace separated",
-  "manage_cave.launch_settings.extra_args.placeholder":
-    "e.g. --fullscreen --skip-intro",
+  "manage_cave.launch_settings.command_template": "Launch options",
+  "manage_cave.launch_settings.command_template.hint":
+    "Extra arguments to pass to the game.",
+  "manage_cave.launch_settings.command_template.hint_advanced":
+    "To set environment variables or run the game through a wrapper, write %command% where the game's command goes. For example: mangohud %command%",
+  "manage_cave.launch_settings.command_template.placeholder":
+    "e.g. --fullscreen",
   "prompt.url_install.credit": "A {{classification}} by {{username}}",
   "prompt.url_install.message": "Do you want to install {{title}}?",
   "prompt.url_install.title": "Install request",
