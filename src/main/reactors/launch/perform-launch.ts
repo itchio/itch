@@ -123,8 +123,8 @@ export async function performLaunch(
           }
         }
 
-        if (caveSettings.extraArgs && caveSettings.extraArgs.length > 0) {
-          launchParams.extraArgs = caveSettings.extraArgs;
+        if (caveSettings.commandTemplate) {
+          launchParams.commandTemplate = caveSettings.commandTemplate;
         }
 
         await mcall(messages.Launch, launchParams, (convo) => {

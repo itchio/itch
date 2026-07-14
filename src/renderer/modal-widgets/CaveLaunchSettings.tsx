@@ -3,11 +3,9 @@ import { IntlShape, injectIntl } from "react-intl";
 import { findWhere } from "underscore";
 
 import * as messages from "common/butlerd/messages";
+import { getErrorMessage } from "common/butlerd/errors";
 import { CaveSettings, SandboxType } from "common/butlerd/messages";
-import {
-  parseExtraArgs,
-  parseSandboxAllowEnv,
-} from "common/util/launch-settings";
+import { parseSandboxAllowEnv } from "common/util/launch-settings";
 import { rcall } from "renderer/butlerd/rcall";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
@@ -187,6 +185,61 @@ const StandaloneRow = styled(SettingRow)`
   background: rgba(255, 255, 255, 0.012);
 `;
 
+const CommandRow = styled(StandaloneRow)`
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+`;
+
+const CommandInput = styled.textarea`
+  &&& {
+    width: 100%;
+    min-height: 76px;
+    margin: 0;
+    padding: 9px 10px;
+    resize: vertical;
+  }
+
+  background: #0d0d0d;
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px #000;
+  color: ${(props) => props.theme.inputText};
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+
+  &::placeholder {
+    color: ${(props) => props.theme.inputPlaceholder};
+    opacity: 0.7;
+  }
+
+  &:hover {
+    border-color: ${(props) => props.theme.inputBorderFocused};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${(props) => props.theme.inputBorderFocused};
+    box-shadow: inset 0 1px 3px #000,
+      0 0 8px ${(props) => props.theme.inputBoxShadow};
+  }
+`;
+
+/* the %command% escape hatch is the minority case: it reads a step quieter than
+   the plain "pass some arguments" line above it, so nobody mistakes the token
+   for required syntax */
+const AdvancedHint = styled(Hint)`
+  opacity: 0.75;
+`;
+
+const SaveError = styled.div`
+  color: ${(props) => props.theme.error};
+  font-size: ${(props) => props.theme.fontSizes.small};
+  line-height: 1.35;
+`;
+
 type TriState = "inherit" | "on" | "off";
 
 function toTriState(value: boolean | undefined): TriState {
@@ -210,8 +263,9 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
     super(props);
     this.state = {
       settings: null,
-      extraArgsText: "",
+      commandTemplateText: "",
       allowEnvText: "",
+      saveError: null,
     };
   }
 
@@ -221,7 +275,7 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
       const { settings } = await rcall(messages.CavesGetSettings, { caveId });
       this.setState({
         settings,
-        extraArgsText: (settings.extraArgs || []).join(" "),
+        commandTemplateText: settings.commandTemplate || "",
         allowEnvText: (settings.sandboxAllowEnv || []).join(", "),
       });
     } catch (e) {
@@ -260,29 +314,42 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
           <GroupRows>{this.renderSandboxRows(settings)}</GroupRows>
         </Group>
 
-        <StandaloneRow>
+        <CommandRow>
           <SettingLabel>
-            <Label as="label" htmlFor={this.fieldId("extra-args")}>
-              {T(["manage_cave.launch_settings.extra_args"])}
+            <Label as="label" htmlFor={this.fieldId("command-template")}>
+              {T(["manage_cave.launch_settings.command_template"])}
             </Label>
-            <Hint id={this.hintId("extra-args")}>
-              {T(["manage_cave.launch_settings.extra_args.hint"])}
+            <Hint id={this.hintId("command-template")}>
+              {T(["manage_cave.launch_settings.command_template.hint"])}
             </Hint>
-          </SettingLabel>
-          <SettingControl>
-            <SettingInput
-              type="text"
-              id={this.fieldId("extra-args")}
-              aria-describedby={this.hintId("extra-args")}
-              value={this.state.extraArgsText}
-              placeholder={TString(intl, [
-                "manage_cave.launch_settings.extra_args.placeholder",
+            <AdvancedHint id={this.hintId("command-template-advanced")}>
+              {T([
+                "manage_cave.launch_settings.command_template.hint_advanced",
               ])}
-              onChange={this.onExtraArgsChange}
-              onBlur={this.onExtraArgsCommit}
-            />
-          </SettingControl>
-        </StandaloneRow>
+            </AdvancedHint>
+          </SettingLabel>
+          <CommandInput
+            id={this.fieldId("command-template")}
+            aria-describedby={[
+              this.hintId("command-template"),
+              this.hintId("command-template-advanced"),
+              ...(this.state.saveError ? [this.fieldId("save-error")] : []),
+            ].join(" ")}
+            aria-invalid={this.state.saveError ? true : undefined}
+            value={this.state.commandTemplateText}
+            placeholder={TString(intl, [
+              "manage_cave.launch_settings.command_template.placeholder",
+            ])}
+            spellCheck={false}
+            onChange={this.onCommandTemplateChange}
+            onBlur={this.onCommandTemplateCommit}
+          />
+          {this.state.saveError ? (
+            <SaveError id={this.fieldId("save-error")} role="alert">
+              {this.state.saveError}
+            </SaveError>
+          ) : null}
+        </CommandRow>
       </LaunchSettingsDiv>
     );
   }
@@ -451,27 +518,42 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
     });
   };
 
-  onExtraArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ extraArgsText: e.currentTarget.value });
+  onCommandTemplateChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    this.setState({
+      commandTemplateText: e.currentTarget.value,
+      saveError: null,
+    });
   };
 
-  onExtraArgsCommit = () => {
-    const extraArgs = parseExtraArgs(this.state.extraArgsText);
-    this.save({
-      extraArgs: extraArgs.length > 0 ? extraArgs : undefined,
-    });
+  onCommandTemplateCommit = () => {
+    const commandTemplate = this.state.commandTemplateText.trim();
+    this.setState({ commandTemplateText: commandTemplate });
+    if (commandTemplate === (this.state.settings?.commandTemplate || "")) {
+      return;
+    }
+    this.save({ commandTemplate: commandTemplate || undefined });
   };
 
   async save(patch: Partial<CaveSettings>) {
     const { caveId } = this.props;
-    const settings = { ...this.state.settings, ...patch };
-    this.setState({ settings });
+    const previousSettings = this.state.settings;
+    if (!previousSettings) {
+      return;
+    }
+    const settings = { ...previousSettings, ...patch };
+    this.setState({ settings, saveError: null });
 
     try {
       // Caves.SetSettings replaces the whole settings object
       await rcall(messages.CavesSetSettings, { caveId, settings });
     } catch (e) {
       logger.error(`could not save cave settings: ${e}`);
+      const saveError = getErrorMessage(e);
+      this.setState((state) => ({
+        settings:
+          state.settings === settings ? previousSettings : state.settings,
+        saveError,
+      }));
     }
   }
 }
@@ -485,8 +567,9 @@ interface Props {
 
 interface State {
   settings: CaveSettings | null;
-  extraArgsText: string;
+  commandTemplateText: string;
   allowEnvText: string;
+  saveError: string | null;
 }
 
 export default injectIntl(

@@ -966,8 +966,12 @@ export interface CaveSettings {
   sandboxNoNetwork?: boolean;
   /** Override allowed environment variables within the sandbox. */
   sandboxAllowEnv?: string[];
-  /** Additional command-line arguments appended after manifest action args. */
-  extraArgs?: string[];
+  /**
+   * Command template applied to native launches. Use %command% as a standalone
+   * token to place the resolved game command. Without it, tokens are appended
+   * as arguments to the resolved command.
+   */
+  commandTemplate?: string;
 }
 
 /**
@@ -4300,8 +4304,12 @@ export interface LaunchParams {
   sandbox?: boolean;
   /** Sandbox configuration options. Only applied when sandbox is enabled. */
   sandboxOptions?: SandboxOptions;
-  /** Additional command-line arguments appended after manifest action args. */
-  extraArgs?: string[];
+  /**
+   * Command template applied to native launches. Use %command% as a standalone
+   * token to place the resolved game command. Without it, tokens are appended
+   * as arguments to the resolved command.
+   */
+  commandTemplate?: string;
 }
 
 /**

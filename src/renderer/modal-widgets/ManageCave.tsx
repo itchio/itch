@@ -150,6 +150,8 @@ const Title = styled.div`
 
 const ManageCaveDiv = styled(ModalWidgetDiv)`
   min-width: 600px;
+  width: 820px;
+  max-width: 90vw;
 `;
 
 class ManageCave extends React.PureComponent<Props> {

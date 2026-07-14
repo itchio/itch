@@ -19,13 +19,3 @@ export function parseSandboxAllowEnv(rawText?: string): string[] {
 
   return result;
 }
-
-/** Parses a whitespace-separated list of extra command-line arguments.
- * Order and duplicates are preserved. */
-export function parseExtraArgs(rawText?: string): string[] {
-  if (!rawText) {
-    return [];
-  }
-
-  return rawText.split(/\s+/).filter((token) => token.length > 0);
-}
