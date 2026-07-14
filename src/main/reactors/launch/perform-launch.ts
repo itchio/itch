@@ -15,26 +15,7 @@ import { performHTMLLaunch } from "main/reactors/launch/perform-html-launch";
 import { pickManifestAction } from "main/reactors/launch/pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
 import { Conversation } from "@itchio/butlerd";
-
-function parseSandboxAllowEnv(rawText?: string): string[] {
-  if (!rawText) {
-    return [];
-  }
-
-  const result: string[] = [];
-  const seen = new Set<string>();
-
-  for (const token of rawText.split(/[\s,]+/)) {
-    const name = token.trim();
-    if (!name || seen.has(name)) {
-      continue;
-    }
-    seen.add(name);
-    result.push(name);
-  }
-
-  return result;
-}
+import { parseSandboxAllowEnv } from "common/util/launch-settings";
 
 export async function performLaunch(
   ctx: Context,
@@ -88,29 +69,42 @@ export async function performLaunch(
   await ctx.withStopper({
     work: async () => {
       try {
+        const { settings: caveSettings } = await mcall(
+          messages.CavesGetSettings,
+          { caveId: cave.id }
+        );
+        if (Object.keys(caveSettings).length > 0) {
+          logger.info(
+            `applying per-game settings: ${JSON.stringify(caveSettings)}`
+          );
+        }
+
+        const sandbox = caveSettings.sandbox ?? preferences.isolateApps;
+
         const launchParams: messages.LaunchParams = {
           caveId: cave.id,
           prereqsDir,
-          sandbox: preferences.isolateApps,
+          sandbox,
         };
 
-        if (process.platform === "linux" && preferences.isolateApps) {
+        if (process.platform === "linux" && sandbox) {
           const sandboxOptions: messages.SandboxOptions = {};
 
-          if (
-            preferences.linuxSandboxType &&
-            preferences.linuxSandboxType !== messages.SandboxType.Auto
-          ) {
-            sandboxOptions.type = preferences.linuxSandboxType;
+          const sandboxType =
+            caveSettings.sandboxType ?? preferences.linuxSandboxType;
+          if (sandboxType && sandboxType !== messages.SandboxType.Auto) {
+            sandboxOptions.type = sandboxType;
           }
 
-          if (preferences.linuxSandboxNoNetwork === true) {
+          const noNetwork =
+            caveSettings.sandboxNoNetwork ?? preferences.linuxSandboxNoNetwork;
+          if (noNetwork === true) {
             sandboxOptions.noNetwork = true;
           }
 
-          const allowEnv = parseSandboxAllowEnv(
-            preferences.linuxSandboxAllowEnv
-          );
+          const allowEnv =
+            caveSettings.sandboxAllowEnv ??
+            parseSandboxAllowEnv(preferences.linuxSandboxAllowEnv);
           if (allowEnv.length > 0) {
             sandboxOptions.allowEnv = allowEnv;
           }
@@ -118,6 +112,10 @@ export async function performLaunch(
           if (Object.keys(sandboxOptions).length > 0) {
             launchParams.sandboxOptions = sandboxOptions;
           }
+        }
+
+        if (caveSettings.extraArgs && caveSettings.extraArgs.length > 0) {
+          launchParams.extraArgs = caveSettings.extraArgs;
         }
 
         await mcall(messages.Launch, launchParams, (convo) => {

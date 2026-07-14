@@ -23,6 +23,7 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
 import { hook } from "renderer/hocs/hook";
+import CaveLaunchSettings from "renderer/modal-widgets/CaveLaunchSettings";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -209,6 +210,7 @@ class ManageCave extends React.PureComponent<Props> {
             </>
           ) : null}
         </CaveItemBigActions>
+        <CaveLaunchSettings caveId={cave.id} />
         <ModalButtons>
           <Button icon="arrow-left" onClick={this.onBack}>
             {T(["prompt.action.back"])}
