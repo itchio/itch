@@ -362,9 +362,16 @@ class Modals extends React.PureComponent<Props, State> {
   };
 
   onDialogClose = () => {
+    // the close event is fired from a queued task, so by the time it runs a
+    // new modal may already have re-opened the dialog (closeModal with a
+    // follow-up action that opens another modal) - that close is stale and
+    // must not close the new modal
+    if (this.dialogRef.current?.open) {
+      return;
+    }
     const { modal, dispatch } = this.props;
     if (modal) {
-      dispatch(actions.closeModal({ wind: ambientWind() }));
+      dispatch(actions.closeModal({ wind: ambientWind(), id: modal.id }));
     }
   };
 
