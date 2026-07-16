@@ -24,10 +24,10 @@ const StandardGameDesc = ({
       <a href={urlForGame(game.id)} className="gamedesc--titlelink">
         <Title>
           <div className="gamedesc--title">{game.title}</div>
-          {children}
         </Title>
       </a>
       <div>{game.shortText}</div>
+      {children}
       <Filler />
       <div>
         {renderClassification(game.classification)}

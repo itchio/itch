@@ -691,6 +691,9 @@ export const actions = wireActions({
   manageCave: action<{
     /** which cave to manage */
     caveId: string;
+
+    /** true when opened from the game's manage dialog - shows a back button */
+    fromManageGame?: boolean;
   }>(),
   requestCaveUninstall: action<{
     /** id of the cave to uninstall */

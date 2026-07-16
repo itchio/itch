@@ -155,7 +155,7 @@ class ManageGame extends React.PureComponent<Props> {
     dispatch(
       actions.closeModal({
         wind: ambientWind(),
-        action: actions.manageCave({ caveId }),
+        action: actions.manageCave({ caveId, fromManageGame: true }),
       })
     );
   };

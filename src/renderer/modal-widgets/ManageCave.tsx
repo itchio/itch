@@ -281,9 +281,11 @@ class ManageCave extends React.PureComponent<Props> {
         </CaveItemBigActions>
         <CaveLaunchSettings caveId={cave.id} />
         <ModalButtons>
-          <Button icon="arrow-left" onClick={this.onBack}>
-            {T(["prompt.action.back"])}
-          </Button>
+          {this.props.modal.widgetParams.fromManageGame ? (
+            <Button icon="arrow-left" onClick={this.onBack}>
+              {T(["prompt.action.back"])}
+            </Button>
+          ) : null}
           <Filler />
           <Button
             icon="repeat"

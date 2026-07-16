@@ -1,12 +1,10 @@
 import React from "react";
 import { Cave } from "common/butlerd/messages";
 import styled from "renderer/styles";
-import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import LastPlayed from "renderer/basics/LastPlayed";
 import GameStatusGetter from "renderer/basics/GameStatusGetter";
 import { formatUploadTitle } from "common/format/upload";
-import { truncate } from "common/format/truncate";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import { fileSize } from "common/format/filesize";
 import { T } from "renderer/t";
@@ -16,51 +14,41 @@ import { actions } from "common/actions";
 import { hook } from "renderer/hocs/hook";
 import { GameStatus } from "common/helpers/get-game-status";
 
-const ExtrasDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  align-items: flex-start;
-`;
-
-const SizeDiv = styled.div`
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 260px;
-
+const CaveInfoRow = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
+
+  margin-top: 0.4em;
+  font-size: 90%;
+  color: ${(props) => props.theme.secondaryText};
 `;
 
-class LocationItemExtras extends React.PureComponent<Props> {
+const UploadTitleDiv = styled.div`
+  font-weight: bold;
+`;
+
+class CaveDescExtras extends React.PureComponent<Props> {
   override render() {
     const { cave } = this.props;
     return (
-      <>
-        <ExtrasDiv>
-          <FilterSpacer />
-          <div title={formatUploadTitle(cave.upload)}>
-            {truncate(formatUploadTitle(cave.upload), {
-              length: 20,
-            })}
-          </div>
-          <GameStatusGetter
-            game={cave.game}
-            caveId={cave.id}
-            render={this.renderPlayStats}
-          />
-          <SizeDiv>
-            {T([
-              "install_location.property.size_on_disk",
-              { size: fileSize(cave.installInfo.installedSize) },
-            ])}
-            <FilterSpacer />
-            <Link label={T(["grid.item.manage"])} onClick={this.onManage} />
-          </SizeDiv>
-        </ExtrasDiv>
-        <StandardMainAction game={cave.game} />
-      </>
+      <CaveInfoRow>
+        <UploadTitleDiv>{formatUploadTitle(cave.upload)}</UploadTitleDiv>
+        <FilterSpacer />
+        {T([
+          "install_location.property.size_on_disk",
+          { size: fileSize(cave.installInfo.installedSize) },
+        ])}
+        <FilterSpacer />
+        <GameStatusGetter
+          game={cave.game}
+          caveId={cave.id}
+          render={this.renderPlayStats}
+        />
+        <FilterSpacer />
+        <Link label={T(["grid.item.manage"])} onClick={this.onManage} />
+      </CaveInfoRow>
     );
   }
 
@@ -69,6 +57,7 @@ class LocationItemExtras extends React.PureComponent<Props> {
     return (
       <>
         <TotalPlaytime game={cave.game} cave={status.cave} />
+        <FilterSpacer />
         <LastPlayed game={cave.game} cave={status.cave} />
       </>
     );
@@ -90,4 +79,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default hook()(LocationItemExtras);
+export default hook()(CaveDescExtras);

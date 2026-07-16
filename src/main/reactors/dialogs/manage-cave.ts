@@ -7,7 +7,7 @@ import { mcall } from "main/butlerd/mcall";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.manageCave, async (store, action) => {
-    const { caveId } = action.payload;
+    const { caveId, fromManageGame } = action.payload;
 
     const { cave } = await mcall(messages.FetchCave, {
       caveId,
@@ -18,6 +18,7 @@ export default function (watcher: Watcher) {
 
     const widgetParams = {
       cave,
+      fromManageGame,
     };
 
     const { game, upload } = cave;

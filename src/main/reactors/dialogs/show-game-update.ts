@@ -28,7 +28,7 @@ export default function (watcher: Watcher) {
       {
         icon: "play2",
         label: ["pick_update_upload.buttons.just_launch"],
-        action: actions.queueGame({ game }),
+        action: actions.queueGame({ game, caveId: update.caveId }),
         className: "secondary",
       },
       "cancel",

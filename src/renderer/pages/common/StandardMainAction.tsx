@@ -11,12 +11,24 @@ const UncollapsibleMainAction = styled(MainAction)`
 // `forceOwned` treats the game as owned even when commons has no download
 // key for it — used in owned-bundle contexts, where the key is only
 // materialized on first install.
-export default ({ game, forceOwned }: { game: Game; forceOwned?: boolean }) => (
+// `caveId` scopes the action to a specific install: status reflects that
+// cave and launching targets it directly instead of asking which one.
+export default ({
+  game,
+  caveId,
+  forceOwned,
+}: {
+  game: Game;
+  caveId?: string;
+  forceOwned?: boolean;
+}) => (
   <GameStatusGetter
     game={game}
+    caveId={caveId}
     render={(status) => (
       <UncollapsibleMainAction
         game={game}
+        caveId={caveId}
         status={forceOwned ? withOwnedAccess(status) : status}
       />
     )}

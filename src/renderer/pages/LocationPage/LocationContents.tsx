@@ -16,7 +16,8 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import makeGameSeries from "renderer/series/GameSeries";
 import { T, _ } from "renderer/t";
-import LocationItemExtras from "renderer/pages/LocationPage/LocationItemExtras";
+import CaveDescExtras from "renderer/pages/common/CaveDescExtras";
+import StandardMainAction from "renderer/pages/common/StandardMainAction";
 
 const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
@@ -38,6 +39,7 @@ class LocationContents extends React.PureComponent<Props> {
         getKey={this.getKey}
         renderMainFilters={this.renderMainFilters}
         renderExtraFilters={this.renderExtraFilters}
+        renderDescExtras={this.renderDescExtras}
         renderItemExtras={this.renderItemExtras}
       />
     );
@@ -75,8 +77,11 @@ class LocationContents extends React.PureComponent<Props> {
       </FilterGroup>
     </SortsAndFilters>
   );
+  renderDescExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
+    <CaveDescExtras cave={cave} />
+  ));
   renderItemExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
-    <LocationItemExtras cave={cave} />
+    <StandardMainAction game={cave.game} caveId={cave.id} />
   ));
 
   onBrowse = () => {

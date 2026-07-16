@@ -165,7 +165,7 @@ class MainAction extends React.PureComponent<Props> {
       if (update) {
         dispatch(actions.showGameUpdate({ update }));
       } else {
-        dispatch(actions.queueGame({ game }));
+        dispatch(actions.queueGame({ game, caveId: this.props.caveId }));
       }
     } else {
       if (access === Access.None) {

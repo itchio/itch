@@ -16,6 +16,7 @@ import {
   FilterSpacer,
   SortsAndFilters,
 } from "renderer/pages/common/SortsAndFilters";
+import CaveDescExtras from "renderer/pages/common/CaveDescExtras";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
@@ -38,6 +39,7 @@ class InstalledPage extends React.PureComponent<Props> {
         }}
         getRecord={this.getRecord}
         getKey={this.getKey}
+        renderDescExtras={this.renderDescExtras}
         renderItemExtras={this.renderItemExtras}
         renderMainFilters={this.renderMainFilters}
         renderExtraFilters={this.renderExtraFilters}
@@ -47,8 +49,11 @@ class InstalledPage extends React.PureComponent<Props> {
 
   getRecord = CaveGameSeries.getRecordCallback((cave) => cave.game);
   getKey = CaveGameSeries.getKeyCallback((cave) => cave.id);
+  renderDescExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
+    <CaveDescExtras cave={cave} />
+  ));
   renderItemExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
-    <StandardMainAction game={cave.game} />
+    <StandardMainAction game={cave.game} caveId={cave.id} />
   ));
   renderMainFilters = () => <SearchControl />;
   renderExtraFilters = () => (

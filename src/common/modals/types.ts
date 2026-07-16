@@ -100,6 +100,9 @@ export interface ManageGameResponse {}
 
 export interface ManageCaveParams {
   cave: Cave;
+
+  /** true when opened from the game's manage dialog - shows a back button */
+  fromManageGame?: boolean;
 }
 
 export interface ManageCaveResponse {}
