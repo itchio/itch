@@ -143,11 +143,27 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
     doAsync(async () => {
       const queryParams = querystring.parse(parsedURL.query || "");
       const gameId = parseInt(queryParams["game_id"] as string, 10);
-      const uploadId = parseInt(queryParams["upload_id"] as string, 10);
+      let uploadId: number | undefined = parseInt(
+        queryParams["upload_id"] as string,
+        10
+      );
+      if (!Number.isFinite(uploadId)) {
+        uploadId = undefined;
+      }
+      // the param may be valueless (`...&launch`), so check presence
+      const launch = queryParams["launch"] !== undefined;
       logger.info(`Should queue install because of URL: ${url}`);
       const { game } = await mcall(messages.FetchGame, { gameId });
       if (!game) {
         logger.warn(`Could not fetch game ${gameId}, not queuing install`);
+        return;
+      }
+      if (launch) {
+        // launch the installed cave (behind a confirmation modal), or fall
+        // back to installing when nothing matches
+        store.dispatch(
+          actions.queueGame({ game, uploadId, confirmLaunch: true })
+        );
         return;
       }
       await queueInstall(store, game, uploadId);

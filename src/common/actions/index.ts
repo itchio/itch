@@ -668,6 +668,12 @@ export const actions = wireActions({
 
     /** which cave to launch */
     caveId?: string;
+
+    /** only consider caves for this upload, and install it if none */
+    uploadId?: number;
+
+    /** ask for confirmation before launching an installed cave */
+    confirmLaunch?: boolean;
   }>(),
   queueGameInstall: action<{
     /** the game we want to install */

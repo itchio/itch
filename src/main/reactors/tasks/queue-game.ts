@@ -18,7 +18,7 @@ const logger = mainLogger.child(__filename);
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
-    const { game, caveId } = action.payload;
+    const { game, caveId, uploadId, confirmLaunch } = action.payload;
     let caves: Cave[] | undefined;
 
     if (caveId) {
@@ -32,13 +32,16 @@ export default function (watcher: Watcher) {
           filters: { gameId: game.id },
         })
       ).items;
+      if (caves && uploadId) {
+        caves = caves.filter((cave) => cave.upload?.id === uploadId);
+      }
     }
 
     if (!caves || caves.length === 0) {
       logger.info(
         `No cave for ${game.title} (#${game.id}), attempting install`
       );
-      await queueInstall(store, game);
+      await queueInstall(store, game, uploadId);
       return;
     }
 
@@ -46,7 +49,7 @@ export default function (watcher: Watcher) {
       `Have ${caves.length} caves for game ${game.title} (#${game.id})`
     );
 
-    if (caves.length === 1) {
+    if (caves.length === 1 && !confirmLaunch) {
       const cave = caves[0];
       store.dispatch(actions.queueLaunch({ cave }));
       return;
