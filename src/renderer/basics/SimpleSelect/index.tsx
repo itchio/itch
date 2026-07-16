@@ -5,14 +5,25 @@ import styled, { css, singleLine } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
-import { first, find, findIndex, isEqual } from "underscore";
+import { find, findIndex, isEqual } from "underscore";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
+import { T } from "renderer/t";
 import { LocalizedString } from "common/types";
 
 export interface BaseOptionType {
   label: LocalizedString;
   value: any;
+  /**
+   * non-selectable group header; skipped by keyboard nav, type-ahead,
+   * and mouse selection
+   */
+  isHeader?: boolean;
+  /**
+   * action option: choosing it invokes this callback instead of committing
+   * a value, and the menu stays open (e.g. "show more options")
+   */
+  onSelect?: () => void;
 }
 
 export const FloaterSpacer = styled.div`
@@ -24,6 +35,11 @@ const SimpleSelectDiv = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+
+  /* behave like a native <select>: one consistent cursor over the whole
+     control, and no text-selection I-beam over option labels */
+  cursor: default;
+  user-select: none;
 `;
 
 const SimpleSelectButton = styled.button`
@@ -158,7 +174,9 @@ const OptionsDiv = styled.div`
 
   z-index: 10;
 
-  max-height: 400px;
+  /* keep the popup short enough that it doesn't spill past the modal and
+     make the surrounding dialog scroll; it scrolls internally instead */
+  max-height: 230px;
   overflow-y: auto;
 `;
 
@@ -167,6 +185,18 @@ const DummyOption = styled.div`
   flex-flow: row;
   align-items: center;
   color: ${(props) => props.theme.ternaryText};
+`;
+
+const GroupHeaderDiv = styled.div`
+  /* generous top space separates the group from the row above (instead of a
+     cramped divider line); text lines up with the option icons below it */
+  padding: 14px calc(${wrapperPadding}px + 1.5em) 5px;
+  font-size: 70%;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: ${(props) => props.theme.secondaryText};
+  background: ${(props) => props.theme.inputBackground};
 `;
 
 const searchClearThreshold = 2000; // 2 seconds
@@ -185,11 +215,41 @@ export default class SimpleSelect<
     this.idPrefix = `simple-select-${++instanceSeed}`;
     this.state = {
       open: false,
-      focusedValue: first(props.options),
+      focusedValue: find(props.options, (o) => !o.isHeader),
       search: "",
       lastSearchAt: Date.now(),
       lastKeyboardFocusAt: 0,
     };
+  }
+
+  override componentDidUpdate(prevProps: Props<OptionType>) {
+    const { open, focusedValue } = this.state;
+    // the option list can change while the menu stays open - e.g. an action
+    // option reveals more options and removes itself. if the focused option
+    // is gone, keyboard nav and aria-activedescendant would break, so move
+    // focus to the first newly-revealed option (falling back to the first
+    // selectable one).
+    if (!open || !focusedValue) {
+      return;
+    }
+    if (this.indexOfOption(focusedValue) !== -1) {
+      return;
+    }
+    const prevValues = new Set(
+      prevProps.options.map((o) => JSON.stringify(o.value))
+    );
+    const fresh = this.props.options.find(
+      (o) =>
+        !o.isHeader && !o.onSelect && !prevValues.has(JSON.stringify(o.value))
+    );
+    if (fresh) {
+      this.setState({ focusedValue: fresh });
+      return;
+    }
+    const idx = this.nearestSelectable(0, 1);
+    this.setState({
+      focusedValue: idx >= 0 ? this.props.options[idx] : undefined,
+    });
   }
 
   listboxId() {
@@ -210,6 +270,23 @@ export default class SimpleSelect<
       this.props.options,
       (x) => x === target || isEqual(x.value, target.value)
     );
+  }
+
+  // nearest selectable (non-header) option index, scanning dir first,
+  // then the opposite way; -1 if none
+  nearestSelectable(from: number, dir: 1 | -1): number {
+    const { options } = this.props;
+    for (let i = from; i >= 0 && i < options.length; i += dir) {
+      if (!options[i].isHeader) {
+        return i;
+      }
+    }
+    for (let i = from; i >= 0 && i < options.length; i -= dir) {
+      if (!options[i].isHeader) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   override render() {
@@ -291,29 +368,47 @@ export default class SimpleSelect<
       }
 
       if (!focusedValue) {
+        // nothing focused or selected yet: focus the first selectable option
+        const idx = this.nearestSelectable(0, 1);
+        if (idx >= 0) {
+          this.setState({
+            focusedValue: options[idx],
+            lastKeyboardFocusAt: Date.now(),
+          });
+        }
         return;
       }
       let currentIndex = this.indexOfOption(focusedValue);
       let newIndex = currentIndex;
+      // which way to look when we land on a group header
+      let dir: 1 | -1 = 1;
 
       if (ev.key === "ArrowUp") {
         newIndex -= 1;
+        dir = -1;
       } else if (ev.key === "ArrowDown") {
         newIndex += 1;
       } else if (ev.key === "PageUp") {
         newIndex -= 5;
+        dir = -1;
       } else if (ev.key === "PageDown") {
         newIndex += 5;
       } else if (ev.key === "Home") {
         newIndex = 0;
       } else if (ev.key === "End") {
         newIndex = options.length - 1;
+        dir = -1;
       }
 
       if (newIndex < 0) {
         newIndex = 0;
       } else if (newIndex >= options.length) {
         newIndex = options.length - 1;
+      }
+
+      newIndex = this.nearestSelectable(newIndex, dir);
+      if (newIndex < 0) {
+        return;
       }
 
       let newFocusedValue = options[newIndex];
@@ -329,10 +424,7 @@ export default class SimpleSelect<
       // toggle the menu right back open (or fire a spurious onChange)
       ev.preventDefault();
       if (open) {
-        this.close();
-        if (this.state.focusedValue != null) {
-          this.props.onChange(this.state.focusedValue);
-        }
+        this.commitFocused();
       } else {
         this.open();
       }
@@ -361,10 +453,7 @@ export default class SimpleSelect<
       // type-ahead search for a label with a space in it
       if (ev.key === " " && !searchActive) {
         if (open) {
-          this.close();
-          if (this.state.focusedValue != null) {
-            this.props.onChange(this.state.focusedValue);
-          }
+          this.commitFocused();
         } else {
           this.open();
         }
@@ -380,8 +469,12 @@ export default class SimpleSelect<
           lastSearchAt: Date.now(),
         });
 
-        const focusedValue = find(this.props.options, (x, i) =>
-          this.optionText(x, i).startsWith(search)
+        const focusedValue = find(
+          this.props.options,
+          (x, i) =>
+            !x.isHeader &&
+            !x.onSelect &&
+            this.optionText(x, i).startsWith(search)
         );
         if (focusedValue) {
           this.setState({ focusedValue, lastKeyboardFocusAt: Date.now() });
@@ -431,6 +524,20 @@ export default class SimpleSelect<
     return (
       <OptionsDiv role="listbox" id={this.listboxId()}>
         {options.map((option, i) => {
+          if (option.isHeader) {
+            return (
+              <GroupHeaderDiv
+                key={i}
+                // keeps option ids aligned with indices for aria/type-ahead
+                id={this.optionId(i)}
+                role="presentation"
+                // don't blur the trigger button (which would close the menu)
+                onMouseDown={this.onOptionMouseDown}
+              >
+                {T(option.label)}
+              </GroupHeaderDiv>
+            );
+          }
           const focused = i === focusedIndex;
           const selected = i === selectedIndex;
           return (
@@ -466,13 +573,31 @@ export default class SimpleSelect<
 
   onOptionClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     ev.stopPropagation();
-    const { onChange } = this.props;
-    const value = this.getValueForWrapper(ev.currentTarget);
-    if (value) {
-      onChange(value);
+    const option = this.getValueForWrapper(ev.currentTarget);
+    if (option?.onSelect) {
+      // action option: run its callback and leave the menu open
+      option.onSelect();
+      return;
+    }
+    if (option) {
+      this.props.onChange(option);
     }
     this.close();
   };
+
+  // commit the focused option: run its action callback (menu stays open) or
+  // select its value and close
+  commitFocused() {
+    const focused = this.state.focusedValue;
+    if (focused?.onSelect) {
+      focused.onSelect();
+      return;
+    }
+    this.close();
+    if (focused != null) {
+      this.props.onChange(focused);
+    }
+  }
 
   onOptionMouseEnter = (ev: React.MouseEvent<HTMLDivElement>) => {
     if (Date.now() - this.state.lastKeyboardFocusAt < keyboardFocusTimeout) {

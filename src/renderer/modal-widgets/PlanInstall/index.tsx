@@ -1,5 +1,6 @@
 import { asError, getErrorStack } from "common/butlerd/errors";
 import classNames from "classnames";
+import { lighten, transparentize } from "polished";
 import { v4 as uuid } from "uuid";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
@@ -8,13 +9,15 @@ import {
   Game,
   InstallLocationSummary,
   InstallPlanInfo,
+  Platform,
   Upload,
   InstallGetUploads,
   InstallPlanUpload,
 } from "common/butlerd/messages";
 import { formatError, getInstallPlanInfoError } from "common/format/errors";
 import { fileSize } from "common/format/filesize";
-import { formatUploadTitle } from "common/format/upload";
+import { formatPlatform } from "common/format/platform";
+import { formatUploadTitle, uploadPlatformList } from "common/format/upload";
 import { ModalWidgetProps } from "common/modals";
 import modals from "renderer/modals";
 import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
@@ -138,6 +141,39 @@ const StyledSelect = styled.select`
   font-size: ${(props) => props.theme.fontSizes.large};
 `;
 
+const NoCompatibleParagraph = styled.div`
+  flex-grow: 1;
+  line-height: 1.4;
+  margin-right: 1em;
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+`;
+
+const CautionCallout = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  background: ${(props) => transparentize(0.88, props.theme.caution)};
+  border: 1px solid ${(props) => transparentize(0.65, props.theme.caution)};
+  color: ${(props) => props.theme.baseText};
+  line-height: 1.45;
+
+  .icon {
+    color: ${(props) => lighten(0.08, props.theme.caution)};
+    /* Nudge the icon to sit on the cap line of the first text line. */
+    margin-top: 2px;
+    font-size: 110%;
+  }
+`;
+
+/** pseudo-option value for the "Other downloads" group header */
+const OtherDownloadsHeader = "header:other-downloads";
+/** pseudo-option value for the "show all downloads" reveal affordance */
+const ShowIncompatibleAction = "action:show-incompatible";
+
 enum PlanStage {
   Planning,
 }
@@ -178,6 +214,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
     const {
       game,
       uploads,
+      incompatibleUploads,
+      showingIncompatible,
       pickedUploadId,
       installLocations,
       pickedInstallLocationId,
@@ -188,9 +226,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
     // install requires the picked upload to actually resolve - a stale or
     // invalid pickedUploadId must not enable the button
-    let pickedUpload = uploads
-      ? findWhere(uploads, { id: pickedUploadId })
-      : undefined;
+    let pickedUpload = findWhere(this.allUploads(), { id: pickedUploadId });
+    let pickedIsIncompatible =
+      !!pickedUpload && !findWhere(uploads ?? [], { id: pickedUploadId });
     let canInstall = !error && !busy && !!pickedUpload;
     let locationOptions = installLocations.map((il) => {
       let label = il.sizeInfo
@@ -212,17 +250,33 @@ class PlanInstall extends React.PureComponent<Props, State> {
       value: pickedInstallLocationId,
     });
 
-    let uploadOptions: UploadOption[] = [];
-    if (uploads) {
-      uploadOptions = uploads.map((u) => {
-        let val: UploadOption = {
-          label: `${formatUploadTitle(u)} ${
-            u.size > 0 ? fileSize(u.size) : ""
-          }`,
-          value: u.id,
-          upload: u,
-        };
-        return val;
+    const incompatible = incompatibleUploads ?? [];
+    const hasIncompatible = incompatible.length > 0;
+    const compatibleCount = uploads?.length ?? 0;
+
+    let uploadOptions: UploadOption[] = (uploads ?? []).map((u) =>
+      this.uploadToOption(u)
+    );
+    if (showingIncompatible && hasIncompatible) {
+      // only label the group when there are compatible uploads above it
+      if (compatibleCount > 0) {
+        uploadOptions.push({
+          value: OtherDownloadsHeader,
+          label: _("plan_install.other_downloads"),
+          isHeader: true,
+        });
+      }
+      for (const u of incompatible) {
+        uploadOptions.push(this.uploadToOption(u, true));
+      }
+    } else if (hasIncompatible) {
+      // a game with only incompatible uploads auto-reveals them, so this
+      // affordance only appears when compatible uploads exist above it
+      uploadOptions.push({
+        value: ShowIncompatibleAction,
+        label: _("plan_install.show_all_downloads"),
+        isAction: true,
+        onSelect: this.onShowIncompatible,
       });
     }
     let uploadValue = findWhere(uploadOptions, { value: pickedUploadId });
@@ -264,11 +318,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           ? this.renderBusy()
           : error
           ? this.renderError()
-          : uploads && uploads.length == 0
-          ? this.renderNoBuilds()
-          : infoBusy
-          ? this.renderInfoBusy()
-          : this.renderSizes()}
+          : this.renderMain(pickedUpload, pickedIsIncompatible)}
         <Filler />
         <ModalButtons>
           <Button onClick={this.onCancel}>{T(["prompt.action.cancel"])}</Button>
@@ -276,15 +326,83 @@ class PlanInstall extends React.PureComponent<Props, State> {
           <Button
             disabled={!canInstall}
             icon="install"
-            primary
+            primary={!pickedIsIncompatible}
             onClick={this.onInstall}
             id={canInstall ? "modal-install-now" : undefined}
           >
-            {T(["grid.item.install"])}
+            {pickedIsIncompatible
+              ? T(_("plan_install.install_anyway"))
+              : T(["grid.item.install"])}
           </Button>
         </ModalButtons>
       </>
     );
+  }
+
+  renderMain(pickedUpload: Upload | undefined, pickedIsIncompatible: boolean) {
+    const { uploads, incompatibleUploads, infoBusy } = this.state;
+
+    const noCompatible = uploads && uploads.length == 0;
+    const hasIncompatible = (incompatibleUploads?.length ?? 0) > 0;
+    if (noCompatible && !hasIncompatible) {
+      return this.renderNoBuilds();
+    }
+    if (noCompatible && !pickedUpload) {
+      return this.renderNoCompatible();
+    }
+    return (
+      <>
+        {pickedIsIncompatible && pickedUpload
+          ? this.renderIncompatibleWarning(pickedUpload)
+          : null}
+        {infoBusy ? this.renderInfoBusy() : this.renderSizes()}
+      </>
+    );
+  }
+
+  renderNoCompatible() {
+    // the "show all downloads" affordance lives in the upload dropdown itself
+    return (
+      <NoCompatibleParagraph>
+        {T(
+          _("plan_install.no_compatible_downloads", {
+            platform: formatPlatform(this.props.systemPlatform),
+          })
+        )}
+      </NoCompatibleParagraph>
+    );
+  }
+
+  renderIncompatibleWarning(upload: Upload) {
+    const { systemPlatform } = this.props;
+    return (
+      <CautionCallout>
+        <Icon icon="warning" />
+        <span>{T(this.incompatibleWarning(upload))}</span>
+      </CautionCallout>
+    );
+  }
+
+  // an upload can be filtered out for reasons other than platform (wrong
+  // architecture, or an installer format we don't handle), so only claim
+  // "it's for another platform" when its tags actually say so
+  incompatibleWarning(upload: Upload) {
+    const platform = formatPlatform(this.props.systemPlatform);
+    const title = formatUploadTitle(upload);
+    const uploadPlatforms = uploadPlatformList(upload);
+
+    if (uploadPlatforms.length === 0) {
+      return _("plan_install.untagged_warning", { title, platform });
+    }
+    if (uploadPlatforms.includes(this.props.systemPlatform)) {
+      // tagged for this platform but still filtered (arch/format)
+      return _("plan_install.system_incompatible_warning", { title });
+    }
+    return _("plan_install.incompatible_warning", {
+      title,
+      platform,
+      uploadPlatforms: uploadPlatforms.map(formatPlatform).join(", "),
+    });
   }
 
   renderError() {
@@ -424,11 +542,34 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
   onUploadChange = (item: UploadOption) => {
     const id = item.value;
+    if (typeof id !== "number") {
+      // group headers aren't selectable, but let's be safe
+      return;
+    }
     this.setState({
       pickedUploadId: id,
     });
     this.loadPlanInfo(id);
   };
+
+  onShowIncompatible = () => {
+    this.setState({ showingIncompatible: true });
+  };
+
+  /** compatible + incompatible uploads, in display order */
+  allUploads(): Upload[] {
+    const { uploads, incompatibleUploads } = this.state;
+    return [...(uploads ?? []), ...(incompatibleUploads ?? [])];
+  }
+
+  uploadToOption(u: Upload, incompatible?: boolean): UploadOption {
+    return {
+      label: `${formatUploadTitle(u)} ${u.size > 0 ? fileSize(u.size) : ""}`,
+      value: u.id,
+      upload: u,
+      incompatible,
+    };
+  }
 
   close() {
     const { wind, id } = this.props.modal;
@@ -445,8 +586,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
     doAsync(async () => {
       const { dispatch, profileId } = this.props;
       const { game } = this.state;
-      const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
-      const upload = findWhere(uploads ?? [], { id: pickedUploadId });
+      const { pickedInstallLocationId, pickedUploadId } = this.state;
+      const upload = findWhere(this.allUploads(), { id: pickedUploadId });
       if (!upload) {
         // canInstall prevents this, but the modal is already closed by the
         // time we get here
@@ -548,12 +689,31 @@ class PlanInstall extends React.PureComponent<Props, State> {
           gameId,
           profileId: profileId ?? undefined,
         });
+        // defensive: older butlers don't return this field
+        const incompatibleUploads = res.incompatibleUploads ?? [];
+        // when a game has *only* incompatible uploads there's nothing to
+        // gate behind a reveal - show them directly (the notice and the
+        // per-upload warnings already make the situation obvious)
+        const onlyIncompatible =
+          res.uploads.length === 0 && incompatibleUploads.length > 0;
+        // never auto-pick an incompatible upload: installing one should
+        // always be a deliberate choice
         const pickedUploadId =
           uploadId || (res.uploads.length > 0 ? res.uploads[0].id : undefined);
+        const showingIncompatible =
+          this.state.showingIncompatible ||
+          onlyIncompatible ||
+          // if the caller pre-picked an upload that butler classified as
+          // incompatible, reveal the group so the pick is actually visible
+          (!!uploadId &&
+            !findWhere(res.uploads, { id: uploadId }) &&
+            !!findWhere(incompatibleUploads, { id: uploadId }));
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
           uploads: res.uploads,
+          incompatibleUploads,
+          showingIncompatible,
           pickedUploadId,
           busy: false,
         });
@@ -616,6 +776,7 @@ interface Props
   defaultInstallLocation: string;
   /** null when no profile is logged in */
   profileId: number | null;
+  systemPlatform: Platform;
   dispatch: Dispatch;
 
   intl: IntlShape;
@@ -628,7 +789,12 @@ interface State {
   gameId: number;
   /** always set: seeded from widgetParams in the constructor */
   game: Game;
+  /** uploads compatible with the current platform */
   uploads?: Upload[];
+  /** uploads butler filtered out for this platform (untagged or other-platform) */
+  incompatibleUploads?: Upload[];
+  /** true once the user has revealed the incompatible group */
+  showingIncompatible?: boolean;
   info?: InstallPlanInfo;
   error?: Error;
   log?: string;
@@ -643,5 +809,6 @@ export default injectIntl(
   hook((map) => ({
     defaultInstallLocation: map((rs) => rs.preferences.defaultInstallLocation),
     profileId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
+    systemPlatform: map((rs) => rs.system.platform),
   }))(PlanInstall)
 );

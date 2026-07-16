@@ -1142,6 +1142,12 @@ export interface InstallGetUploadsResult {
   game: Game;
   /** undocumented */
   uploads: Upload[];
+  /**
+   * Uploads that were filtered out as not compatible with the current
+   * runtime — untagged, or tagged for other platforms. They can still be
+   * installed by explicitly passing them to @@InstallQueueParams.
+   */
+  incompatibleUploads?: Upload[];
 }
 
 /**

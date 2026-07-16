@@ -1,7 +1,21 @@
-import { Upload, Build } from "common/butlerd/messages";
+import { Upload, Build, Platform } from "common/butlerd/messages";
 
 export function formatUploadTitle(u: Upload): string {
   return u ? u.displayName || u.filename : "?";
+}
+
+export function uploadPlatformList(u: Upload): Platform[] {
+  const platforms: Platform[] = [];
+  if (u.platforms?.windows) {
+    platforms.push(Platform.Windows);
+  }
+  if (u.platforms?.linux) {
+    platforms.push(Platform.Linux);
+  }
+  if (u.platforms?.osx) {
+    platforms.push(Platform.OSX);
+  }
+  return platforms;
 }
 
 function clean(s: string) {
