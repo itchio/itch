@@ -450,9 +450,8 @@
   "prompt.logout_title": "Log out",
   "prompt.manage_game.title": "Manage {{title}}",
   "prompt.manage_game.installed_uploads": "The following items are installed:",
-  "prompt.manage_game.available_uploads": "These items are also available:",
-  "prompt.manage_game.no_other_uploads":
-    "No other items are currently available.",
+  "prompt.manage_game.install_other": "Install another file",
+  "prompt.manage_game.not_installed": "This game is not installed.",
   "prompt.no_compatible_version.detail":
     "Perhaps this {{classification}} isn't compatible with it yet?",
   "prompt.no_compatible_version.message":

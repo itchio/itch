@@ -92,8 +92,6 @@ export interface PrereqsStateResponse {}
 export interface ManageGameParams {
   game: Game;
   caves: Cave[];
-  allUploads: Upload[];
-  loadingUploads: boolean;
 }
 
 export interface ManageGameResponse {}

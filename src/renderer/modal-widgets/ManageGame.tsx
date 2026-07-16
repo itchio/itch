@@ -9,16 +9,14 @@ import React from "react";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
 import LastPlayed from "renderer/basics/LastPlayed";
-import LoadingCircle from "renderer/basics/LoadingCircle";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { each, filter, find, map, size } from "underscore";
+import { map, size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
-import Floater from "renderer/basics/Floater";
 import { getCaveSummary } from "common/butlerd/utils";
 
 const CaveItemList = styled.div`
@@ -91,135 +89,62 @@ const ManageGameDiv = styled(ModalWidgetDiv)`
 class ManageGame extends React.PureComponent<Props> {
   override render() {
     const params = this.props.modal.widgetParams;
-    const { game, caves, allUploads, loadingUploads } = params;
+    const { game, caves } = params;
 
-    const installedUploadIds: { [key: number]: boolean } = {};
-    each(caves, (cave) => {
-      if (cave.upload) {
-        installedUploadIds[cave.upload.id] = true;
-      }
-    });
-
-    const uninstalledUploads = filter(
-      allUploads,
-      (u) => !installedUploadIds[u.id]
-    );
+    if (size(caves) === 0) {
+      return (
+        <ManageGameDiv>
+          <p>{T(["prompt.manage_game.not_installed"])}</p>
+        </ManageGameDiv>
+      );
+    }
 
     return (
       <ManageGameDiv>
-        {size(caves) > 0 ? (
-          <>
-            <p>{T(["prompt.manage_game.installed_uploads"])}</p>
+        <p>{T(["prompt.manage_game.installed_uploads"])}</p>
 
-            <CaveItemList>
-              {map(caves, (cave, i) => {
-                const u = cave.upload;
-                const caveSummary = getCaveSummary(cave);
+        <CaveItemList>
+          {map(caves, (cave, i) => {
+            const u = cave.upload;
+            const caveSummary = getCaveSummary(cave);
 
-                return (
-                  <CaveItem key={cave.id}>
-                    <CaveDetails>
-                      <CaveDetailsRow>
-                        <Title>{formatUpload(u)}</Title>
-                      </CaveDetailsRow>
-                      <CaveDetailsRow className="smaller">
-                        {cave.installInfo.installedSize ? (
-                          <FileSize>
-                            {fileSize(cave.installInfo.installedSize)}
-                          </FileSize>
-                        ) : null}
-                        <Spacer />
-                        <LastPlayed game={game} cave={caveSummary} />
-                        <Spacer />
-                        <TotalPlaytime game={game} cave={caveSummary} />
-                      </CaveDetailsRow>
-                    </CaveDetails>
-                    <Filler />
-                    <CaveItemActions>
-                      <Button
-                        className="manage-cave"
-                        data-cave-id={cave.id}
-                        icon="cog"
-                        primary
-                        onClick={this.onManage}
-                      >
-                        {T(["grid.item.manage"])}
-                      </Button>
-                    </CaveItemActions>
-                  </CaveItem>
-                );
-              })}
-            </CaveItemList>
-          </>
-        ) : null}
-
-        {uninstalledUploads.length > 0 ? (
-          size(caves) > 0 ? (
-            <p>{T(["prompt.manage_game.available_uploads"])}</p>
-          ) : null
-        ) : (
-          <>
-            {" "}
-            {loadingUploads ? (
-              <Floater />
-            ) : (
-              <p>{T(["prompt.manage_game.no_other_uploads"])}</p>
-            )}
-          </>
-        )}
-        {uninstalledUploads.length > 0 ? (
-          <CaveItemList>
-            {map(uninstalledUploads, (u) => {
-              return (
-                <CaveItem key={u.id}>
-                  <CaveDetails>
-                    <CaveDetailsRow>
-                      <Title>{formatUpload(u)}</Title>
-                    </CaveDetailsRow>
-                    <CaveDetailsRow className="smaller">
-                      {u.size > 0 ? (
-                        <FileSize>{fileSize(u.size)}</FileSize>
-                      ) : null}
-                    </CaveDetailsRow>
-                  </CaveDetails>
-                  <Filler />
-                  <CaveItemActions>
-                    <Button
-                      data-upload-id={u.id}
-                      icon="install"
-                      primary
-                      onClick={this.onInstall}
-                    >
-                      {T(["grid.item.install"])}
-                    </Button>
-                  </CaveItemActions>
-                </CaveItem>
-              );
-            })}
-          </CaveItemList>
-        ) : null}
+            return (
+              <CaveItem key={cave.id}>
+                <CaveDetails>
+                  <CaveDetailsRow>
+                    <Title>{formatUpload(u)}</Title>
+                  </CaveDetailsRow>
+                  <CaveDetailsRow className="smaller">
+                    {cave.installInfo.installedSize ? (
+                      <FileSize>
+                        {fileSize(cave.installInfo.installedSize)}
+                      </FileSize>
+                    ) : null}
+                    <Spacer />
+                    <LastPlayed game={game} cave={caveSummary} />
+                    <Spacer />
+                    <TotalPlaytime game={game} cave={caveSummary} />
+                  </CaveDetailsRow>
+                </CaveDetails>
+                <Filler />
+                <CaveItemActions>
+                  <Button
+                    className="manage-cave"
+                    data-cave-id={cave.id}
+                    icon="cog"
+                    primary
+                    onClick={this.onManage}
+                  >
+                    {T(["grid.item.manage"])}
+                  </Button>
+                </CaveItemActions>
+              </CaveItem>
+            );
+          })}
+        </CaveItemList>
       </ManageGameDiv>
     );
   }
-
-  onInstall = (ev: React.MouseEvent<HTMLElement>) => {
-    const { uploadId } = ev.currentTarget.dataset;
-    if (!uploadId) {
-      return;
-    }
-    const params = this.props.modal.widgetParams;
-    const { game } = params;
-    const { dispatch } = this.props;
-    dispatch(
-      actions.closeModal({
-        wind: ambientWind(),
-        action: actions.queueGameInstall({
-          game,
-          uploadId: parseInt(uploadId, 10),
-        }),
-      })
-    );
-  };
 
   onManage = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = ev.currentTarget.dataset.caveId;

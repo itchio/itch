@@ -1,13 +1,9 @@
-import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import modals from "main/modals";
 import { ManageGameParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { mainLogger } from "main/logger";
-
-const logger = mainLogger.child(__filename);
 
 export default function (watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
@@ -22,52 +18,29 @@ export default function (watcher: Watcher) {
     const widgetParams: ManageGameParams = {
       game,
       caves,
-      allUploads: [],
-      loadingUploads: true,
     };
 
-    const openModal = actions.openModal(
-      modals.manageGame.make({
-        wind: "root",
-        title: game.title,
-        message: "",
-        buttons: [
-          {
-            label: ["prompt.action.close"],
-            className: "secondary",
-          },
-        ],
-        widgetParams,
-      })
+    store.dispatch(
+      actions.openModal(
+        modals.manageGame.make({
+          wind: "root",
+          title: game.title,
+          message: "",
+          buttons: [
+            {
+              icon: "install",
+              label: ["prompt.manage_game.install_other"],
+              left: true,
+              action: actions.queueGameInstall({ game }),
+            },
+            {
+              label: ["prompt.action.close"],
+              className: "secondary",
+            },
+          ],
+          widgetParams,
+        })
+      )
     );
-    store.dispatch(openModal);
-    const modalId = openModal.payload.id;
-
-    try {
-      try {
-        const { profile } = store.getState().profile;
-        const { uploads } = await mcall(messages.GameFindUploads, {
-          game,
-          // scopes bundle ownership materialization to the active profile
-          profileId: profile ? profile.id : undefined,
-        });
-        widgetParams.allUploads = uploads;
-      } catch (e) {
-        console.log(`Could not fetch compatible uploads: ${getErrorStack(e)}`);
-      }
-    } catch (e) {
-      logger.warn(`could not list uploads: ${getErrorMessage(e)}`);
-    } finally {
-      widgetParams.loadingUploads = false;
-
-      store.dispatch(
-        actions.updateModalWidgetParams(
-          modals.manageGame.update({
-            id: modalId,
-            widgetParams,
-          })
-        )
-      );
-    }
   });
 }
