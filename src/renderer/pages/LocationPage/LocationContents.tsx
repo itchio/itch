@@ -10,20 +10,22 @@ import Link from "renderer/basics/Link";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import { SortOption } from "renderer/pages/common/Sort";
+import { FilterGroupNeverPlayed } from "renderer/pages/common/CommonFilters";
 import {
   FilterGroup,
+  FilterSpacer,
   SortsAndFilters,
 } from "renderer/pages/common/SortsAndFilters";
 import makeGameSeries from "renderer/series/GameSeries";
 import { T, _ } from "renderer/t";
 import CaveDescExtras from "renderer/pages/common/CaveDescExtras";
-import StandardMainAction from "renderer/pages/common/StandardMainAction";
+import CaveItemActions from "renderer/pages/common/CaveItemActions";
 
 const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class LocationContents extends React.PureComponent<Props> {
   override render() {
-    const { sortBy, sortDir, location } = this.props;
+    const { sortBy, sortDir, location, neverPlayed } = this.props;
     if (!location) {
       return "Location not found";
     }
@@ -31,12 +33,16 @@ class LocationContents extends React.PureComponent<Props> {
     return (
       <CaveGameSeries
         params={{
-          filters: { installLocationId: location.id },
+          filters: {
+            installLocationId: location.id,
+            neverPlayed: neverPlayed === "true",
+          },
           sortBy,
           reverse: sortDir === "reverse",
         }}
         getRecord={this.getRecord}
         getKey={this.getKey}
+        hideGameDetails
         renderMainFilters={this.renderMainFilters}
         renderExtraFilters={this.renderExtraFilters}
         renderDescExtras={this.renderDescExtras}
@@ -75,13 +81,15 @@ class LocationContents extends React.PureComponent<Props> {
           label={_("sort_by.games.install_date")}
         />
       </FilterGroup>
+      <FilterSpacer />
+      <FilterGroupNeverPlayed />
     </SortsAndFilters>
   );
   renderDescExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
     <CaveDescExtras cave={cave} />
   ));
   renderItemExtras = CaveGameSeries.renderItemExtrasCallback((cave) => (
-    <StandardMainAction game={cave.game} caveId={cave.id} />
+    <CaveItemActions cave={cave} />
   ));
 
   onBrowse = () => {
@@ -120,11 +128,15 @@ interface Props {
 
   sortBy: string | undefined;
   sortDir: string | undefined;
+  neverPlayed: string | undefined;
 }
 
 export default withTab(
   hookWithProps(LocationContents)((map) => ({
     sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
     sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
+    neverPlayed: map(
+      (rs, props) => ambientTab(rs, props).location?.query.neverPlayed
+    ),
   }))(LocationContents)
 );

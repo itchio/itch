@@ -5,11 +5,16 @@ import PlatformIcons from "renderer/basics/PlatformIcons";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import { T } from "renderer/t";
 
+// `hideDetails` drops the short description and the classification/platforms
+// line - for lists where the game is already installed and only the title
+// and per-install info matter.
 const StandardGameDesc = ({
   game,
+  hideDetails,
   children,
 }: {
   game: Game | undefined;
+  hideDetails?: boolean;
   children?: any;
 }) => {
   if (!game) {
@@ -26,13 +31,15 @@ const StandardGameDesc = ({
           <div className="gamedesc--title">{game.title}</div>
         </Title>
       </a>
-      <div>{game.shortText}</div>
+      {hideDetails ? null : <div>{game.shortText}</div>}
       {children}
       <Filler />
-      <div>
-        {renderClassification(game.classification)}
-        <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
-      </div>
+      {hideDetails ? null : (
+        <div>
+          {renderClassification(game.classification)}
+          <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
+        </div>
+      )}
     </TitleBox>
   );
 };

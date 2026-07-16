@@ -18,6 +18,8 @@ import StandardGameCover from "renderer/pages/common/StandardGameCover";
 interface GenericExtraProps<Item> {
   renderDescExtras?: (item: Item) => JSX.Element | null;
   renderItemExtras?: (item: Item) => JSX.Element | null;
+  /** hide the game's short description and classification/platforms line */
+  hideGameDetails?: boolean;
 }
 
 interface GameSeriesProps<Params, Item>
@@ -45,6 +47,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
       this.selector = createStructuredSelector({
         renderDescExtras: (props) => props.renderDescExtras,
         renderItemExtras: (props) => props.renderItemExtras,
+        hideGameDetails: (props) => props.hideGameDetails,
       });
     }
 
@@ -84,6 +87,7 @@ class GenericGameRecordComponent<Item> extends React.PureComponent<
       record,
       renderDescExtras = renderNoop,
       renderItemExtras = renderNoop,
+      hideGameDetails,
     } = this.props;
     const game = record;
     return (
@@ -91,7 +95,7 @@ class GenericGameRecordComponent<Item> extends React.PureComponent<
         <BoxInner>
           <StandardGameCover game={game} />
           <FilterSpacer />
-          <StandardGameDesc game={game}>
+          <StandardGameDesc game={game} hideDetails={hideGameDetails}>
             {renderDescExtras(item)}
           </StandardGameDesc>
           <Filler />

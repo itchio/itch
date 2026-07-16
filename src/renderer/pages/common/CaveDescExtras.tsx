@@ -8,10 +8,6 @@ import { formatUploadTitle } from "common/format/upload";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import { fileSize } from "common/format/filesize";
 import { T } from "renderer/t";
-import Link from "renderer/basics/Link";
-import { Dispatch } from "common/types";
-import { actions } from "common/actions";
-import { hook } from "renderer/hocs/hook";
 import { GameStatus } from "common/helpers/get-game-status";
 
 const CaveInfoRow = styled.div`
@@ -46,8 +42,6 @@ class CaveDescExtras extends React.PureComponent<Props> {
           caveId={cave.id}
           render={this.renderPlayStats}
         />
-        <FilterSpacer />
-        <Link label={T(["grid.item.manage"])} onClick={this.onManage} />
       </CaveInfoRow>
     );
   }
@@ -62,21 +56,10 @@ class CaveDescExtras extends React.PureComponent<Props> {
       </>
     );
   };
-
-  onManage = () => {
-    const { dispatch, cave } = this.props;
-    dispatch(
-      actions.manageCave({
-        caveId: cave.id,
-      })
-    );
-  };
 }
 
 interface Props {
   cave: Cave;
-
-  dispatch: Dispatch;
 }
 
-export default hook()(CaveDescExtras);
+export default CaveDescExtras;

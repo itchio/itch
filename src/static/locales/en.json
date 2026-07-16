@@ -764,6 +764,7 @@
   "sort_by.collections.title": "Title",
   "sort_by.collections.updated_at": "Updated",
 
+  "filter_by.games.classification.all": "All content types",
   "filter_by.games.classification.games": "Games",
   "filter_by.games.classification.tools": "Tools",
   "filter_by.games.classification.assets": "Game assets",

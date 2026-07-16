@@ -972,6 +972,14 @@ export interface CaveSettings {
    * as arguments to the resolved command.
    */
   commandTemplate?: string;
+  /**
+   * Preferred launch target for this game, skipping the target picker.
+   * Matched against manifest action names first, then against target
+   * paths (relative to the install folder); the first match in host
+   * preference order wins. If it matches no target (e.g. it went stale
+   * after a game update), the normal selection behavior applies.
+   */
+  launchTarget?: string;
 }
 
 /**
@@ -1017,6 +1025,8 @@ export interface CavesFilters {
   gameId?: number;
   /** undocumented */
   installLocationId?: string;
+  /** When true, only return caves that have never been played */
+  neverPlayed?: boolean;
 }
 
 /**
@@ -1822,6 +1832,33 @@ export const SnoozeCave = createRequest<SnoozeCaveParams, SnoozeCaveResult>(
 );
 
 /**
+ * Result for Launch.GetTargets
+ */
+export interface LaunchGetTargetsResult {
+  /**
+   * All launch targets found for the cave, in host preference order
+   * (targets for the native host come first)
+   */
+  targets: LaunchTarget[];
+}
+
+/**
+ * List the launch targets found for a cave, without launching anything.
+ * This is the same list @@LaunchParams considers when picking (or asking
+ * the client to pick) what to launch.
+ *
+ * May refresh the upload's metadata from the itch.io API (and save it to
+ * the local database); works offline with a warning. Unlike @@LaunchParams,
+ * this does not wait for the install folder lock, so it returns while a
+ * game is running; results obtained during an install operation may be
+ * transient.
+ */
+export const LaunchGetTargets = createRequest<
+  LaunchGetTargetsParams,
+  LaunchGetTargetsResult
+>("Launch.GetTargets");
+
+/**
  * undocumented
  */
 export enum SandboxType {
@@ -2066,6 +2103,9 @@ export enum Code {
   UnsupportedHost = 3001,
   // Nothing that can be launched was found
   NoLaunchCandidates = 5000,
+  // The launch target explicitly requested via LaunchParams.target
+  // did not match any launch target
+  LaunchTargetNotFound = 5001,
   // Java Runtime Environment is required to launch this title.
   JavaRuntimeNeeded = 6000,
   // There is no Internet connection
@@ -4294,6 +4334,14 @@ export interface GameUpdateChoice {
 }
 
 /**
+ * Params for Launch.GetTargets
+ */
+export interface LaunchGetTargetsParams {
+  /** The ID of the cave to list launch targets for */
+  caveId: string;
+}
+
+/**
  * Params for Launch
  */
 export interface LaunchParams {
@@ -4316,6 +4364,14 @@ export interface LaunchParams {
    * as arguments to the resolved command.
    */
   commandTemplate?: string;
+  /**
+   * Launch target to use, skipping the target picker. Matched against
+   * manifest action names first, then against target paths (relative to
+   * the install folder); the first match in host preference order wins.
+   * Takes precedence over the launchTarget cave setting. If it matches
+   * no target, the launch fails with CodeLaunchTargetNotFound.
+   */
+  target?: string;
 }
 
 /**

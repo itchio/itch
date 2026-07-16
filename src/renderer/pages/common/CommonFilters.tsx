@@ -8,35 +8,35 @@ export const FilterGroupGameClassification = () => {
   return (
     <>
       <FilterGroup>
-        <FilterOption
+        <FilterDropdown
           optionKey="classification"
-          optionValue={GameClassification.Game}
-          label={_("filter_by.games.classification.games")}
-        />
-        <FilterOption
-          optionKey="classification"
-          optionValue={GameClassification.Tool}
-          label={_("filter_by.games.classification.tools")}
-        />
-        <FilterOption
-          optionKey="classification"
-          optionValue={GameClassification.Assets}
-          label={_("filter_by.games.classification.assets")}
-        />
-        <FilterOption
-          optionKey="classification"
-          optionValue={GameClassification.Comic}
-          label={_("filter_by.games.classification.comics")}
-        />
-        <FilterOption
-          optionKey="classification"
-          optionValue={GameClassification.Book}
-          label={_("filter_by.games.classification.books")}
-        />
-        <FilterOption
-          optionKey="classification"
-          optionValue={GameClassification.PhysicalGame}
-          label={_("filter_by.games.classification.physical_game")}
+          allLabel={_("filter_by.games.classification.all")}
+          options={[
+            {
+              value: GameClassification.Game,
+              label: _("filter_by.games.classification.games"),
+            },
+            {
+              value: GameClassification.Tool,
+              label: _("filter_by.games.classification.tools"),
+            },
+            {
+              value: GameClassification.Assets,
+              label: _("filter_by.games.classification.assets"),
+            },
+            {
+              value: GameClassification.Comic,
+              label: _("filter_by.games.classification.comics"),
+            },
+            {
+              value: GameClassification.Book,
+              label: _("filter_by.games.classification.books"),
+            },
+            {
+              value: GameClassification.PhysicalGame,
+              label: _("filter_by.games.classification.physical_game"),
+            },
+          ]}
         />
       </FilterGroup>
     </>
@@ -53,6 +53,22 @@ export const FilterGroupInstalled = () => {
           optionKey="installed"
           optionValue={"true"}
           label={_("filter_by.games.status.installed")}
+        />
+      </FilterGroup>
+    </>
+  );
+};
+
+///////////////////////////////////////////////////
+
+export const FilterGroupNeverPlayed = () => {
+  return (
+    <>
+      <FilterGroup>
+        <FilterOption
+          optionKey="neverPlayed"
+          optionValue={"true"}
+          label={_("usage_stats.never_played")}
         />
       </FilterGroup>
     </>
