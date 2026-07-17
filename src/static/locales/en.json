@@ -771,6 +771,9 @@
   "filter_by.games.classification.comics": "Comics",
   "filter_by.games.classification.books": "Books",
   "filter_by.games.classification.physical_game": "Physical Games",
+  "filter_by.games.classification.soundtracks": "Soundtracks",
+  "filter_by.games.classification.game_mods": "Game Mods",
+  "filter_by.games.classification.other": "Other",
 
   "filter_by.games.status.installed": "Installed",
 

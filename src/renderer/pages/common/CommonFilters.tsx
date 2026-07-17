@@ -36,6 +36,18 @@ export const FilterGroupGameClassification = () => {
               value: GameClassification.PhysicalGame,
               label: _("filter_by.games.classification.physical_game"),
             },
+            {
+              value: GameClassification.Soundtrack,
+              label: _("filter_by.games.classification.soundtracks"),
+            },
+            {
+              value: GameClassification.GameMod,
+              label: _("filter_by.games.classification.game_mods"),
+            },
+            {
+              value: GameClassification.Other,
+              label: _("filter_by.games.classification.other"),
+            },
           ]}
         />
       </FilterGroup>
