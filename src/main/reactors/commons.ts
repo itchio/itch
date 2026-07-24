@@ -25,7 +25,7 @@ async function updateCommonsNowThrows(store: Store) {
 
   const { caves, downloadKeys, installLocations } = await mcall(
     messages.FetchCommons,
-    {}
+    { profileId: store.getState().profile.profile?.id }
   );
 
   let locationSizes: { [key: string]: number } = {};
@@ -44,9 +44,87 @@ async function updateCommonsNowThrows(store: Store) {
     downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
     locationSizes,
   });
+
+  void hydrateInteractions(store);
 }
 
 const updateCommons = throttle(updateCommonsNow, 500);
+
+// Across sessions "already hydrated" is the butler-side interaction row
+// itself, including confirmed-zero rows. Failures stay eligible behind a
+// cooldown so an offline session recovers on a later commons refresh
+// instead of hammering every tick.
+const hydratedThisSession = new Set<string>();
+let hydrating = false;
+let hydrationCooldownUntil = 0;
+const hydrationCooldownMs = 10 * 60 * 1000;
+
+// Transition shim for the play time migration (butler 15.30: per-profile
+// user_game_interactions replacing unscoped cave columns). Butler starts with
+// an empty interaction table, so games played before the migration would show
+// "never played" until launched or visited; this hydrates those rows from the
+// server. Removable once libraries predating the migration are no longer a
+// concern: it goes quiet after one pass, since launches and game-page visits
+// keep rows hydrated on their own.
+async function hydrateInteractions(store: Store) {
+  if (hydrating || Date.now() < hydrationCooldownUntil) {
+    return;
+  }
+  const profileId = store.getState().profile.profile?.id;
+  if (!profileId) {
+    return;
+  }
+
+  const { caves } = store.getState().commons;
+  const gameIds = new Set<number>();
+  for (const caveId of Object.keys(caves)) {
+    const cave = caves[caveId];
+    if (cave.interaction) {
+      continue;
+    }
+    if (cave.secondsRun <= 0 && (cave.localSecondsRun ?? 0) <= 0) {
+      continue;
+    }
+    if (hydratedThisSession.has(`${profileId}:${cave.gameId}`)) {
+      continue;
+    }
+    gameIds.add(cave.gameId);
+  }
+  if (gameIds.size === 0) {
+    return;
+  }
+
+  hydrating = true;
+  try {
+    logger.info(`hydrating play time for ${gameIds.size} game(s)...`);
+    let hydrated = 0;
+    let failed = 0;
+    for (const gameId of gameIds) {
+      try {
+        await mcall(messages.FetchGameInteraction, {
+          profileId,
+          gameId,
+          fresh: true,
+        });
+        hydratedThisSession.add(`${profileId}:${gameId}`);
+        hydrated++;
+      } catch (e) {
+        failed++;
+        logger.warn(
+          `could not hydrate play time for game ${gameId}: ${getErrorStack(e)}`
+        );
+      }
+    }
+    if (failed > 0) {
+      hydrationCooldownUntil = Date.now() + hydrationCooldownMs;
+    }
+    if (hydrated > 0) {
+      updateCommons(store);
+    }
+  } finally {
+    hydrating = false;
+  }
+}
 
 export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {

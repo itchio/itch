@@ -39,7 +39,10 @@ export function getCaveSummary(cave: Cave): CaveSummary {
     gameId: cave.game.id,
     lastTouchedAt: cave.stats.lastTouchedAt,
     secondsRun: cave.stats.secondsRun,
+    localSecondsRun: cave.stats.localSecondsRun,
+    localLastRunAt: cave.stats.localLastRunAt,
     installedSize: cave.installInfo.installedSize,
+    interaction: cave.interaction,
   };
 }
 

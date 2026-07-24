@@ -25,7 +25,7 @@ const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class LocationContents extends React.PureComponent<Props> {
   override render() {
-    const { sortBy, sortDir, location, neverPlayed } = this.props;
+    const { sortBy, sortDir, location, neverPlayed, profileId } = this.props;
     if (!location) {
       return "Location not found";
     }
@@ -39,6 +39,7 @@ class LocationContents extends React.PureComponent<Props> {
           },
           sortBy,
           reverse: sortDir === "reverse",
+          profileId,
         }}
         getRecord={this.getRecord}
         getKey={this.getKey}
@@ -129,6 +130,7 @@ interface Props {
   sortBy: string | undefined;
   sortDir: string | undefined;
   neverPlayed: string | undefined;
+  profileId: number | undefined;
 }
 
 export default withTab(
@@ -138,5 +140,6 @@ export default withTab(
     neverPlayed: map(
       (rs, props) => ambientTab(rs, props).location?.query.neverPlayed
     ),
+    profileId: map((rs) => rs.profile.profile?.id),
   }))(LocationContents)
 );

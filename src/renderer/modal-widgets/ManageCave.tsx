@@ -165,11 +165,11 @@ class ManageCave extends React.PureComponent<Props> {
 
     const u = cave.upload;
     const caveSummary = getCaveSummary(cave);
-    const hasLastPlayed = Boolean(caveSummary.lastTouchedAt);
+    const hasLastPlayed = Boolean(caveSummary.interaction?.lastRunAt);
     // mirrors what TotalPlaytime renders — without this the grid would show a
     // stopwatch icon with nothing next to it for a game that's never been played
     const hasPlaytime =
-      caveSummary.secondsRun > 0 &&
+      (caveSummary.interaction?.secondsRun ?? 0) > 0 &&
       actionForGame(game, caveSummary) === "launch";
     return (
       <CaveItem key={cave.id}>

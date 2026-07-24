@@ -160,7 +160,10 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
             <EnormousIcon icon="play2" />
           </ProgressContainer>
           <TitleBlock>
-            <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
+            <FetchCave
+              params={{ caveId, profileId: this.props.profileId }}
+              render={this.renderLastPlayed}
+            />
           </TitleBlock>
         </>
       );
@@ -225,8 +228,10 @@ interface Props {
 
   downloadsPaused: boolean;
   dispatch: Dispatch;
+  profileId: number | undefined;
 }
 
 export default hook((map) => ({
   downloadsPaused: map((rs) => rs.downloads.paused),
+  profileId: map((rs) => rs.profile.profile?.id),
 }))(PrimeDownloadContents);

@@ -91,6 +91,7 @@ export async function performLaunch(
           caveId: cave.id,
           prereqsDir,
           sandbox,
+          profileId: store.getState().profile.profile?.id,
         };
 
         // sent even when we're not asking for a sandbox: butler ignores these

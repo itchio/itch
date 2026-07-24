@@ -12,7 +12,9 @@ interface Props {
 }
 
 const TotalPlaytime = ({ game, cave, short = false }: Props) => {
-  const { secondsRun = 0 } = (cave || {}) as CaveSummary;
+  // legacy secondsRun may hold another account's total; only the profile's
+  // interaction is attributable
+  const secondsRun = cave?.interaction?.secondsRun ?? 0;
 
   const classification = game.classification || "game";
   const classAction = actionForGame(game, cave);

@@ -53,7 +53,9 @@ describeFormula("butler", {
     if (env.isCanary) {
       return null;
     }
-    return "^15.20.0";
+    // 15.30.0: profile-scoped playtime (profileId on Launch/cave fetches);
+    // older butlers silently ignore profileId
+    return "^15.30.0";
   },
   requiredAtStartup: true,
 });

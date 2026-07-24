@@ -11,6 +11,7 @@ export default function (watcher: Watcher) {
 
     const { cave } = await mcall(messages.FetchCave, {
       caveId,
+      profileId: store.getState().profile.profile?.id,
     });
     if (!cave) {
       return;

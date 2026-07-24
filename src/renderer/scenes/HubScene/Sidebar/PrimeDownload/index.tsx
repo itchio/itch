@@ -49,6 +49,7 @@ class PrimeDownload extends React.PureComponent<Props> {
         params={{
           limit: 1,
           sortBy: "lastTouched",
+          profileId: this.props.profileId,
         }}
         render={this.renderGameForCave}
       />
@@ -90,11 +91,13 @@ interface Props {
   dispatch: Dispatch;
   download: Download | undefined;
   progress: DownloadProgress | null;
+  profileId: number | undefined;
 }
 
 export default hook((map) => ({
   task: map((rs) => getActiveTask(rs.tasks)),
   download: map((rs) => getActiveDownload(rs.downloads)),
+  profileId: map((rs) => rs.profile.profile?.id),
   progress: map((rs): DownloadProgress | null => {
     const active = getActiveDownload(rs.downloads);
     if (active) {

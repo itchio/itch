@@ -13,7 +13,9 @@ interface Props {
 }
 
 const LastPlayed = ({ game, cave, short = false, className }: Props) => {
-  const { lastTouchedAt = null } = cave || {};
+  // legacy lastTouchedAt may hold another account's activity; only the
+  // profile's interaction is attributable
+  const lastTouchedAt = cave?.interaction?.lastRunAt ?? null;
 
   const classification = game.classification || "game";
   const classAction = actionForGame(game, cave);

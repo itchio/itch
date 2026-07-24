@@ -12,6 +12,7 @@ export default function (watcher: Watcher) {
     const caves = (
       await mcall(messages.FetchCaves, {
         filters: { gameId: game.id },
+        profileId: store.getState().profile.profile?.id,
       })
     ).items;
 

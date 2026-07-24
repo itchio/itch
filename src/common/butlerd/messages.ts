@@ -894,6 +894,16 @@ export interface CaveSummary {
   secondsRun: number;
   /** undocumented */
   installedSize: number;
+  /**
+   * Play time observed on this device for this install, regardless of
+   * whether gameplay-session sync succeeded. Not attributable to an
+   * account and never summed with server-confirmed totals.
+   */
+  localSecondsRun?: number;
+  /** Last time a game was observed running on this device for this install */
+  localLastRunAt?: RFCDate;
+  /** Profile-scoped play time, omitted when nothing has been synced yet. */
+  interaction?: UserGameInteraction;
 }
 
 /**
@@ -916,6 +926,8 @@ export interface Cave {
   stats: CaveStats;
   /** Information about where the cave is installed, how much space it takes up etc. */
   installInfo: CaveInstallInfo;
+  /** Profile-scoped play time, omitted when nothing has been synced yet. */
+  interaction?: UserGameInteraction;
 }
 
 /**
@@ -928,6 +940,14 @@ export interface CaveStats {
   lastTouchedAt?: RFCDate;
   /** undocumented */
   secondsRun: number;
+  /**
+   * Play time observed on this device for this install, regardless of
+   * whether gameplay-session sync succeeded. Not attributable to an
+   * account and never summed with server-confirmed totals.
+   */
+  localSecondsRun?: number;
+  /** Last time a game was observed running on this device for this install */
+  localLastRunAt?: RFCDate;
 }
 
 /**
@@ -1060,6 +1080,41 @@ export interface FetchCaveResult {
 export const FetchCave = createRequest<FetchCaveParams, FetchCaveResult>(
   "Fetch.Cave"
 );
+
+/**
+ * Play time and last run info for a game, as seen by one itch.io account.
+ * Cached from the itch.io session API; the same for every cave of the game.
+ */
+export interface UserGameInteraction {
+  /** itch.io user the summary belongs to */
+  userId: number;
+  /** Game the summary is for */
+  gameId: number;
+  /** Total play time in seconds, as confirmed by the server */
+  secondsRun: number;
+  /** Last time the user ran the game, null if never */
+  lastRunAt?: RFCDate;
+  /** When butler last received this summary from the server */
+  syncedAt?: RFCDate;
+}
+
+/**
+ * Result for Fetch.GameInteraction
+ */
+export interface FetchGameInteractionResult {
+  /** The cached interaction, omitted if none has been synced yet */
+  interaction?: UserGameInteraction;
+  /** True when no interaction is cached locally */
+  stale?: boolean;
+}
+
+/**
+ * Fetch the play time summary for a game, as seen by a profile's account.
+ */
+export const FetchGameInteraction = createRequest<
+  FetchGameInteractionParams,
+  FetchGameInteractionResult
+>("Fetch.GameInteraction");
 
 /**
  * Result for Fetch.ExpireAll
@@ -2118,6 +2173,8 @@ export enum Code {
   CantRemoveLocationBecauseOfActiveDownloads = 18000,
   // The selected sandbox is not available on this system
   SandboxNotAvailable = 19000,
+  // The profile explicitly requested for an operation does not exist
+  NoSuchProfile = 20000,
 }
 
 /**
@@ -3780,7 +3837,8 @@ export interface FetchProfileBundleOwnershipsParams {
  * Params for Fetch.Commons
  */
 export interface FetchCommonsParams {
-  // no fields
+  /** When set, each cave summary carries this profile's interaction summary. */
+  profileId?: number;
 }
 
 /**
@@ -3799,6 +3857,12 @@ export interface FetchCavesParams {
   reverse?: boolean;
   /** Used for pagination, if specified */
   cursor?: Cursor;
+  /**
+   * When set, play-time sorting and filtering use this profile's account
+   * instead of the unscoped cave columns, and each cave carries its
+   * interaction summary.
+   */
+  profileId?: number;
 }
 
 /**
@@ -3807,6 +3871,20 @@ export interface FetchCavesParams {
 export interface FetchCaveParams {
   /** undocumented */
   caveId: string;
+  /** When set, the cave carries this profile's interaction summary. */
+  profileId?: number;
+}
+
+/**
+ * Params for Fetch.GameInteraction
+ */
+export interface FetchGameInteractionParams {
+  /** Profile whose account's interaction to fetch */
+  profileId: number;
+  /** Game to fetch the interaction for */
+  gameId: number;
+  /** When true, refresh from the itch.io API before returning */
+  fresh?: boolean;
 }
 
 /**
@@ -4372,6 +4450,11 @@ export interface LaunchParams {
    * no target, the launch fails with CodeLaunchTargetNotFound.
    */
   target?: string;
+  /**
+   * Profile whose account receives gameplay-session updates. When zero,
+   * Butler resolves any suitable profile (legacy behavior).
+   */
+  profileId?: number;
 }
 
 /**

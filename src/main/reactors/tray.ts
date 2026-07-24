@@ -63,6 +63,7 @@ async function refreshTray(store: Store) {
       const { items } = await mcall(messages.FetchCaves, {
         limit: 5,
         sortBy: "lastTouched",
+        profileId: rs.profile.profile?.id,
       });
       if (!_.isEmpty(items)) {
         let caveItems: MenuTemplate = [];

@@ -41,7 +41,7 @@ class LibraryPage extends React.PureComponent<Props> {
           <InstalledGameStripe
             title={_("sidebar.installed")}
             href="itch://library/installed"
-            params={{ sortBy: "lastTouched" }}
+            params={{ sortBy: "lastTouched", profileId: profile.id }}
             getGame={this.installedGetGame}
             renderTitleExtras={this.installedTitleExtras}
             linkId="library-installed"
