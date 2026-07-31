@@ -170,6 +170,7 @@ const OptionsDiv = styled.div`
   padding: 4px 0;
   border-radius: 2px;
 
+  background: ${(props) => props.theme.inputBackground};
   border: 1px solid ${(props) => props.theme.inputBorder};
 
   z-index: 10;
