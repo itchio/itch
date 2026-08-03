@@ -1,1 +1,5 @@
-{}
+{
+    "action.name.editor": "编辑器",
+    "grid.item.install": "安装",
+    "collection.empty": "收藏夹中没有任何游戏"
+}

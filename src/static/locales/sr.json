@@ -240,8 +240,6 @@
     "search.results.games": "Игре",
     "search.results.creators": "Аутори",
     "search.empty.no_results": "Резултати нису пронађени",
-    "search.empty.tagline": "Треба ти инспирација? Пробај да тражиш '{{example}}'",
-    "search.open_as_tab": "Отвори у виду картице",
     "search.placeholder": "Тражи",
     "sidebar.aw_snap": "Ух, бре!",
     "sidebar.broken": "Не ради",

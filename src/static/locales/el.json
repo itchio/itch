@@ -232,8 +232,6 @@
     "sidebar.loading": "Φόρτωση...",
     "sidebar.aw_snap": "Ω, να πάρει!",
     "search.placeholder": "Αναζήτηση",
-    "search.open_as_tab": "Άνοιγμα ως καρτέλα",
-    "search.empty.tagline": "Χρειάζεσαι έμπνευση; Προσπάθησε να αναζητήσεις για '{{example}}'",
     "search.empty.no_results": "Δεν βρέθηκαν αποτελέσματα",
     "search.results.creators": "Δημιουργοί",
     "search.results.games": "Παιχνίδια",

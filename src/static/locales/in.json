@@ -281,8 +281,6 @@
     "search.results.games": "Game",
     "search.results.creators": "Pencipta",
     "search.empty.no_results": "Tidak ditemukan hasil",
-    "search.empty.tagline": "Butuh inspirasi? Coba cari '{{example}}'",
-    "search.open_as_tab": "Buka sebagai tab",
     "search.placeholder": "Cari",
     "sidebar.aw_snap": "Aduh!",
     "sidebar.loading": "Memuat...",

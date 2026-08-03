@@ -75,5 +75,8 @@
     "grid.criterion.search": "Buscar...",
     "grid.criterion.filter": "Filtrar...",
     "grid.criterion.filter_by": "Filtrar por: ",
-    "menu.edit.select_all": "Seleccionar todo"
+    "menu.edit.select_all": "Seleccionar todo",
+    "grid.criterion.only_compatible": "Só compatibles",
+    "grid.filters.options.compatible": "Compatible",
+    "grid.filters.options.installed": "Instalado"
 }

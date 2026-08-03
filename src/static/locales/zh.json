@@ -298,8 +298,6 @@
     "search.results.games": "游戏",
     "search.results.creators": "创作者",
     "search.empty.no_results": "未找到结果",
-    "search.empty.tagline": "试试搜索“{{example}}”",
-    "search.open_as_tab": "在标签页中打开",
     "status.available": "itch 有新版本！",
     "status.copied_to_clipboard": "已复制到剪贴板！",
     "status.downloads.category.active": "正在下载",
@@ -500,7 +498,6 @@
     "prompt.manage_game.no_other_uploads": "没有其他可以下载的项目",
     "prompt.revert.no_other_version": "没有其他版本",
     "prompt.self_update_ready.short": "有新版本",
-    "search.results.game.no_description": "无简介",
     "sidebar.applog": "应用日志",
     "sidebar.explore": "探索",
     "status.downloads.updates_available": "可用更新",
@@ -591,5 +588,15 @@
     "send_feedback.consent.include_in_report": "在报告中添加这些信息",
     "send_feedback.send.secret_url": "我们会为您的反馈生成一个特殊的链接。",
     "send_feedback.send.secret_url.feature_list.delete": "删除反馈",
-    "filter_by.games.classification.physical_game": "实体游戏"
+    "filter_by.games.classification.physical_game": "实体游戏",
+    "duration.precise.hour_minute": "1 小时 1 分钟",
+    "duration.precise.hour_minutes": "1 小时 {{minutes}} 分钟",
+    "duration.precise.hour_only": "1 小时",
+    "duration.precise.hours_minute": "{{hours}} 小时 1 分钟",
+    "duration.precise.hours_minutes": "{{hours}} 小时 {{minutes}} 分钟",
+    "duration.precise.hours_only": "{{hours}} 小时",
+    "duration.precise.minute_only": "1 分钟",
+    "duration.precise.minutes_only": "{{minutes}} 分钟",
+    "duration.precise.seconds_only": "{{seconds}} 秒",
+    "notification.push_processing": "{{title}}：已向 {{channel}} 推送，服务器正在处理构建版本"
 }

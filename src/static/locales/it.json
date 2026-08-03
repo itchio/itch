@@ -242,8 +242,6 @@
     "search.results.games": "Giochi",
     "search.results.creators": "Autori",
     "search.empty.no_results": "Nessun risultato",
-    "search.empty.tagline": "In cerca di ispirazione? Prova a cercare '{{example}}'",
-    "search.open_as_tab": "Apri come scheda",
     "search.placeholder": "Cerca",
     "sidebar.aw_snap": "Oops!",
     "sidebar.close_all_tabs": "Chiudi tutte le schede",
@@ -523,7 +521,6 @@
     "butlerd.codes.3000": "Questo programma è compresso in un formato non compatibile con l'app itch.io.",
     "butlerd.codes.404": "La cartella di installazione è sparita",
     "status.installing_game.cancelled": "Installazione di {{title}} annullata!",
-    "search.results.game.no_description": "Nessuna descrizione",
     "prompt.uninstall_error.action_permissions": "Rimuovi come amministratore",
     "prompt.uninstall_error.title": "Errore di disinstallazione",
     "prompt.revert.title": "Passa ad un'altra versione di {{title}}",
@@ -592,5 +589,13 @@
     "send_feedback.nav.next": "Avanti",
     "send_feedback.steps.send": "Invia la segnalzione",
     "duration.precise.hour_minute": "1 ora 1 minuto",
-    "duration.precise.hour_minutes": "1 ora {{minutes}} minuti"
+    "duration.precise.hour_minutes": "1 ora {{minutes}} minuti",
+    "duration.precise.hour_only": "1 ora",
+    "duration.precise.hours_minutes": "{{hours}} ore {{minutes}} minuti",
+    "duration.precise.hours_only": "{{hours}} ore",
+    "duration.precise.minute_only": "1 minuto",
+    "duration.precise.minutes_only": "{{minutes}} minuti",
+    "duration.precise.seconds_only": "{{seconds}} secondi",
+    "bundle.item_count": "{{itemCount}} giochi",
+    "duration.precise.hours_minute": "{{hours}} ore 1 minuto"
 }
