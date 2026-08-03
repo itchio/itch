@@ -65,23 +65,19 @@ async function main() {
 async function signApp(appBundle, electronVersion) {
   console.log("Preparing to sign Application bundle...");
 
-  console.log("Writing entitlements file");
-  const entitlementsPath = ospath.join(".", "entitlements.plist");
-  fs.writeFileSync(entitlementsPath, entitlements());
-
   console.log("Signing Application bundle...");
   await measure("@electron/osx-sign", async () => {
     const debug = await import("debug");
     debug.default.enable("@electron/osx-sign");
     const { sign } = await import("@electron/osx-sign");
+    // Rely on osx-sign's per-file default entitlements. They include
+    // com.apple.security.cs.allow-jit, which V8 needs under the hardened
+    // runtime on Apple Silicon; overriding them with a single custom plist
+    // shipped a build that crashed on launch (#3474).
     await sign({
       app: appBundle,
       platform: "darwin",
       version: electronVersion,
-      optionsForFile: () => ({
-        hardenedRuntime: true,
-        entitlements: entitlementsPath,
-      }),
     });
   });
 
@@ -123,22 +119,6 @@ async function notarizeApp(appBundle) {
 
   console.log("Verifying notarization...");
   $(`codesign --test-requirement="=notarized" -vvvv "${appBundle}"`);
-}
-
-function entitlements() {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-  <dict>
-    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
-    <true/>
-    <key>com.apple.security.network.client</key>
-    <true/>
-    <key>com.apple.security.files.user-selected.read-write</key>
-    <true/>
-  </dict>
-</plist>
-`;
 }
 
 main().catch((err) => {

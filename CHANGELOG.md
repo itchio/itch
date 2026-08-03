@@ -1,5 +1,50 @@
 # Changelog
 
+## [26.18.0] - 2026-08-02
+
+- Fix crash on launch on Apple Silicon Macs: 26.17.0 was signed without the `com.apple.security.cs.allow-jit` entitlement ([#3474](https://github.com/itchio/itch/issues/3474))
+
+## [26.17.0] - 2026-07-28
+
+This release adds per-game launch settings, lets you install downloads that aren't tagged for your platform, reworks the installed library page and the manage dialog, and rebuilds the sidebar search around your own library. It requires butler 15.30.0 or newer.
+
+### Launch settings
+
+- Each installed game now has a Launch settings screen, reachable from the manage dialog, with per-game sandbox, network access, and environment variable options ([#366](https://github.com/itchio/itch/issues/366), [#3102](https://github.com/itchio/itch/issues/3102))
+- Introduces a "Command Pattern" launch options: support either plain arguments to add or a `%command%` pattern to add wrapper commands or environment variables ([#342](https://github.com/itchio/itch/issues/342), [#3238](https://github.com/itchio/itch/issues/3238), [#2713](https://github.com/itchio/itch/issues/2713))
+
+### Installing
+
+- Downloads that aren't tagged for your platform are now able to be revealed and intsalled. ([#3430](https://github.com/itchio/itch/issues/3430), [#3237](https://github.com/itchio/itch/issues/3237), [#3270](https://github.com/itchio/itch/issues/3270), [#2929](https://github.com/itchio/itch/issues/2929), [#2556](https://github.com/itchio/itch/issues/2556), [#2446](https://github.com/itchio/itch/issues/2446), [#2275](https://github.com/itchio/itch/issues/2275))
+- `itch://install` accepts a `launch` parameter, which opens the launch dialog instead of reinstalling when the upload is already downloaded
+
+### Search
+
+The sidebar search has been replaced:
+* Autocomplete candidates now only show locally available projects, eg. things you have bought, or synced from collections or bundles.
+* Autocomplete results now include Collections and Bundles, making it easy to naviagte directly to the corresponding page in the app.
+* There's now a *Search on itch.io...* option presented first that will take you to itch.io's full search page to search across the site.
+
+This replaces the old API search autocomplete which presented items in a confusing order that made it hard to actually find anything. We feel that autocomplete works best for things you already have, and everything else should go through the site's full search experience.
+
+### Library
+
+- Installed items show install size, version, and play time inline, plus a manage button next to the main action
+- The installed page can be sorted by last played, play time, size on disk, and install date, and filtered to games you've never played
+- The content type filter is now a dropdown and includes soundtracks, game mods, and other ([#3421](https://github.com/itchio/itch/issues/3421))
+- The manage dialog was redesigned around quick actions and no longer duplicates the install dialog, it links to it instead
+
+
+### butler
+
+- Requires butler 15.30.0 or newer
+- Play time and last played are now tracked per profile. Play time recorded before this change is pulled from the server the first time your library refreshes
+
+### Bugs
+
+- Fixed a race condition where closing a dialog could dismiss the one it just opened
+
+
 ## [26.15.0] - 2026-07-07
 
 This release adds a page for browsing and installing games from itch.io bundles you own, a platform filter on the collection, bundle, and library pages, accessibility improvements to the sort and filter dropdowns, and an Electron bump.
