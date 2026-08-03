@@ -532,8 +532,6 @@
     "status.downloads.resume_downloads": "Riprendi download",
     "status.repairing_game": "{title} deve completare l'aggiornamento prima di essere aperto",
     "prompt.uninstall_error.message": "Disinstallazione fallita. Rimuovere comunque l'elemento?",
-    "prompt.manage_game.no_other_uploads": "Non sono presenti altri elementi al momento.",
-    "prompt.manage_game.available_uploads": "Sono inoltre disponibili questi elementi:",
     "status.downloads.find_games_button": "Scarichiamo qualcosa!",
     "sidebar.explore": "Esplora",
     "sidebar.applog": "Registri dell'applicazione",

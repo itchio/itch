@@ -491,8 +491,6 @@
     "prompt.blessing.detail": "Fortsätt bara ifall du litar på skaparen.",
     "prompt.manage_game.title": "Hantera {title}",
     "prompt.manage_game.installed_uploads": "Följande föremål är installerade:",
-    "prompt.manage_game.available_uploads": "Dessa föremål är också tillgängliga:",
-    "prompt.manage_game.no_other_uploads": "Inga andra föremål är tillgängliga för tillfället.",
     "prompt.revert.version": "version {version}",
     "prompt.revert.no_other_version": "Ingen annan version är tillgänglig.",
     "prompt.self_update_ready.short": "Ny version tillgänglig",

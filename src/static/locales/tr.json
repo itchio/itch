@@ -478,8 +478,6 @@
     "prompt.revert.title": "{title} yazılımının başka bir sürümüne geç",
     "prompt.install_error.find_upload": "İndirme için arama yaparken: {message}",
     "prompt.install_error.title": "Kurulum sırasında bir hata oluştu",
-    "prompt.manage_game.no_other_uploads": "Şu anda mevcut olan başka öğe yok.",
-    "prompt.manage_game.available_uploads": "Bu öğeler de mevcut bulunmakta:",
     "prompt.manage_game.title": "Yönet: {title}",
     "prompt.blessing.message": "{title} yazılımını yönetmek için yönetici izni gereklidir",
     "prompt.launch.title": "Çalıştır: {title}",

@@ -500,8 +500,6 @@
     "prompt.sla.accept": "Akceptuję warunki",
     "prompt.blessing.detail": "Kontynuuj, tylko jeśli ufasz autorowi.",
     "prompt.manage_game.installed_uploads": "Zainstalowane są następujące elementy:",
-    "prompt.manage_game.available_uploads": "Te pozycje są również dostępne:",
-    "prompt.manage_game.no_other_uploads": "Obecnie nie są dostępne żadne inne pozycje.",
     "prompt.revert.no_other_version": "Żadna inna wersja nie jest dostępna.",
     "prompt.self_update_ready.short": "Nowa wersja jest dostępna",
     "sidebar.applog": "Dziennik aplikacji",

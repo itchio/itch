@@ -386,8 +386,6 @@
     "prompt.logout_title": "Tanca la sessió",
     "prompt.manage_game.title": "Gestiona {title}",
     "prompt.manage_game.installed_uploads": "Els següents elements estan instal·lats:",
-    "prompt.manage_game.available_uploads": "Aquests elements també estan disponibles:",
-    "prompt.manage_game.no_other_uploads": "No hi ha cap altre element disponible.",
     "prompt.install_error.title": "S’ha produït un error durant la instal·lació",
     "prompt.install_error.find_upload": "Mentre se cercava una baixada: {message}",
     "prompt.packaging_policy.learn_more": "Més informació",

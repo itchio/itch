@@ -396,8 +396,6 @@
     "prompt.logout_detail": "Downloads die nu bezig zijn, zullen gepauzeerd worden totdat je weer inlogt.",
     "prompt.manage_game.title": "{title} beheren",
     "prompt.manage_game.installed_uploads": "De volgende voorwerpen zijn geïnstalleerd:",
-    "prompt.manage_game.available_uploads": "Deze voorwerpen zijn ook beschikbaar:",
-    "prompt.manage_game.no_other_uploads": "Geen andere voorwerpen zijn momenteel beschikbaar.",
     "prompt.install_error.title": "Er ging iets mis tijdens het installeren",
     "prompt.install_error.find_upload": "Tijdens het zoeken naar een download: {message}",
     "prompt.packaging_policy.learn_more": "Meer info",

@@ -500,8 +500,6 @@
     "prompt.sla.title": "Lisensavtale for programvare",
     "prompt.sla.message": "For å bruke dette programmet må du godta vilkårene i denne lisensavtalen:",
     "prompt.sla.accept": "Godta vilkår",
-    "prompt.manage_game.available_uploads": "Disse gjenstandene er også tilgjengelige:",
-    "prompt.manage_game.no_other_uploads": "Ingen andre gjenstander er tilgjengelige nå.",
     "prompt.revert.no_other_version": "Ingen andre versjoner er tilgjengelige.",
     "prompt.self_update_ready.short": "Ny versjon tilgjengelig",
     "sidebar.applog": "Applikasjonslogg",

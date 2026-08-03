@@ -265,8 +265,6 @@
     "prompt.packaging_policy.learn_more": "Μάθε περισσότερα",
     "prompt.install_error.find_upload": "Κατά την αναζήτηση για λήψη: {message}",
     "prompt.install_error.title": "Ένα σφάλμα συνέβη κατά τη διάρκεια της εγκατάστασης",
-    "prompt.manage_game.no_other_uploads": "Δεν υπάρχουν άλλα διαθέσιμα αντικείμενα προς το παρόν.",
-    "prompt.manage_game.available_uploads": "Αυτά τα αντικείμενα είναι επίσης διαθέσιμα:",
     "prompt.manage_game.installed_uploads": "Τα ακόλουθα αντικείμενα έχουν εγκατασταθεί:",
     "prompt.manage_game.title": "Διαχείριση του {title}",
     "prompt.logout_title": "Αποσύνδεση",

@@ -487,8 +487,6 @@
     "prompt.blessing.detail": "Prossiga apenas se você confia no autor.",
     "prompt.manage_game.title": "Gerenciar {title}",
     "prompt.manage_game.installed_uploads": "Os seguintes itens estão instalados:",
-    "prompt.manage_game.available_uploads": "Estes itens também estão disponíveis:",
-    "prompt.manage_game.no_other_uploads": "Nenhum outro item está disponível atualmente.",
     "prompt.install_error.title": "Ocorreu um erro durante a instalação",
     "prompt.install_error.find_upload": "Enquanto busca por um download: {message}",
     "prompt.revert.title": "Mudar {title} para outra versão",

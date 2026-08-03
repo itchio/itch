@@ -510,8 +510,6 @@
     "prompt.revert.no_other_version": "Žádná jiná verze není k dispozici.",
     "prompt.revert.version": "verze {version}",
     "prompt.revert.title": "Přepnout {title} na jinou verzi",
-    "prompt.manage_game.no_other_uploads": "V tuto chvíli nejsou k dispozici žádné další položky.",
-    "prompt.manage_game.available_uploads": "K dispozici jsou také tyto položky:",
     "prompt.manage_game.installed_uploads": "Následující položky jsou nainstalovány:",
     "prompt.manage_game.title": "Spravovat {title}",
     "prompt.blessing.detail": "Pokračujte pouze pokud důvěřujete autorovi.",

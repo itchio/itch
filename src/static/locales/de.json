@@ -478,8 +478,6 @@
     "sidebar.explore": "Erkunden",
     "sidebar.library": "Bibliothek",
     "prompt.manage_game.installed_uploads": "Folgendes ist Installiert:",
-    "prompt.manage_game.available_uploads": "Diese Elemente sind auch verfügbar:",
-    "prompt.manage_game.no_other_uploads": "Keine weiteren Elemente sind verfügbar.",
     "sidebar.applog": "Applikationenslog",
     "grid.really_empty_state.explanation": "... bisher!",
     "grid.item.running.prepare": "Vorbereiten …",

@@ -392,8 +392,6 @@
     "prompt.logout_title": "Terminar sessão",
     "prompt.manage_game.title": "Gerir {title}",
     "prompt.manage_game.installed_uploads": "Os seguintes itens estão instalados:",
-    "prompt.manage_game.available_uploads": "Estes itens também estão disponíveis:",
-    "prompt.manage_game.no_other_uploads": "Não há itens disponíveis de momento.",
     "prompt.install_error.title": "Ocorreu um erro durante a instalação",
     "prompt.install_error.find_upload": "Durante a pesquisa por uma transferência: {message}",
     "prompt.packaging_policy.open_web_page": "Abrir página web de {title}",

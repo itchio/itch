@@ -460,8 +460,6 @@
     "prompt.blessing.detail": "Fortsæt kun hvis du stoler på forfatteren.",
     "prompt.manage_game.title": "Administrer {title}",
     "prompt.manage_game.installed_uploads": "Følgende genstande er installeret:",
-    "prompt.manage_game.available_uploads": "Disse genstande er også tilgængelige:",
-    "prompt.manage_game.no_other_uploads": "Ingen andre genstande er tilgængelige på nuværende tidspunkt.",
     "prompt.install_error.title": "Der skete en fejl under installationen",
     "prompt.install_error.find_upload": "Under søgning efter download:{message}",
     "prompt.revert.title": "Skift {title} til en anden version",

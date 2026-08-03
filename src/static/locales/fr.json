@@ -438,8 +438,6 @@
     "prompt.launch.message": "Que voulez-vous ouvrir ?",
     "prompt.manage_game.title": "Gérer {title}",
     "prompt.manage_game.installed_uploads": "Les éléments suivants sont installés :",
-    "prompt.manage_game.available_uploads": "Ces éléments sont également disponible :",
-    "prompt.manage_game.no_other_uploads": "Aucun autre élément n'est disponible pour l'instant.",
     "prompt.revert.version": "version {version}",
     "status.repairing_game": "{title} doit terminer la mise à jour avant de pouvoir l'ouvrir",
     "status.downloads.no_active_downloads_subtext": "Les choses que vous installez ou téléchargez apparaîtront ici",
