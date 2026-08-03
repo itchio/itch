@@ -3,7 +3,7 @@ import env from "common/env";
 interface FormattedDuration {
   id: string;
   values?: {
-    [key: string]: string;
+    [key: string]: number;
   };
 }
 
@@ -11,19 +11,17 @@ export function formatDurationAsMessage(secs: number): FormattedDuration {
   if (secs < 60) {
     return {
       id: "duration.seconds",
-      values: { x: Math.floor(secs).toFixed() },
+      values: { x: Math.floor(secs) },
     };
   } else if (secs < 3600) {
     return {
       id: "duration.minutes",
-      values: { x: Math.floor(secs / 60).toFixed() },
+      values: { x: Math.floor(secs / 60) },
     };
-  } else if (secs < 3600 * 2) {
-    return { id: "duration.hour" };
   } else {
     return {
       id: "duration.hours",
-      values: { x: Math.floor(secs / 3600).toFixed() },
+      values: { x: Math.floor(secs / 3600) },
     };
   }
 }
@@ -34,54 +32,32 @@ export function formatPreciseDurationAsMessage(
   const totalMinutes = Math.floor(secs / 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  const seconds = Math.floor(secs % 60);
 
   if (hours === 0 && minutes === 0) {
     return {
       id: "duration.precise.seconds_only",
-      values: { seconds: seconds.toFixed() },
+      values: { seconds: Math.floor(secs % 60) },
     };
   }
 
   if (hours === 0) {
     return {
-      id:
-        minutes === 1
-          ? "duration.precise.minute_only"
-          : "duration.precise.minutes_only",
-      values: { minutes: minutes.toFixed() },
+      id: "duration.precise.minutes_only",
+      values: { minutes },
     };
   }
 
   if (minutes === 0) {
     return {
-      id:
-        hours === 1
-          ? "duration.precise.hour_only"
-          : "duration.precise.hours_only",
-      values: { hours: hours.toFixed() },
+      id: "duration.precise.hours_only",
+      values: { hours },
     };
   }
 
-  // Both hours and minutes
-  if (hours === 1 && minutes === 1) {
-    return { id: "duration.precise.hour_minute" };
-  } else if (hours === 1) {
-    return {
-      id: "duration.precise.hour_minutes",
-      values: { minutes: minutes.toFixed() },
-    };
-  } else if (minutes === 1) {
-    return {
-      id: "duration.precise.hours_minute",
-      values: { hours: hours.toFixed() },
-    };
-  } else {
-    return {
-      id: "duration.precise.hours_minutes",
-      values: { hours: hours.toFixed(), minutes: minutes.toFixed() },
-    };
-  }
+  return {
+    id: "duration.precise.hours_minutes",
+    values: { hours, minutes },
+  };
 }
 
 export interface DateFormat {
