@@ -47,6 +47,12 @@
     "errors.api.login.password_must_be_provided": "请输入密码\n",
     "errors.api.login.incorrect_username_or_password": "用户名或密码不正确\n",
     "duration.seconds": "{x} 秒\n",
+    "bundle.item_count": "{itemCount} 个游戏",
+    "duration.precise.hours_minutes": "{hours} 小时 {minutes} 分钟",
+    "duration.precise.hours_only": "{hours} 小时",
+    "duration.precise.minutes_only": "{minutes} 分钟",
+    "duration.precise.seconds_only": "{seconds} 秒",
+    "upload.preview.files_to_upload": "将上传 {count} 个文件({size})。",
     "duration.minutes": "{x} 分钟\n",
     "duration.minute": "1 分钟以内\n",
     "dashboard.game_stats.downloads": "下载数\n",
@@ -62,7 +68,6 @@
     "download.outcome.reinstalled": "重新安装",
     "dashboard.game_stats.purchases": "购买",
     "duration.hours": "{x}小时",
-    "duration.hour": "一小时",
     "grid.item.developer": "开发者",
     "grid.item.check_for_update": "检查更新",
     "grid.really_empty_state.leader": "这里什么也没有...",
@@ -138,5 +143,6 @@
     "grid.item.manage": "管理",
     "grid.item.not_compatible": "在此平台不可用",
     "grid.item.probe": "检查失败原因",
-    "grid.item.retry": "请再次尝试下载/安装/启动此项目"
+    "grid.item.retry": "请再次尝试下载/安装/启动此项目",
+    "grid.item.report_problem": "发送反馈"
 }

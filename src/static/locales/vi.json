@@ -73,7 +73,6 @@
     "game.install.could_not_launch": "Đã có lỗi xảy ra trong khi khởi động {title}",
     "errors.api.login.incorrect_username_or_password": "Tên người dùng hoặc mật khẩu không chính xác",
     "duration.minute": "một phút hoặc ít hơn",
-    "duration.hour": "một giờ",
     "dashboard.game_stats.purchases": "lượt mua",
     "dashboard.game_stats.downloads": "lượt tải về",
     "dashboard.game_stats.views": "lượt xem",

@@ -1,9 +1,8 @@
 {
     "desktop.shortcut.comment": "Installer et jouer à des jeux itch.io facilement",
-    "duration.hour": "une heure",
-    "duration.hours": "{x} heures",
+    "duration.hours": "{x, plural, one {une heure} many {# heures} other {# heures}}",
     "duration.minute": "moins d'une minute",
-    "duration.minutes": "{x} minutes",
+    "duration.minutes": "{x, plural, one {# minute} many {# minutes} other {# minutes}}",
     "errors.api.login.incorrect_username_or_password": "Mot de passe ou nom d'utilisateur incorrect",
     "errors.api.login.password_must_be_provided": "Le mot de passe est requis",
     "errors.api.login.username_must_be_provided": "Le nom d'utilisateur est requis",
@@ -445,7 +444,13 @@
     "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées",
     "collections.empty": "Vous n'avez actuellement aucune collection",
     "collections.empty_sub": "Cherchez quelques jeux et ajoutez-les à une nouvelle collection !",
-    "duration.seconds": "{x} secondes",
+    "duration.seconds": "{x, plural, one {# seconde} many {# secondes} other {# secondes}}",
+    "bundle.item_count": "{itemCount, plural, one {# jeu} many {# jeux} other {# jeux}}",
+    "duration.precise.hours_minutes": "{hours, plural, one {# heure} many {# heures} other {# heures}} {minutes, plural, one {# minute} many {# minutes} other {# minutes}}",
+    "duration.precise.hours_only": "{hours, plural, one {# heure} many {# heures} other {# heures}}",
+    "duration.precise.minutes_only": "{minutes, plural, one {# minute} many {# minutes} other {# minutes}}",
+    "duration.precise.seconds_only": "{seconds, plural, one {# seconde} many {# secondes} other {# secondes}}",
+    "upload.preview.files_to_upload": "{count, plural, one {# fichier sera téléversé} many {# fichiers seront téléversés} other {# fichiers seront téléversés}} ({size}).",
     "grid.item_count": "{count} items",
     "browser.disabled": "Le navigateur internet itch est désactivé",
     "browser.reenable": "Réactiver",
@@ -469,7 +474,7 @@
     "preferences.scan_install_locations.items_imported": "{numImportedItems} éléments ont été importés avec succès",
     "login.status.antivirus_warning": "Un logiciel antivirus pourrait interférer avec itch.",
     "preferences.scan_install_locations.import_items": "Importer {numItems} éléments",
-    "collection.item_count": "{itemCount} éléments",
+    "collection.item_count": "{itemCount, plural, one {# élément} many {# éléments} other {# éléments}}",
     "dashboard.game_stats.views": "vues",
     "dashboard.game_stats.downloads": "téléchargements",
     "dashboard.game_stats.purchases": "ventes",
@@ -586,6 +591,5 @@
     "prompt.sla.accept": "Accepter les conditions d'utilisation",
     "prompt.sla.message": "Pour utiliser ce logiciel, vous devez accepter la licence suivante :",
     "plan_install.computing_space_requirements": "Calcul de l'espace nécessaire",
-    "filter_by.games.classification.physical_game": "Jeux physiques",
-    "duration.precise.hour_minute": "1 heure 1 minute"
+    "filter_by.games.classification.physical_game": "Jeux physiques"
 }

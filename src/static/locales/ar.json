@@ -159,7 +159,6 @@
     "dashboard.game_stats.views": "المشاهدات",
     "dashboard.game_stats.downloads": "التحميلات",
     "dashboard.game_stats.purchases": "المقتنيات",
-    "duration.hour": "لساعة",
     "duration.hours": "{x} ساعة",
     "duration.minute": "لدقيقة أو أقل",
     "duration.minutes": "{x} دقيقة",

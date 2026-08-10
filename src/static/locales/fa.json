@@ -55,7 +55,6 @@
     "dashboard.game_stats.views": "بازدید",
     "dashboard.game_stats.downloads": "دانلود",
     "dashboard.game_stats.purchases": "خرید",
-    "duration.hour": "یک ساعت",
     "duration.hours": "{x} ساعت",
     "duration.minute": "یک دقیقه یا کمتر",
     "duration.minutes": "{x} دقیقه",

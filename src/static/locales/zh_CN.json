@@ -1,5 +1,10 @@
 {
     "action.name.editor": "编辑器",
     "grid.item.install": "安装",
-    "collection.empty": "收藏夹中没有任何游戏"
+    "collection.empty": "收藏夹中没有任何游戏",
+    "grid.item.report_problem": "发送反馈",
+    "grid.item.uninstall": "卸载",
+    "action.name.manual": "用户手册",
+    "grid.item.buy_now": "立即购买",
+    "action.name.play": "立即游玩"
 }

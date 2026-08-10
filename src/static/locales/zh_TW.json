@@ -40,7 +40,6 @@
     "duration.minutes": "{x}分鐘",
     "duration.minute": "小於1分鐘",
     "duration.hours": "{x}小時",
-    "duration.hour": "1小時",
     "dashboard.game_stats.purchases": "購買次數",
     "dashboard.game_stats.downloads": "下載次數",
     "dashboard.game_stats.views": "瀏覽次數",

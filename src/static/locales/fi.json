@@ -130,7 +130,6 @@
     "download.reason.reinstall": "uudelleenasentaaksesi",
     "download.reason.revert": "vaihtaaksesi toiseen versioon",
     "download.reason.heal": "tarkistaaksesi ja korjataksesi",
-    "duration.hour": "yksi tunti",
     "duration.hours": "{x} tuntia",
     "duration.minute": "minuutti tai vähemmän",
     "duration.minutes": "{x} minuuttia",

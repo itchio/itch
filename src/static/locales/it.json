@@ -124,7 +124,6 @@
     "docs.learn_more": "Per saperne di più",
     "download.started": "Avviato",
     "download.reason.update": "per aggiornare all'ultima versione",
-    "duration.hour": "un'ora",
     "duration.hours": "{x} ore",
     "duration.minute": "un minuto o meno",
     "duration.minutes": "{x} minuti",
@@ -586,14 +585,11 @@
     "send_feedback.describe_issue": "Per favore descrivi cosa stavi tentando di fare quando è accaduto l'errore",
     "send_feedback.nav.next": "Avanti",
     "send_feedback.steps.send": "Invia la segnalzione",
-    "duration.precise.hour_minute": "1 ora 1 minuto",
-    "duration.precise.hour_minutes": "1 ora {minutes} minuti",
-    "duration.precise.hour_only": "1 ora",
     "duration.precise.hours_minutes": "{hours} ore {minutes} minuti",
     "duration.precise.hours_only": "{hours} ore",
-    "duration.precise.minute_only": "1 minuto",
     "duration.precise.minutes_only": "{minutes} minuti",
     "duration.precise.seconds_only": "{seconds} secondi",
     "bundle.item_count": "{itemCount} giochi",
-    "duration.precise.hours_minute": "{hours} ore 1 minuto"
+    "bundle.info.acquired": "Acquisito",
+    "preferences.security.sandbox.type.auto": "Auto"
 }

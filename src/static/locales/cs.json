@@ -203,7 +203,6 @@
     "download.reason.reinstall": "přeinstalovat",
     "download.reason.revert": "přepnout na jinou verzi",
     "download.reason.heal": "kvůli ověření a opravení",
-    "duration.hour": "hodina",
     "duration.hours": "{x} hodin",
     "duration.minute": "minuta nebo méně",
     "duration.minutes": "{x} minut",

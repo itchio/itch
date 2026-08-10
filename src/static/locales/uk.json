@@ -151,7 +151,6 @@
     "game.install.could_not_launch.missing_jre": "Необхідна Java, яка не встановлена у вашій системі.",
     "grid.criterion.only_compatible": "Тільки сумісні",
     "grid.really_empty_state.leader": "Тут нічого немає...",
-    "duration.hour": "годину",
     "dashboard.game_stats.views": "переглядів",
     "dashboard.game_stats.downloads": "завантажень",
     "collection.item_count": "{itemCount} застосунків",
@@ -581,10 +580,6 @@
     "outlinks.open_dashboard": "Кабінет розробника",
     "onboarding.collections.title_mix": "Перемішати & підібрати",
     "sandbox.setup.windows.detail": "Після натискання кнопки \"Продовжити\" може з'явитися вікно з проханням надати дозвіл. Це додасть обліковий запис користувача `itch-player`, щоб захистити ваші ігри від решти системи.",
-    "duration.precise.hour_minute": "1 година 1 хвилина",
-    "duration.precise.hour_minutes": "1 година {minutes} хвилин",
-    "duration.precise.hour_only": "1 година",
-    "duration.precise.hours_minute": "{hours} годин 1 хвилина",
     "prompt.self_update.message.linux": "Ви можете завантажити власноруч або оновити за допомогою пакетного менеджеру в дистрибутиві: перейдіть на сайт для додаткових інструкцій.",
     "prompt.uninstall_error.message": "Видалення не вдалося. Усе одно видалити запис?"
 }

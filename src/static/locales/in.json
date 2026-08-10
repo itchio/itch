@@ -122,7 +122,6 @@
     "download.reason.reinstall": "untuk menginstall kembali",
     "download.reason.revert": "untuk beralih ke versi lain",
     "download.reason.heal": "untuk verifikasi dan memulihkan",
-    "duration.hour": "satu jam",
     "duration.hours": "{x} jam",
     "duration.minute": "satu menit atau kurang",
     "duration.minutes": "{x} menit",

@@ -23,7 +23,6 @@
     "download.started": "Покренуто",
     "download.reason.install": "за прву инсталацију",
     "download.reason.update": "да се освежи на последњу верзију",
-    "duration.hour": "час",
     "duration.hours": "{x} часова",
     "duration.minute": "минут или мање",
     "duration.minutes": "{x} минута",

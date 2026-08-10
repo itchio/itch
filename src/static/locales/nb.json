@@ -125,7 +125,6 @@
     "download.started": "Startet",
     "download.reason.install": "for førstegangs installasjon",
     "download.reason.update": "for å oppdatere til siste versjon",
-    "duration.hour": "en time",
     "duration.hours": "{x} timer",
     "duration.minute": "ett minutt eller mindre",
     "duration.minutes": "{x} minutter",

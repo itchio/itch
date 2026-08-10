@@ -115,7 +115,6 @@
     "status.uptodate": "Din itch är uppdaterad!",
     "label.experimental": "Experimentell",
     "docs.learn_more": "Läs vidare",
-    "duration.hour": "en timme",
     "duration.hours": "{x} timmar",
     "duration.minute": "en minut eller mindre",
     "duration.minutes": "{x} minuter",
@@ -585,7 +584,5 @@
     "plan_install.select_upload": "Installera",
     "plan_install.disk_space_required": "Diskutrymme som krävs",
     "plan_install.disk_space_available": "Diskutrymme tillgängligt",
-    "empty_state.nothing_to_see_here": "Ingenting att se här",
-    "duration.precise.hour_minutes": "1 timme {minutes} minuter",
-    "duration.precise.hours_minute": "{hours} timmar 1 minut"
+    "empty_state.nothing_to_see_here": "Ingenting att se här"
 }

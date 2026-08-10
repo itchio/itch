@@ -44,7 +44,6 @@
     "dashboard.game_stats.views": "व्यूस",
     "dashboard.game_stats.downloads": "डाउनलोड",
     "dashboard.game_stats.purchases": "खरीदी हुई वस्तुएं",
-    "duration.hour": "एक घंटा",
     "duration.hours": "{x} घंटे",
     "duration.minute": "एक मिनट या उससे कम",
     "duration.minutes": "{x} मिनट",
