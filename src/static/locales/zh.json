@@ -464,6 +464,7 @@
     "grid.really_empty_state.leader": "这里空空如也...",
     "grid.item_count": "{count} 项",
     "duration.seconds": "{x} 秒",
+    "upload.preview.files_to_upload": "将上传 {count} 个文件 ({size})。",
     "dashboard.game_stats.purchases": "购买数",
     "dashboard.game_stats.downloads": "下载数",
     "download.outcome.healed": "已验证并修复",
