@@ -599,5 +599,7 @@
     "preferences.security.sandbox.no_network.title": "禁用沙盒内的网络访问",
     "preferences.security.sandbox.allow_env.label": "允许的环境变量名称（以逗号或空格分隔）",
     "preferences.security.sandbox.save_warning": "更改沙盒设置可能会影响对现有游戏存档文件的访问。",
-    "prompt.uninstall.title": "确认卸载"
+    "prompt.uninstall.title": "确认卸载",
+    "manage_cave.launch_settings": "启动设置",
+    "manage_cave.launch_settings.sandbox": "沙盒"
 }
