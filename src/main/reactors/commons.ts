@@ -18,15 +18,32 @@ async function updateCommonsNow(store: Store) {
   }
 }
 
+// Protect overlapping FetchCommons calls resolving out of order, only
+// use the response from the most recent call
+let latestFetchGen = 0;
+
 async function updateCommonsNowThrows(store: Store) {
   if (!store.getState().setup.done) {
     return;
   }
 
-  const { caves, downloadKeys, installLocations } = await mcall(
-    messages.FetchCommons,
-    { profileId: store.getState().profile.profile?.id }
-  );
+  const gen = ++latestFetchGen;
+  let caves, downloadKeys, installLocations;
+  try {
+    ({ caves, downloadKeys, installLocations } = await mcall(
+      messages.FetchCommons,
+      { profileId: store.getState().profile.profile?.id }
+    ));
+  } catch (e) {
+    // don't let a failed fetch invalidate an older one still in flight
+    if (gen === latestFetchGen) {
+      latestFetchGen = gen - 1;
+    }
+    throw e;
+  }
+  if (gen !== latestFetchGen) {
+    return;
+  }
 
   let locationSizes: { [key: string]: number } = {};
   if (!isEmpty(installLocations)) {
