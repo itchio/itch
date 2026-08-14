@@ -1,10 +1,8 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { Dispatch, LocaleInfo, RootState } from "common/types";
+import { Dispatch, LocaleInfo } from "common/types";
 import React from "react";
-import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
-import IconButton from "renderer/basics/IconButton";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
 import {
@@ -45,8 +43,6 @@ class LanguageSettings extends React.PureComponent<Props> {
     const badgeLang = lang ? lang.substr(0, 2) : "en";
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itchio/${badgeLang}/itch/svg-badge.svg`;
 
-    const downloading = this.props.downloading[lang];
-
     return (
       <>
         <h2>{T(["preferences.language"])}</h2>
@@ -59,11 +55,6 @@ class LanguageSettings extends React.PureComponent<Props> {
               options={options}
               value={findWhere(options, { value: lang }) || autoLang}
             />
-            {downloading ? (
-              <Floater />
-            ) : (
-              <IconButton icon="repeat" onClick={this.queueLocaleDownload} />
-            )}
           </SettingsGroupRow>
         </SettingsGroup>
 
@@ -76,12 +67,6 @@ class LanguageSettings extends React.PureComponent<Props> {
       </>
     );
   }
-
-  queueLocaleDownload = (e: React.MouseEvent<any>) => {
-    const { dispatch, lang } = this.props;
-    e.preventDefault();
-    dispatch(actions.queueLocaleDownload({ lang }));
-  };
 
   onLanguageChange = (value: BaseOptionType) => {
     const { dispatch } = this.props;
@@ -102,12 +87,10 @@ interface Props {
   locales: LocaleInfo[];
   lang: string;
   sniffedLang: string | undefined;
-  downloading: RootState["i18n"]["downloading"];
 }
 
 export default hook((map) => ({
   locales: map((rs) => rs.i18n.locales),
   lang: map((rs) => rs.i18n.lang),
   sniffedLang: map((rs) => rs.system.sniffedLanguage),
-  downloading: map((rs) => rs.i18n.downloading),
 }))(LanguageSettings);

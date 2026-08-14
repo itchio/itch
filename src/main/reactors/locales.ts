@@ -1,89 +1,17 @@
-import {
-  getErrorStack,
-  getErrorMessage,
-  getErrorCode,
-} from "common/butlerd/errors";
+import { getErrorCode, getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
-import urls from "common/constants/urls";
-import env from "main/env";
-import { I18nResources, I18nResourceSet, Store } from "common/types";
+import { I18nResources, Store } from "common/types";
 import { getLocalePath, getLocalesConfigPath } from "main/util/resources";
 import { Watcher } from "common/util/watcher";
-import { app } from "electron";
 import { mainLogger } from "main/logger";
-import { join } from "path";
-import { request } from "main/net/request";
-import { exists, readFile, writeFile } from "main/os/ifs";
+import { exists, readFile } from "main/os/ifs";
 
-// locales.itch.zone no longer exists, disable remote locale fetching
-const upgradesEnabled = false;
-//  (env.production && !env.integrationTests);
-
-const remoteDir = join(app.getPath("userData"), "locales");
 const localesConfigPath = getLocalesConfigPath();
 
 const logger = mainLogger.child(__filename);
 
 function canonicalFileName(lang: string): string {
   return getLocalePath(`${lang}.json`);
-}
-
-function remoteFileName(lang: string): string {
-  return join(remoteDir, `${lang}.json`);
-}
-
-async function doDownloadLocale(
-  lang: string,
-  resources: I18nResources,
-  { implicit }: { implicit?: boolean }
-): Promise<I18nResources> {
-  if (!upgradesEnabled) {
-    if (!implicit) {
-      logger.debug(`Not downloading locale (${lang}), remote locales disabled`);
-    }
-    return {};
-  }
-
-  const local = canonicalFileName(lang);
-  if (!local) {
-    // try stripping region
-    lang = lang.substring(0, 2);
-  }
-
-  const remote = remoteFileName(lang);
-  const uri = `${urls.remoteLocalePath}/${lang}.json`;
-
-  logger.debug(`Downloading fresh locale file from ${uri}`);
-  const resp = await request("get", uri, {}, { format: "json" });
-
-  logger.debug(`HTTP GET ${uri}: ${resp.statusCode}`);
-  if (resp.statusCode === 404) {
-    // no such locale, alrighty then.
-    return {};
-  } else if (resp.statusCode !== 200) {
-    throw new Error("Locale update server is down, try again later");
-  }
-
-  const payload = JSON.parse(resp.body);
-
-  const finalResources = {
-    ...resources,
-    ...payload,
-  };
-
-  try {
-    logger.debug(`Saving fresh ${lang} locale to ${remote}`);
-    const payload = JSON.stringify(finalResources, null, 2);
-    await writeFile(remote, payload, { encoding: "utf8" });
-  } catch (e) {
-    logger.warn(
-      `Could not save locale to ${remote}: ${
-        getErrorStack(e) || getErrorMessage(e) || e
-      }`
-    );
-  }
-
-  return finalResources;
 }
 
 async function loadLocale(store: Store, lang: string) {
@@ -95,7 +23,7 @@ async function loadLocale(store: Store, lang: string) {
   }
 
   try {
-    logger.debug(`Reading local locale file ${local}`);
+    logger.debug(`Reading locale file ${local}`);
     const payload = await readFile(local);
     commitLocale(store, lang, JSON.parse(payload));
   } catch (e) {
@@ -105,66 +33,19 @@ async function loadLocale(store: Store, lang: string) {
       logger.warn(`Failed to load locale from ${local}: ${getErrorStack(e)}`);
     }
   }
-
-  if (upgradesEnabled) {
-    const remote = remoteFileName(lang);
-    try {
-      let payload: string | undefined;
-      try {
-        logger.debug(`Reading remote locale file ${local}`);
-        payload = await readFile(remote);
-      } catch (e) {
-        // no updated version of the locale available
-      }
-
-      if (payload) {
-        commitLocale(store, lang, JSON.parse(payload));
-      }
-    } catch (e) {
-      logger.warn(`Failed to load locale from ${local}: ${getErrorStack(e)}`);
-    }
-  }
-
-  store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
 }
 
 function commitLocale(store: Store, lang: string, resources: I18nResources) {
-  store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+  store.dispatch(actions.localeLoaded({ lang, resources }));
 }
 
 export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
-    // load initial locales
     const configPayload = await readFile(localesConfigPath);
     const config = JSON.parse(configPayload);
     store.dispatch(actions.localesConfigLoaded(config));
+    // en strings ship in the bundle (common/reducers/i18n.ts initial state)
   });
-
-  watcher.onDebounced(
-    actions.queueLocaleDownload,
-    2000,
-    async (store, action) => {
-      let { lang, implicit } = action.payload;
-
-      const downloading = store.getState().i18n.downloading;
-      if (downloading[lang]) {
-        return;
-      }
-
-      store.dispatch(actions.localeDownloadStarted({ lang }));
-
-      let resources = {};
-      try {
-        resources = await doDownloadLocale(lang, resources, { implicit });
-      } catch (e) {
-        logger.warn(
-          `Failed downloading locale for ${lang}: ${getErrorMessage(e)}`
-        );
-      } finally {
-        commitLocale(store, lang, resources);
-      }
-    }
-  );
 
   watcher.on(actions.languageChanged, async (store, action) => {
     const { lang } = action.payload;

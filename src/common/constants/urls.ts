@@ -16,7 +16,6 @@ export default {
   appHomepage: "https://itch.io/app",
   itchTranslationPlatform: "https://weblate.itch.zone",
   brothRepo: "https://broth.itch.zone",
-  remoteLocalePath: "https://locales.itch.zone/itch",
   manual,
 
   itchioApi: itchio,

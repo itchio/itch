@@ -21,8 +21,8 @@ import {
   EvolveTabPayload,
   GenerosityLevel,
   I18nResources,
-  I18nResourceSet,
   ItchAppTabs,
+  LocaleInfo,
   LocalizedString,
   MenuTemplate,
   ModalAction,
@@ -521,22 +521,11 @@ export const actions = wireActions({
 
   // locales
   localesConfigLoaded: action<{
-    /** initial set of i18n strings */
-    strings: I18nResourceSet;
+    /** languages available in the app */
+    locales: LocaleInfo[];
   }>(),
-  queueLocaleDownload: action<{
-    /** language to download */
-    lang: string;
-
-    /** true if not triggered manually */
-    implicit?: boolean;
-  }>(),
-  localeDownloadStarted: action<{
-    /** which language just started downloading */
-    lang: string;
-  }>(),
-  localeDownloadEnded: action<{
-    /** which language just finished downloading */
+  localeLoaded: action<{
+    /** which language's strings were just loaded */
     lang: string;
 
     /** i18n strings */

@@ -479,16 +479,6 @@ export interface I18nState {
   /** all translated strings */
   strings: I18nResourceSet;
 
-  /** locales we'll download soon */
-  queued: {
-    [lang: string]: boolean;
-  };
-
-  /** locales we're downloading now */
-  downloading: {
-    [lang: string]: boolean;
-  };
-
   locales: LocaleInfo[];
 }
 
