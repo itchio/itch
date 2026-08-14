@@ -11,11 +11,14 @@
     "isolatedModules": true,
     "skipLibCheck": true,
 
+    "resolveJsonModule": true,
+
     "paths": {
       "common/*": ["./src/common/*"],
       "renderer/*": ["./src/renderer/*"],
       "main/*": ["./src/main/*"],
-      "vendor/*": ["./src/vendor/*"]
+      "vendor/*": ["./src/vendor/*"],
+      "static/*": ["./src/static/*"]
     },
 
     "noImplicitReturns": true,

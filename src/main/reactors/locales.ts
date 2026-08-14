@@ -138,8 +138,6 @@ export default function (watcher: Watcher) {
     const configPayload = await readFile(localesConfigPath);
     const config = JSON.parse(configPayload);
     store.dispatch(actions.localesConfigLoaded(config));
-
-    await loadLocale(store, "en");
   });
 
   watcher.onDebounced(

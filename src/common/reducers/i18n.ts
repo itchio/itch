@@ -4,11 +4,13 @@ import reducer from "common/reducers/reducer";
 
 import { I18nState } from "common/types";
 import env from "common/env";
+import enStrings from "static/locales/en.json";
 
+// bundled at build time so the first render never shows raw keys
 const initialState = {
   lang: "en",
   strings: {
-    en: {},
+    en: enStrings,
   },
   downloading: {},
   queued: {},
