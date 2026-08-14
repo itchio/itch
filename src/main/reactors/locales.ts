@@ -84,6 +84,8 @@ function mountDevLocaleWatcher(store: Store) {
     });
 
     app.on("before-quit", () => {
+      flush.cancel();
+      changedLangs.clear();
       fileWatcher.close();
     });
 
@@ -98,13 +100,16 @@ export default function (watcher: Watcher) {
     const configPayload = await readFile(localesConfigPath);
     const config = JSON.parse(configPayload);
     store.dispatch(actions.localesConfigLoaded(config));
-    // en strings ship in the bundle (common/reducers/i18n.ts initial state)
     mountDevLocaleWatcher(store);
   });
 
   watcher.on(actions.languageChanged, async (store, action) => {
     const { lang } = action.payload;
 
+    // en is the t() fallback for keys missing from partial translations
+    if (!lang.startsWith("en") && !store.getState().i18n.strings.en) {
+      await loadLocale(store, "en");
+    }
     await loadLocale(store, lang);
   });
 

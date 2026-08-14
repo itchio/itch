@@ -13,7 +13,8 @@ function applyLanguage(store: Store) {
   const preferenceLang = rs.preferences.lang;
   const sniffedLang = rs.system.sniffedLanguage;
   const lang = preferenceLang || sniffedLang || fallbackLang;
-  if (lang === rs.i18n.lang) {
+  const loaded = rs.i18n.strings[lang] || rs.i18n.strings[lang.substring(0, 2)];
+  if (lang === rs.i18n.lang && loaded) {
     return;
   }
   logger.info(
