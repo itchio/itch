@@ -26,10 +26,7 @@ export default reducer<I18nState>(initialState, (on) => {
       ...state,
       strings: {
         ...state.strings,
-        [lang]: {
-          ...state.strings[lang],
-          ...resources,
-        },
+        [lang]: resources,
       },
     };
   });
