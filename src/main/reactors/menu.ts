@@ -158,12 +158,6 @@ function computeMenuTemplate(
       visible: false,
     },
 
-    {
-      localizedLabel: ["menu.file.focus_in_page_search"],
-      accelerator: "CmdOrCtrl+F",
-      visible: false,
-    },
-
     // reload
     {
       localizedLabel: ["menu.command.reload"],
@@ -176,11 +170,6 @@ function computeMenuTemplate(
       visible: false,
     },
 
-    {
-      localizedLabel: ["menu.command.main"],
-      accelerator: "CmdOrCtrl+Enter",
-      visible: false,
-    },
     {
       localizedLabel: ["menu.command.location"],
       accelerator: "CmdOrCtrl+L",

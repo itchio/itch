@@ -67,12 +67,8 @@ function convertMenuAction(wind: string, payload: MenuItem, runtime: Runtime) {
       return actions.openDevTools({ wind });
     case "menu.file.focus_search":
       return actions.focusSearch({ wind });
-    case "menu.file.focus_in_page_search":
-      return actions.focusInPageSearch({ wind });
     case "menu.command.reload":
       return actions.commandReload({ wind });
-    case "menu.command.main":
-      return actions.commandMain({ wind });
     case "menu.command.location":
       return actions.commandLocation({ wind });
     case "menu.command.go_back":

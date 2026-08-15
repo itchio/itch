@@ -771,10 +771,6 @@ export const actions = wireActions({
 
   // search
 
-  focusInPageSearch: action<{
-    wind: string;
-  }>(),
-
   searchFetched: action<{}>(),
   focusSearch: action<{}>(),
   closeSearch: action<{}>(),
@@ -840,9 +836,6 @@ export const actions = wireActions({
     message: LocalizedString;
   }>(),
   dismissStatusMessage: action<{}>(),
-  commandMain: action<{
-    wind: string;
-  }>(),
   commandOk: action<{
     wind: string;
   }>(),

@@ -44,10 +44,6 @@ export interface ChromeStore extends Store {
   watcher: Watcher;
 }
 
-export interface Dispatch {
-  (a: Action<any>): void;
-}
-
 export type GenerosityLevel = "discreet";
 
 export type ClassificationAction = "launch" | "open";
