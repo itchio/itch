@@ -137,15 +137,10 @@ class ReportIssue extends React.PureComponent<Props, State> {
   override componentDidMount() {
     doAsync(async () => {
       try {
-        let output = {
-          cpu: "" as any,
-          graphics: "" as any,
-          osInfo: "" as any,
-          broth: "" as any,
-        };
+        let cpu: object | string;
         try {
           const input = await sysinfo.cpu();
-          output.cpu = fillShape(input, {
+          cpu = fillShape(input, {
             manufacturer: true,
             brand: true,
             vendor: true,
@@ -153,11 +148,12 @@ class ReportIssue extends React.PureComponent<Props, State> {
             cores: true,
           });
         } catch (e) {
-          output.cpu = `Could not get info: ${e}`;
+          cpu = `Could not get info: ${e}`;
         }
+        let graphics: object | string;
         try {
           const input = await sysinfo.graphics();
-          output.graphics = fillShape(input, {
+          graphics = fillShape(input, {
             controllers: {
               model: true,
               vendor: true,
@@ -165,11 +161,12 @@ class ReportIssue extends React.PureComponent<Props, State> {
             },
           });
         } catch (e) {
-          output.graphics = `Could not get info: ${e}`;
+          graphics = `Could not get info: ${e}`;
         }
+        let osInfo: object | string;
         try {
           const input = await sysinfo.osInfo();
-          output.osInfo = fillShape(input, {
+          osInfo = fillShape(input, {
             platform: true,
             arch: true,
             distro: true,
@@ -178,16 +175,16 @@ class ReportIssue extends React.PureComponent<Props, State> {
             logofile: true,
           });
         } catch (e) {
-          output.osInfo = `Could not get info: ${e}`;
+          osInfo = `Could not get info: ${e}`;
         }
-        output.broth = fillShape(this.props.brothPackages, {
+        const broth = fillShape(this.props.brothPackages, {
           "*": {
             stage: true,
             version: true,
           },
         });
         this.setState({
-          system: output,
+          system: { cpu, graphics, osInfo, broth },
         });
       } catch (e) {
         this.setState({
