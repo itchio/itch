@@ -127,24 +127,21 @@ export async function downloadToFileWithRetry(
     } catch (originalErr) {
       let err = originalErr as HTTPError;
       if (err.httpStatusCode) {
-        let shouldRetry = false;
-        if (httpStatusesThatWarrantARetry.indexOf(err.httpStatusCode)) {
-          shouldRetry = true;
-        }
-
-        if (shouldRetry) {
+        if (httpStatusesThatWarrantARetry.includes(err.httpStatusCode)) {
           lastError = asError(originalErr);
           tries++;
-          // exponential backoff: 1, 2, 4, 8 seconds...
+          if (tries >= maxTries) {
+            break;
+          }
+          // exponential backoff: 1, 4, 9, 16 seconds...
           let numSeconds = tries * tries;
           // ...plus a random number of milliseconds.
           // see https://cloud.google.com/storage/docs/exponential-backoff
-          let jitter = Math.random() % 1000;
+          let jitter = Math.random() * 1000;
           let sleepTime = numSeconds * 1000 + jitter;
           logger.warn(`While downloading file, got: ${getErrorStack(err)}`);
           logger.warn(`Retrying after ${sleepTime.toFixed()}ms`);
           await delay(sleepTime);
-          tries++;
           continue;
         }
       }
