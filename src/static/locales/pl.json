@@ -295,7 +295,7 @@
     "notification.download_updated": "{title} zaktualizowano!",
     "sandbox.setup.proceed": "Kontynuuj",
     "sandbox.setup.windows.message": "Aby uruchamiać gry w piaskownicy itch.io, należy przeprowadzić jednorazową konfigurację jako administrator.",
-    "sandbox.setup.windows.detail": "Po kliknięciu 'Kontynuuj' może pojawić się prośba o zezwolenie. Umożliwi ona dodanie konta użytkownika `itch-player` aby osłonić twoje gry od reszty systemu.",
+    "sandbox.setup.windows.detail": "Po kliknięciu 'Kontynuuj' może pojawić się prośba o zezwolenie. Umożliwi ona dodanie konta użytkownika <code>itch-player</code> aby osłonić twoje gry od reszty systemu.",
     "sandbox.setup.linux.message": "Aby uruchomić gry w piaskownicy itch.io, należy uruchomić jednorazowo skrypt konfiguracyjny jako root.",
     "sandbox.setup.linux.detail": "Po kliknięciu 'Kontynuuj' pojawi się prośba o wpisanie hasła. Jest to potrzebne tylko do pierwszego uruchomienia piaskownicy. Twoje hasło nie jest nigdy widziane ani zapisywane przez itcha.",
     "preferences.security": "Bezpieczeństwo i prywatność",

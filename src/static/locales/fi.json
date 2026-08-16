@@ -223,7 +223,7 @@
     "sandbox.setup.title": "itch.io hiekkalaatikon asennus",
     "sandbox.setup.proceed": "Seuraava",
     "sandbox.setup.windows.message": "Pelataksesi pelejä itch.io hiekkalaatikossa, asennusohjelma on käynnistettävä järjestelmänvalvojan oikeuksilla.",
-    "sandbox.setup.windows.detail": "Kun napsautat 'Seuraava', pyydämme lupaasi käyttämään järjestelmävalvojan oikeuksia. Tämä lisää käyttäjätunnuksen `itch-player`, jotta pelejä voidaan suojata käyttöjärjestelmältä.",
+    "sandbox.setup.windows.detail": "Kun napsautat 'Seuraava', pyydämme lupaasi käyttämään järjestelmävalvojan oikeuksia. Tämä lisää käyttäjätunnuksen <code>itch-player</code>, jotta pelejä voidaan suojata käyttöjärjestelmältä.",
     "sandbox.setup.linux.message": "Pelataksesi pelejä itch.io hiekkalaatikossa, asennuskomentosarja tulee ajaa rootissa.",
     "sandbox.setup.linux.detail": "Kun napsautat 'Seuraava', pyydämme lupaasi kysymällä järjestelmän salasanaasi. Tätä tarvitaan vain kun hiekkalaatikkoa päivitetään tai käytetään ensimmäisen kerran. Salasanaasi ei kirjata mihinkään.",
     "preferences.security": "Turvallisuus & yksityisyys",

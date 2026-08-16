@@ -260,7 +260,7 @@
     "sandbox.setup.title": "Jednorázové nastavení sandboxu",
     "sandbox.setup.proceed": "Pokračovat",
     "sandbox.setup.windows.message": "Abyste mohli spouštět hry v itch.io sandboxu, budeme muset spustit jednorázové nastavení s administrátorskými právy.",
-    "sandbox.setup.windows.detail": "Po kliknutí na 'Pokračovat' se může zobrazit okno, které se vás zeptá o povolení. Tato akce přidá uživatelský účet `itch-player`, který bude chránit vaše hry od zbytku systému.",
+    "sandbox.setup.windows.detail": "Po kliknutí na 'Pokračovat' se může zobrazit okno, které se vás zeptá o povolení. Tato akce přidá uživatelský účet <code>itch-player</code>, který bude chránit vaše hry od zbytku systému.",
     "sandbox.setup.linux.message": "Abyste mohli spouštět hry v itch.io sandboxu, musíme jednorázově spustit skript jako root.",
     "sandbox.setup.linux.detail": "Po kliknutí na 'Pokračovat' se zobrazí okno, které se vás zeptá na vaše heslo. To je potřeba pouze pro první spuštění sandboxu, itch vaše heslo nikdy nevidí a nikam nezapisuje.",
     "pick_install_upload.title": "Ke stažení je dostupných více souborů pro {title}",
