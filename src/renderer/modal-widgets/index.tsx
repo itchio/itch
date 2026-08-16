@@ -8,7 +8,6 @@ import ManageCave from "renderer/modal-widgets/ManageCave";
 import ManageGame from "renderer/modal-widgets/ManageGame";
 import PlanInstall from "renderer/modal-widgets/PlanInstall";
 import PrereqsState from "renderer/modal-widgets/PrereqsState";
-import RecaptchaInput from "renderer/modal-widgets/RecaptchaInput";
 import PushBuild from "renderer/modal-widgets/PushBuild";
 import SendFeedback from "renderer/modal-widgets/SendFeedback";
 import SecretSettings from "renderer/modal-widgets/SecretSettings";
@@ -37,7 +36,6 @@ export const modalWidgets: ModalWidgetRegistry = {
   planInstall: PlanInstall,
   prereqsState: PrereqsState,
   pushBuild: PushBuild,
-  recaptchaInput: RecaptchaInput,
   sendFeedback: SendFeedback,
   secretSettings: SecretSettings,
   showError: ShowError,

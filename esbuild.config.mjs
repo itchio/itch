@@ -19,7 +19,6 @@ export const mainConfig = {
   entryPoints: {
     main: "src/main/index.ts",
     "inject-game": "src/main/inject/inject-game.ts",
-    "inject-captcha": "src/main/inject/inject-captcha.ts",
     "inject-preload": "src/main/inject/inject-preload.ts",
   },
   bundle: true,

@@ -166,11 +166,6 @@ export const actions = wireActions({
     initialURL: string;
     role: WindRole;
   }>(),
-  // only exists due to IPC difficulties
-  closeCaptchaModal: action<{
-    response: string;
-  }>(),
-
   // setup
 
   packagesListed: action<{

@@ -59,14 +59,6 @@ export interface SendFeedbackResponse {}
 
 //---------------------
 
-export interface RecaptchaInputParams {
-  url: string;
-}
-
-export interface RecaptchaInputResponse {
-  recaptchaResponse: string;
-}
-
 //---------------------
 
 export interface PrereqsStateParams {

@@ -12,8 +12,6 @@ import {
   PlanInstallResponse,
   PrereqsStateParams,
   PrereqsStateResponse,
-  RecaptchaInputParams,
-  RecaptchaInputResponse,
   SecretSettingsParams,
   SecretSettingsResponse,
   SendFeedbackParams,
@@ -118,7 +116,6 @@ export const prepModals = (uuid: () => string) => {
     manageCave: widget<ManageCaveParams, ManageCaveResponse>(uuid),
     planInstall: widget<PlanInstallParams, PlanInstallResponse>(uuid),
     prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(uuid),
-    recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(uuid),
     switchVersionCave: widget<
       SwitchVersionCaveParams,
       SwitchVersionCaveResponse

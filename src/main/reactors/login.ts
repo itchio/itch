@@ -187,37 +187,25 @@ export default function (watcher: Watcher) {
         {
           username,
           password,
-          forceRecaptcha: process.env.ITCH_FORCE_RECAPTCHA === "1",
         },
         (client) => {
           logger.debug(`Setting up handlers for TOTP & captcha`);
-          client.onRequest(
-            messages.ProfileRequestCaptcha,
-            async ({ recaptchaUrl }) => {
-              logger.info(`Showing captcha`);
-              const modalRes = await promisedModal(
-                store,
-                modals.recaptchaInput.make({
-                  wind: "root",
-                  title: "Captcha",
-                  message: "",
-                  widgetParams: {
-                    url: recaptchaUrl || urls.itchio + "/captcha",
-                  },
-                  fullscreen: true,
-                })
-              );
-
-              if (modalRes) {
-                logger.info(`Captcha solved`);
-                return { recaptchaResponse: modalRes.recaptchaResponse };
-              } else {
-                // abort
-                logger.info(`Captcha cancelled`);
-                return { recaptchaResponse: null };
-              }
-            }
-          );
+          client.onRequest(messages.ProfileRequestCaptcha, async () => {
+            // captcha support was removed; steer the user to OAuth
+            logger.info(`Captcha requested, aborting password login`);
+            await promisedModal(
+              store,
+              modals.naked.make({
+                wind: "root",
+                title: ["login.captcha_unsupported.title"],
+                message: ["login.captcha_unsupported.message"],
+                detail: ["login.captcha_unsupported.detail"],
+                buttons: ["ok"],
+                widgetParams: null,
+              })
+            );
+            return { recaptchaResponse: "" };
+          });
 
           client.onRequest(messages.ProfileRequestTOTP, async () => {
             logger.info(`Showing TOTP`);
