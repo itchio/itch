@@ -1,7 +1,6 @@
 import { Endpoint } from "@itchio/butlerd";
 import {
   Cave,
-  CleanDownloadsEntry,
   Download,
   DownloadProgress,
   Game,
@@ -19,7 +18,6 @@ import {
   CommonsState,
   Dispatch,
   EvolveTabPayload,
-  GenerosityLevel,
   I18nResources,
   ItchAppTabs,
   LocaleInfo,
@@ -27,7 +25,6 @@ import {
   MenuTemplate,
   ModalAction,
   NavigatePayload,
-  NavigateTabPayload,
   OpenAtLoginError,
   OpenContextMenuBase,
   OpenTabPayload,
@@ -256,16 +253,11 @@ export const actions = wireActions({
     /** an error that occured while logging in */
     error: Error;
   }>(),
-  loginCancelled: action<{}>(),
   loginSucceeded: action<{
     /** Profile we just logged in as */
     profile: Profile;
   }>(),
 
-  forgetProfileRequest: action<{
-    /** Profile to forget */
-    profile: Profile;
-  }>(),
   forgetProfile: action<{
     /** Profile to forget */
     profile: Profile;
@@ -276,16 +268,8 @@ export const actions = wireActions({
   requestLogout: action<{}>(),
   loggedOut: action<{}>(),
 
-  // onboarding
-
-  startOnboarding: action<{}>(),
-  exitOnboarding: action<{}>(),
-
   // window events
 
-  windDestroyed: action<{
-    wind: string;
-  }>(),
   windFocusChanged: action<{
     wind: string;
 
@@ -408,18 +392,11 @@ export const actions = wireActions({
     andFocus?: string;
   }>(),
 
-  navigateTab: action<NavigateTabPayload>(),
   evolveTab: action<EvolveTabPayload>(),
   tabReloaded: action<{
     wind: string;
 
     /** the tab that just reloaded */
-    tab: string;
-  }>(),
-  tabChanged: action<{
-    wind: string;
-
-    /** the newly active tab */
     tab: string;
   }>(),
   tabsChanged: action<{
@@ -507,13 +484,8 @@ export const actions = wireActions({
       template: MenuTemplate;
     }
   >(),
-  closeContextMenu: action<{
-    wind: string;
-  }>(),
-
   checkForComponentUpdates: action<{}>(),
 
-  beforeQuit: action<{}>(),
   cancelQuit: action<{}>(),
   quit: action<{}>(),
   performQuit: action<{}>(),
@@ -544,10 +516,6 @@ export const actions = wireActions({
   }>(),
   removeInstallLocation: action<{
     /** id of the install location to remove */
-    id: string;
-  }>(),
-  makeInstallLocationDefault: action<{
-    /** id of install location to make the default */
     id: string;
   }>(),
   scanInstallLocations: action<{}>(),
@@ -622,31 +590,12 @@ export const actions = wireActions({
     /** id of download to discard */
     id: string;
   }>(),
-  downloadDiscarded: action<{
-    /** id of download that was just discarded */
-    id: string;
-  }>(),
   setDownloadsPaused: action<{
     paused: boolean;
   }>(),
   retryDownload: action<{
     /** id of download to retry */
     id: string;
-  }>(),
-  clearGameDownloads: action<{
-    /** id of game for which to clear downloads */
-    gameId: number;
-  }>(),
-
-  downloadsRestored: action<{}>(),
-  cleanDownloadsSearch: action<{}>(),
-  cleanDownloadsFoundEntries: action<{
-    /** download subfolders we could remove */
-    entries: CleanDownloadsEntry[];
-  }>(),
-  cleanDownloadsApply: action<{
-    /** download subfolders we will remove */
-    entries: CleanDownloadsEntry[];
   }>(),
 
   // game management
@@ -701,7 +650,6 @@ export const actions = wireActions({
     /** id of the cave to explore */
     caveId: string;
   }>(),
-  recordGameInteraction: action<{}>(),
   forceCloseGameRequest: action<{
     /** the game we want to force-quit */
     game: Game;
@@ -757,21 +705,9 @@ export const actions = wireActions({
     /** the game that might be purchased */
     game: Game;
   }>(),
-  purchaseCompleted: action<{
-    /** the game that was just purchased */
-    game: Game;
-  }>(),
-  encourageGenerosity: action<{
-    /** for which game should we encourage generosity? */
-    gameId: number;
-
-    /** how hard should we encourage generosity? */
-    level: GenerosityLevel;
-  }>(),
 
   // search
 
-  searchFetched: action<{}>(),
   focusSearch: action<{}>(),
   closeSearch: action<{}>(),
 
@@ -814,9 +750,6 @@ export const actions = wireActions({
 
   // misc.
 
-  gcDatabase: action<{}>(),
-  /** macOS-only, bounce dock */
-  bounce: action<{}>(),
   /** cross-platform, notification bubble */
   notify: action<{
     /** title of the notification, defaults to `itch` */
@@ -852,9 +785,6 @@ export const actions = wireActions({
     wind: string;
   }>(),
   commandReload: action<{
-    wind: string;
-  }>(),
-  commandStop: action<{
     wind: string;
   }>(),
   tabGoBack: action<{

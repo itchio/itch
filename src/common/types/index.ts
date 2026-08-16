@@ -44,8 +44,6 @@ export interface ChromeStore extends Store {
   watcher: Watcher;
 }
 
-export type GenerosityLevel = "discreet";
-
 export type ClassificationAction = "launch" | "open";
 
 export interface UserSet {
@@ -771,11 +769,6 @@ export interface EvolveTabPayload extends EvolveBasePayload {
   onlyIfMatchingURL?: boolean;
 
   fromWebContents?: boolean;
-}
-
-export interface NavigateTabPayload extends EvolveBasePayload {
-  /** whether to open in the background */
-  background: boolean;
 }
 
 export interface TabInstances {

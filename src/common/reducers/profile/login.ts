@@ -42,13 +42,6 @@ export default reducer<ProfileLoginState>(initialState, (on) => {
     };
   });
 
-  on(actions.loginCancelled, (state, action) => {
-    return {
-      ...state,
-      blockingOperation: null,
-    };
-  });
-
   on(actions.loginSucceeded, (state, action) => {
     return initialState;
   });

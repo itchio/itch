@@ -87,22 +87,6 @@ export default function (watcher: Watcher) {
     );
   });
 
-  watcher.on(actions.navigateTab, async (store, action) => {
-    const { background } = action.payload;
-
-    if (background) {
-      store.dispatch(actions.navigate(action.payload));
-    } else {
-      const { background, ...rest } = action.payload;
-      store.dispatch(
-        actions.evolveTab({
-          ...rest,
-          replace: false,
-        })
-      );
-    }
-  });
-
   watcher.on(actions.navigate, async (store, action) => {
     let { url, resource, wind, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
@@ -337,15 +321,6 @@ export default function (watcher: Watcher) {
 function makeSubWatcher(rs: RootState) {
   const watcher = new Watcher(mainLogger);
   for (const wind of Object.keys(rs.winds)) {
-    watcher.onStateChange({
-      makeSelector: (store, schedule) =>
-        createSelector(
-          (rs: RootState) => rs.winds[wind].navigation.tab,
-          (tab) =>
-            schedule(() => store.dispatch(actions.tabChanged({ wind, tab })))
-        ),
-    });
-
     watcher.onStateChange({
       makeSelector: (store, schedule) =>
         createSelector(

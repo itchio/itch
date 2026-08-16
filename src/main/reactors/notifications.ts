@@ -17,13 +17,6 @@ const DEFAULT_ICON =
     : `./static/images/tray/${env.appName}.png`;
 
 export default function (watcher: Watcher) {
-  watcher.on(actions.bounce, async (store, action) => {
-    const { dock } = app;
-    if (dock) {
-      dock.bounce();
-    }
-  });
-
   watcher.on(actions.notify, async (store, action) => {
     const {
       title = "itch",

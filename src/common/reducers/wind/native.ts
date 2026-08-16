@@ -17,10 +17,6 @@ export default reducer<NativeWindowState>(initialState, (on) => {
     return { ...state, id: nativeId };
   });
 
-  on(actions.windDestroyed, (state, action) => {
-    return { ...state, id: null, focused: false };
-  });
-
   on(actions.windFocusChanged, (state, action) => {
     const { focused } = action.payload;
     return { ...state, focused };
