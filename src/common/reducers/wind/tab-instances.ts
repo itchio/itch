@@ -1,4 +1,4 @@
-import { actions } from "common/actions";
+import { actions, typeOf } from "common/actions";
 import tabReducer, { trimHistory } from "common/reducers/wind/tab-instance";
 import { Action, TabDataSave, TabInstance, TabInstances } from "common/types";
 import { each, omit } from "underscore";
@@ -15,11 +15,11 @@ let initialState = (initialURL?: string): TabInstances => ({
   ),
 });
 
-const windOpenedType = actions.windOpened({} as any).type;
-const tabsRestoredType = actions.tabsRestored({} as any).type;
-const tabOpenedType = actions.tabOpened({} as any).type;
-const tabsClosedType = actions.tabsClosed({} as any).type;
-const loggedOutType = actions.loggedOut({} as any).type;
+const windOpenedType = typeOf(actions.windOpened);
+const tabsRestoredType = typeOf(actions.tabsRestored);
+const tabOpenedType = typeOf(actions.tabOpened);
+const tabsClosedType = typeOf(actions.tabsClosed);
+const loggedOutType = typeOf(actions.loggedOut);
 
 export default function (
   state: TabInstances | undefined,

@@ -31,7 +31,6 @@ import {
   ViewChangelogResponse,
 } from "common/modals/types";
 import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
-import uuid from "common/util/uuid";
 
 interface TypedModalBase<Params> extends ModalBase {
   widgetParams: Params;

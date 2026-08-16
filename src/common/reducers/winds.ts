@@ -1,12 +1,12 @@
 import { WindsState, Action } from "common/types";
 import windReducer from "common/reducers/wind";
-import { actions } from "common/actions";
+import { actions, typeOf } from "common/actions";
 import { omit } from "underscore";
 
 const initialState: WindsState = {};
 
-const windOpenedType = actions.windOpened({} as any).type;
-const windClosedType = actions.windClosed({} as any).type;
+const windOpenedType = typeOf(actions.windOpened);
+const windClosedType = typeOf(actions.windClosed);
 
 export default function (
   state: WindsState | undefined,

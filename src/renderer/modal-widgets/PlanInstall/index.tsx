@@ -1,7 +1,7 @@
 import { asError, getErrorStack } from "common/butlerd/errors";
 import classNames from "classnames";
 import { lighten, transparentize } from "polished";
-import { v4 as uuid } from "uuid";
+import uuid from "common/util/uuid";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import {

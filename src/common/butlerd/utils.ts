@@ -1,9 +1,8 @@
-import { Client, RequestCreator, Conversation } from "@itchio/butlerd";
+import { Conversation } from "@itchio/butlerd";
 import { Logger } from "common/logger";
 import { MinimalContext } from "main/context";
 import * as messages from "common/butlerd/messages";
 import { Cave, CaveSummary } from "common/butlerd/messages";
-import { Store } from "common/types";
 
 export function hookProgress(convo: Conversation, ctx: MinimalContext) {
   convo.onNotification(messages.Progress, (params) => {
@@ -44,21 +43,4 @@ export function getCaveSummary(cave: Cave): CaveSummary {
     installedSize: cave.installInfo.installedSize,
     interaction: cave.interaction,
   };
-}
-
-export function getErrorMessage(e: any): string {
-  if (!e) {
-    return "Unknown error";
-  }
-
-  // TODO: this is a good place to do i18n on butlerd error codes!
-  let errorMessage = e.message;
-  const re = e.rpcError;
-  if (re) {
-    if (re.message) {
-      // use just the json-rpc message if possible
-      errorMessage = re.message;
-    }
-  }
-  return errorMessage;
 }

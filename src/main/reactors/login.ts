@@ -16,7 +16,7 @@ import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { session } from "electron";
 import { elapsed } from "common/format/datetime";
 import { withTimeout } from "common/helpers/with-timeout";
-import { v4 as uuidv4 } from "uuid";
+import uuidv4 from "common/util/uuid";
 import crypto from "crypto";
 import env from "main/env";
 

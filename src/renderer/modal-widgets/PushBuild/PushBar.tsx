@@ -7,7 +7,6 @@ import Button from "renderer/basics/Button";
 import { hookWithProps } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
-import rng from "renderer/util/rng";
 
 const Wrapper = styled.div`
   margin-top: 16px;
@@ -112,7 +111,7 @@ class PushBar extends React.PureComponent<Props> {
     onSetPendingPushConfirm(false);
     dispatch(
       actions.startPreview({
-        id: uuid(rng),
+        id: uuid(),
         target,
         channel,
         src,
@@ -153,7 +152,7 @@ class PushBar extends React.PureComponent<Props> {
 
     dispatch(
       actions.startPush({
-        jobId: uuid(rng),
+        jobId: uuid(),
         createdAt: Date.now(),
         gameId,
         gameTitle: gameTitle ?? undefined,

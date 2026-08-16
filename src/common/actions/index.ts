@@ -57,6 +57,11 @@ function action<PayloadType extends Object>(): ActionCreator<PayloadType> {
   return ret as any;
 }
 
+/** Returns the type string an action creator produces, without dispatching. */
+export function typeOf(actionCreator: (payload: any) => Action<any>): string {
+  return actionCreator({}).type;
+}
+
 export function dispatcher<T, U extends Object>(
   dispatch: Dispatch,
   actionCreator: (payload: T) => Action<U>

@@ -42,7 +42,12 @@ export function isInternalError(e: unknown): boolean {
 }
 
 export function getErrorMessage(e: unknown): string {
-  return asError(e).message;
+  const re = asRequestError(e);
+  if (re && re.rpcError.message) {
+    // use just the json-rpc message if possible
+    return re.rpcError.message;
+  }
+  return asError(e).message || "Unknown error";
 }
 
 export function getErrorCode(e: unknown): unknown {
