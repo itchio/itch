@@ -1,4 +1,3 @@
-import btoa from "btoa";
 import querystring from "querystring";
 
 import { BrowserWindow, shell, session } from "electron";
@@ -137,7 +136,9 @@ export async function performHTMLLaunch(
   });
 
   // nasty hack to pass in the itchObject
-  const itchObjectBase64 = btoa(JSON.stringify(itchObject));
+  const itchObjectBase64 = Buffer.from(JSON.stringify(itchObject)).toString(
+    "base64"
+  );
   const query = querystring.stringify({ itchObject: itchObjectBase64 });
 
   // don't use the HTTP cache, we already have everything on disk!

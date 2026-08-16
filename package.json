@@ -27,12 +27,8 @@
   "dependencies": {
     "@goosewobbler/electron-redux": "^1.0.4",
     "@itchio/butlerd": "^15.0.0",
-    "btoa": "^1.2.1",
     "buffer": "^6.0.3",
     "classnames": "^2.2.6",
-    "crc-32": "^1.2.2",
-    "debug": "^4.4.3",
-    "events": "^3.3.0",
     "fast-memoize": "^2.5.2",
     "intl-messageformat": "^9.4.6",
     "logrotate-stream": "^0.2.7",
@@ -42,7 +38,6 @@
     "polished": "^3.6.7",
     "process": "^0.11.10",
     "progress-stream": "^2.0.0",
-    "querystring-es3": "^0.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-fast-compare": "^3.2.2",
@@ -62,7 +57,6 @@
     "systeminformation": "^5.31.13",
     "term-color": "^1.0.1",
     "underscore": "^1.12.0",
-    "url": "^0.11.4",
     "vivus": "^0.4.5",
     "which": "^6.0.1",
     "yauzl": "^3.4.0"
@@ -79,8 +73,8 @@
     "@types/react": "^17.0.80",
     "@types/react-dom": "^17.0.25",
     "@types/react-redux": "^7.1.16",
-    "@types/readable-stream": "^4.0.22",
     "@types/semver": "^7.3.4",
+    "debug": "^4.4.3",
     "@types/split2": "^4.2.3",
     "@types/styled-components": "^5.1.36",
     "@types/underscore": "^1.13.0",
@@ -117,5 +111,8 @@
     "*.{ts,tsx}": [
       "prettier --write"
     ]
+  },
+  "allowScripts": {
+    "esbuild@0.27.0": true
   }
 }

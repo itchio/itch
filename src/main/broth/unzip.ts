@@ -1,6 +1,6 @@
 import yauzl from "yauzl";
 import progress from "progress-stream";
-const crc32 = require("crc-32");
+import { crc32 } from "zlib";
 const yauzlOpen = promisify(yauzl.open) as (
   path: string,
   options: yauzl.Options
@@ -128,9 +128,8 @@ export async function unzip(opts: UnzipOpts) {
     await sf.chmod(entryPath, 0o755);
 
     const fileBuffer = await sf.readFile(entryPath, { encoding: null });
-    const signedHash = crc32.buf(fileBuffer);
-    // this converts an int32 to an uint32 (which is what yauzl reports)
-    const hash = new Uint32Array([signedHash])[0];
+    // zlib's crc32 already returns an uint32 (which is what yauzl reports)
+    const hash = crc32(fileBuffer);
     if (hash !== entry.crc32) {
       await sf.unlink(entryPath);
       throw new Error(

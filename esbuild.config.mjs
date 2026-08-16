@@ -41,14 +41,6 @@ export const mainConfig = {
   },
 };
 
-// Browser polyfills for Node.js built-ins
-const browserAliases = {
-  ...aliases,
-  querystring: "querystring-es3",
-  events: "events",
-  url: "url",
-};
-
 // Renderer process config
 export const rendererConfig = {
   tsconfig: "tsconfig.renderer.json",
@@ -66,7 +58,7 @@ export const rendererConfig = {
   minify: isProduction,
   metafile: true,
   external: ["systeminformation"],
-  alias: browserAliases,
+  alias: aliases,
   loader: {
     ".png": "file",
     ".svg": "file",

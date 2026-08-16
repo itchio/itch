@@ -1,7 +1,5 @@
 // This file is the entry point for renderer processes
 
-import { parse as parseQueryString } from "querystring";
-
 import env from "renderer/env";
 
 env.setNodeEnv();
@@ -45,11 +43,11 @@ window.addEventListener("beforeunload", () => {
 });
 
 async function start() {
-  const opts = parseQueryString(location.search.replace(/^\?/, ""));
+  const opts = new URLSearchParams(location.search);
   const extWindow = window as unknown as ExtendedWindow;
   extWindow.windSpec = {
-    wind: String(opts.wind),
-    role: String(opts.role) as any,
+    wind: String(opts.get("wind")),
+    role: String(opts.get("role")) as any,
   };
 
   // Wait for electron-redux to sync state from main process

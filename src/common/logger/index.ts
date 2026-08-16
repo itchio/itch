@@ -100,7 +100,7 @@ export function multiSink(...sinks: LogSink[]) {
   };
 }
 
-export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
+export const streamSink = (stream: { write(chunk: string): void }): LogSink => {
   return {
     write(entry: LogEntry) {
       stream.write(JSON.stringify(entry));

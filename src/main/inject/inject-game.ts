@@ -28,9 +28,12 @@ declare function atob(b64: string): string;
     if (!itchObjectBase64) {
       throw new Error("Missing itchObject in query string");
     }
-    const jsonSource = atob(
+    const binary = atob(
       Array.isArray(itchObjectBase64) ? itchObjectBase64[0] : itchObjectBase64
     );
+    // the encoder base64s UTF-8 bytes; atob yields them as single chars
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    const jsonSource = new TextDecoder().decode(bytes);
     const itchObject = JSON.parse(jsonSource);
     contextBridge.exposeInMainWorld("Itch", itchObject);
     console.log("Loaded itch environment!");
