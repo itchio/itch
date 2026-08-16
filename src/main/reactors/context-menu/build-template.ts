@@ -28,44 +28,6 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
-export function newTabControls(
-  store: Store,
-  wind: string,
-  tab: string
-): MenuTemplate {
-  return [
-    {
-      localizedLabel: ["menu.file.new_tab"],
-      accelerator: "CmdOrCtrl+T",
-      action: actions.newTab({ wind }),
-    },
-  ];
-}
-
-export function closeTabControls(
-  store: Store,
-  wind: string,
-  tab: string
-): MenuTemplate {
-  // TODO: disable some menu items if last transient tab
-
-  return [
-    {
-      localizedLabel: ["menu.file.close_tab"],
-      accelerator: "CmdOrCtrl+W",
-      action: actions.closeTab({ wind, tab }),
-    },
-    {
-      localizedLabel: ["menu.file.close_other_tabs"],
-      action: actions.closeOtherTabs({ wind, tab }),
-    },
-    {
-      localizedLabel: ["menu.file.close_tabs_below"],
-      action: actions.closeTabsBelow({ wind, tab }),
-    },
-  ];
-}
-
 export function gameControls(store: Store, game: Game): MenuTemplate {
   let template: MenuTemplate = [];
 

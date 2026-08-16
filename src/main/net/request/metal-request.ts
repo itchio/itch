@@ -12,8 +12,6 @@ import {
   RequestParsingFailure,
 } from "main/net/errors";
 
-import env from "main/env";
-
 import { net } from "electron";
 import { Readable } from "stream";
 import { userAgent } from "main/util/useragent";
@@ -33,9 +31,6 @@ export async function request(
   opts: RequestOpts = {}
 ): Promise<Response> {
   let url = uri;
-  if (env.unitTests) {
-    throw new Error(`refusing to do API request in unit test`);
-  }
 
   if (method === "get") {
     const query = querystring.stringify(data);

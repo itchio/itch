@@ -171,15 +171,6 @@ export const animations = {
     }
   `,
 
-  horizontalScan: keyframes`
-    0% {
-      background-position: 0em 0;
-    }
-    100% {
-      background-position: 1em 0;
-    }
-  `,
-
   enterLeft: keyframes`
     0% {
       opacity: 0;
@@ -377,19 +368,6 @@ export const progress = css`
       ${downloadProgressColorInB} 8px
     );
   }
-`;
-
-export const horizontalScan = css`
-  background: -webkit-linear-gradient(
-    left,
-    ${(props) => props.theme.secondaryTextHover} 0%
-      ${(props) => props.theme.secondaryTextHover} 50%
-      ${(props) => props.theme.secondaryText} 50%
-  );
-  background-size: 200% 100%;
-  animation: horizontal-scan 2s infinite;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 `;
 
 export const singleLine = css`

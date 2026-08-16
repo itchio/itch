@@ -6,8 +6,3 @@ export interface ReadFileOpts {
 export interface WriteFileOpts extends ReadFileOpts {
   mode?: number;
 }
-
-export interface FSError {
-  code?: string;
-  message: string;
-}

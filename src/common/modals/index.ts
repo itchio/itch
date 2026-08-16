@@ -132,14 +132,6 @@ export const prepModals = (uuid: () => string) => {
 
     // dummy widgets
 
-    pickUpload: widget<
-      {},
-      {
-        /** manually picked upload for install */
-        pickedUploadIndex?: number;
-      }
-    >(uuid),
-
     pickManifestAction: widget<
       {},
       {
@@ -155,8 +147,6 @@ export const prepModals = (uuid: () => string) => {
         sandboxBlessing?: boolean;
       }
     >(uuid),
-
-    adminWipeBlessing: widget<{}, {}>(uuid),
 
     naked: widget<{} | null, {}>(uuid),
 

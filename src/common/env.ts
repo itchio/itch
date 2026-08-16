@@ -23,7 +23,6 @@ export default {
   isCanary,
   setNodeEnv,
   integrationTests: !!process.env.ITCH_INTEGRATION_TESTS,
-  unitTests: false,
   channel: (app: AppLike) => (isCanary(app) ? "canary" : "stable"),
   appName: (app: AppLike) => (isCanary(app) ? "kitch" : "itch"),
   development: (app: AppLike) => envName(app) === "development",

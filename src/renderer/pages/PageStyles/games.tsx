@@ -29,10 +29,6 @@ export const TitleBreak = styled.div`
   margin-top: 8px;
 `;
 
-export const TitleSpacer = styled.div`
-  width: 8px;
-`;
-
 export const Desc = styled.div`
   color: ${(props) => props.theme.secondaryText};
 `;

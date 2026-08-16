@@ -7,7 +7,6 @@ import env from "common/env";
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
 export const initialState: PreferencesState = {
-  downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
   defaultInstallLocation: "appdata",
@@ -21,8 +20,6 @@ export const initialState: PreferencesState = {
   openAsHidden: false,
   manualGameUpdates: false,
   preventDisplaySleep: true,
-  preferOptimizedPatches: false,
-  layout: "grid",
   disableBrowser: env.integrationTests ? true : false,
   disableHardwareAcceleration: false,
   enableTabs: false,

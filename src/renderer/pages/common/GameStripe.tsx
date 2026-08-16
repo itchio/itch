@@ -235,18 +235,6 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
   return augmentedResult;
 }
 
-export function makeStripeCallbacks<Params, Res extends FetchRes<any>>(
-  rc: RequestCreator<Params, Res>
-) {
-  type Item = Res["items"][0];
-
-  return {
-    getGame(f: (item: Item) => Game | undefined) {
-      return f;
-    },
-  };
-}
-
 function renderNoop(): JSX.Element | null {
   return null;
 }

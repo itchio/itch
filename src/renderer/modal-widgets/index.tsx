@@ -46,9 +46,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   viewChangelog: ViewChangelog,
 
   // dummies
-  adminWipeBlessing: null,
   pickManifestAction: null,
-  pickUpload: null,
   sandboxBlessing: null,
   naked: null,
 };

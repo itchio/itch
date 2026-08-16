@@ -8,18 +8,6 @@ const app =
 
 import urls from "common/constants/urls";
 
-export function usersPath(): string {
-  let usersPath = join(app.getPath("userData"), "users");
-  if (urls.itchio !== urls.originalItchio) {
-    usersPath = join(usersPath, fsFriendlyHost(urls.itchio));
-  }
-  return usersPath;
-}
-
-export function fsFriendlyHost(url: string): string {
-  return new URL(url).host.replace(/[^a-zA-Z0-9\.]/g, "-");
-}
-
 export function preferencesPath(): string {
   return join(app.getPath("userData"), "preferences.json");
 }
@@ -53,18 +41,4 @@ export function relaunchLogPath(): string {
 
 export function legacyMarketPath(): string {
   return join(app.getPath("userData"), "marketdb");
-}
-
-export function sanitize(file: string): string {
-  const sane = file.replace(/[^a-zA-Z0-9_ -]/g, "").replace(/[\s]+/, " ");
-  if (sane.length > 0) {
-    return sane;
-  } else {
-    return "nihilo";
-  }
-}
-
-export enum PathScheme {
-  LEGACY_PER_USER = 1,
-  MODERN_SHARED = 2,
 }

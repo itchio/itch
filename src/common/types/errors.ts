@@ -1,7 +1,7 @@
 import { RequestError } from "@itchio/butlerd";
 import * as messages from "common/butlerd/messages";
 
-type ItchErrorCode = "ITCH_ECANCELLED" | "ITCH_ERETRY";
+type ItchErrorCode = "ITCH_ECANCELLED";
 
 class ItchError extends Error {
   constructor(public code: ItchErrorCode) {
@@ -52,20 +52,4 @@ export function isAborted(e: any): boolean {
   }
 
   return false;
-}
-
-export class Retry extends ItchError {
-  constructor(detail: string) {
-    super("ITCH_ERETRY");
-    this.message = `Retry: ${detail}`;
-  }
-
-  override toString() {
-    return this.message;
-  }
-}
-
-export function isRetry(e: any): boolean {
-  let ie = e as ItchError;
-  return ie && ie.code === "ITCH_ERETRY";
 }

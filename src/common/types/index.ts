@@ -6,8 +6,6 @@ export * from "common/types/net";
 import {
   GameUpdate,
   Game,
-  User,
-  Collection,
   CaveSummary,
   DownloadKeySummary,
   Download,
@@ -45,18 +43,6 @@ export interface ChromeStore extends Store {
 }
 
 export type ClassificationAction = "launch" | "open";
-
-export interface UserSet {
-  [id: string]: User;
-}
-
-export interface GameSet {
-  [id: string]: Game;
-}
-
-export interface CollectionSet {
-  [id: string]: Collection;
-}
 
 /**
  * The entire application state, following the redux philosophy
@@ -430,8 +416,6 @@ export interface ProfileLoginState {
   oauthURL?: string;
 }
 
-export type TabLayout = "grid" | "table";
-
 export interface NavigationState {
   /** opened tabs */
   openTabs: string[];
@@ -498,9 +482,6 @@ interface InstallLocation {
 }
 
 export interface PreferencesState {
-  /** is the app allowed to check for updates to itself? */
-  downloadSelfUpdates: boolean;
-
   /** do not make any network requests */
   offlineMode: boolean;
 
@@ -554,12 +535,6 @@ export interface PreferencesState {
 
   /** prevent display sleep while playing */
   preventDisplaySleep: boolean;
-
-  /** if rediff'd patch is available, use it instead of original patch */
-  preferOptimizedPatches: boolean;
-
-  /** layout to use to show games */
-  layout: TabLayout;
 
   /** disable all webviews */
   disableBrowser: boolean;
@@ -922,8 +897,6 @@ export interface TabDataSave {
 }
 
 export type TaskName = "install-queue" | "install" | "uninstall" | "launch";
-
-export type AutoUpdaterStart = () => Promise<boolean>;
 
 export interface ExtendedWindow extends Window {
   windSpec: WindSpec;

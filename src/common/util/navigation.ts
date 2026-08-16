@@ -56,10 +56,6 @@ export function urlForGame(gameId: number) {
   return `itch://games/${gameId}`;
 }
 
-export function urlForUser(userId: number) {
-  return `itch://users/${userId}`;
-}
-
 export function urlForCollection(collectionId: number) {
   return `itch://collections/${collectionId}`;
 }
