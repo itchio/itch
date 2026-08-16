@@ -28,7 +28,7 @@ import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
 import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
 import { mainLogger } from "main/logger";
-import { stopForwarding } from "@goosewobbler/electron-redux";
+import { stopForwarding } from "common/util/store-sync";
 
 const appUserModelId = "io.itch.itch";
 

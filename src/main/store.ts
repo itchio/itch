@@ -3,14 +3,7 @@ if (process.type !== "browser") {
   throw new Error("main store required from renderer");
 }
 
-import {
-  createStore,
-  applyMiddleware,
-  compose,
-  AnyAction,
-  Middleware,
-  MiddlewareAPI,
-} from "redux";
+import { createStore, applyMiddleware, Middleware, MiddlewareAPI } from "redux";
 
 import route from "common/util/route";
 import getWatcher from "main/reactors";
@@ -18,9 +11,9 @@ import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { Action, RootState, Store } from "common/types";
+import { Action, Store } from "common/types";
 import { mainLogger } from "main/logger";
-import { syncMain } from "@goosewobbler/electron-redux";
+import { mainSyncMiddleware } from "main/store-sync";
 
 const crashGetter =
   (store: MiddlewareAPI<any>) =>
@@ -71,24 +64,21 @@ if (beChatty) {
 
 let watcher = getWatcher(mainLogger);
 
-const initialState = {} as any;
-const enhancers = [syncMain, applyMiddleware(...middleware)];
+// innermost so reactors see the already-reduced state
+const routeMiddleware: Middleware = (api) => (next) => (action) => {
+  const res = next(action);
+  route(watcher, api as Store, action as Action<any>);
+  return res;
+};
 
-const hack: { store: Store | null } = { store: null };
+middleware.push(mainSyncMiddleware);
+middleware.push(routeMiddleware);
+
+const initialState = {} as any;
 const store = createStore(
-  (state: RootState | undefined, action: AnyAction) => {
-    // redux's own actions (@@INIT etc.) have no payload; ours always do
-    const res = reducer(state, action as Action<any>);
-    if (hack.store) {
-      // hack.store is null only during createStore's own initial
-      // @@INIT dispatch
-      route(watcher, hack.store, action as Action<any>);
-    }
-    return res;
-  },
+  reducer,
   initialState,
-  compose(...enhancers)
+  applyMiddleware(...middleware)
 ) as Store;
-hack.store = store;
 
 export default store;

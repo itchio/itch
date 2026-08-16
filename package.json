@@ -25,7 +25,6 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@goosewobbler/electron-redux": "^1.0.4",
     "@itchio/butlerd": "^15.0.0",
     "buffer": "^6.0.3",
     "classnames": "^2.2.6",

@@ -50,7 +50,7 @@ async function start() {
     role: String(opts.get("role")) as any,
   };
 
-  // Wait for electron-redux to sync state from main process
+  // Wait for store-sync to hydrate state from the main process
   await new Promise<void>((resolve) => {
     const checkState = () => {
       const state = store.getState();

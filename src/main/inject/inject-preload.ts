@@ -18,7 +18,29 @@ import { emitAsyncIpcEvent, emitSyncIpcEvent } from "common/ipc";
 import type { InjectName } from "common/ipc";
 import { Store } from "common/types";
 import { convertMessage } from "common/helpers/bridge";
-import "@goosewobbler/electron-redux/preload";
+import {
+  ACTION_CHANNEL,
+  FETCH_STATE_CHANNEL,
+  ElectronReduxBridge,
+  hydrate,
+  stopForwarding,
+} from "common/util/store-sync";
+
+// Vendored from @goosewobbler/electron-redux/preload
+const electronReduxBridge: ElectronReduxBridge = {
+  getMainState: async () => {
+    const state = await ipcRenderer.invoke(FETCH_STATE_CHANNEL);
+    return JSON.parse(state, hydrate);
+  },
+  subscribeToActions: (store) => {
+    ipcRenderer.on(ACTION_CHANNEL, (_event, action) => {
+      store.dispatch(stopForwarding(action));
+    });
+  },
+  sendAction: (action) => {
+    ipcRenderer.send(ACTION_CHANNEL, action);
+  },
+};
 
 const memo = <A>(fn: () => A): (() => A) => {
   let found: A | null = null;
@@ -120,6 +142,7 @@ export const mainWorldSupplement = {
   promisedFs: { readFile: promises.readFile },
 };
 
+contextBridge.exposeInMainWorld("__ElectronReduxBridge", electronReduxBridge);
 contextBridge.exposeInMainWorld("github", mainWorldSupplement.github);
 contextBridge.exposeInMainWorld("electron", mainWorldSupplement.electron);
 contextBridge.exposeInMainWorld("butlerd", mainWorldSupplement.butlerd);

@@ -898,7 +898,9 @@ export interface TabDataSave {
 
 export type TaskName = "install-queue" | "install" | "uninstall" | "launch";
 
-export interface ExtendedWindow extends Window {
+// not extending Window: main's tsconfig has no dom lib, and every use
+// site casts through unknown and only reads windSpec
+export interface ExtendedWindow {
   windSpec: WindSpec;
 }
 
