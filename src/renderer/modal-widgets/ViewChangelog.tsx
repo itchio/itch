@@ -198,7 +198,11 @@ class ViewChangelog extends React.PureComponent<Props, State> {
               </ReleaseHeader>
               {release.body ? (
                 <ReleaseBody>
-                  <Markdown source={release.body} externalLinks />
+                  <Markdown
+                    source={release.body}
+                    externalLinks
+                    repoUrl={repoConfig.repoUrl}
+                  />
                 </ReleaseBody>
               ) : (
                 <EmptyBody>This release has no notes.</EmptyBody>

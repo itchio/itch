@@ -10,10 +10,13 @@ import React from "react";
 interface Props {
   source: string;
   externalLinks?: boolean;
+  /** repository that bare #123 issue references link to */
+  repoUrl?: string;
 }
 
 interface RenderOptions {
   externalLinks: boolean;
+  repoUrl: string;
 }
 
 // absolute http(s) only: the page has a local URL, so relative links
@@ -113,7 +116,7 @@ const renderInline = (
       nodes.push(
         renderLink(
           `#${issue}`,
-          `${urls.itchRepo}/issues/${issue}`,
+          `${options.repoUrl}/issues/${issue}`,
           options,
           key++
         )
@@ -337,8 +340,12 @@ const parseBlocks = (
   return blocks;
 };
 
-const Markdown = ({ source, externalLinks = false }: Props) => {
-  return <div>{parseBlocks(source, { externalLinks })}</div>;
+const Markdown = ({
+  source,
+  externalLinks = false,
+  repoUrl = urls.itchRepo,
+}: Props) => {
+  return <div>{parseBlocks(source, { externalLinks, repoUrl })}</div>;
 };
 
 export default React.memo(Markdown);
