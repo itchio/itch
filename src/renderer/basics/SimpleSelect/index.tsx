@@ -5,7 +5,7 @@ import styled, { css, singleLine } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
-import isEqual from "react-fast-compare";
+import equal from "react-fast-compare";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import { T } from "renderer/t";
@@ -268,7 +268,7 @@ export default class SimpleSelect<
       return -1;
     }
     return this.props.options.findIndex(
-      (x) => x === target || isEqual(x.value, target.value)
+      (x) => x === target || equal(x.value, target.value)
     );
   }
 

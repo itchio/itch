@@ -11,6 +11,7 @@ import { app } from "electron";
 import { Manager } from "main/broth/manager";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
+import indexById from "common/helpers/index-by-id";
 import { mkdir } from "main/os/sf";
 import { delay } from "main/reactors/delay";
 import { recordingLogger } from "common/logger";
@@ -19,9 +20,7 @@ const logger = recordingLogger(mainLogger, "🔧 setup");
 
 async function syncInstallLocations(store: Store) {
   const { installLocations } = await mcall(messages.InstallLocationsList, {});
-  const newLocationsById = Object.fromEntries(
-    (installLocations ?? []).map((x) => [x.id, x] as const)
-  );
+  const newLocationsById = indexById(installLocations);
 
   const { preferences } = store.getState();
   if (!preferences.importedOldInstallLocations) {
@@ -35,24 +34,22 @@ async function syncInstallLocations(store: Store) {
     } as { [key: string]: { id: string; path: string } };
 
     let numAdded = 0;
-    if (Object.keys(oldLocations).length > 0) {
-      for (const id of Object.keys(oldLocations)) {
-        logger.debug(`Checking install location ${id}...`);
-        const oldLoc = oldLocations[id];
-        const newLoc = newLocationsById[id];
-        if (newLoc) {
-          logger.debug(`Has on butler side too!`);
-        } else {
-          logger.debug(`Synchronizing ${id}...`);
-          numAdded++;
-          try {
-            await mcall(messages.InstallLocationsAdd, {
-              id,
-              path: oldLoc.path,
-            });
-          } catch (e) {
-            logger.warn(`Could not add ${oldLoc.path}: ${getErrorStack(e)}`);
-          }
+    for (const id of Object.keys(oldLocations)) {
+      logger.debug(`Checking install location ${id}...`);
+      const oldLoc = oldLocations[id];
+      const newLoc = newLocationsById[id];
+      if (newLoc) {
+        logger.debug(`Has on butler side too!`);
+      } else {
+        logger.debug(`Synchronizing ${id}...`);
+        numAdded++;
+        try {
+          await mcall(messages.InstallLocationsAdd, {
+            id,
+            path: oldLoc.path,
+          });
+        } catch (e) {
+          logger.warn(`Could not add ${oldLoc.path}: ${getErrorStack(e)}`);
         }
       }
     }

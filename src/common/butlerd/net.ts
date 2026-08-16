@@ -4,7 +4,7 @@ import {
   RequestCreator,
   Conversation,
 } from "@itchio/butlerd";
-import isEqual from "react-fast-compare";
+import equal from "react-fast-compare";
 import { Store, isCancelled, isAborted } from "common/types";
 import {
   getRpcErrorData,
@@ -62,7 +62,7 @@ async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
     // the endpoint may have been cleared or replaced while we were
     // setting up (butlerd restart); if so, start over
     const currentEndpoint = store.getState().butlerd.endpoint;
-    if (isEqual(endpoint, currentEndpoint)) {
+    if (equal(endpoint, currentEndpoint)) {
       return c;
     }
     parentLogger.warn(

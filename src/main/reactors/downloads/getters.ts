@@ -14,25 +14,22 @@ export const getPendingDownloads = memoize(
   1,
   function (downloads: DownloadsState): Download[] {
     const pending = Object.values(downloads.items).filter((i) => !i.finishedAt);
-    return pending.sort((a, b) =>
-      a.position < b.position ? -1 : a.position > b.position ? 1 : 0
-    );
+    return pending.sort((a, b) => a.position - b.position);
   }
 );
 
 export const getFinishedDownloads = memoize(
   1,
   function (downloads: DownloadsState): Download[] {
-    const pending = Object.values(downloads.items).filter(
+    const finished = Object.values(downloads.items).filter(
       (i) => !!i.finishedAt
     );
-    return pending
-      .sort((a, b) => {
-        const fa = a.finishedAt ?? "";
-        const fb = b.finishedAt ?? "";
-        return fa < fb ? -1 : fa > fb ? 1 : 0;
-      })
-      .reverse();
+    // most recently finished first
+    return finished.sort((a, b) => {
+      const fa = a.finishedAt ?? "";
+      const fb = b.finishedAt ?? "";
+      return fa < fb ? 1 : fa > fb ? -1 : 0;
+    });
   }
 );
 

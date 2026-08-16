@@ -90,7 +90,7 @@ class ManageGame extends React.PureComponent<Props> {
     const params = this.props.modal.widgetParams;
     const { game, caves } = params;
 
-    if (caves.length === 0) {
+    if (!caves || caves.length === 0) {
       return (
         <ManageGameDiv>
           <p>{T(["prompt.manage_game.not_installed"])}</p>

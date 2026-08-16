@@ -1,4 +1,5 @@
 import { actions } from "common/actions";
+import indexById from "common/helpers/index-by-id";
 import reducer from "common/reducers/reducer";
 import { DownloadsState } from "common/types";
 
@@ -16,7 +17,7 @@ export default reducer<DownloadsState>(initialState, (on) => {
     const { downloads } = action.payload;
     return {
       ...state,
-      items: Object.fromEntries(downloads.map((d) => [d.id, d])),
+      items: indexById(downloads),
     };
   });
 

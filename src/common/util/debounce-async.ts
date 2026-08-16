@@ -8,17 +8,21 @@ class CancelError extends Error {
   }
 }
 
-function debounce<Arg1, T>(
+// Unlike the fire-and-forget debounce in common/util/rate-limit, this one
+// wraps promise-returning functions: superseded calls are cancelled and
+// resolve to undefined, only the latest call runs f.
+
+function debounceAsync<Arg1, T>(
   f: (arg1: Arg1) => Promise<T>,
   ms: number
 ): (arg1: Arg1) => Promise<T>;
 
-function debounce<Arg1, Arg2, T>(
+function debounceAsync<Arg1, Arg2, T>(
   f: (arg1: Arg1, arg2: Arg2) => Promise<T>,
   ms: number
 ): (arg1: Arg1, arg2: Arg2) => Promise<T>;
 
-function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
+function debounceAsync<T>(f: (...args: any[]) => Promise<T>, ms: number) {
   let rejectOther: ((err: Error) => void) | null;
 
   return async function (...args: any[]) {
@@ -45,4 +49,4 @@ function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
   };
 }
 
-export default debounce;
+export default debounceAsync;

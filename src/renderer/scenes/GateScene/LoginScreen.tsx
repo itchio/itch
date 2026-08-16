@@ -38,7 +38,9 @@ class LoginScreen extends React.PureComponent<Props, State> {
   refresh() {
     doAsync(async () => {
       const { profiles } = await rcall(messages.ProfileList, {});
-      this.setState({ loading: false, profiles });
+      // butlerd returns null for an empty profile list; state renders before
+      // the showingSaved setState below lands
+      this.setState({ loading: false, profiles: profiles ?? [] });
 
       if (!profiles || profiles.length === 0) {
         this.setState({ showingSaved: false });

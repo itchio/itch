@@ -2,11 +2,12 @@ import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import groupIdBy from "common/helpers/group-id-by";
+import indexById from "common/helpers/index-by-id";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import isEqual from "react-fast-compare";
+import equal from "react-fast-compare";
 import { throttle } from "common/util/rate-limit";
 
 const logger = mainLogger.child(__filename);
@@ -56,11 +57,9 @@ async function updateCommonsNowThrows(store: Store) {
   }
 
   push(store, {
-    caves: Object.fromEntries((caves ?? []).map((x) => [x.id, x] as const)),
+    caves: indexById(caves),
     caveIdsByGameId: groupIdBy(caves, "gameId"),
-    downloadKeys: Object.fromEntries(
-      (downloadKeys ?? []).map((x) => [x.id, x] as const)
-    ),
+    downloadKeys: indexById(downloadKeys),
     downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
     locationSizes,
   });
@@ -195,7 +194,7 @@ function push(store: Store, next: typeof actions.commonsUpdated.payload) {
 
   let hasDifferences = false;
   for (const k of Object.keys(next)) {
-    if (!isEqual((prev as any)[k], (next as any)[k])) {
+    if (!equal((prev as any)[k], (next as any)[k])) {
       hasDifferences = true;
       break;
     }

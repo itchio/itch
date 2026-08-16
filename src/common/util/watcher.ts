@@ -1,7 +1,7 @@
 import { getErrorStack } from "common/butlerd/errors";
 import { Store, RootState, Action } from "common/types";
 
-import debounce from "common/util/debounce";
+import debounceAsync from "common/util/debounce-async";
 
 import { Logger } from "common/logger";
 import { actions } from "common/actions";
@@ -97,7 +97,7 @@ export class Watcher {
   ) {
     // create a dummy action to get the type
     const type = actionCreator({} as any as T).type;
-    this.addWatcher(type, debounce(reactor, ms));
+    this.addWatcher(type, debounceAsync(reactor, ms));
   }
 
   validate() {

@@ -40,7 +40,7 @@ export default function (watcher: Watcher) {
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,
-          bigButtons: update.choices.map((choice) => {
+          bigButtons: (update.choices ?? []).map((choice) => {
             const uploadButton = makeUploadButton(choice.upload, {
               showSize: false,
             });
