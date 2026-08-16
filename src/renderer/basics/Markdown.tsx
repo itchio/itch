@@ -1,6 +1,10 @@
-import { getErrorMessage } from "common/butlerd/errors";
+// Minimal markdown renderer for GitHub release notes shown in the
+// changelog modal (itch / butler / itch-setup). Covers only the syntax
+// those notes use, unsupported constructs render as plain text. Emits
+// React elements directly (never HTML strings), so untrusted input
+// cannot inject markup.
+
 import urls from "common/constants/urls";
-import { marked } from "marked";
 import React from "react";
 
 interface Props {
@@ -8,252 +12,333 @@ interface Props {
   externalLinks?: boolean;
 }
 
-// We used to import `emojify` from the `node-emoji` package to convert
-// :shortcode: style emoji in markdown, but our locale files only use `:date:`.
-// This minimal implementation only supports `:date:` - future translations
-// should use emoji characters directly (e.g. 📅) instead of shortcodes.
-const emojify = (text: string): string => {
-  return text.replace(/:date:/g, "📅");
-};
-
 interface RenderOptions {
   externalLinks: boolean;
 }
 
-const renderHTML = (source: string, options: RenderOptions) => {
-  const emojified = emojify(source);
-  const autolinked = autolink(emojified);
-  const normalized = normalizeMarkdown(autolinked);
-
-  let html = "";
+// absolute http(s) only: the page has a local URL, so relative links
+// would resolve to file: before reaching shell.openExternal
+const isSafeUrl = (value: string): boolean => {
   try {
-    html = marked(normalized, { async: false });
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch (e) {
-    const errorMessage = getErrorMessage(e) || "Unknown markdown error";
-    html = `<p>${escapeHtml(`Markdown error: ${errorMessage}`)}</p>`;
+    return false;
   }
-
-  return { __html: sanitizeRenderedHtml(html, options) };
 };
 
-const autolink = (src: string) => {
-  return src.replace(
-    /#([0-9]+)/g,
-    (match, p1) => `[${match}](${urls.itchRepo}/issues/${p1})`
+// alternatives: code span, bold, italic, ![alt](src), [label](url),
+// bare URL, #issue, html <img>
+const inlineRe =
+  /`([^`\n]+)`|\*\*(\S(?:[^*\n]*\S)?)\*\*|\*(\S(?:[^*\n]*\S)?)\*|!\[([^\]]*)\]\(([^)\s]+)\)|\[([^\]]+)\]\(([^)\s]+)\)|(https?:\/\/[^\s<>)\]]+)|#([0-9]+)|<img\s([^>]*?)\/?>/g;
+
+const imgAttrRe = /([a-zA-Z-]+)\s*=\s*"([^"]*)"/g;
+
+const renderLink = (
+  label: React.ReactNode,
+  url: string,
+  options: RenderOptions,
+  key: number
+): React.ReactNode => {
+  if (!isSafeUrl(url)) {
+    return label;
+  }
+  return (
+    <a
+      key={key}
+      href={url}
+      rel="noopener noreferrer"
+      target={options.externalLinks ? "_popout" : undefined}
+    >
+      {label}
+    </a>
   );
 };
 
-const normalizeMarkdown = (src: string) => {
-  return src.replace(/\n##/g, "\n\n##");
+// the renderer CSP only allows itch image hosts, so embedded images
+// become links that open in the external browser instead
+const renderImg = (
+  alt: string,
+  src: string,
+  options: RenderOptions,
+  key: number
+): React.ReactNode => {
+  return renderLink(alt || "image", src, options, key);
 };
 
-const escapeHtml = (src: string) => {
-  return src
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-};
-
-// Strict allowlist sanitizer for marked output.
-const allowedTags = new Set([
-  "a",
-  "blockquote",
-  "br",
-  "code",
-  "del",
-  "em",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "hr",
-  "i",
-  "img",
-  "li",
-  "ol",
-  "p",
-  "pre",
-  "strong",
-  "table",
-  "tbody",
-  "td",
-  "tfoot",
-  "th",
-  "thead",
-  "tr",
-  "ul",
-]);
-
-const allowedAttributes: Record<string, Set<string>> = {
-  a: new Set(["href", "title"]),
-  img: new Set(["src", "alt", "title"]),
-  th: new Set(["colspan", "rowspan"]),
-  td: new Set(["colspan", "rowspan"]),
-};
-
-const isSafeUrl = (value: string, allowMailto: boolean): boolean => {
-  const url = value.trim();
-  if (!url) {
-    return false;
-  }
-
-  if (
-    url.startsWith("#") ||
-    url.startsWith("/") ||
-    url.startsWith("./") ||
-    url.startsWith("../")
-  ) {
-    return true;
-  }
-
-  try {
-    const parsed = new URL(url, "https://itch.io");
-    return (
-      parsed.protocol === "http:" ||
-      parsed.protocol === "https:" ||
-      (allowMailto && parsed.protocol === "mailto:")
-    );
-  } catch (e) {
-    return false;
-  }
-};
-
-const isSafeCellSpan = (value: string): boolean => {
-  return /^[1-9][0-9]{0,2}$/.test(value.trim());
-};
-
-const sanitizeAttributes = (
-  source: Element,
-  target: Element,
-  tagName: string
-) => {
-  const allowed = allowedAttributes[tagName];
-  if (!allowed) {
-    return;
-  }
-
-  for (const attr of Array.from(source.attributes)) {
-    const name = attr.name.toLowerCase();
-    if (!allowed.has(name)) {
-      continue;
-    }
-
-    const value = attr.value.trim();
-    if (!value) {
-      continue;
-    }
-
-    if (name === "href") {
-      if (!isSafeUrl(value, true)) {
-        continue;
-      }
-      target.setAttribute("href", value);
-      continue;
-    }
-
-    if (name === "src") {
-      if (!isSafeUrl(value, false)) {
-        continue;
-      }
-      target.setAttribute("src", value);
-      continue;
-    }
-
-    if ((name === "colspan" || name === "rowspan") && !isSafeCellSpan(value)) {
-      continue;
-    }
-
-    target.setAttribute(name, value);
-  }
-};
-
-const sanitizeNode = (
-  source: Node,
-  target: Node,
-  outDoc: Document,
+const renderInline = (
+  text: string,
   options: RenderOptions
-): void => {
-  if (source.nodeType === Node.TEXT_NODE) {
-    target.appendChild(outDoc.createTextNode(source.textContent || ""));
-    return;
-  }
+): React.ReactNode[] => {
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let key = 0;
 
-  if (source.nodeType !== Node.ELEMENT_NODE) {
-    return;
-  }
-
-  const sourceElement = source as Element;
-  const tagName = sourceElement.tagName.toLowerCase();
-
-  if (!allowedTags.has(tagName)) {
-    for (const child of Array.from(sourceElement.childNodes)) {
-      sanitizeNode(child, target, outDoc, options);
+  for (const m of Array.from(text.matchAll(inlineRe))) {
+    if (m.index > last) {
+      nodes.push(text.slice(last, m.index));
     }
-    return;
-  }
+    last = m.index + m[0].length;
 
-  const safeElement = outDoc.createElement(tagName);
-  sanitizeAttributes(sourceElement, safeElement, tagName);
-
-  if (tagName === "a") {
-    const href = safeElement.getAttribute("href");
-    if (!href) {
-      for (const child of Array.from(sourceElement.childNodes)) {
-        sanitizeNode(child, target, outDoc, options);
+    const [
+      ,
+      code,
+      bold,
+      italic,
+      imgAlt,
+      imgSrc,
+      label,
+      url,
+      bareUrl,
+      issue,
+      imgAttrs,
+    ] = m;
+    if (code !== undefined) {
+      nodes.push(<code key={key++}>{code}</code>);
+    } else if (bold !== undefined) {
+      nodes.push(<strong key={key++}>{renderInline(bold, options)}</strong>);
+    } else if (italic !== undefined) {
+      nodes.push(<em key={key++}>{renderInline(italic, options)}</em>);
+    } else if (imgSrc !== undefined) {
+      nodes.push(renderImg(imgAlt || "", imgSrc, options, key++));
+    } else if (label !== undefined && url !== undefined) {
+      nodes.push(renderLink(renderInline(label, options), url, options, key++));
+    } else if (bareUrl !== undefined) {
+      const trimmed = bareUrl.replace(/[.,;:!?]+$/, "");
+      nodes.push(renderLink(trimmed, trimmed, options, key++));
+      if (trimmed.length < bareUrl.length) {
+        nodes.push(bareUrl.slice(trimmed.length));
       }
-      return;
-    }
-    if (options.externalLinks) {
-      safeElement.setAttribute("target", "_popout");
-    }
-    safeElement.setAttribute("rel", "noopener noreferrer");
-  }
-
-  if (tagName === "img") {
-    if (!safeElement.getAttribute("src")) {
-      const alt = sourceElement.getAttribute("alt");
-      if (alt) {
-        target.appendChild(outDoc.createTextNode(alt));
+    } else if (issue !== undefined) {
+      nodes.push(
+        renderLink(
+          `#${issue}`,
+          `${urls.itchRepo}/issues/${issue}`,
+          options,
+          key++
+        )
+      );
+    } else if (imgAttrs !== undefined) {
+      const attrs: { [key: string]: string } = {};
+      for (const am of Array.from(imgAttrs.matchAll(imgAttrRe))) {
+        attrs[am[1].toLowerCase()] = am[2];
       }
-      return;
+      if (attrs.src) {
+        nodes.push(renderImg(attrs.alt || "", attrs.src, options, key++));
+      }
     }
   }
-
-  for (const child of Array.from(sourceElement.childNodes)) {
-    sanitizeNode(child, safeElement, outDoc, options);
+  if (last < text.length) {
+    nodes.push(text.slice(last));
   }
-
-  target.appendChild(safeElement);
+  return nodes;
 };
 
-const sanitizeRenderedHtml = (src: string, options: RenderOptions): string => {
-  if (typeof DOMParser === "undefined" || typeof document === "undefined") {
-    return escapeHtml(src);
+const headingRe = /^(#{1,6})\s+(.*)$/;
+const bulletRe = /^(\s*)[-*]\s+(.*)$/;
+const orderedRe = /^(\s*)\d+[.)]\s+(.*)$/;
+const quoteRe = /^\s*>\s?(.*)$/;
+const fenceRe = /^\s*```/;
+// GFM table rows may omit the outer pipes; the separator line is the
+// signal that distinguishes a table from prose containing "|"
+const tableRowRe = /^[^\n]*\|/;
+const tableSeparatorRe = /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/;
+
+interface ListItem {
+  indent: number;
+  text: string;
+  ordered: boolean;
+}
+
+const buildList = (
+  items: ListItem[],
+  options: RenderOptions,
+  key: number
+): React.ReactNode => {
+  const base = Math.min(...items.map((it) => it.indent));
+  const groups: { item: ListItem; children: ListItem[] }[] = [];
+  for (const it of items) {
+    if (it.indent <= base || groups.length === 0) {
+      groups.push({ item: it, children: [] });
+    } else {
+      groups[groups.length - 1].children.push(it);
+    }
   }
 
-  const parsed = new DOMParser().parseFromString(src, "text/html");
-  const outDoc = document.implementation.createHTMLDocument("");
-  const container = outDoc.createElement("div");
+  const children = groups.map((g, i) => (
+    <li key={i}>
+      {renderInline(g.item.text, options)}
+      {g.children.length > 0 ? buildList(g.children, options, 0) : null}
+    </li>
+  ));
+  return React.createElement(
+    groups[0].item.ordered ? "ol" : "ul",
+    { key },
+    children
+  );
+};
 
-  for (const child of Array.from(parsed.body.childNodes)) {
-    sanitizeNode(child, container, outDoc, options);
+const splitTableRow = (line: string): string[] => {
+  return line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+};
+
+const parseBlocks = (
+  source: string,
+  options: RenderOptions
+): React.ReactNode[] => {
+  const blocks: React.ReactNode[] = [];
+  const lines = source.split(/\r?\n/);
+  let para: string[] = [];
+  let list: ListItem[] = [];
+  let quote: string[] = [];
+  let key = 0;
+
+  const flushPara = () => {
+    if (para.length > 0) {
+      blocks.push(<p key={key++}>{renderInline(para.join(" "), options)}</p>);
+      para = [];
+    }
+  };
+
+  const flushList = () => {
+    if (list.length > 0) {
+      blocks.push(buildList(list, options, key++));
+      list = [];
+    }
+  };
+
+  const flushQuote = () => {
+    if (quote.length > 0) {
+      blocks.push(
+        <blockquote key={key++}>
+          {renderInline(quote.join(" "), options)}
+        </blockquote>
+      );
+      quote = [];
+    }
+  };
+
+  const flushAll = () => {
+    flushPara();
+    flushList();
+    flushQuote();
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (fenceRe.test(line)) {
+      flushAll();
+      const code: string[] = [];
+      i++;
+      while (i < lines.length && !fenceRe.test(lines[i])) {
+        code.push(lines[i]);
+        i++;
+      }
+      blocks.push(
+        <pre key={key++}>
+          <code>{code.join("\n")}</code>
+        </pre>
+      );
+      continue;
+    }
+
+    if (
+      tableRowRe.test(line) &&
+      i + 1 < lines.length &&
+      tableSeparatorRe.test(lines[i + 1])
+    ) {
+      flushAll();
+      const header = splitTableRow(line);
+      i += 2;
+      const rows: string[][] = [];
+      while (
+        i < lines.length &&
+        lines[i].trim() !== "" &&
+        tableRowRe.test(lines[i])
+      ) {
+        rows.push(splitTableRow(lines[i]));
+        i++;
+      }
+      i--;
+      blocks.push(
+        <table key={key++}>
+          <thead>
+            <tr>
+              {header.map((cell, c) => (
+                <th key={c}>{renderInline(cell, options)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, r) => (
+              <tr key={r}>
+                {row.map((cell, c) => (
+                  <td key={c}>{renderInline(cell, options)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+      continue;
+    }
+
+    const heading = headingRe.exec(line);
+    if (heading) {
+      flushAll();
+      const tag = `h${heading[1].length}` as keyof JSX.IntrinsicElements;
+      blocks.push(
+        React.createElement(
+          tag,
+          { key: key++ },
+          renderInline(heading[2], options)
+        )
+      );
+      continue;
+    }
+
+    const bullet = bulletRe.exec(line) || orderedRe.exec(line);
+    if (bullet) {
+      flushPara();
+      flushQuote();
+      list.push({
+        indent: bullet[1].length,
+        text: bullet[2],
+        ordered: /\d/.test(line.trim()[0]),
+      });
+      continue;
+    }
+
+    const quoted = quoteRe.exec(line);
+    if (quoted) {
+      flushPara();
+      flushList();
+      quote.push(quoted[1]);
+      continue;
+    }
+
+    if (line.trim() === "") {
+      flushAll();
+      continue;
+    }
+
+    flushList();
+    flushQuote();
+    para.push(line);
   }
+  flushAll();
 
-  return container.innerHTML;
+  return blocks;
 };
 
 const Markdown = ({ source, externalLinks = false }: Props) => {
-  return (
-    <div
-      dangerouslySetInnerHTML={renderHTML(source, {
-        externalLinks,
-      })}
-    />
-  );
+  return <div>{parseBlocks(source, { externalLinks })}</div>;
 };
 
 export default React.memo(Markdown);

@@ -469,6 +469,7 @@ const ReleaseBody = styled.div`
   h4 {
     margin: 12px 0 8px;
     font-size: ${(props) => props.theme.fontSizes.large};
+    font-weight: bold;
   }
 
   p {
@@ -479,6 +480,14 @@ const ReleaseBody = styled.div`
   ol {
     margin: 8px 0 10px;
     padding-left: 20px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
   }
 
   li {
@@ -508,6 +517,23 @@ const ReleaseBody = styled.div`
   img,
   table {
     max-width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid ${(props) => props.theme.prefBorder};
+    padding: 4px 8px;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  blockquote {
+    margin: 8px 0;
+    padding: 4px 12px;
+    border-left: 3px solid ${(props) => props.theme.prefBorder};
+    color: ${(props) => props.theme.secondaryText};
   }
 `;
 
