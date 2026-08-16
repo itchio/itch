@@ -1,6 +1,6 @@
 import { getErrorMessage } from "common/butlerd/errors";
 import urls from "common/constants/urls";
-import marked from "marked-extra";
+import { marked } from "marked";
 import React from "react";
 
 interface Props {
@@ -27,7 +27,7 @@ const renderHTML = (source: string, options: RenderOptions) => {
 
   let html = "";
   try {
-    html = marked(normalized);
+    html = marked(normalized, { async: false });
   } catch (e) {
     const errorMessage = getErrorMessage(e) || "Unknown markdown error";
     html = `<p>${escapeHtml(`Markdown error: ${errorMessage}`)}</p>`;
