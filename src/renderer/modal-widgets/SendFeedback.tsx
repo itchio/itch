@@ -336,7 +336,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
       <SendFeedbackDiv>
         <CallToAction>
           <LoadingCircle progress={-1} />
-          <span>Sending...</span>
+          <span>{T(["send_feedback.send.sending"])}</span>
         </CallToAction>
       </SendFeedbackDiv>
     );
