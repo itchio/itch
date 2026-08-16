@@ -8,6 +8,14 @@ import { isEqual } from "underscore";
 
 const enableProfiling = process.env.ITCH_ENABLE_PROFILING === "1";
 
+// The only rich-text tags allowed in locale strings. String contexts
+// (TString, main-process t) collapse these to plain text instead.
+const defaultRichTextElements = {
+  strong: (chunks: React.ReactNode) => <strong>{chunks}</strong>,
+  em: (chunks: React.ReactNode) => <em>{chunks}</em>,
+  code: (chunks: React.ReactNode) => <code>{chunks}</code>,
+};
+
 class App extends React.PureComponent<Props, State> {
   constructor(props: App["props"], context: any) {
     super(props, context);
@@ -51,7 +59,12 @@ class App extends React.PureComponent<Props, State> {
     const { localeVersion, locale, messages } = this.state;
 
     return (
-      <IntlProvider key={localeVersion} locale={locale} messages={messages}>
+      <IntlProvider
+        key={localeVersion}
+        locale={locale}
+        messages={messages}
+        defaultRichTextElements={defaultRichTextElements}
+      >
         <StyleSheetManager disableVendorPrefixes>
           <ThemeProvider theme={theme}>
             <AppContents />

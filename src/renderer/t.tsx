@@ -2,7 +2,7 @@ import { IntlMessageFormat } from "intl-messageformat";
 import { FormattedMessage, IntlShape } from "react-intl";
 import { LocalizedString } from "common/types";
 import { memoize } from "common/util/lru-memoize";
-import { collapseIntlChunks } from "common/format/t";
+import { collapseIntlChunks, stripRichTags } from "common/format/t";
 
 export function T(input: any): JSX.Element | string {
   if (Array.isArray(input)) {
@@ -23,10 +23,16 @@ export function TString(intl: IntlShape, input: any): string {
     const valuesIn = input[1] || {};
     const { defaultValue = "", ...values } = valuesIn;
     if (intl.messages[id]) {
-      return intl.formatMessage({ id }, values);
+      return intl.formatMessage({ id }, { ...stripRichTags, ...values });
     } else {
-      const formatter = new IntlMessageFormat(defaultValue, intl.locale);
-      return collapseIntlChunks(formatter.format<string>(values));
+      try {
+        const formatter = new IntlMessageFormat(defaultValue, intl.locale);
+        return collapseIntlChunks(
+          formatter.format<string>({ ...stripRichTags, ...values })
+        );
+      } catch (e) {
+        return defaultValue;
+      }
     }
   } else {
     return input;

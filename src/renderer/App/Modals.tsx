@@ -11,15 +11,12 @@ import {
   ModalButtonSpec,
 } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
-import { stripUnit } from "polished";
 import React from "react";
-import { IntlShape, injectIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
-import Markdown from "renderer/basics/Markdown";
 import RowButton, {
   BigButtonContent,
   BigButtonRow,
@@ -31,7 +28,7 @@ import watching, { Watcher } from "renderer/hocs/watching";
 import Hoverable from "renderer/hocs/withHover";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
-import { T, TString } from "renderer/t";
+import { T } from "renderer/t";
 import { filter, isEmpty, map } from "underscore";
 import { isSecretClick } from "common/helpers/secret-click";
 
@@ -145,31 +142,8 @@ const ModalsDiv = styled.div.withConfig({
       overflow-y: auto;
       max-height: 460px;
       -webkit-user-select: initial;
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        margin-bottom: 0.4em;
-        font-size: ${(props) =>
-          stripUnit(props.theme.fontSizes.baseText) + 2}px;
-        font-weight: bold;
-      }
-
-      a {
-        color: darken($ivory, 5%);
-
-        &:hover {
-          color: $ivory;
-          cursor: pointer;
-        }
-      }
-
-      p img {
-        max-width: 100%;
-      }
+      /* locale strings use \n\n for paragraph breaks */
+      white-space: pre-line;
 
       code {
         font-family: monospace;
@@ -392,7 +366,7 @@ class Modals extends React.PureComponent<Props, State> {
   }
 
   renderContent() {
-    const { modal, dispatch, intl } = this.props;
+    const { modal, dispatch } = this.props;
 
     if (!modal) {
       return null;
@@ -421,14 +395,8 @@ class Modals extends React.PureComponent<Props, State> {
         {message !== "" ? (
           <div className="body">
             <div className="message">
-              <div>
-                <Markdown source={TString(intl, message)} />
-              </div>
-              {detail && (
-                <div className="secondary">
-                  <Markdown source={TString(intl, detail)} />
-                </div>
-              )}
+              <div>{T(message)}</div>
+              {detail && <div className="secondary">{T(detail)}</div>}
             </div>
           </div>
         ) : null}
@@ -626,7 +594,6 @@ class Modals extends React.PureComponent<Props, State> {
 
 interface Props {
   modal: Modal | undefined;
-  intl: IntlShape;
   dispatch: Dispatch;
 }
 
@@ -643,4 +610,4 @@ export default hook((map) => ({
       return undefined;
     }
   }),
-}))(injectIntl(Modals));
+}))(Modals);

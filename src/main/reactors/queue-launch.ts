@@ -47,8 +47,11 @@ export default function (watcher: Watcher) {
                     title: ["game.install.could_not_launch", { title }],
                     coverUrl: game.coverUrl,
                     stillCoverUrl: game.stillCoverUrl,
-                    message: `The folder where **${title}** was installed doesn't exist anymore.`,
-                    detail: `That means we can't open it.`,
+                    message: [
+                      "game.install.folder_disappeared.message",
+                      { title },
+                    ],
+                    detail: ["game.install.folder_disappeared.detail"],
                     bigButtons: [
                       {
                         icon: "delete",
