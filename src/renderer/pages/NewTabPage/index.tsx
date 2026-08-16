@@ -12,7 +12,6 @@ import {
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { map } from "underscore";
 
 const NewTabPageDiv = styled.div`
   ${styles.meat};
@@ -78,7 +77,7 @@ class NewTabPage extends React.PureComponent<Props> {
         <BrowserBar />
         <NewTabMain>
           <NewTabGrid>
-            {map(newTabPrimaryItems, (item) => {
+            {newTabPrimaryItems.map((item) => {
               const { label, icon, url } = item;
 
               return (
@@ -92,7 +91,7 @@ class NewTabPage extends React.PureComponent<Props> {
 
           <NewTabGrid>
             <Title>{T(["new_tab.titles.buttons"])}</Title>
-            {map(newTabSecondaryItems, (item) => {
+            {newTabSecondaryItems.map((item) => {
               const { label, icon, url } = item;
 
               return (

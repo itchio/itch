@@ -7,7 +7,6 @@ import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import PrimeDownloadContents from "renderer/scenes/HubScene/Sidebar/PrimeDownload/PrimeDownloadContents";
-import { first } from "underscore";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 const FetchCaves = butlerCaller(messages.FetchCaves);
@@ -59,7 +58,7 @@ class PrimeDownload extends React.PureComponent<Props> {
   renderGameForCave = FetchCaves.renderCallback(({ result }) => {
     if (result) {
       const { items } = result;
-      const cave = first(items);
+      const cave = items?.[0];
       if (cave) {
         const { game } = cave;
         return (

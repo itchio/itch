@@ -8,7 +8,6 @@ import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import { map } from "underscore";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
@@ -42,7 +41,7 @@ export default class ConfirmQuit extends React.PureComponent<Props> {
 
     return (
       <ModalWidgetDiv>
-        {map(gameIds, (gameId) => (
+        {gameIds.map((gameId) => (
           <RunningGame gameId={gameId} key={gameId} />
         ))}
       </ModalWidgetDiv>

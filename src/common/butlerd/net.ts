@@ -4,7 +4,7 @@ import {
   RequestCreator,
   Conversation,
 } from "@itchio/butlerd";
-import { isEqual } from "underscore";
+import isEqual from "react-fast-compare";
 import { Store, isCancelled, isAborted } from "common/types";
 import {
   getRpcErrorData,

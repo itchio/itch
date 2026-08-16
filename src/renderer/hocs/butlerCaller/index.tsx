@@ -8,7 +8,7 @@ import Floater from "renderer/basics/Floater";
 import { ActionList, invalidators } from "renderer/butlerd/invalidators";
 import { rcall } from "renderer/butlerd/rcall";
 import styled from "renderer/styles";
-import { debounce } from "underscore";
+import { debounce } from "common/util/rate-limit";
 import { ReactReduxContext } from "react-redux";
 
 interface GenericProps<Params, Result> {

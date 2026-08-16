@@ -1,6 +1,5 @@
 import React from "react";
 import { IntlShape, injectIntl } from "react-intl";
-import { findWhere } from "underscore";
 
 import * as messages from "common/butlerd/messages";
 import { getErrorMessage } from "common/butlerd/errors";
@@ -475,7 +474,7 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
             ariaLabelledBy={labelId}
             className={value === INHERIT ? "is-default" : undefined}
             options={options}
-            value={findWhere(options, { value })}
+            value={options.find((o) => o.value === value)}
             onChange={onChange}
           />
         </SettingControl>

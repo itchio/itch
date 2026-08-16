@@ -23,7 +23,6 @@ import {
 import LocationSummary from "renderer/pages/LocationsPage/LocationSummary";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { T } from "renderer/t";
-import { isEmpty, size, sortBy } from "underscore";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import styled from "renderer/styles";
 
@@ -83,24 +82,27 @@ class LocationsPage extends React.PureComponent<Props> {
   );
 
   renderList = (result: InstallLocationsListResult | undefined) => {
-    if (!result || isEmpty(result.installLocations)) {
+    if (!result?.installLocations || result.installLocations.length === 0) {
       return null;
     }
     const locations = result.installLocations;
-    const numLocations = size(locations);
+    const numLocations = locations.length;
 
     return (
       <ItemList>
-        {sortBy(
-          result.installLocations,
-          (location) => -(location.sizeInfo?.installedSize ?? 0)
-        ).map((location) => (
-          <LocationSummary
-            key={location.id}
-            location={location}
-            numLocations={numLocations}
-          />
-        ))}
+        {[...locations]
+          .sort(
+            (a, b) =>
+              (b.sizeInfo?.installedSize ?? 0) -
+              (a.sizeInfo?.installedSize ?? 0)
+          )
+          .map((location) => (
+            <LocationSummary
+              key={location.id}
+              location={location}
+              numLocations={numLocations}
+            />
+          ))}
       </ItemList>
     );
   };

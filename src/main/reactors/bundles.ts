@@ -5,7 +5,7 @@ import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { throttle } from "underscore";
+import { throttle } from "common/util/rate-limit";
 
 const logger = mainLogger.child(__filename);
 

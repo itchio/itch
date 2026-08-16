@@ -20,7 +20,6 @@ import { Title } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
-import { first, isEmpty, map, rest, size } from "underscore";
 
 const PauseResumeButton = styled(Button)`
   min-width: 210px;
@@ -82,7 +81,9 @@ class DownloadsPage extends React.PureComponent<Props> {
     const { items, finishedItems, updates, dispatch } = this.props;
 
     const allEmpty =
-      isEmpty(items) && isEmpty(finishedItems) && isEmpty(updates);
+      items.length === 0 &&
+      finishedItems.length === 0 &&
+      Object.keys(updates).length === 0;
     if (allEmpty) {
       return (
         <DownloadsContentDiv>
@@ -100,8 +101,8 @@ class DownloadsPage extends React.PureComponent<Props> {
       );
     }
 
-    const firstItem = first(items);
-    const queuedItems = rest(items);
+    const firstItem = items[0];
+    const queuedItems = items.slice(1);
 
     return (
       <DownloadsContentDiv>
@@ -136,7 +137,7 @@ class DownloadsPage extends React.PureComponent<Props> {
   }
 
   renderQueuedItems(queuedItems: Download[]): JSX.Element | null {
-    if (isEmpty(queuedItems)) {
+    if (queuedItems.length === 0) {
       return null;
     }
 
@@ -145,7 +146,7 @@ class DownloadsPage extends React.PureComponent<Props> {
         <div className="section-bar">
           <Title>{T(["status.downloads.category.queued"])}</Title>
         </div>
-        {map(queuedItems, (item, i) => (
+        {queuedItems.map((item) => (
           <Row key={item.id} item={item} />
         ))}
       </>
@@ -155,7 +156,7 @@ class DownloadsPage extends React.PureComponent<Props> {
   renderUpdates(): JSX.Element | null {
     const { updates, updateCheckHappening, updateCheckProgress } = this.props;
 
-    if (isEmpty(updates) && !updateCheckHappening) {
+    if (Object.keys(updates).length === 0 && !updateCheckHappening) {
       return null;
     }
 
@@ -164,7 +165,8 @@ class DownloadsPage extends React.PureComponent<Props> {
         <div className="section-bar">
           <Title className="finished-header">
             <span>
-              {T(["status.downloads.updates_available"])} ({size(updates)})
+              {T(["status.downloads.updates_available"])} (
+              {Object.keys(updates).length})
             </span>
           </Title>
           <FilterSpacer />
@@ -179,7 +181,7 @@ class DownloadsPage extends React.PureComponent<Props> {
             </>
           ) : null}
         </div>
-        {map(updates, (update, k) => (
+        {Object.entries(updates).map(([k, update]) => (
           <GameUpdateRow key={k} update={update} />
         ))}
       </>
@@ -215,7 +217,7 @@ class DownloadsPage extends React.PureComponent<Props> {
   renderRecentActivity(): JSX.Element | null {
     const { finishedItems, dispatch } = this.props;
 
-    if (isEmpty(finishedItems)) {
+    if (finishedItems.length === 0) {
       return null;
     }
 
@@ -233,7 +235,7 @@ class DownloadsPage extends React.PureComponent<Props> {
             {T(["status.downloads.clear_all_finished"])}
           </Link>
         </div>
-        {map(finishedItems, (item) => (
+        {finishedItems.map((item) => (
           <Row key={item.id} item={item} finished />
         ))}
       </>

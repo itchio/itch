@@ -1,7 +1,6 @@
 import { StatusState } from "common/types";
 import reducer from "common/reducers/reducer";
 
-import { rest } from "underscore";
 import { actions } from "common/actions";
 
 const initialState: StatusState = {
@@ -23,7 +22,7 @@ export default reducer<StatusState>(initialState, (on) => {
   on(actions.dismissStatusMessage, (state, action) => {
     return {
       ...state,
-      messages: rest(state.messages),
+      messages: state.messages.slice(1),
     };
   });
 

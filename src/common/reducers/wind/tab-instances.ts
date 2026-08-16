@@ -1,7 +1,6 @@
 import { actions, typeOf } from "common/actions";
 import tabReducer, { trimHistory } from "common/reducers/wind/tab-instance";
-import { Action, TabDataSave, TabInstance, TabInstances } from "common/types";
-import { each, omit } from "underscore";
+import { Action, TabInstance, TabInstances } from "common/types";
 
 let initialState = (initialURL?: string): TabInstances => ({
   ["initial-tab"]: tabReducer(
@@ -42,14 +41,14 @@ export default function (
 
       let newState: TabInstances = {};
 
-      each(snapshot.items, (tabSave: TabDataSave) => {
+      for (const tabSave of snapshot.items ?? []) {
         if (typeof tabSave !== "object") {
-          return;
+          continue;
         }
 
         const { id, ...data } = tabSave;
         if (!id) {
-          return;
+          continue;
         }
 
         let tabState: TabInstance = {
@@ -60,7 +59,7 @@ export default function (
         tabState = trimHistory(tabState);
         tabState = tabReducer(tabState, null);
         newState[id] = tabState;
-      });
+      }
 
       return newState;
     }
@@ -79,8 +78,11 @@ export default function (
 
     if (action.type === tabsClosedType) {
       const { tabs } = action.payload;
-      // underscore types rest-key omit as Partial, but it only removes keys
-      return omit(state, ...tabs) as TabInstances;
+      const newState = { ...state };
+      for (const tab of tabs) {
+        delete newState[tab];
+      }
+      return newState;
     }
 
     if (action.type === loggedOutType) {

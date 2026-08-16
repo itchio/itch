@@ -14,7 +14,6 @@ import TitleBar from "renderer/basics/TitleBar";
 import { hook } from "renderer/hocs/hook";
 import modals from "renderer/modals";
 import styled from "renderer/styles";
-import { map } from "underscore";
 import Meat from "renderer/scenes/HubScene/Meats/Meat";
 import { TabProvider } from "renderer/hocs/withTab";
 
@@ -54,7 +53,7 @@ class Meats extends React.PureComponent<Props> {
     return (
       <MeatContainer onClick={this.onClick}>
         <TitleBar tab={currentId} />
-        {map(openTabs, (tab) => {
+        {openTabs.map((tab) => {
           const ti = tabInstances[tab];
           const visible = tab === currentId;
           return (

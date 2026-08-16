@@ -1,5 +1,3 @@
-import { reject } from "underscore";
-
 import { ModalsState } from "common/types";
 
 import { actions } from "common/actions";
@@ -25,6 +23,6 @@ export default reducer<ModalsState>(initialState, (on) => {
 
   on(actions.modalClosed, (state, action) => {
     const { id } = action.payload;
-    return reject(state, (modal) => modal.id === id);
+    return state.filter((modal) => modal.id !== id);
   });
 });

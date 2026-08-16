@@ -5,7 +5,7 @@ import styled, { css, singleLine } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
-import { find, findIndex, isEqual } from "underscore";
+import isEqual from "react-fast-compare";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import { T } from "renderer/t";
@@ -216,7 +216,7 @@ export default class SimpleSelect<
     this.idPrefix = `simple-select-${++instanceSeed}`;
     this.state = {
       open: false,
-      focusedValue: find(props.options, (o) => !o.isHeader),
+      focusedValue: props.options.find((o) => !o.isHeader),
       search: "",
       lastSearchAt: Date.now(),
       lastKeyboardFocusAt: 0,
@@ -267,8 +267,7 @@ export default class SimpleSelect<
     if (!target) {
       return -1;
     }
-    return findIndex(
-      this.props.options,
+    return this.props.options.findIndex(
       (x) => x === target || isEqual(x.value, target.value)
     );
   }
@@ -470,8 +469,7 @@ export default class SimpleSelect<
           lastSearchAt: Date.now(),
         });
 
-        const focusedValue = find(
-          this.props.options,
+        const focusedValue = this.props.options.find(
           (x, i) =>
             !x.isHeader &&
             !x.onSelect &&

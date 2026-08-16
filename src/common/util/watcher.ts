@@ -1,8 +1,6 @@
 import { getErrorStack } from "common/butlerd/errors";
 import { Store, RootState, Action } from "common/types";
 
-import { each } from "underscore";
-
 import debounce from "common/util/debounce";
 
 import { Logger } from "common/logger";
@@ -103,11 +101,11 @@ export class Watcher {
   }
 
   validate() {
-    each(Object.keys(this.reactors), (key) => {
+    for (const key of Object.keys(this.reactors)) {
       if (!actions.hasOwnProperty(key)) {
         throw new Error(`trying to react to unknown action type ${key}`);
       }
-    });
+    }
   }
 
   addSub(watcher: Watcher) {

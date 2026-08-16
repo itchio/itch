@@ -6,7 +6,7 @@ import { dispatchTabEvolve, urlWithParams } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import FilterInput from "renderer/pages/common/FilterInput";
 import { TString } from "renderer/t";
-import { debounce } from "underscore";
+import { debounce } from "common/util/rate-limit";
 import { IntlShape, injectIntl } from "react-intl";
 
 class SearchControl extends React.PureComponent<Props> {

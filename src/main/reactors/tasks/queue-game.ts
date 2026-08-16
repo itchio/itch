@@ -9,7 +9,6 @@ import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 import modals from "main/modals";
-import { map } from "underscore";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";
 import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-modal";
@@ -61,7 +60,7 @@ export default function (watcher: Watcher) {
           wind: "root",
           title: ["prompt.launch.title", { title: game.title }],
           message: ["prompt.launch.message"],
-          bigButtons: map(caves, (cave) => {
+          bigButtons: caves.map((cave) => {
             return {
               ...makeUploadButton(cave.upload),
               action: actions.queueLaunch({ cave }),

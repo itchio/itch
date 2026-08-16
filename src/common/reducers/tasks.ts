@@ -1,7 +1,5 @@
 import { createStructuredSelector } from "reselect";
 
-import { groupBy, omit } from "underscore";
-
 import { TasksState } from "common/types";
 
 import { actions } from "common/actions";
@@ -53,9 +51,11 @@ const baseReducer = reducer<TasksState>(initialState, (on) => {
   on(actions.taskEnded, (state, action) => {
     const { id } = action.payload;
 
+    const tasks = { ...state.tasks };
+    delete tasks[id];
     return {
       ...state,
-      tasks: omit(state.tasks, id),
+      tasks,
       finishedTasks: [state.tasks[id], ...state.finishedTasks],
     };
   });
@@ -65,7 +65,16 @@ const selector = createStructuredSelector<
   Partial<TasksState>,
   Partial<TasksState>
 >({
-  tasksByGameId: (state) => groupBy(state.tasks ?? {}, "gameId"),
+  tasksByGameId: (state) => {
+    const result: TasksState["tasksByGameId"] = {};
+    for (const task of Object.values(state.tasks ?? {})) {
+      if (!result[task.gameId]) {
+        result[task.gameId] = [];
+      }
+      result[task.gameId].push(task);
+    }
+    return result;
+  },
 });
 
 export default derivedReducer<TasksState>(baseReducer, selector);

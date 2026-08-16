@@ -3,7 +3,6 @@ import React from "react";
 import { IntlShape, injectIntl } from "react-intl";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
-import { map } from "underscore";
 
 const SelectRowDiv = styled.div`
   display: inline-block;
@@ -42,7 +41,7 @@ class SelectRow extends React.PureComponent<Props> {
   override render() {
     const { options, value, intl } = this.props;
 
-    const optionTags = map(options, (option, index) => (
+    const optionTags = options.map((option, index) => (
       <option key={index} value={option.value}>
         {TString(intl, option.label)}
       </option>

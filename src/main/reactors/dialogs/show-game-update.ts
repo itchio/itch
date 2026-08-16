@@ -1,6 +1,5 @@
 import { actions } from "common/actions";
 
-import { map } from "underscore";
 import { Watcher } from "common/util/watcher";
 
 import { ModalButtonSpec } from "common/types";
@@ -41,7 +40,7 @@ export default function (watcher: Watcher) {
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,
-          bigButtons: map(update.choices, (choice) => {
+          bigButtons: update.choices.map((choice) => {
             const uploadButton = makeUploadButton(choice.upload, {
               showSize: false,
             });

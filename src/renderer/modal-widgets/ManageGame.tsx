@@ -15,7 +15,6 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { map, size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import { getCaveSummary } from "common/butlerd/utils";
 
@@ -91,7 +90,7 @@ class ManageGame extends React.PureComponent<Props> {
     const params = this.props.modal.widgetParams;
     const { game, caves } = params;
 
-    if (size(caves) === 0) {
+    if (caves.length === 0) {
       return (
         <ManageGameDiv>
           <p>{T(["prompt.manage_game.not_installed"])}</p>
@@ -104,7 +103,7 @@ class ManageGame extends React.PureComponent<Props> {
         <p>{T(["prompt.manage_game.installed_uploads"])}</p>
 
         <CaveItemList>
-          {map(caves, (cave, i) => {
+          {caves.map((cave) => {
             const u = cave.upload;
             const caveSummary = getCaveSummary(cave);
 

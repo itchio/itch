@@ -7,7 +7,6 @@ import { Store, TabDataSave } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { map } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -41,17 +40,19 @@ export async function saveTabs(store: Store) {
   }
   const { tab, openTabs } = navigation;
   const profileId = profile.id;
-  const items: TabDataSave[] = map(openTabs, (id): TabDataSave | null => {
-    const ti = tabInstances[id];
-    if (!ti) {
-      return null;
-    }
+  const items: TabDataSave[] = openTabs
+    .map((id): TabDataSave | null => {
+      const ti = tabInstances[id];
+      if (!ti) {
+        return null;
+      }
 
-    const sp = Space.fromInstance(id, ti);
-    const { history, currentIndex } = ti;
-    const savedLabel = sp.label();
-    return { id, history, currentIndex, savedLabel };
-  }).filter((x): x is TabDataSave => !!x);
+      const sp = Space.fromInstance(id, ti);
+      const { history, currentIndex } = ti;
+      const savedLabel = sp.label();
+      return { id, history, currentIndex, savedLabel };
+    })
+    .filter((x): x is TabDataSave => !!x);
 
   const snapshot: Snapshot = { current: tab, items };
 

@@ -1,5 +1,3 @@
-import { reject, omit, map, filter, difference } from "underscore";
-
 import { NavigationState, TabDataSave } from "common/types";
 
 import { actions } from "common/actions";
@@ -92,7 +90,7 @@ export default reducer<NavigationState>(initialState, (on) => {
     const { tabs, andFocus } = action.payload;
     return {
       ...state,
-      openTabs: difference(state.openTabs, tabs),
+      openTabs: state.openTabs.filter((t) => !tabs.includes(t)),
       tab: andFocus ? andFocus : state.tab,
     };
   });
@@ -101,12 +99,9 @@ export default reducer<NavigationState>(initialState, (on) => {
     const { snapshot } = action.payload;
 
     const tab = snapshot.current || state.tab;
-    const openTabs = filter(
-      map(snapshot.items, (tab: TabDataSave) => {
-        return tab.id;
-      }),
-      (x) => !!x
-    );
+    const openTabs = (snapshot.items ?? [])
+      .map((tab: TabDataSave) => tab.id)
+      .filter((x) => !!x);
 
     return {
       ...state,

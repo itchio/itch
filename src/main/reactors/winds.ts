@@ -38,7 +38,7 @@ import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-m
 import { basename, dirname } from "path";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 import { createSelector } from "reselect";
-import { debounce } from "underscore";
+import { debounce } from "common/util/rate-limit";
 import { format as formatUrl, UrlObject } from "url";
 
 const logger = mainLogger.child(__filename);

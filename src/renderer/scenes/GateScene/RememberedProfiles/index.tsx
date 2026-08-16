@@ -8,7 +8,6 @@ import watching, { Watcher } from "renderer/hocs/watching";
 import { Links } from "renderer/scenes/GateScene/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { map } from "underscore";
 import RememberedProfile from "renderer/scenes/GateScene/RememberedProfiles/RememberedProfile";
 
 const RememberedProfilesDiv = styled.div.withConfig({
@@ -30,7 +29,7 @@ class RememberedProfiles extends React.PureComponent<Props> {
 
     return (
       <RememberedProfilesDiv>
-        {map(profiles, (profile) => (
+        {profiles.map((profile) => (
           <RememberedProfile key={profile.user.id} profile={profile} />
         ))}
 

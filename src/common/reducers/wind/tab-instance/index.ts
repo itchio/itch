@@ -8,7 +8,6 @@ import {
   QueryParams,
   Action,
 } from "common/types";
-import { omit, size } from "underscore";
 import equal from "react-fast-compare";
 import { internalPageToIcon } from "common/helpers/space";
 
@@ -26,7 +25,7 @@ export function trimHistory(ti: TabInstance): TabInstance {
     return ti;
   }
 
-  const historySize = size(ti.history);
+  const historySize = ti.history.length;
   if (historySize <= maxHistorySize) {
     return ti;
   }
@@ -34,8 +33,8 @@ export function trimHistory(ti: TabInstance): TabInstance {
   let offset = maxHistorySize - historySize;
   let newIndex = ti.currentIndex - offset;
   let newHistory = ti.history.slice(offset);
-  if (newIndex < 0 || newIndex >= size(newHistory)) {
-    newIndex = size(newHistory) - 1;
+  if (newIndex < 0 || newIndex >= newHistory.length) {
+    newIndex = newHistory.length - 1;
   }
 
   return {
@@ -154,8 +153,9 @@ const baseReducer = reducer<TabInstance>(initialState, (on) => {
     let newHistory = [...state.history];
     newHistory[state.currentIndex] = { ...oldPage, ...page };
 
+    const { sleepy, ...rest } = state;
     return {
-      ...omit(state, "sleepy"),
+      ...rest,
       history: newHistory,
     };
   });
@@ -248,7 +248,8 @@ const baseReducer = reducer<TabInstance>(initialState, (on) => {
 
   on(actions.tabFocused, (state, action) => {
     if (state.sleepy) {
-      return omit(state, "sleepy");
+      const { sleepy, ...rest } = state;
+      return rest;
     }
     return state;
   });

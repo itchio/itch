@@ -21,7 +21,7 @@ import {
 } from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/SearchResult";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce, isEmpty } from "underscore";
+import { debounce } from "common/util/rate-limit";
 import { injectIntl, IntlShape } from "react-intl";
 
 const SearchContainerContainer = styled.section`
@@ -352,7 +352,7 @@ function buildSections(
 ): LocalSearchSection[] {
   const sections: LocalSearchSection[] = [];
 
-  if (!isEmpty(res.games)) {
+  if (res.games && res.games.length > 0) {
     sections.push({
       labelKey: "search.results.games",
       results: res.games.map((game) => ({
@@ -368,7 +368,7 @@ function buildSections(
     });
   }
 
-  if (!isEmpty(res.bundles)) {
+  if (res.bundles && res.bundles.length > 0) {
     sections.push({
       labelKey: "search.results.bundles",
       results: res.bundles.map((bundle) => ({
@@ -382,7 +382,7 @@ function buildSections(
     });
   }
 
-  if (!isEmpty(res.collections)) {
+  if (res.collections && res.collections.length > 0) {
     sections.push({
       labelKey: "search.results.collections",
       results: res.collections.map((collection) => ({

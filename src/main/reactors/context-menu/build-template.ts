@@ -1,7 +1,6 @@
 import { MenuTemplate, MenuItem, Store } from "common/types";
 import { actions } from "common/actions";
 
-import { isEmpty } from "underscore";
 import getGameStatus, {
   Access,
   OperationType,
@@ -17,11 +16,11 @@ export function concatTemplates(
   a: MenuTemplate,
   b: MenuTemplate
 ): MenuTemplate {
-  if (isEmpty(a)) {
+  if (a.length === 0) {
     return b;
   }
 
-  if (isEmpty(b)) {
+  if (b.length === 0) {
     return a;
   }
 

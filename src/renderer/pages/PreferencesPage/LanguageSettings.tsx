@@ -11,7 +11,6 @@ import {
 } from "renderer/pages/PreferencesPage/SettingsGroup";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { findWhere } from "underscore";
 
 const Spacer = styled.div`
   width: 8px;
@@ -53,7 +52,7 @@ class LanguageSettings extends React.PureComponent<Props> {
             <LanguageSelect
               onChange={this.onLanguageChange}
               options={options}
-              value={findWhere(options, { value: lang }) || autoLang}
+              value={options.find((o) => o.value === lang) || autoLang}
             />
           </SettingsGroupRow>
         </SettingsGroup>

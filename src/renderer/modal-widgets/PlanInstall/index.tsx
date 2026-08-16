@@ -51,7 +51,6 @@ import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
-import { findWhere } from "underscore";
 import { recordingLogger } from "common/logger";
 import { hookLogging } from "common/helpers/bridge";
 
@@ -226,9 +225,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
     // install requires the picked upload to actually resolve - a stale or
     // invalid pickedUploadId must not enable the button
-    let pickedUpload = findWhere(this.allUploads(), { id: pickedUploadId });
+    let pickedUpload = this.allUploads().find((u) => u.id === pickedUploadId);
     let pickedIsIncompatible =
-      !!pickedUpload && !findWhere(uploads ?? [], { id: pickedUploadId });
+      !!pickedUpload && !(uploads ?? []).find((u) => u.id === pickedUploadId);
     let canInstall = !error && !busy && !!pickedUpload;
     let locationOptions = installLocations.map((il) => {
       let label = il.sizeInfo
@@ -246,9 +245,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
       value: InstallLocationOptionAdd,
       location: null,
     });
-    let locationValue = findWhere(locationOptions, {
-      value: pickedInstallLocationId,
-    });
+    let locationValue = locationOptions.find(
+      (o) => o.value === pickedInstallLocationId
+    );
 
     const incompatible = incompatibleUploads ?? [];
     const hasIncompatible = incompatible.length > 0;
@@ -279,7 +278,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
         onSelect: this.onShowIncompatible,
       });
     }
-    let uploadValue = findWhere(uploadOptions, { value: pickedUploadId });
+    let uploadValue = uploadOptions.find((o) => o.value === pickedUploadId);
 
     return (
       <>
@@ -478,9 +477,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const installLocation = findWhere(installLocations, {
-      id: pickedInstallLocationId,
-    });
+    const installLocation = installLocations.find(
+      (il) => il.id === pickedInstallLocationId
+    );
     if (!installLocation) {
       return null;
     }
@@ -587,7 +586,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const { dispatch, profileId } = this.props;
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId } = this.state;
-      const upload = findWhere(this.allUploads(), { id: pickedUploadId });
+      const upload = this.allUploads().find((u) => u.id === pickedUploadId);
       if (!upload) {
         // canInstall prevents this, but the modal is already closed by the
         // time we get here
@@ -663,9 +662,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
         {}
       );
 
-      const defaultRecord = findWhere(installLocations, {
-        id: defaultInstallLocation,
-      });
+      const defaultRecord = installLocations.find(
+        (il) => il.id === defaultInstallLocation
+      );
       this.setState({
         stage: PlanStage.Planning,
         installLocations,
@@ -706,8 +705,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
           // if the caller pre-picked an upload that butler classified as
           // incompatible, reveal the group so the pick is actually visible
           (!!uploadId &&
-            !findWhere(res.uploads, { id: uploadId }) &&
-            !!findWhere(incompatibleUploads, { id: uploadId }));
+            !res.uploads.find((u) => u.id === uploadId) &&
+            !!incompatibleUploads.find((u) => u.id === uploadId));
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,

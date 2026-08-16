@@ -21,7 +21,6 @@ import {
 import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
 import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
-import { map } from "underscore";
 import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
 import equal from "react-fast-compare";
@@ -78,7 +77,7 @@ const SortableList = SortableContainer((params: SortableContainerParams) => {
 
   return (
     <SortableListContainer>
-      {map(items, (tab, index) => {
+      {items.map((tab, index) => {
         const active = currentTab === tab;
         return (
           <Tab key={tab} tab={tab} active={active} index={index} sortable />

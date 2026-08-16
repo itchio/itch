@@ -4,7 +4,7 @@ import { IntlProvider } from "react-intl";
 import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider, StyleSheetManager } from "renderer/styles";
 import AppContents from "renderer/App/AppContents";
-import { isEqual } from "underscore";
+import isEqual from "react-fast-compare";
 
 const enableProfiling = process.env.ITCH_ENABLE_PROFILING === "1";
 

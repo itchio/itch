@@ -10,7 +10,6 @@ import SearchResult, {
 } from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/SearchResult";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { each, isEmpty } from "underscore";
 
 const ResultsContainer = styled.div`
   background: ${(props) => props.theme.sidebarBackground};
@@ -167,7 +166,7 @@ class SearchResultsBar extends React.PureComponent<Props> {
           {T(["sidebar.loading"])}
         </LocalEmptyState>
       );
-    } else if (isEmpty(sections)) {
+    } else if (!sections || sections.length === 0) {
       items.push(
         <LocalEmptyState key="no-local-results">
           {T(["search.empty.no_local_results"])}
@@ -175,13 +174,13 @@ class SearchResultsBar extends React.PureComponent<Props> {
       );
     } else {
       let index = 1;
-      each(sections, (section) => {
+      sections.forEach((section) => {
         items.push(
           <SectionLabel key={section.labelKey}>
             {T([section.labelKey])}
           </SectionLabel>
         );
-        each(section.results, (result) => {
+        section.results.forEach((result) => {
           items.push(
             <SearchResult
               key={`${result.kind}-${result.id}`}

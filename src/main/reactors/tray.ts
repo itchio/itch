@@ -3,7 +3,6 @@ import { Watcher } from "common/util/watcher";
 
 import { app } from "electron";
 const logger = mainLogger.child(__filename);
-import * as _ from "underscore";
 
 import { actions } from "common/actions";
 import { getTray } from "main/reactors/tray-persistent-state";
@@ -65,7 +64,7 @@ async function refreshTray(store: Store) {
         sortBy: "lastTouched",
         profileId: rs.profile.profile?.id,
       });
-      if (!_.isEmpty(items)) {
+      if (items && items.length > 0) {
         let caveItems: MenuTemplate = [];
         for (const cave of items) {
           caveItems.push({

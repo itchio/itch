@@ -1,8 +1,6 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 
-import { each, findWhere } from "underscore";
-
 import { Modal, Store } from "common/types";
 
 import modalResolves from "main/reactors/modals-persistent-state";
@@ -34,13 +32,15 @@ export default function (watcher: Watcher) {
     const modals = store.getState().winds[wind].modals;
     let modal: Modal | undefined = modals[0];
     if (id) {
-      modal = findWhere(modals, { id });
+      modal = modals.find((m) => m.id === id);
     }
 
     let response: any = null;
     if (action) {
       if (Array.isArray(action)) {
-        each(action, (a) => store.dispatch(a));
+        for (const a of action) {
+          store.dispatch(a);
+        }
       } else {
         store.dispatch(action);
         if (action.type === "modalResponse") {

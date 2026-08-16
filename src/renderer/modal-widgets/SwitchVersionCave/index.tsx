@@ -16,7 +16,6 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import CustomDate from "renderer/modal-widgets/SwitchVersionCave/CustomDate";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { isEmpty } from "underscore";
 
 const SwitchVersionCaveDialog = styled(ModalWidgetDiv).withConfig({
   displayName: "SwitchVersionCave-Dialog",
@@ -103,7 +102,7 @@ class SwitchVersionCave extends React.PureComponent<Props> {
     const { builds } = this.props.modal.widgetParams;
 
     const buildElements: JSX.Element[] = [];
-    if (isEmpty(builds)) {
+    if (!builds || builds.length === 0) {
       buildElements.push(<>{T(["prompt.revert.no_other_version"])}</>);
     } else {
       let lastMonth = 0;

@@ -17,7 +17,6 @@ import { injectIntl, IntlShape } from "react-intl";
 import { SortableElement } from "react-sortable-hoc";
 import { hookWithProps } from "renderer/hocs/hook";
 import modals from "renderer/modals";
-import { size } from "underscore";
 import Item from "renderer/scenes/HubScene/Sidebar/Item";
 
 interface SortableHubSidebarItemProps {
@@ -59,7 +58,7 @@ class Tab extends React.PureComponent<Props> {
     if (tab === "itch://downloads") {
       const { downloads } = this.props;
       if (downloads) {
-        count = size(getPendingDownloads(downloads));
+        count = getPendingDownloads(downloads).length;
         const activeDownload = getActiveDownload(downloads);
         if (activeDownload) {
           const downloadProgress = downloads.progresses[activeDownload.id];

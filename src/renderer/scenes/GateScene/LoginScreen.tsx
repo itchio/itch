@@ -8,7 +8,6 @@ import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { isEmpty } from "underscore";
 import LoginForm from "renderer/scenes/GateScene/LoginForm";
 import RememberedProfiles from "renderer/scenes/GateScene/RememberedProfiles";
 
@@ -41,7 +40,7 @@ class LoginScreen extends React.PureComponent<Props, State> {
       const { profiles } = await rcall(messages.ProfileList, {});
       this.setState({ loading: false, profiles });
 
-      if (isEmpty(profiles)) {
+      if (!profiles || profiles.length === 0) {
         this.setState({ showingSaved: false });
       }
     });

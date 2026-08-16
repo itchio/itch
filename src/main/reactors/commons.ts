@@ -6,7 +6,8 @@ import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { indexBy, isEmpty, isEqual, throttle } from "underscore";
+import isEqual from "react-fast-compare";
+import { throttle } from "common/util/rate-limit";
 
 const logger = mainLogger.child(__filename);
 
@@ -46,7 +47,7 @@ async function updateCommonsNowThrows(store: Store) {
   }
 
   let locationSizes: { [key: string]: number } = {};
-  if (!isEmpty(installLocations)) {
+  if (installLocations && installLocations.length > 0) {
     for (const x of installLocations) {
       if (x.sizeInfo) {
         locationSizes[x.id] = x.sizeInfo.installedSize;
@@ -55,9 +56,11 @@ async function updateCommonsNowThrows(store: Store) {
   }
 
   push(store, {
-    caves: indexBy(caves, "id"),
+    caves: Object.fromEntries((caves ?? []).map((x) => [x.id, x] as const)),
     caveIdsByGameId: groupIdBy(caves, "gameId"),
-    downloadKeys: indexBy(downloadKeys, "id"),
+    downloadKeys: Object.fromEntries(
+      (downloadKeys ?? []).map((x) => [x.id, x] as const)
+    ),
     downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
     locationSizes,
   });

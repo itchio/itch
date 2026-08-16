@@ -5,7 +5,6 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { map } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
@@ -19,7 +18,7 @@ class PrereqsState extends React.PureComponent<Props> {
         <p>{T(["prereq.explanation", { title: gameTitle }])}</p>
 
         <PrereqsRows>
-          {map(tasks, (v, name) => {
+          {Object.entries(tasks).map(([name, v]) => {
             let progress = v.progress;
             switch (v.status) {
               case PrereqStatus.Installing: {

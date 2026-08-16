@@ -7,7 +7,6 @@ import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -92,13 +91,13 @@ export default function (watcher: Watcher) {
         });
       });
 
-      if (!isEmpty(res.updates)) {
+      if (res.updates && res.updates.length > 0) {
         for (const update of res.updates) {
           store.dispatch(actions.gameUpdateAvailable({ update }));
         }
       }
 
-      if (!isEmpty(res.warnings)) {
+      if (res.warnings && res.warnings.length > 0) {
         logger.warn(`Got warnings when checking for updates: `);
         for (const w of res.warnings) {
           logger.warn(w);
@@ -140,7 +139,7 @@ export default function (watcher: Watcher) {
       }
     }
 
-    if (res && !isEmpty(res.updates)) {
+    if (res && res.updates && res.updates.length > 0) {
       for (const update of res.updates) {
         store.dispatch(actions.gameUpdateAvailable({ update }));
       }
@@ -167,7 +166,7 @@ function dispatchUpdateNotification(
     return;
   }
 
-  if (!isEmpty(result.warnings)) {
+  if (result.warnings && result.warnings.length > 0) {
     store.dispatch(
       actions.statusMessage({
         message: [
@@ -183,7 +182,7 @@ function dispatchUpdateNotification(
     return;
   }
 
-  if (isEmpty(result.updates)) {
+  if (!result.updates || result.updates.length === 0) {
     store.dispatch(
       actions.statusMessage({
         message: ["status.game_update.not_found", { title: cave.game.title }],

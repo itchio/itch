@@ -1,5 +1,4 @@
 import React from "react";
-import { findWhere } from "underscore";
 
 import { actions } from "common/actions";
 import { SandboxType } from "common/butlerd/messages";
@@ -82,9 +81,9 @@ class BehaviorSettings extends React.PureComponent<Props> {
                   onChange={this.onSandboxTypeChange}
                   options={sandboxTypeOptions}
                   value={
-                    findWhere(sandboxTypeOptions, {
-                      value: linuxSandboxType,
-                    }) || sandboxTypeOptions[0]
+                    sandboxTypeOptions.find(
+                      (o) => o.value === linuxSandboxType
+                    ) || sandboxTypeOptions[0]
                   }
                 />
               </SandboxTypeRow>

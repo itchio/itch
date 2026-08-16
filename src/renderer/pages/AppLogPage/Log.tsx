@@ -4,7 +4,6 @@ import Filler from "renderer/basics/Filler";
 import IconButton from "renderer/basics/IconButton";
 import SelectRow from "renderer/basics/SelectRow";
 import styled from "renderer/styles";
-import _ from "underscore";
 import { T } from "renderer/t";
 import Button from "renderer/basics/Button";
 
@@ -133,9 +132,9 @@ class Log extends React.PureComponent<Props, State> {
         return x;
       }
     });
-    entries = _.filter(entries, (x) => (x.level ? x.level >= level : false));
-    let hasMore = _.size(entries) > maxLines;
-    entries = _.last(entries, maxLines);
+    entries = entries.filter((x) => (x.level ? x.level >= level : false));
+    let hasMore = entries.length > maxLines;
+    entries = entries.slice(-maxLines);
 
     return (
       <LogContainer className={className}>

@@ -2,7 +2,6 @@ import { asError, asRequestError } from "common/butlerd/errors";
 import { LocalizedString } from "common/types";
 import { RequestError } from "@itchio/butlerd";
 import { Download, InstallPlanInfo } from "common/butlerd/messages";
-import { first } from "underscore";
 
 export function formatError(
   e: unknown,
@@ -13,7 +12,7 @@ export function formatError(
     const { code, data } = re.rpcError;
     if (data && data.apiError && apiErrorPrefix) {
       const { messages } = data.apiError;
-      const message = first(messages ?? []);
+      const message = (messages ?? [])[0];
       if (message) {
         const snakeCaseMessage = message.replace(/\s/g, "_").toLowerCase();
         return [

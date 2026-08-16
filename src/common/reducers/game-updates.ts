@@ -1,5 +1,4 @@
 import { GameUpdatesState } from "common/types";
-import { omit } from "underscore";
 
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
@@ -35,18 +34,22 @@ export default reducer<GameUpdatesState>(initialState, (on) => {
   on(actions.queueGameUpdate, (state, action) => {
     const { update } = action.payload;
 
+    const updates = { ...state.updates };
+    delete updates[update.caveId];
     return {
       ...state,
-      updates: omit(state.updates, update.caveId),
+      updates,
     };
   });
 
   on(actions.snoozeCave, (state, action) => {
     const { caveId } = action.payload;
 
+    const updates = { ...state.updates };
+    delete updates[caveId];
     return {
       ...state,
-      updates: omit(state.updates, caveId),
+      updates,
     };
   });
 });

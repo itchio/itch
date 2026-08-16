@@ -16,7 +16,7 @@ import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import styled from "renderer/styles";
 import { _ } from "renderer/t";
-import { isEmpty, throttle } from "underscore";
+import { throttle } from "common/util/rate-limit";
 
 export interface FetchRes<Item> {
   items: Item[];
@@ -93,7 +93,7 @@ export function makeSeries<
     if (!result) {
       return false;
     }
-    return !isEmpty(result.items);
+    return !!result.items && result.items.length > 0;
   };
 
   type Item = Res["items"][0];

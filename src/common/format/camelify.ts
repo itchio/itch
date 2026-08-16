@@ -1,5 +1,3 @@
-import { isDate } from "underscore";
-
 // regexps are generally slow,
 export function camelify(str: string): string {
   return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase());
@@ -13,7 +11,7 @@ export function camelifyObject(obj: any): any {
         res[i] = camelifyObject(obj[i]);
       }
       return res;
-    } else if (isDate(obj)) {
+    } else if (obj instanceof Date) {
       return obj;
     } else {
       const keys = Object.keys(obj);

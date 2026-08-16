@@ -2,7 +2,6 @@ import urls from "common/constants/urls";
 import { actions } from "common/actions";
 import { Store, MenuTemplate, Runtime, MenuItem } from "common/types";
 
-import { map } from "underscore";
 import { t } from "common/format/t";
 
 export function fleshOutTemplate(
@@ -38,13 +37,13 @@ export function fleshOutTemplate(
     }
 
     if (node.submenu) {
-      node.submenu = map(node.submenu as MenuItem[], visitNode);
+      node.submenu = (node.submenu as MenuItem[]).map(visitNode);
     }
 
     return node;
   };
 
-  return map(template, visitNode);
+  return template.map(visitNode);
 }
 
 function convertMenuAction(wind: string, payload: MenuItem, runtime: Runtime) {

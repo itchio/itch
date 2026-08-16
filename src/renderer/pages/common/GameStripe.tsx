@@ -13,7 +13,6 @@ import { withTab } from "renderer/hocs/withTab";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { isEmpty } from "underscore";
 import StandardGameCover, {
   standardCoverHeight,
 } from "renderer/pages/common/StandardGameCover";
@@ -96,7 +95,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
     if (!result) {
       return false;
     }
-    return !isEmpty(result.items);
+    return !!result.items && result.items.length > 0;
   };
 
   type Props = GenericProps<Params, Item>;
@@ -174,7 +173,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
         return null;
       }
 
-      if (isEmpty(result.items)) {
+      if (!result.items || result.items.length === 0) {
         return null;
       }
 

@@ -9,7 +9,7 @@ import fs from "fs";
 import { dirname } from "path";
 import { mainLogger } from "main/logger";
 import { exists, readFile } from "main/os/ifs";
-import { debounce } from "underscore";
+import { debounce } from "common/util/rate-limit";
 
 const localesConfigPath = getLocalesConfigPath();
 

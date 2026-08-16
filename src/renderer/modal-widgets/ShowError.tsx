@@ -14,7 +14,6 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import Log from "renderer/pages/AppLogPage/Log";
 
@@ -173,7 +172,7 @@ class ShowError extends React.PureComponent<Props, State> {
                 </p>
               ) : null}
             </details>
-            {size(errorLines) == 1 ? null : (
+            {errorLines.length == 1 ? null : (
               <details>
                 <summary>
                   {T(["prompt.show_error.details_for_nerds.stack_trace"])}

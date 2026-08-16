@@ -13,14 +13,15 @@ import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { mkdir } from "main/os/sf";
 import { delay } from "main/reactors/delay";
-import { indexBy, isEmpty } from "underscore";
 import { recordingLogger } from "common/logger";
 
 const logger = recordingLogger(mainLogger, "🔧 setup");
 
 async function syncInstallLocations(store: Store) {
   const { installLocations } = await mcall(messages.InstallLocationsList, {});
-  const newLocationsById = indexBy(installLocations, "id");
+  const newLocationsById = Object.fromEntries(
+    (installLocations ?? []).map((x) => [x.id, x] as const)
+  );
 
   const { preferences } = store.getState();
   if (!preferences.importedOldInstallLocations) {
@@ -34,7 +35,7 @@ async function syncInstallLocations(store: Store) {
     } as { [key: string]: { id: string; path: string } };
 
     let numAdded = 0;
-    if (!isEmpty(oldLocations)) {
+    if (Object.keys(oldLocations).length > 0) {
       for (const id of Object.keys(oldLocations)) {
         logger.debug(`Checking install location ${id}...`);
         const oldLoc = oldLocations[id];

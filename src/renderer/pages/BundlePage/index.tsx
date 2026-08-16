@@ -28,7 +28,6 @@ import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
 import { _ } from "renderer/t";
-import { findWhere } from "underscore";
 
 const FetchProfileOwnedBundles = butlerCaller(
   messages.FetchProfileOwnedBundles
@@ -126,7 +125,9 @@ class BundlePage extends React.PureComponent<Props> {
   onFetchedBundles = FetchProfileOwnedBundles.onResultCallback((result) => {
     const { bundleId } = this.props;
     let label = "Bundle not found";
-    const bundleKey = findWhere(result ? result.items : [], { bundleId });
+    const bundleKey = (result?.items ?? []).find(
+      (item) => item.bundleId === bundleId
+    );
     if (bundleKey && bundleKey.bundle) {
       const b = bundleKey.bundle;
       label = `${b.title} (${b.gamesCount})`;

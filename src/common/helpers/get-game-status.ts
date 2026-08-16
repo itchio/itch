@@ -1,6 +1,5 @@
 import { RootState, Task, TaskName } from "common/types";
 
-import { first, findWhere, size } from "underscore";
 import getByIds from "common/helpers/get-by-ids";
 import {
   getPendingForGame,
@@ -138,20 +137,20 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
     cave = commons.caves[caveId];
   } else {
     let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
-    numCaves = size(caves);
-    cave = first(caves);
+    numCaves = caves.length;
+    cave = caves[0];
   }
-  const downloadKey = first(downloadKeys);
+  const downloadKey = downloadKeys[0];
 
   const pressUser = profile.user.pressUser;
-  const task = first(tasks.tasksByGameId[game.id]);
+  const task = tasks.tasksByGameId[game.id]?.[0];
 
   const pendingDownloads = getPendingForGame(downloads, game.id);
   let download: Download | undefined;
   if (caveId) {
-    download = findWhere(pendingDownloads, { caveId });
+    download = pendingDownloads.find((d) => d.caveId === caveId);
   } else {
-    download = first(pendingDownloads);
+    download = pendingDownloads[0];
   }
 
   let isActiveDownload = false;

@@ -55,7 +55,6 @@
     "styled-components": "^5.3.11",
     "systeminformation": "^5.31.13",
     "term-color": "^1.0.1",
-    "underscore": "^1.12.0",
     "vivus": "^0.4.5",
     "which": "^6.0.1",
     "yauzl": "^3.4.0"
@@ -75,7 +74,6 @@
     "@types/semver": "^7.3.4",
     "@types/split2": "^4.2.3",
     "@types/styled-components": "^5.1.36",
-    "@types/underscore": "^1.13.0",
     "@types/vivus": "^0.4.3",
     "@types/which": "^3.0.4",
     "@types/yauzl": "^2.10.3",

@@ -29,7 +29,6 @@ import Hoverable from "renderer/hocs/withHover";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { filter, isEmpty, map } from "underscore";
 import { isSecretClick } from "common/helpers/secret-click";
 
 const HoverCover = Hoverable(Cover);
@@ -308,15 +307,14 @@ class Modals extends React.PureComponent<Props, State> {
         return;
       }
 
-      if (modal.bigButtons && !isEmpty(modal.bigButtons)) {
+      if (modal.bigButtons && modal.bigButtons.length > 0) {
         // 'ok' does nothing when there's big buttons
         return;
       }
 
-      if (modal.buttons && !isEmpty(modal.buttons)) {
-        let primaryButtons = map(modal.buttons, specToButton);
-        primaryButtons = filter(
-          primaryButtons,
+      if (modal.buttons && modal.buttons.length > 0) {
+        let primaryButtons = modal.buttons.map(specToButton);
+        primaryButtons = primaryButtons.filter(
           (b) => !b.className || !/secondary/.test(b.className)
         );
         // if there's more than one primary button, or none at all, 'ok' does nothing
@@ -481,7 +479,7 @@ class Modals extends React.PureComponent<Props, State> {
   renderBigButtons(buttons: ModalButtonSpec[]) {
     return (
       <BigButtonsDiv>
-        {map(buttons, (buttonSpec, index) => {
+        {buttons.map((buttonSpec, index) => {
           const button = specToButton(buttonSpec);
           const { label, className = "", icon, id, tags, timeAgo } = button;
           let onClick = this.buttonOnClick(button);
@@ -500,7 +498,7 @@ class Modals extends React.PureComponent<Props, State> {
                 {tags || timeAgo ? (
                   <BigButtonRow>
                     {tags
-                      ? map(tags, (tag) => {
+                      ? tags.map((tag) => {
                           return (
                             <Tag>
                               {tag.icon ? <Icon icon={tag.icon} /> : null}

@@ -7,7 +7,6 @@ import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { handleItchioUrl } from "main/reactors/url";
 import { doAsync } from "renderer/helpers/doAsync";
-import * as _ from "underscore";
 import { getResponseHeader } from "common/util/net";
 
 const logger = mainLogger.child(__filename);

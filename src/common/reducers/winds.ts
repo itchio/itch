@@ -1,7 +1,6 @@
 import { WindsState, Action } from "common/types";
 import windReducer from "common/reducers/wind";
 import { actions, typeOf } from "common/actions";
-import { omit } from "underscore";
 
 const initialState: WindsState = {};
 
@@ -32,7 +31,9 @@ export default function (
 
     if (action.type === windClosedType) {
       const { wind } = action.payload as (typeof actions.windClosed)["payload"];
-      return omit(state, wind);
+      const newState = { ...state };
+      delete newState[wind];
+      return newState;
     }
 
     if (action.payload && action.payload.wind) {
