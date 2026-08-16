@@ -7,7 +7,7 @@ const yauzlOpen = promisify(yauzl.open) as (
 ) => Promise<yauzl.ZipFile>;
 
 import * as sf from "main/os/sf";
-import { dirname, join } from "path";
+import { dirname, join, relative, resolve, sep } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "common/logger";
 import { ProgressInfo } from "common/types";
@@ -21,6 +21,40 @@ interface UnzipOpts {
 }
 
 const DIR_RE = /\/$/;
+
+/**
+ * Validates that the entry path does not escape the destination directory
+ * Prevents Zip Slip / Path Traversal attacks
+ */
+function validateEntryPath(destination: string, entryPath: string, entryFileName: string): void {
+  const resolvedDestination = resolve(destination);
+  const resolvedEntryPath = resolve(entryPath);
+
+  // Additional check: reject entries that start with absolute path markers
+  // This catches cases like "/etc/passwd" or "C:\Windows\..." before normalization
+  if (entryFileName.startsWith('/') || entryFileName.startsWith('\\')) {
+    throw new Error(
+      `Zip entry contains absolute path: "${entryFileName}"`
+    );
+  }
+
+  // Check for Windows drive letters (C:, D:, etc.)
+  if (/^[a-zA-Z]:/.test(entryFileName)) {
+    throw new Error(
+      `Zip entry contains absolute Windows path: "${entryFileName}"`
+    );
+  }
+
+  // Check if the resolved entry path is within the destination directory
+  const rel = relative(resolvedDestination, resolvedEntryPath);
+  const escapes =
+    rel === ".." || rel.startsWith(`..${sep}`) || rel === "";
+  if (escapes) {
+    throw new Error(
+      `Zip entry attempts path traversal: "${entryFileName}" resolves outside destination directory`
+    );
+  }
+}
 
 export async function unzip(opts: UnzipOpts) {
   const { archivePath, destination, logger } = opts;
@@ -43,6 +77,15 @@ export async function unzip(opts: UnzipOpts) {
     }
 
     const entryPath = join(destination, entry.fileName);
+
+    // Security fix: Validate entry path to prevent path traversal attacks
+    try {
+      validateEntryPath(destination, entryPath, entry.fileName);
+    } catch (e) {
+      logger.error(`Security: ${(e as Error).message}`);
+      throw e;
+    }
+
     logger.info(`Extracting ${entryPath}`);
 
     await sf.mkdir(dirname(entryPath));
