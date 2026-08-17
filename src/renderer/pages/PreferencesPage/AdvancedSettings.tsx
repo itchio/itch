@@ -36,7 +36,11 @@ class AdvancedSettings extends React.PureComponent<Props> {
             <ProxySettings />
           </div>
           <div className="section">
-            <LinkButton type="button" onClick={this.openAppLog}>
+            <LinkButton
+              type="button"
+              id="open-app-log-link"
+              onClick={this.openAppLog}
+            >
               {T(["preferences.advanced.open_app_log"])}
             </LinkButton>
           </div>

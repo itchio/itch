@@ -28,4 +28,24 @@ func navigationFlow(r *runner) {
 	must(r.waitUntilTextExists(currTab+".upload-subtitle", "builds across"))
 
 	r.takeScreenshot("uploads page")
+
+	r.logf("navigating to collections")
+	must(r.click("#sidebar a[href='itch://collections']"))
+	must(r.waitForVisible(currTab + ".series--itemlist"))
+	r.takeScreenshot("collections page")
+
+	r.logf("navigating to preferences")
+	must(r.click("#sidebar a[href='itch://preferences']"))
+	must(r.waitUntilTextExists("#preferences-advanced-section", "Advanced"))
+	r.takeScreenshot("preferences page")
+
+	r.logf("opening the app log from preferences")
+	must(r.click("#open-app-log-link"))
+	must(r.waitForVisible(currTab + ".msgcol"))
+	r.takeScreenshot("app log page")
+
+	r.logf("opening a new tab")
+	must(r.click("#new-tab-icon"))
+	must(r.waitUntilTextExists(currTab+"h2", "Try one of these:"))
+	r.takeScreenshot("new tab page")
 }
