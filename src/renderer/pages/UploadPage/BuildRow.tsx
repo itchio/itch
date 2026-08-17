@@ -11,13 +11,13 @@ import {
 } from "common/butlerd/messages";
 import platformData from "common/constants/platform-data";
 import { fileSize } from "common/format/filesize";
-import { Dispatch, MenuTemplate, PushJob } from "common/types";
+import { MenuTemplate, PushJob } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import modals from "renderer/modals";
-import React from "react";
+import React, { useState } from "react";
 import Icon from "renderer/basics/Icon";
 import TimeAgo from "renderer/basics/TimeAgo";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch } from "renderer/hooks/redux";
 import { targetForGame } from "renderer/modal-widgets/PushBuild/target";
 import StatusPill from "renderer/pages/UploadPage/StatusPill";
 import styled from "renderer/styles";
@@ -506,7 +506,7 @@ function formatPushedAt(date: Date | string | undefined): string {
   return `${dateStr} · ${timeStr}`;
 }
 
-interface OwnProps {
+interface Props {
   /** Server-side build, or null when the row is purely a synthetic in-flight push. */
   build: Build | null;
   /** Local push job matching this row. For rows with no server build it
@@ -519,385 +519,56 @@ interface OwnProps {
   onSetSearch: (search: string) => void;
 }
 
-interface MappedProps {
-  dispatch: Dispatch;
-}
+const BuildRow = (props: Props) => {
+  const { build, pushJob, onSetSearch } = props;
+  const dispatch = useAppDispatch();
 
-type Props = OwnProps & MappedProps;
+  // Auto-expand only for cases where the user genuinely wants the
+  // detail open: synthetic-only rows (no server build, the row IS the
+  // job) and actively-uploading overlays. Don't auto-expand for
+  // already-handed-off or terminal overlays — re-mounts (search,
+  // filter, polling reorders) would otherwise force the row back open
+  // every time, even after the user collapsed it. Lazy useState runs on
+  // mount only, matching those semantics.
+  const [expanded, setExpanded] = useState(
+    () => !build || pushJob?.status === "pushing"
+  );
 
-interface State {
-  expanded: boolean;
-}
+  const toggle = () => setExpanded((s) => !s);
 
-class BuildRow extends React.PureComponent<Props, State> {
-  constructor(props: Props, context: any) {
-    super(props, context);
-    // Auto-expand only for cases where the user genuinely wants the
-    // detail open: synthetic-only rows (no server build, the row IS the
-    // job) and actively-uploading overlays. Don't auto-expand for
-    // already-handed-off or terminal overlays — re-mounts (search,
-    // filter, polling reorders) would otherwise force the row back open
-    // every time, even after the user collapsed it.
-    this.state = {
-      expanded: !props.build || props.pushJob?.status === "pushing",
-    };
-  }
-
-  override render() {
-    const { build, pushJob } = this.props;
-    const { expanded } = this.state;
-
-    // Synthetic-only rows (no server build yet) fall back to fields the
-    // push modal stashed on the job at dispatch time.
-    const game: Game | undefined = build?.game;
-    const upload: Upload | undefined = build?.upload;
-
-    const projectTitle = game?.title ?? pushJob?.gameTitle ?? "";
-    const projectSlug = game ? targetForGame(game) : pushJob?.target ?? "";
-    const projectCoverUrl =
-      game?.stillCoverUrl ||
-      game?.coverUrl ||
-      pushJob?.gameStillCoverUrl ||
-      pushJob?.gameCoverUrl ||
-      null;
-    const channelName = upload?.channelName ?? pushJob?.channel ?? "";
-    const target = pushJob?.target ?? projectSlug;
-    const userVersion = build?.userVersion?.trim() || null;
-    const buildIdLabel = build ? `#${build.id}` : "";
-    const archiveFile = findBuildFile(build?.files, BuildFileType.Archive);
-    // Prefer the optimized patch when present — it's the smaller download
-    // players will actually receive once async optimization finishes.
-    const patchFile =
-      build?.files?.find(
-        (f) =>
-          f.type === BuildFileType.Patch &&
-          f.subType === BuildFileSubType.Optimized
-      ) ?? findBuildFile(build?.files, BuildFileType.Patch);
-    const archiveSize = archiveFile?.size ?? upload?.size ?? 0;
-    const patchSize = patchFile?.size ?? 0;
-    const patchIsOptimized = patchFile?.subType === BuildFileSubType.Optimized;
-    const orderedFiles = orderedBuildFiles(build?.files);
-    const platforms = upload?.platforms;
-
-    // Push job match is by buildId (set by Publish.Push.BuildAssigned),
-    // so server rows can safely overlay live progress / terminal state.
-    const activeJob = pushJob ?? null;
-    const isTerminal =
-      activeJob?.status === "failed" || activeJob?.status === "cancelled";
-    // Only show the progress bar while bytes are still flowing — once the
-    // push hands off to the server (status="processing"), the upload is
-    // done and a stuck 100% bar would just be noise.
-    const showProgressBar = activeJob?.status === "pushing";
-
-    const butlerCmd = `butler push <dir> ${target}:${channelName}`;
-
-    return (
-      <Row className={expanded ? "expanded" : ""}>
-        <Header onClick={this.toggle} onContextMenu={this.handleKebab}>
-          <Caret
-            type="button"
-            className={expanded ? "open" : ""}
-            onClick={this.handleCaretClick}
-            aria-expanded={expanded}
-            aria-label={
-              expanded ? "Collapse build details" : "Expand build details"
-            }
-          >
-            <Icon icon="caret-down" />
-          </Caret>
-          <Project>
-            <ProjectChip>
-              {projectCoverUrl ? (
-                <ProjectCoverImg src={projectCoverUrl} alt={projectTitle} />
-              ) : (
-                projectInitials(projectTitle)
-              )}
-            </ProjectChip>
-            <ProjectText>
-              <ProjectTitle>{projectTitle || "—"}</ProjectTitle>
-              <ProjectSlug>{projectSlug}</ProjectSlug>
-            </ProjectText>
-          </Project>
-          <Channel onClick={this.handleChannelClick} disabled={!channelName}>
-            {platforms ? <Icon icon={platformIcon(platforms)} /> : null}
-            <span>{channelName}</span>
-          </Channel>
-          <Version>
-            <VersionLine
-              title={
-                userVersion ??
-                (build?.version ? `v${build.version}` : undefined)
-              }
-            >
-              {userVersion ?? (build?.version ? `v${build.version}` : "—")}
-            </VersionLine>
-          </Version>
-          <Cell>
-            <StatusPill build={build ?? undefined} pushJob={activeJob} />
-          </Cell>
-          <SizeCell>
-            <SizePrimary>
-              {archiveSize > 0 ? fileSize(archiveSize) : "—"}
-            </SizePrimary>
-            {patchSize > 0 ? (
-              <SizeSecondary>
-                {T([
-                  "upload.size.patch_subtext",
-                  { size: fileSize(patchSize) },
-                ])}
-                {patchIsOptimized ? (
-                  <BoltIcon
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    role="img"
-                    aria-label="optimized"
-                    data-rh={JSON.stringify(
-                      _("upload.size.patch_optimized_hint")
-                    )}
-                    data-rh-at="top"
-                  >
-                    <path d="M13 2 L4 14 L11 14 L10 22 L20 10 L13 10 Z" />
-                  </BoltIcon>
-                ) : null}
-              </SizeSecondary>
-            ) : null}
-          </SizeCell>
-          <Cell>
-            {build?.createdAt ? (
-              <TimeAgo date={build.createdAt} />
-            ) : pushJob ? (
-              <TimeAgo date={new Date(pushJob.createdAt)} />
-            ) : (
-              "—"
-            )}
-          </Cell>
-          <Kebab onClick={this.handleKebab}>
-            <Icon icon="more_vert" />
-          </Kebab>
-        </Header>
-        {expanded ? (
-          <Expanded>
-            <ExpandedTopRow>
-              <ExpandedField>
-                <ExpandedLabel>
-                  {T(_("upload.expanded.filename"))}
-                </ExpandedLabel>
-                <ExpandedValue>
-                  {upload?.filename ?? pushJob?.src ?? "—"}
-                </ExpandedValue>
-              </ExpandedField>
-              <ExpandedField>
-                <ExpandedLabel>
-                  {T(_("upload.expanded.pushed_by"))}
-                </ExpandedLabel>
-                <ExpandedValue>
-                  {build?.createdAt ? formatPushedAt(build.createdAt) : "—"}
-                  {build?.user?.username ? (
-                    <>
-                      {" · "}
-                      {T(_("upload.expanded.by_user"))}{" "}
-                      <strong>{build.user.username}</strong>
-                    </>
-                  ) : null}
-                </ExpandedValue>
-              </ExpandedField>
-              <ExpandedField>
-                <ExpandedLabel>
-                  {T(_("upload.expanded.build_id"))}
-                </ExpandedLabel>
-                {build ? (
-                  <BuildIdValue onClick={this.handleCopyBuildId}>
-                    {buildIdLabel}
-                  </BuildIdValue>
-                ) : (
-                  <ExpandedValue>—</ExpandedValue>
-                )}
-              </ExpandedField>
-            </ExpandedTopRow>
-            {orderedFiles.length > 0 ? (
-              <ExpandedSection>
-                <ExpandedLabel>{T(_("upload.expanded.files"))}</ExpandedLabel>
-                <FilesRow>{orderedFiles.map(this.renderFileChip)}</FilesRow>
-              </ExpandedSection>
-            ) : null}
-            <ExpandedSection>
-              <ExpandedLabel>
-                {T(_("upload.expanded.butler_command"))}
-              </ExpandedLabel>
-              <ButlerCommand>
-                <CommandText
-                  readOnly
-                  value={butlerCmd}
-                  onClick={(ev) => ev.stopPropagation()}
-                  spellCheck={false}
-                />
-                <CopyButton
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    this.handleCopyCommand(butlerCmd);
-                  }}
-                  title="Copy"
-                >
-                  <Icon icon="copy" />
-                </CopyButton>
-              </ButlerCommand>
-            </ExpandedSection>
-            {showProgressBar && activeJob
-              ? this.renderProgressSection(activeJob)
-              : null}
-            {isTerminal && activeJob
-              ? this.renderErrorSection(activeJob)
-              : null}
-          </Expanded>
-        ) : null}
-      </Row>
-    );
-  }
-
-  renderErrorSection = (job: PushJob) => {
-    const labelKey =
-      job.status === "cancelled"
-        ? "upload.expanded.cancelled"
-        : "upload.expanded.error";
-    return (
-      <ExpandedSection>
-        <ExpandedLabel>{T(_(labelKey))}</ExpandedLabel>
-        {job.message ? <ErrorBlock>{job.message}</ErrorBlock> : null}
-        <ErrorActions>
-          <DismissButton onClick={this.handleDismiss}>
-            {T(_("upload.dismiss"))}
-          </DismissButton>
-        </ErrorActions>
-      </ExpandedSection>
-    );
+  const handleCaretClick = (ev: React.MouseEvent) => {
+    ev.stopPropagation();
+    toggle();
   };
 
-  handleDismiss = (ev: React.MouseEvent) => {
+  const handleDismiss = (ev: React.MouseEvent) => {
     ev.stopPropagation();
-    const { pushJob, dispatch } = this.props;
     if (pushJob) {
       dispatch(actions.dismissPushJob({ jobId: pushJob.id }));
     }
   };
 
-  toggle = () => {
-    this.setState((s) => ({ expanded: !s.expanded }));
+  const handleCopyCommand = (cmd: string) => {
+    dispatch(actions.copyToClipboard({ text: cmd }));
   };
 
-  handleCaretClick = (ev: React.MouseEvent) => {
+  const handleCopyBuildId = (ev: React.MouseEvent) => {
     ev.stopPropagation();
-    this.toggle();
-  };
-
-  renderProgressSection = (job: PushJob) => {
-    const phaseKey = pushPhaseKey(job);
-    const pct = Math.round((job.progress ?? 0) * 100);
-    const bpsText = formatBps(job.bps);
-    const etaText = formatEta(job.eta);
-    const metaParts: React.ReactNode[] = [];
-    if (bpsText) metaParts.push(bpsText);
-    if (etaText) {
-      metaParts.push(T(["upload.progress.eta", { eta: etaText }]));
+    if (build) {
+      handleCopyCommand(String(build.id));
     }
-
-    const hasReadStats = (job.totalBytes ?? 0) > 0;
-    const hasUploadStats =
-      (job.uploadedBytes ?? 0) > 0 || (job.patchBytes ?? 0) > 0;
-
-    return (
-      <ExpandedSection>
-        <ProgressHeader>
-          <ProgressPhase>
-            {T(_(phaseKey))} · {pct}%
-          </ProgressPhase>
-          {metaParts.length > 0 ? (
-            <ProgressMeta>
-              {metaParts.map((part, i) => (
-                <React.Fragment key={i}>
-                  {i > 0 ? " · " : null}
-                  {part}
-                </React.Fragment>
-              ))}
-            </ProgressMeta>
-          ) : null}
-        </ProgressHeader>
-        <ProgressBarWrap>
-          <ProgressBarFill style={{ width: `${pct}%` }} />
-        </ProgressBarWrap>
-        {hasReadStats || hasUploadStats ? (
-          <ProgressBreakdown>
-            {hasReadStats ? (
-              <ProgressStat>
-                {T(_("upload.progress.read"))}{" "}
-                <strong>
-                  {fileSize(job.readBytes ?? 0)} / {fileSize(job.totalBytes!)}
-                </strong>
-              </ProgressStat>
-            ) : null}
-            {hasUploadStats ? (
-              <ProgressStat>
-                {T(_("upload.progress.uploaded"))}{" "}
-                <strong>{fileSize(job.uploadedBytes ?? 0)}</strong>
-                {(job.patchBytes ?? 0) > 0 ? (
-                  <>
-                    {" "}
-                    {T([
-                      "upload.progress.patch_size",
-                      { size: fileSize(job.patchBytes!) },
-                    ])}
-                  </>
-                ) : null}
-              </ProgressStat>
-            ) : null}
-          </ProgressBreakdown>
-        ) : null}
-      </ExpandedSection>
-    );
   };
 
-  renderFileChip = (file: BuildFile) => {
-    const { build } = this.props;
-    const failed = file.state === BuildFileState.Failed;
-    const pending =
-      file.state === BuildFileState.Created ||
-      file.state === BuildFileState.Uploading;
-    const className = failed ? "failed" : pending ? "muted" : "";
-    const isOptimizedPatch =
-      file.type === BuildFileType.Patch &&
-      file.subType === BuildFileSubType.Optimized;
-    // Optimized patches and archives for a build with a parent are generated
-    // on a remote server, not uploaded directly by the user, so report them
-    // as "processing" rather than "uploading".
-    const serverProcessed =
-      (build?.parentBuildId ?? -1) > 0 &&
-      (isOptimizedPatch || file.type === BuildFileType.Archive);
-    const meta: string[] = [];
-    if (file.size > 0) meta.push(fileSize(file.size));
-    if (file.state !== BuildFileState.Uploaded) {
-      meta.push(serverProcessed && pending ? "processing" : file.state);
-    }
-    const typeSuffix = isOptimizedPatch ? "patch_optimized" : file.type;
-    const typeKey = `upload.file_type.${typeSuffix}`;
-    const hintKey = `upload.file_type.${typeSuffix}_hint`;
-    return (
-      <FileChip
-        key={`${file.type}-${file.subType}`}
-        className={className}
-        data-rh={JSON.stringify(_(hintKey))}
-        data-rh-at="top"
-      >
-        <FileChipType>{T(_(typeKey))}</FileChipType>
-        {meta.length > 0 ? (
-          <FileChipMeta>· {meta.join(" · ")}</FileChipMeta>
-        ) : null}
-      </FileChip>
-    );
+  const handleChannelClick = (ev: React.MouseEvent) => {
+    ev.stopPropagation();
+    const channel = build?.upload?.channelName ?? pushJob?.channel ?? "";
+    if (!channel) return;
+    onSetSearch(channel);
   };
 
-  handleKebab = (ev: React.MouseEvent) => {
+  const handleKebab = (ev: React.MouseEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
-    const { build, pushJob, dispatch } = this.props;
     const target =
       pushJob?.target ?? (build?.game ? targetForGame(build.game) : "");
     const channel = pushJob?.channel ?? build?.upload?.channelName ?? "";
@@ -967,27 +638,321 @@ class BuildRow extends React.PureComponent<Props, State> {
     );
   };
 
-  handleCopyCommand = (cmd: string) => {
-    this.props.dispatch(actions.copyToClipboard({ text: cmd }));
+  const renderErrorSection = (job: PushJob) => {
+    const labelKey =
+      job.status === "cancelled"
+        ? "upload.expanded.cancelled"
+        : "upload.expanded.error";
+    return (
+      <ExpandedSection>
+        <ExpandedLabel>{T(_(labelKey))}</ExpandedLabel>
+        {job.message ? <ErrorBlock>{job.message}</ErrorBlock> : null}
+        <ErrorActions>
+          <DismissButton onClick={handleDismiss}>
+            {T(_("upload.dismiss"))}
+          </DismissButton>
+        </ErrorActions>
+      </ExpandedSection>
+    );
   };
 
-  handleCopyBuildId = (ev: React.MouseEvent) => {
-    ev.stopPropagation();
-    const { build } = this.props;
-    if (build) {
-      this.handleCopyCommand(String(build.id));
+  const renderProgressSection = (job: PushJob) => {
+    const phaseKey = pushPhaseKey(job);
+    const pct = Math.round((job.progress ?? 0) * 100);
+    const bpsText = formatBps(job.bps);
+    const etaText = formatEta(job.eta);
+    const metaParts: React.ReactNode[] = [];
+    if (bpsText) metaParts.push(bpsText);
+    if (etaText) {
+      metaParts.push(T(["upload.progress.eta", { eta: etaText }]));
     }
+
+    const hasReadStats = (job.totalBytes ?? 0) > 0;
+    const hasUploadStats =
+      (job.uploadedBytes ?? 0) > 0 || (job.patchBytes ?? 0) > 0;
+
+    return (
+      <ExpandedSection>
+        <ProgressHeader>
+          <ProgressPhase>
+            {T(_(phaseKey))} · {pct}%
+          </ProgressPhase>
+          {metaParts.length > 0 ? (
+            <ProgressMeta>
+              {metaParts.map((part, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 ? " · " : null}
+                  {part}
+                </React.Fragment>
+              ))}
+            </ProgressMeta>
+          ) : null}
+        </ProgressHeader>
+        <ProgressBarWrap>
+          <ProgressBarFill style={{ width: `${pct}%` }} />
+        </ProgressBarWrap>
+        {hasReadStats || hasUploadStats ? (
+          <ProgressBreakdown>
+            {hasReadStats ? (
+              <ProgressStat>
+                {T(_("upload.progress.read"))}{" "}
+                <strong>
+                  {fileSize(job.readBytes ?? 0)} / {fileSize(job.totalBytes!)}
+                </strong>
+              </ProgressStat>
+            ) : null}
+            {hasUploadStats ? (
+              <ProgressStat>
+                {T(_("upload.progress.uploaded"))}{" "}
+                <strong>{fileSize(job.uploadedBytes ?? 0)}</strong>
+                {(job.patchBytes ?? 0) > 0 ? (
+                  <>
+                    {" "}
+                    {T([
+                      "upload.progress.patch_size",
+                      { size: fileSize(job.patchBytes!) },
+                    ])}
+                  </>
+                ) : null}
+              </ProgressStat>
+            ) : null}
+          </ProgressBreakdown>
+        ) : null}
+      </ExpandedSection>
+    );
   };
 
-  handleChannelClick = (ev: React.MouseEvent) => {
-    ev.stopPropagation();
-    const channel =
-      this.props.build?.upload?.channelName ??
-      this.props.pushJob?.channel ??
-      "";
-    if (!channel) return;
-    this.props.onSetSearch(channel);
+  const renderFileChip = (file: BuildFile) => {
+    const failed = file.state === BuildFileState.Failed;
+    const pending =
+      file.state === BuildFileState.Created ||
+      file.state === BuildFileState.Uploading;
+    const className = failed ? "failed" : pending ? "muted" : "";
+    const isOptimizedPatch =
+      file.type === BuildFileType.Patch &&
+      file.subType === BuildFileSubType.Optimized;
+    // Optimized patches and archives for a build with a parent are generated
+    // on a remote server, not uploaded directly by the user, so report them
+    // as "processing" rather than "uploading".
+    const serverProcessed =
+      (build?.parentBuildId ?? -1) > 0 &&
+      (isOptimizedPatch || file.type === BuildFileType.Archive);
+    const meta: string[] = [];
+    if (file.size > 0) meta.push(fileSize(file.size));
+    if (file.state !== BuildFileState.Uploaded) {
+      meta.push(serverProcessed && pending ? "processing" : file.state);
+    }
+    const typeSuffix = isOptimizedPatch ? "patch_optimized" : file.type;
+    const typeKey = `upload.file_type.${typeSuffix}`;
+    const hintKey = `upload.file_type.${typeSuffix}_hint`;
+    return (
+      <FileChip
+        key={`${file.type}-${file.subType}`}
+        className={className}
+        data-rh={JSON.stringify(_(hintKey))}
+        data-rh-at="top"
+      >
+        <FileChipType>{T(_(typeKey))}</FileChipType>
+        {meta.length > 0 ? (
+          <FileChipMeta>· {meta.join(" · ")}</FileChipMeta>
+        ) : null}
+      </FileChip>
+    );
   };
-}
 
-export default hook()(BuildRow);
+  // Synthetic-only rows (no server build yet) fall back to fields the
+  // push modal stashed on the job at dispatch time.
+  const game: Game | undefined = build?.game;
+  const upload: Upload | undefined = build?.upload;
+
+  const projectTitle = game?.title ?? pushJob?.gameTitle ?? "";
+  const projectSlug = game ? targetForGame(game) : pushJob?.target ?? "";
+  const projectCoverUrl =
+    game?.stillCoverUrl ||
+    game?.coverUrl ||
+    pushJob?.gameStillCoverUrl ||
+    pushJob?.gameCoverUrl ||
+    null;
+  const channelName = upload?.channelName ?? pushJob?.channel ?? "";
+  const target = pushJob?.target ?? projectSlug;
+  const userVersion = build?.userVersion?.trim() || null;
+  const buildIdLabel = build ? `#${build.id}` : "";
+  const archiveFile = findBuildFile(build?.files, BuildFileType.Archive);
+  // Prefer the optimized patch when present — it's the smaller download
+  // players will actually receive once async optimization finishes.
+  const patchFile =
+    build?.files?.find(
+      (f) =>
+        f.type === BuildFileType.Patch &&
+        f.subType === BuildFileSubType.Optimized
+    ) ?? findBuildFile(build?.files, BuildFileType.Patch);
+  const archiveSize = archiveFile?.size ?? upload?.size ?? 0;
+  const patchSize = patchFile?.size ?? 0;
+  const patchIsOptimized = patchFile?.subType === BuildFileSubType.Optimized;
+  const orderedFiles = orderedBuildFiles(build?.files);
+  const platforms = upload?.platforms;
+
+  // Push job match is by buildId (set by Publish.Push.BuildAssigned),
+  // so server rows can safely overlay live progress / terminal state.
+  const activeJob = pushJob ?? null;
+  const isTerminal =
+    activeJob?.status === "failed" || activeJob?.status === "cancelled";
+  // Only show the progress bar while bytes are still flowing — once the
+  // push hands off to the server (status="processing"), the upload is
+  // done and a stuck 100% bar would just be noise.
+  const showProgressBar = activeJob?.status === "pushing";
+
+  const butlerCmd = `butler push <dir> ${target}:${channelName}`;
+
+  return (
+    <Row className={expanded ? "expanded" : ""}>
+      <Header onClick={toggle} onContextMenu={handleKebab}>
+        <Caret
+          type="button"
+          className={expanded ? "open" : ""}
+          onClick={handleCaretClick}
+          aria-expanded={expanded}
+          aria-label={
+            expanded ? "Collapse build details" : "Expand build details"
+          }
+        >
+          <Icon icon="caret-down" />
+        </Caret>
+        <Project>
+          <ProjectChip>
+            {projectCoverUrl ? (
+              <ProjectCoverImg src={projectCoverUrl} alt={projectTitle} />
+            ) : (
+              projectInitials(projectTitle)
+            )}
+          </ProjectChip>
+          <ProjectText>
+            <ProjectTitle>{projectTitle || "—"}</ProjectTitle>
+            <ProjectSlug>{projectSlug}</ProjectSlug>
+          </ProjectText>
+        </Project>
+        <Channel onClick={handleChannelClick} disabled={!channelName}>
+          {platforms ? <Icon icon={platformIcon(platforms)} /> : null}
+          <span>{channelName}</span>
+        </Channel>
+        <Version>
+          <VersionLine
+            title={
+              userVersion ?? (build?.version ? `v${build.version}` : undefined)
+            }
+          >
+            {userVersion ?? (build?.version ? `v${build.version}` : "—")}
+          </VersionLine>
+        </Version>
+        <Cell>
+          <StatusPill build={build ?? undefined} pushJob={activeJob} />
+        </Cell>
+        <SizeCell>
+          <SizePrimary>
+            {archiveSize > 0 ? fileSize(archiveSize) : "—"}
+          </SizePrimary>
+          {patchSize > 0 ? (
+            <SizeSecondary>
+              {T(["upload.size.patch_subtext", { size: fileSize(patchSize) }])}
+              {patchIsOptimized ? (
+                <BoltIcon
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  role="img"
+                  aria-label="optimized"
+                  data-rh={JSON.stringify(
+                    _("upload.size.patch_optimized_hint")
+                  )}
+                  data-rh-at="top"
+                >
+                  <path d="M13 2 L4 14 L11 14 L10 22 L20 10 L13 10 Z" />
+                </BoltIcon>
+              ) : null}
+            </SizeSecondary>
+          ) : null}
+        </SizeCell>
+        <Cell>
+          {build?.createdAt ? (
+            <TimeAgo date={build.createdAt} />
+          ) : pushJob ? (
+            <TimeAgo date={new Date(pushJob.createdAt)} />
+          ) : (
+            "—"
+          )}
+        </Cell>
+        <Kebab onClick={handleKebab}>
+          <Icon icon="more_vert" />
+        </Kebab>
+      </Header>
+      {expanded ? (
+        <Expanded>
+          <ExpandedTopRow>
+            <ExpandedField>
+              <ExpandedLabel>{T(_("upload.expanded.filename"))}</ExpandedLabel>
+              <ExpandedValue>
+                {upload?.filename ?? pushJob?.src ?? "—"}
+              </ExpandedValue>
+            </ExpandedField>
+            <ExpandedField>
+              <ExpandedLabel>{T(_("upload.expanded.pushed_by"))}</ExpandedLabel>
+              <ExpandedValue>
+                {build?.createdAt ? formatPushedAt(build.createdAt) : "—"}
+                {build?.user?.username ? (
+                  <>
+                    {" · "}
+                    {T(_("upload.expanded.by_user"))}{" "}
+                    <strong>{build.user.username}</strong>
+                  </>
+                ) : null}
+              </ExpandedValue>
+            </ExpandedField>
+            <ExpandedField>
+              <ExpandedLabel>{T(_("upload.expanded.build_id"))}</ExpandedLabel>
+              {build ? (
+                <BuildIdValue onClick={handleCopyBuildId}>
+                  {buildIdLabel}
+                </BuildIdValue>
+              ) : (
+                <ExpandedValue>—</ExpandedValue>
+              )}
+            </ExpandedField>
+          </ExpandedTopRow>
+          {orderedFiles.length > 0 ? (
+            <ExpandedSection>
+              <ExpandedLabel>{T(_("upload.expanded.files"))}</ExpandedLabel>
+              <FilesRow>{orderedFiles.map(renderFileChip)}</FilesRow>
+            </ExpandedSection>
+          ) : null}
+          <ExpandedSection>
+            <ExpandedLabel>
+              {T(_("upload.expanded.butler_command"))}
+            </ExpandedLabel>
+            <ButlerCommand>
+              <CommandText
+                readOnly
+                value={butlerCmd}
+                onClick={(ev) => ev.stopPropagation()}
+                spellCheck={false}
+              />
+              <CopyButton
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  handleCopyCommand(butlerCmd);
+                }}
+                title="Copy"
+              >
+                <Icon icon="copy" />
+              </CopyButton>
+            </ButlerCommand>
+          </ExpandedSection>
+          {showProgressBar && activeJob
+            ? renderProgressSection(activeJob)
+            : null}
+          {isTerminal && activeJob ? renderErrorSection(activeJob) : null}
+        </Expanded>
+      ) : null}
+    </Row>
+  );
+};
+
+export default React.memo(BuildRow);
