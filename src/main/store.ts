@@ -5,13 +5,13 @@ if (process.type !== "browser") {
 
 import { createStore, applyMiddleware, Middleware, MiddlewareAPI } from "redux";
 
-import route from "common/util/route";
+import { makeRouteMiddleware } from "common/util/route";
 import getWatcher from "main/reactors";
 import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { Action, Store } from "common/types";
+import { Store } from "common/types";
 import { mainLogger } from "main/logger";
 import { mainSyncMiddleware } from "main/store-sync";
 
@@ -64,21 +64,13 @@ if (beChatty) {
 
 let watcher = getWatcher(mainLogger);
 
-// innermost so reactors see the already-reduced state
-const routeMiddleware: Middleware = (api) => (next) => (action) => {
-  const res = next(action);
-  route(watcher, api as Store, action as Action<any>);
-  return res;
-};
-
 middleware.push(mainSyncMiddleware);
-middleware.push(routeMiddleware);
 
 const initialState = {} as any;
 const store = createStore(
   reducer,
   initialState,
-  applyMiddleware(...middleware)
+  applyMiddleware(...middleware, makeRouteMiddleware(watcher))
 ) as Store;
 
 export default store;

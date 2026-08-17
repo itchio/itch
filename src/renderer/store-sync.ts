@@ -9,7 +9,7 @@ declare global {
   const __ElectronReduxBridge: ElectronReduxBridge;
 }
 
-const REPLACE_STATE = "electron-redux.REPLACE_STATE";
+const REPLACE_STATE = "store-sync.REPLACE_STATE";
 
 // scope "local" so the hydration action is never forwarded back to main
 const replaceState = (state: any): AnyAction => ({
@@ -28,6 +28,11 @@ export const wrapReducer =
   };
 
 export const rendererSyncMiddleware: Middleware = (api) => {
+  if (typeof __ElectronReduxBridge === "undefined") {
+    throw new Error(
+      "store-sync bridge not found. Was this window opened without the inject-preload script?"
+    );
+  }
   __ElectronReduxBridge.subscribeToActions(api);
   return (next) => (action) => {
     if (validateAction(action)) {

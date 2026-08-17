@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "production") {
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import store from "renderer/store";
+import store, { hydrated } from "renderer/store";
 
 import App from "renderer/App";
 import { actions } from "common/actions";
@@ -50,7 +50,19 @@ async function start() {
     role: String(opts.get("role")) as any,
   };
 
-  // Wait for store-sync to hydrate state from the main process
+  // Wait for store-sync to hydrate state from the main process. Without
+  // this the winds polling below would wait forever on a blank window.
+  try {
+    await hydrated;
+  } catch (e) {
+    document.querySelector("body")!.classList.remove("loading");
+    const node = document.querySelector("#app");
+    if (node) {
+      node.textContent = `itch failed to start: ${e}`;
+    }
+    throw e;
+  }
+
   await new Promise<void>((resolve) => {
     const checkState = () => {
       const state = store.getState();
@@ -70,6 +82,18 @@ async function start() {
     });
   });
 
+  // registered post-hydration: a dispatch before REPLACE_STATE lands
+  // would be forwarded to main but erased locally by the state snapshot
+  document.addEventListener("drop", (event) => {
+    event.preventDefault();
+    const urls = event.dataTransfer?.getData("text/uri-list");
+    if (urls) {
+      urls.split("\n").forEach((url) => {
+        store.dispatch(actions.navigate({ wind: ambientWind(), url }));
+      });
+    }
+  });
+
   render(App);
 
   // it isn't a guarantee that this code will run
@@ -86,16 +110,6 @@ async function start() {
 }
 
 start();
-
-document.addEventListener("drop", (event) => {
-  event.preventDefault();
-  const urls = event.dataTransfer?.getData("text/uri-list");
-  if (urls) {
-    urls.split("\n").forEach((url) => {
-      store.dispatch(actions.navigate({ wind: ambientWind(), url }));
-    });
-  }
-});
 
 // Catch unhandled form submissions that would navigate away from the app
 document.addEventListener("submit", (event) => {

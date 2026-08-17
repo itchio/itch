@@ -189,7 +189,7 @@ export default function (watcher: Watcher) {
           password,
         },
         (client) => {
-          logger.debug(`Setting up handlers for TOTP & captcha`);
+          logger.debug(`Setting up handlers for TOTP`);
           client.onRequest(messages.ProfileRequestCaptcha, async () => {
             // captcha support was removed; steer the user to OAuth
             logger.info(`Captcha requested, aborting password login`);

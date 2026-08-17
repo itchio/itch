@@ -1,6 +1,6 @@
 import reducer from "common/reducers";
-import { Action, ChromeStore, Store } from "common/types";
-import route from "common/util/route";
+import { ChromeStore } from "common/types";
+import { makeRouteMiddleware } from "common/util/route";
 import shouldLogAction from "common/util/should-log-action";
 import { Watcher } from "common/util/watcher";
 import { applyMiddleware, createStore, Middleware } from "redux";
@@ -27,24 +27,17 @@ const logger = createLogger({
 middleware.push(logger);
 middleware.push(rendererSyncMiddleware);
 
-// innermost so reactors see the already-reduced state
-const routeMiddleware: Middleware = (api) => (next) => (action) => {
-  const res = next(action);
-  route(watcher, api as Store, action as Action<any>);
-  return res;
-};
-middleware.push(routeMiddleware);
-
 const initialState = {} as any;
 const store = createStore(
   wrapReducer(reducer),
   initialState,
-  applyMiddleware(...middleware)
+  applyMiddleware(...middleware, makeRouteMiddleware(watcher))
 ) as unknown as ChromeStore;
 
 store.watcher = watcher;
 
-hydrateFromMainState(store).catch((e) => {
+export const hydrated = hydrateFromMainState(store);
+hydrated.catch((e) => {
   rendererLogger.error(`Failed to hydrate state from main: ${e.stack || e}`);
 });
 

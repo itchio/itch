@@ -59,8 +59,6 @@ export interface SendFeedbackResponse {}
 
 //---------------------
 
-//---------------------
-
 export interface PrereqsStateParams {
   gameTitle: string;
   tasks: {

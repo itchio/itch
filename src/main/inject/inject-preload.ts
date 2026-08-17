@@ -22,7 +22,6 @@ import {
   ACTION_CHANNEL,
   FETCH_STATE_CHANNEL,
   ElectronReduxBridge,
-  hydrate,
   stopForwarding,
 } from "common/util/store-sync";
 
@@ -30,7 +29,7 @@ import {
 const electronReduxBridge: ElectronReduxBridge = {
   getMainState: async () => {
     const state = await ipcRenderer.invoke(FETCH_STATE_CHANNEL);
-    return JSON.parse(state, hydrate);
+    return JSON.parse(state);
   },
   subscribeToActions: (store) => {
     ipcRenderer.on(ACTION_CHANNEL, (_event, action) => {

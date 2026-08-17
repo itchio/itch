@@ -2,39 +2,52 @@
 // instead of a store enhancer.
 
 import { ipcMain, webContents } from "electron";
-import { Middleware } from "redux";
+import { AnyAction, Middleware } from "redux";
+import { mainLogger } from "main/logger";
 import {
   ACTION_CHANNEL,
   FETCH_STATE_CHANNEL,
-  freeze,
   stopForwarding,
   validateAction,
 } from "common/util/store-sync";
 
+const logger = mainLogger.child(__filename);
+
+const broadcast = (action: AnyAction, excludeId?: number) => {
+  for (const contents of webContents.getAllWebContents()) {
+    if (contents.id === excludeId || contents.isDestroyed()) {
+      continue;
+    }
+    try {
+      contents.send(ACTION_CHANNEL, action);
+    } catch (e) {
+      logger.debug(
+        `Could not forward ${action.type} to webContents ${contents.id}: ${e}`
+      );
+    }
+  }
+};
+
 export const mainSyncMiddleware: Middleware = (api) => {
-  ipcMain.handle(FETCH_STATE_CHANNEL, () =>
-    // freeze preserves types like Map and Set that aren't JSON
-    // serializable by default
-    JSON.stringify(api.getState(), freeze)
-  );
+  ipcMain.handle(FETCH_STATE_CHANNEL, () => JSON.stringify(api.getState()));
 
   ipcMain.on(ACTION_CHANNEL, (event, action) => {
+    if (!validateAction(action)) {
+      return;
+    }
     const localAction = stopForwarding(action);
     api.dispatch(localAction);
     // Forward it to all of the other renderers
-    for (const contents of webContents.getAllWebContents()) {
-      if (contents.id !== event.sender.id) {
-        contents.send(ACTION_CHANNEL, localAction);
-      }
-    }
+    broadcast(localAction, event.sender.id);
   });
 
   return (next) => (action) => {
+    // reduce first: a throwing send must not keep the action from
+    // being applied locally
+    const res = next(action);
     if (validateAction(action)) {
-      for (const contents of webContents.getAllWebContents()) {
-        contents.send(ACTION_CHANNEL, action);
-      }
+      broadcast(action);
     }
-    return next(action);
+    return res;
   };
 };

@@ -3,6 +3,7 @@ import { Store, isCancelled, Action } from "common/types";
 import { Watcher } from "common/util/watcher";
 
 import { Logger } from "common/logger";
+import { Middleware } from "redux";
 
 const emptyArr = [] as any[];
 
@@ -38,5 +39,17 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
   }, 0);
   return;
 }
+
+// must be the innermost middleware so reactors see the already-reduced
+// state
+export const makeRouteMiddleware =
+  (watcher: Watcher): Middleware =>
+  (api) =>
+  (next) =>
+  (action) => {
+    const res = next(action);
+    route(watcher, api as Store, action as Action<any>);
+    return res;
+  };
 
 export default route;
