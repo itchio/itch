@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Dispatch } from "common/types";
 import { ambientTab, ambientWind } from "common/util/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import IconButton from "renderer/basics/IconButton";
 import Link from "renderer/basics/Link";
@@ -19,9 +19,7 @@ import Log from "renderer/pages/AppLogPage/Log";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { Watcher } from "common/util/watcher";
-import { watchStore } from "renderer/hooks/useWatcher";
-import store from "renderer/store";
+import { useWatcher } from "renderer/hooks/useWatcher";
 import { paths, electron, promisedFs } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
@@ -47,79 +45,82 @@ const ControlsDiv = styled.div`
   align-items: center;
 `;
 
-class AppLogPage extends React.PureComponent<Props, State> {
-  private unwatch = () => {};
+interface Props extends MeatProps {
+  tab: string;
+  dispatch: Dispatch;
+  file?: string;
+}
 
-  constructor(props: AppLogPage["props"], context: any) {
-    super(props, context);
-    this.state = {
-      log: null,
-      loading: true,
-      error: null,
+const AppLogPage = (props: Props) => {
+  const { tab, dispatch, file, sequence } = props;
+  const [log, setLog] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    dispatchTabPageUpdate({ tab, dispatch }, { label: ["sidebar.applog"] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    let stale = false;
+    setLoading(true);
+    setError(null);
+    (async () => {
+      let filePath = file;
+      if (filePath) {
+        console.log(`Reading external log`, filePath);
+      } else {
+        filePath = paths.mainLogPath();
+      }
+      const log = await promisedFs.readFile(filePath, { encoding: "utf8" });
+      if (stale) return;
+      setLog(log);
+      setError(null);
+    })()
+      .catch((e) => {
+        if (!stale) setError(e);
+      })
+      .then(() => {
+        if (!stale) setLoading(false);
+      });
+    return () => {
+      stale = true;
     };
-  }
+  }, [sequence, file]);
 
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.openLogFileRequest, async () => {
+  useWatcher((watcher) => {
+    watcher.on(actions.openLogFileRequest, async (store) => {
       try {
         const { showOpenDialog } = electron;
         const filePaths = await showOpenDialog({ title: "Open log file" });
         if (filePaths && filePaths.length > 0) {
           const filePath = filePaths[0];
           console.log(`Opening external log`, filePath);
-          const { url } = this.props;
+          // read through the store: the mount-time url prop would be
+          // stale once the tab has evolved
+          const url = ambientTab(store.getState(), { tab }).location?.url;
           if (!url) {
             // tab hasn't derived a location yet, nothing to evolve
             return;
           }
-          dispatchTabEvolve(this.props, {
-            replace: true,
-            url: urlWithParams(url, { file: filePath }),
-          });
+          dispatchTabEvolve(
+            { tab, dispatch },
+            {
+              replace: true,
+              url: urlWithParams(url, { file: filePath }),
+            }
+          );
         }
       } catch (e) {
         console.error(e);
       }
     });
-  }
+  });
 
-  override render() {
-    const { loading, log, error } = this.state;
-
-    return (
-      <AppLogDiv>
-        <AppLogContentDiv>
-          {error ? <ErrorState error={error} /> : null}
-          {log ? (
-            <Log
-              log={log || ""}
-              extraControls={
-                <ControlsDiv>
-                  <Spacer />
-                  <Link
-                    onContextMenu={this.onContextMenu}
-                    onClick={this.onOpenAppLog}
-                    label={T(showInExplorerString())}
-                  />
-                  <Spacer />
-                  {loading ? (
-                    <LoadingCircle progress={-1} />
-                  ) : (
-                    <IconButton icon="repeat" onClick={this.onReload} />
-                  )}
-                </ControlsDiv>
-              }
-            />
-          ) : null}
-        </AppLogContentDiv>
-      </AppLogDiv>
-    );
-  }
-
-  onContextMenu = (ev: React.MouseEvent) => {
+  const onContextMenu = (ev: React.MouseEvent) => {
     ev.preventDefault();
     ev.stopPropagation();
-    const { dispatch } = this.props;
     const { clientX, clientY } = ev;
     dispatch(
       actions.popupContextMenu({
@@ -136,73 +137,46 @@ class AppLogPage extends React.PureComponent<Props, State> {
     );
   };
 
-  override componentDidMount() {
-    this.unwatch = watchStore(store, (watcher) => this.subscribe(watcher));
-    dispatchTabPageUpdate(this.props, { label: ["sidebar.applog"] });
-    this.queueFetch();
-  }
-
-  override componentWillUnmount() {
-    this.unwatch();
-  }
-
-  override componentDidUpdate(prevProps: AppLogPage["props"]) {
-    if (
-      prevProps.sequence != this.props.sequence ||
-      prevProps.file !== this.props.file
-    ) {
-      this.queueFetch();
-    }
-  }
-
-  queueFetch = () => {
-    this.setState({ loading: true, error: null });
-    this.doFetch()
-      .catch((e) => {
-        this.setState({ error: e });
-      })
-      .then(() => {
-        this.setState({ loading: false });
-      });
-  };
-
-  doFetch = async () => {
-    let filePath = this.props.file;
-    if (filePath) {
-      console.log(`Reading external log`, filePath);
-    } else {
-      filePath = paths.mainLogPath();
-    }
-    const log = await promisedFs.readFile(filePath, { encoding: "utf8" });
-    this.setState({ log, error: null });
-  };
-
-  onOpenAppLog = () => {
-    const { dispatch } = this.props;
+  const onOpenAppLog = () => {
     dispatch(actions.openAppLog({}));
   };
 
-  onReload = () => {
-    dispatchTabReloaded(this.props);
+  const onReload = () => {
+    dispatchTabReloaded({ tab, dispatch });
   };
-}
 
-interface Props extends MeatProps {
-  tab: string;
-  dispatch: Dispatch;
-  url: string | undefined;
-  file?: string;
-}
-
-interface State {
-  loading: boolean;
-  error: Error | null;
-  log: string | null;
-}
+  return (
+    <AppLogDiv>
+      <AppLogContentDiv>
+        {error ? <ErrorState error={error} /> : null}
+        {log ? (
+          <Log
+            log={log || ""}
+            extraControls={
+              <ControlsDiv>
+                <Spacer />
+                <Link
+                  onContextMenu={onContextMenu}
+                  onClick={onOpenAppLog}
+                  label={T(showInExplorerString())}
+                />
+                <Spacer />
+                {loading ? (
+                  <LoadingCircle progress={-1} />
+                ) : (
+                  <IconButton icon="repeat" onClick={onReload} />
+                )}
+              </ControlsDiv>
+            }
+          />
+        ) : null}
+      </AppLogContentDiv>
+    </AppLogDiv>
+  );
+};
 
 export default withTab(
   hookWithProps(AppLogPage)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location?.url),
     file: map((rs, props) => ambientTab(rs, props).location?.query.file),
   }))(AppLogPage)
 );
