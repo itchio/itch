@@ -15,7 +15,7 @@ const Bar = styled.div`
   gap: 6px;
 `;
 
-const Chip = styled.button`
+const FilterButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -94,14 +94,14 @@ class Filters extends React.PureComponent<Props> {
     return (
       <Bar>
         {FILTERS.map((f) => (
-          <Chip
+          <FilterButton
             key={f.value}
             className={status === f.value ? "active" : ""}
             onClick={() => this.setStatus(f.value)}
           >
             <span>{T(_(f.labelKey))}</span>
             {totals ? <Badge>{totals[f.totalKey]}</Badge> : null}
-          </Chip>
+          </FilterButton>
         ))}
       </Bar>
     );

@@ -292,7 +292,7 @@ class UploadPage extends React.PureComponent<Props, State> {
             // covers them — dedupe against the unfiltered list so search
             // hiding the server row doesn't unmask a synthetic), then
             // tab-filter and search-filter so synthetic rows respect the
-            // same chips and query as real rows.
+            // same filters and query as real rows.
             const syntheticToShow = rowlessJobs.filter((j) => {
               if (j.buildId && builds.some((b) => b.id === j.buildId)) {
                 return false;
@@ -374,7 +374,6 @@ class UploadPage extends React.PureComponent<Props, State> {
                           key={`syn-${job.id}`}
                           build={null}
                           pushJob={job}
-                          tab={tab}
                           onSetSearch={this.setSearch}
                         />
                       ))}
@@ -383,7 +382,6 @@ class UploadPage extends React.PureComponent<Props, State> {
                           key={`${build.id}-${build.uploadId}`}
                           build={build}
                           pushJob={pushJobsByBuildId[build.id]}
-                          tab={tab}
                           onSetSearch={this.setSearch}
                         />
                       ))}

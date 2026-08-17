@@ -64,7 +64,7 @@ class UploadSearch extends React.PureComponent<Props, State> {
 
   override componentDidUpdate(prevProps: Props) {
     // Sync from the URL if it changed externally (e.g. clicking a row's
-    // channel chip). Cancel any pending debounced write so an in-flight
+    // channel name). Cancel any pending debounced write so an in-flight
     // keystroke doesn't clobber the new value.
     if (
       prevProps.search !== this.props.search &&

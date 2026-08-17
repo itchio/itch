@@ -4,10 +4,9 @@ import React from "react";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
-const Pill = styled.span`
+const Tag = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 80%;
@@ -47,13 +46,6 @@ const Pill = styled.span`
   }
 `;
 
-const Dot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-`;
-
 interface Props {
   /** The build behind the row, if any. Synthetic in-flight rows have no build. */
   build?: Build;
@@ -61,7 +53,7 @@ interface Props {
   pushJob: PushJob | null;
 }
 
-export default class StatusPill extends React.PureComponent<Props> {
+export default class BuildStatusTag extends React.PureComponent<Props> {
   override render() {
     const { build, pushJob } = this.props;
 
@@ -69,36 +61,24 @@ export default class StatusPill extends React.PureComponent<Props> {
       if (pushJob.status === "pushing") {
         const pct = Math.round((pushJob.progress ?? 0) * 100);
         return (
-          <Pill className="pushing">
-            <Dot />
+          <Tag className="pushing">
             {T(_("upload.status.pushing"))} · {pct}%
-          </Pill>
+          </Tag>
         );
       }
       if (pushJob.status === "failed") {
-        return (
-          <Pill className="failed">
-            <Dot />
-            {T(_("upload.status.failed"))}
-          </Pill>
-        );
+        return <Tag className="failed">{T(_("upload.status.failed"))}</Tag>;
       }
       if (pushJob.status === "cancelled") {
         return (
-          <Pill className="cancelled">
-            <Dot />
-            {T(_("upload.status.cancelled"))}
-          </Pill>
+          <Tag className="cancelled">{T(_("upload.status.cancelled"))}</Tag>
         );
       }
       // status === "processing" falls through to the build-state branch
-      // below if a build is attached, otherwise to the bare processing pill.
+      // below if a build is attached, otherwise to the bare processing tag.
       if (!build) {
         return (
-          <Pill className="processing">
-            <Dot />
-            {T(_("upload.status.processing"))}
-          </Pill>
+          <Tag className="processing">{T(_("upload.status.processing"))}</Tag>
         );
       }
     }
@@ -114,39 +94,25 @@ export default class StatusPill extends React.PureComponent<Props> {
           build.upload != null && build.upload.buildId === build.id;
         if (!isHead) {
           return (
-            <Pill
+            <Tag
               className="inactive"
               data-rh={JSON.stringify(_("upload.status.inactive_hint"))}
               data-rh-at="top"
             >
-              <Dot />
               {T(_("upload.status.inactive"))}
-            </Pill>
+            </Tag>
           );
         }
-        return (
-          <Pill className="live">
-            <Dot />
-            {T(_("upload.status.live"))}
-          </Pill>
-        );
+        return <Tag className="live">{T(_("upload.status.live"))}</Tag>;
       }
       case BuildState.Failed:
-        return (
-          <Pill className="failed">
-            <Dot />
-            {T(_("upload.status.failed"))}
-          </Pill>
-        );
+        return <Tag className="failed">{T(_("upload.status.failed"))}</Tag>;
       case BuildState.Queued:
       case BuildState.Processing:
       case BuildState.Started:
       default:
         return (
-          <Pill className="processing">
-            <Dot />
-            {T(_("upload.status.processing"))}
-          </Pill>
+          <Tag className="processing">{T(_("upload.status.processing"))}</Tag>
         );
     }
   }
