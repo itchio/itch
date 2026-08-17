@@ -31,16 +31,17 @@ func navigationFlow(r *runner) {
 
 	r.logf("navigating to collections")
 	must(r.click("#sidebar a[href='itch://collections']"))
-	must(r.waitForVisible(currTab + ".series--itemlist"))
+	// .series--itemlist alone would match the dashboard tab we're leaving
+	must(r.waitForVisible(currTab + ".collections-page .series--itemlist"))
 	r.takeScreenshot("collections page")
 
 	r.logf("navigating to preferences")
 	must(r.click("#sidebar a[href='itch://preferences']"))
-	must(r.waitUntilTextExists("#preferences-advanced-section", "Advanced"))
+	must(r.waitUntilTextExists(currTab+"#preferences-advanced-section", "Advanced"))
 	r.takeScreenshot("preferences page")
 
 	r.logf("opening the app log from preferences")
-	must(r.click("#open-app-log-link"))
+	must(r.click(currTab + "#open-app-log-link"))
 	must(r.waitForVisible(currTab + ".msgcol"))
 	r.takeScreenshot("app log page")
 

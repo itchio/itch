@@ -33,7 +33,7 @@ class CollectionsPage extends React.PureComponent<Props> {
   override render() {
     const { profile, search, sortBy, sortDir } = this.props;
     return (
-      <CollectionsDiv>
+      <CollectionsDiv className="collections-page">
         <ProfileCollectionsSeries
           label={_("sidebar.collections")}
           getRecord={this.getRecord}
