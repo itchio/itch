@@ -9,7 +9,6 @@ const aliases = {
   common: path.resolve(__dirname, "src/common"),
   renderer: path.resolve(__dirname, "src/renderer"),
   main: path.resolve(__dirname, "src/main"),
-  vendor: path.resolve(__dirname, "src/vendor"),
   static: path.resolve(__dirname, "src/static"),
 };
 

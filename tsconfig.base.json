@@ -14,8 +14,7 @@
     "paths": {
       "common/*": ["./src/common/*"],
       "renderer/*": ["./src/renderer/*"],
-      "main/*": ["./src/main/*"],
-      "vendor/*": ["./src/vendor/*"]
+      "main/*": ["./src/main/*"]
     },
 
     "noImplicitReturns": true,
