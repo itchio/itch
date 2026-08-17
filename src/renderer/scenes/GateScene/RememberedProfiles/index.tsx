@@ -4,7 +4,7 @@ import { Profile } from "common/butlerd/messages";
 import React from "react";
 import Link from "renderer/basics/Link";
 import { rcall } from "renderer/butlerd/rcall";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { useWatcher } from "renderer/hooks/useWatcher";
 import { Links } from "renderer/scenes/GateScene/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -22,36 +22,31 @@ const RememberedProfilesDiv = styled.div.withConfig({
   overflow-y: auto;
 `;
 
-@watching
-class RememberedProfiles extends React.PureComponent<Props> {
-  override render() {
-    const { profiles, showForm } = this.props;
+interface Props {
+  profiles: Profile[];
+  showForm: () => void;
+}
 
-    return (
-      <RememberedProfilesDiv>
-        {profiles.map((profile) => (
-          <RememberedProfile key={profile.user.id} profile={profile} />
-        ))}
-
-        <Links>
-          <Link label={T(["login.action.show_form"])} onClick={showForm} />
-        </Links>
-      </RememberedProfilesDiv>
-    );
-  }
-
-  subscribe(watcher: Watcher) {
+const RememberedProfiles = ({ profiles, showForm }: Props) => {
+  useWatcher((watcher) => {
     watcher.on(actions.forgetProfile, async (store, action) => {
       const { profile } = action.payload;
       await rcall(messages.ProfileForget, { profileId: profile.id });
       store.dispatch(actions.profilesUpdated({}));
     });
-  }
-}
+  });
+
+  return (
+    <RememberedProfilesDiv>
+      {profiles.map((profile) => (
+        <RememberedProfile key={profile.user.id} profile={profile} />
+      ))}
+
+      <Links>
+        <Link label={T(["login.action.show_form"])} onClick={showForm} />
+      </Links>
+    </RememberedProfilesDiv>
+  );
+};
 
 export default RememberedProfiles;
-
-interface Props {
-  profiles: Profile[];
-  showForm: () => void;
-}

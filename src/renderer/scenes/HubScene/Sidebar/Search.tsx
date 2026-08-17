@@ -13,7 +13,9 @@ import Floater from "renderer/basics/Floater";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { Watcher } from "common/util/watcher";
+import { watchStore } from "renderer/hooks/useWatcher";
+import store from "renderer/store";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import {
   LocalSearchResult,
@@ -75,9 +77,9 @@ const SearchContainer = styled.div`
   }
 `;
 
-@watching
 class Search extends React.PureComponent<Props, State> {
   input: HTMLInputElement | null = null;
+  private unwatch = () => {};
 
   constructor(props: Search["props"], context: any) {
     super(props, context);
@@ -252,6 +254,14 @@ class Search extends React.PureComponent<Props, State> {
       })
     );
   };
+
+  override componentDidMount() {
+    this.unwatch = watchStore(store, (watcher) => this.subscribe(watcher));
+  }
+
+  override componentWillUnmount() {
+    this.unwatch();
+  }
 
   subscribe(watcher: Watcher) {
     watcher.on(actions.focusSearch, async (store, action) => {

@@ -15,7 +15,8 @@ import { hook, hookWithProps } from "renderer/hocs/hook";
 import store from "renderer/store";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { Watcher } from "common/util/watcher";
+import { watchStore } from "renderer/hooks/useWatcher";
 import { withTab } from "renderer/hocs/withTab";
 import { _ } from "renderer/t";
 import {
@@ -118,10 +119,10 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
-@watching
 class NavigationBar extends React.PureComponent<Props, State> {
   fresh = true;
   browserAddress: HTMLInputElement | HTMLElement | null = null;
+  private unwatch = () => {};
 
   // event handlers
   goBack = () => {
@@ -153,6 +154,14 @@ class NavigationBar extends React.PureComponent<Props, State> {
       editingAddress: false,
       url: null,
     };
+  }
+
+  override componentDidMount() {
+    this.unwatch = watchStore(store, (w) => this.subscribe(w));
+  }
+
+  override componentWillUnmount() {
+    this.unwatch();
   }
 
   subscribe(w: Watcher) {

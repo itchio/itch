@@ -14,7 +14,7 @@ import getGameStatus, {
   OperationType,
 } from "common/helpers/get-game-status";
 import modals from "renderer/modals";
-import { Dispatch, Task } from "common/types";
+import { Dispatch, Subtract, Task } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
@@ -28,7 +28,7 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import UploadIcon from "renderer/basics/UploadIcon";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { hookWithProps } from "renderer/hocs/hook";
-import withHover, { HoverProps } from "renderer/hocs/withHover";
+import { HoverProps, useHover } from "renderer/hooks/useHover";
 import Chart from "renderer/pages/DownloadsPage/Chart";
 import { Title } from "renderer/pages/PageStyles/games";
 import * as styles from "renderer/styles";
@@ -501,12 +501,19 @@ interface Props extends HoverProps {
   downloadsPaused: boolean;
 }
 
-export default withHover(
-  hookWithProps(DownloadRow)((map) => ({
-    speeds: map((rs) => rs.downloads.speeds),
-    downloadsPaused: map((rs) => rs.downloads.paused),
-    status: map((rs, props) =>
-      getGameStatus(rs, props.item.game, props.item.caveId)
-    ),
-  }))(DownloadRow)
-);
+const ConnectedDownloadRow = hookWithProps(DownloadRow)((map) => ({
+  speeds: map((rs) => rs.downloads.speeds),
+  downloadsPaused: map((rs) => rs.downloads.paused),
+  status: map((rs, props) =>
+    getGameStatus(rs, props.item.game, props.item.caveId)
+  ),
+}))(DownloadRow);
+
+const HoverDownloadRow = (
+  props: Subtract<React.ComponentProps<typeof ConnectedDownloadRow>, HoverProps>
+) => {
+  const hoverProps = useHover();
+  return <ConnectedDownloadRow {...props} {...hoverProps} />;
+};
+
+export default HoverDownloadRow;

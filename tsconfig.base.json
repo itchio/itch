@@ -20,7 +20,6 @@
 
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "experimentalDecorators": true
+    "noImplicitOverride": true
   }
 }

@@ -19,7 +19,9 @@ import Log from "renderer/pages/AppLogPage/Log";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { Watcher } from "common/util/watcher";
+import { watchStore } from "renderer/hooks/useWatcher";
+import store from "renderer/store";
 import { paths, electron, promisedFs } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
@@ -45,8 +47,9 @@ const ControlsDiv = styled.div`
   align-items: center;
 `;
 
-@watching
 class AppLogPage extends React.PureComponent<Props, State> {
+  private unwatch = () => {};
+
   constructor(props: AppLogPage["props"], context: any) {
     super(props, context);
     this.state = {
@@ -134,8 +137,13 @@ class AppLogPage extends React.PureComponent<Props, State> {
   };
 
   override componentDidMount() {
+    this.unwatch = watchStore(store, (watcher) => this.subscribe(watcher));
     dispatchTabPageUpdate(this.props, { label: ["sidebar.applog"] });
     this.queueFetch();
+  }
+
+  override componentWillUnmount() {
+    this.unwatch();
   }
 
   override componentDidUpdate(prevProps: AppLogPage["props"]) {

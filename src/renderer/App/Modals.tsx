@@ -13,7 +13,7 @@ import {
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
-import Cover from "renderer/basics/Cover";
+import { HoverCover } from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
@@ -24,14 +24,13 @@ import RowButton, {
 } from "renderer/basics/RowButton";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
-import watching, { Watcher } from "renderer/hocs/watching";
-import Hoverable from "renderer/hocs/withHover";
+import { Watcher } from "common/util/watcher";
+import { watchStore } from "renderer/hooks/useWatcher";
+import store from "renderer/store";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isSecretClick } from "common/helpers/secret-click";
-
-const HoverCover = Hoverable(Cover);
 
 type Flavor = "normal" | "big";
 
@@ -262,9 +261,9 @@ const BigButtonsDiv = styled.div`
   }
 `;
 
-@watching
 class Modals extends React.PureComponent<Props, State> {
   dialogRef = React.createRef<HTMLDialogElement>();
+  private unwatch = () => {};
 
   constructor(props: Modals["props"], context: any) {
     super(props, context);
@@ -274,12 +273,14 @@ class Modals extends React.PureComponent<Props, State> {
   }
 
   override componentDidMount() {
+    this.unwatch = watchStore(store, (watcher) => this.subscribe(watcher));
     this.syncDialogState();
     this.dialogRef.current?.addEventListener("cancel", this.onDialogCancel);
     this.dialogRef.current?.addEventListener("close", this.onDialogClose);
   }
 
   override componentWillUnmount() {
+    this.unwatch();
     this.dialogRef.current?.removeEventListener("cancel", this.onDialogCancel);
     this.dialogRef.current?.removeEventListener("close", this.onDialogClose);
   }

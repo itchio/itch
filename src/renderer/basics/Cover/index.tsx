@@ -2,7 +2,8 @@ import classNames from "classnames";
 import React, { useState, useCallback } from "react";
 import GifMarker from "renderer/basics/Cover/GifMarker";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import withHover, { HoverProps } from "renderer/hocs/withHover";
+import { HoverProps, useHover } from "renderer/hooks/useHover";
+import { Subtract } from "common/types";
 import styled from "renderer/styles";
 import SmartImage from "renderer/basics/Cover/SmartImage";
 import { Game } from "common/butlerd/messages";
@@ -85,8 +86,13 @@ const Cover = ({
   );
 };
 
-export default React.memo(Cover);
-export const HoverCover = withHover(Cover);
+const MemoizedCover = React.memo(Cover);
+export default MemoizedCover;
+
+export const HoverCover = (props: Subtract<Props, HoverProps>) => {
+  const hoverProps = useHover();
+  return <MemoizedCover {...props} {...hoverProps} />;
+};
 
 export const GameCover = ({
   game,

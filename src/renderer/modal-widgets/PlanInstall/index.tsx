@@ -35,7 +35,9 @@ import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { Watcher } from "common/util/watcher";
+import { watchStore } from "renderer/hooks/useWatcher";
+import store from "renderer/store";
 import { rendererLogger } from "renderer/logger";
 import InstallLocationOptionComponent, {
   InstallLocationOption,
@@ -177,8 +179,9 @@ enum PlanStage {
   Planning,
 }
 
-@watching
 class PlanInstall extends React.PureComponent<Props, State> {
+  private unwatch = () => {};
+
   constructor(props: Props, context: any) {
     super(props, context);
     const { game } = props.modal.widgetParams;
@@ -640,12 +643,14 @@ class PlanInstall extends React.PureComponent<Props, State> {
   };
 
   override componentDidMount() {
+    this.unwatch = watchStore(store, (watcher) => this.subscribe(watcher));
     this.loadInstallLocations();
     const { uploadId } = this.props.modal.widgetParams;
     this.loadUploads(uploadId);
   }
 
   override componentWillUnmount() {
+    this.unwatch();
     const { planRequestId } = this.state;
     if (planRequestId) {
       rcall(messages.InstallCancel, { id: planRequestId }).catch(() => {

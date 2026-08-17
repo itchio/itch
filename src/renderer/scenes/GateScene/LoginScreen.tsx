@@ -1,84 +1,56 @@
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
-import { Dispatch } from "common/types";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
-import { hook } from "renderer/hocs/hook";
-import watching, { Watcher } from "renderer/hocs/watching";
+import { useWatcher } from "renderer/hooks/useWatcher";
 import LoginForm from "renderer/scenes/GateScene/LoginForm";
 import RememberedProfiles from "renderer/scenes/GateScene/RememberedProfiles";
 
-@watching
-class LoginScreen extends React.PureComponent<Props, State> {
-  constructor(props: LoginScreen["props"], context: any) {
-    super(props, context);
-    this.state = {
-      loading: true,
-      showingSaved: true,
-      profiles: [],
-    };
-  }
+const LoginScreen = () => {
+  const [{ loading, profiles }, setProfilesState] = useState({
+    loading: true,
+    profiles: [] as Profile[],
+  });
+  const [showingSaved, setShowingSaved] = useState(true);
 
-  override componentDidMount() {
-    this.refresh();
-  }
-
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.profilesUpdated, async (store, action) => {
-      this.refresh();
-    });
-    watcher.on(actions.loginFailed, async (store, action) => {
-      this.showForm();
-    });
-  }
-
-  refresh() {
+  const refresh = useCallback(() => {
     doAsync(async () => {
       const { profiles } = await rcall(messages.ProfileList, {});
-      // butlerd returns null for an empty profile list; state renders before
-      // the showingSaved setState below lands
-      this.setState({ loading: false, profiles: profiles ?? [] });
-
+      // butlerd returns null for an empty profile list
+      setProfilesState({ loading: false, profiles: profiles ?? [] });
       if (!profiles || profiles.length === 0) {
-        this.setState({ showingSaved: false });
+        setShowingSaved(false);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  useWatcher((watcher) => {
+    watcher.on(actions.profilesUpdated, async () => {
+      refresh();
+    });
+    watcher.on(actions.loginFailed, async () => {
+      setShowingSaved(false);
+    });
+  });
+
+  const showForm = useCallback(() => setShowingSaved(false), []);
+  const showSaved = useCallback(() => setShowingSaved(true), []);
+
+  if (loading) {
+    return <LoadingCircle progress={-1} wide />;
   }
 
-  override render() {
-    const { loading, showingSaved, profiles } = this.state;
-    if (loading) {
-      return <LoadingCircle progress={-1} wide />;
-    }
-
-    if (showingSaved) {
-      return (
-        <RememberedProfiles profiles={profiles} showForm={this.showForm} />
-      );
-    } else {
-      return <LoginForm showSaved={this.showSaved} />;
-    }
+  if (showingSaved) {
+    return <RememberedProfiles profiles={profiles} showForm={showForm} />;
   }
+  return <LoginForm showSaved={showSaved} />;
+};
 
-  showForm = () => {
-    this.setState({ showingSaved: false });
-  };
-  showSaved = () => {
-    this.setState({ showingSaved: true });
-  };
-}
-
-interface Props {
-  dispatch: Dispatch;
-}
-
-interface State {
-  loading: boolean;
-  showingSaved: boolean;
-  profiles: Profile[];
-}
-
-export default hook()(LoginScreen);
+export default LoginScreen;
