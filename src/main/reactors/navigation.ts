@@ -6,8 +6,8 @@ import { Space } from "common/helpers/space";
 import { I18nState, MenuTemplate, RootState } from "common/types";
 import uuid from "common/util/uuid";
 import { Watcher } from "common/util/watcher";
-import { shell } from "electron";
 import { mainLogger } from "main/logger";
+import { openExternalURL } from "main/util/url";
 import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
 
@@ -107,8 +107,8 @@ export default function (watcher: Watcher) {
     });
     if (space.protocol() == "mailto:") {
       logger.debug(`Is mailto link, opening as external and skipping tab open`);
-      // openExternal wants the full url, including the mailto: protocol
-      shell.openExternal(url);
+      // openExternalURL wants the full url, including the mailto: protocol
+      openExternalURL(url);
       return;
     }
 

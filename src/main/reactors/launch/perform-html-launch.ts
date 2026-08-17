@@ -1,8 +1,9 @@
 import querystring from "querystring";
 
-import { BrowserWindow, shell, session } from "electron";
+import { BrowserWindow, session } from "electron";
 
 import { getInjectPath } from "main/util/resources";
+import { openExternalURL } from "main/util/url";
 
 import { Context } from "main/context";
 
@@ -126,12 +127,7 @@ export async function performHTMLLaunch(
   );
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    let u = new URL(url);
-    if (u.protocol == "http:" || u.protocol == "https:") {
-      shell.openExternal(url);
-    } else {
-      logger.warn(`Prevented opening external URL: ${url}`);
-    }
+    openExternalURL(url);
     return { action: "deny" };
   });
 

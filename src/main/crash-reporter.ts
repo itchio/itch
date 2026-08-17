@@ -8,6 +8,7 @@ import { app, dialog, shell } from "electron";
 import { isNetworkError } from "main/net/errors";
 import { exit } from "main/os/exit";
 import { writeFile } from "main/os/sf";
+import { openExternalURL } from "main/util/url";
 import path from "path";
 import querystring from "querystring";
 import { mainLogger } from "main/logger";
@@ -89,7 +90,7 @@ ${log}
   if (url.length > maxLen) {
     url = url.substring(0, maxLen);
   }
-  shell.openExternal(url);
+  openExternalURL(url);
 }
 
 async function handle(type: ErrorType, e: Error) {

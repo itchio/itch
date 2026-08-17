@@ -1,9 +1,8 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Store } from "common/types";
-import { isItchioURL } from "main/util/url";
+import { isItchioURL, openExternalURL } from "main/util/url";
 import { Watcher } from "common/util/watcher";
-import { shell } from "electron";
 import { mainLogger } from "main/logger";
 import modals from "main/modals";
 import urlParser from "url";
@@ -28,7 +27,11 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.openInExternalBrowser, async (store, action) => {
     const uri = action.payload.url;
-    shell.openExternal(uri);
+    if (isItchioURL(uri)) {
+      store.dispatch(actions.handleItchioURI({ uri }));
+      return;
+    }
+    openExternalURL(uri);
   });
 
   watcher.on(actions.handleItchioURI, async (store, action) => {
