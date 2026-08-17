@@ -19,4 +19,13 @@ func navigationFlow(r *runner) {
 	must(r.click(currTab + ".sortby--title--reverse"))
 	r.logf("ensuring the Z-A sorting is correct")
 	must(r.waitUntilTextExists(firstTitleSelector, "zzz last"))
+
+	r.logf("navigating to uploads")
+	must(r.click("#sidebar a[href='itch://upload']"))
+	must(r.waitUntilTextExists(currTab+".upload-title", "Builds"))
+
+	r.logf("waiting for build totals to load")
+	must(r.waitUntilTextExists(currTab+".upload-subtitle", "builds across"))
+
+	r.takeScreenshot("uploads page")
 }

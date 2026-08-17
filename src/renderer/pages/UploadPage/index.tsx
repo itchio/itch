@@ -311,8 +311,10 @@ class UploadPage extends React.PureComponent<Props, State> {
                 <FiltersContainer loading={loading} />
                 <Container>
                   <TitleBox>
-                    <Title>{T(_("upload.title"))}</Title>
-                    <Subtitle>
+                    <Title className="upload-title">
+                      {T(_("upload.title"))}
+                    </Title>
+                    <Subtitle className="upload-subtitle">
                       {totals
                         ? T([
                             "upload.subtitle",
