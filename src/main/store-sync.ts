@@ -1,7 +1,18 @@
-// Vendored from @goosewobbler/electron-redux (syncMain), as plain middleware
-// instead of a store enhancer.
+// Vendored from @goosewobbler/electron-redux (syncMain). Changes from
+// the original:
+// - plain middleware in the store's own chain instead of a store
+//   enhancer, so incoming actions pass through the full chain
+//   (including the route middleware)
+// - broadcasts only to webContents that fetched the initial state (app
+//   windows), not getAllWebContents()
+// - broadcasts after the reduce, with isDestroyed/try-catch guards, so
+//   a failing send can't drop the action locally
+// - inbound actions are validated before dispatch, mirroring the
+//   outbound path
+// - plain JSON serialization (upstream's Map/Set support had no
+//   consumers here)
 
-import { ipcMain, webContents } from "electron";
+import { ipcMain, WebContents } from "electron";
 import { AnyAction, Middleware } from "redux";
 import { mainLogger } from "main/logger";
 import {
@@ -13,8 +24,22 @@ import {
 
 const logger = mainLogger.child(__filename);
 
+// Actions are only broadcast to webContents that fetched the initial
+// state, i.e. app windows running our renderer.
+const appWebContents = new Set<WebContents>();
+
+const register = (contents: WebContents) => {
+  if (appWebContents.has(contents)) {
+    return;
+  }
+  appWebContents.add(contents);
+  contents.once("destroyed", () => {
+    appWebContents.delete(contents);
+  });
+};
+
 const broadcast = (action: AnyAction, excludeId?: number) => {
-  for (const contents of webContents.getAllWebContents()) {
+  for (const contents of appWebContents) {
     if (contents.id === excludeId || contents.isDestroyed()) {
       continue;
     }
@@ -29,7 +54,10 @@ const broadcast = (action: AnyAction, excludeId?: number) => {
 };
 
 export const mainSyncMiddleware: Middleware = (api) => {
-  ipcMain.handle(FETCH_STATE_CHANNEL, () => JSON.stringify(api.getState()));
+  ipcMain.handle(FETCH_STATE_CHANNEL, (event) => {
+    register(event.sender);
+    return JSON.stringify(api.getState());
+  });
 
   ipcMain.on(ACTION_CHANNEL, (event, action) => {
     if (!validateAction(action)) {
