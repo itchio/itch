@@ -35,18 +35,26 @@ func navigationFlow(r *runner) {
 	must(r.waitForVisible(currTab + ".collections-page .series--itemlist"))
 	r.takeScreenshot("collections page")
 
-	r.logf("navigating to preferences")
-	must(r.click("#sidebar a[href='itch://preferences']"))
+	// itch://preferences and itch://applog open secondary windows when
+	// navigated to (see opensInWindow); the address bar evolves the
+	// current tab instead, so use it to render those pages in-tab.
+	r.logf("navigating to preferences via the address bar")
+	must(r.click(currTab + ".browser-address"))
+	must(r.setValue(currTab+"input.browser-address", "itch://preferences\uE007"))
 	must(r.waitUntilTextExists(currTab+"#preferences-advanced-section", "Advanced"))
 	r.takeScreenshot("preferences page")
 
-	r.logf("opening the app log from preferences")
-	must(r.click(currTab + "#open-app-log-link"))
-	must(r.waitForVisible(currTab + ".msgcol"))
-	r.takeScreenshot("app log page")
-
-	r.logf("opening a new tab")
-	must(r.click("#new-tab-icon"))
+	// the preferences page has no address bar; hop back to the dashboard
+	r.logf("navigating to the new tab page")
+	must(r.click("#sidebar a[href='itch://dashboard']"))
+	must(r.click(currTab + ".browser-address"))
+	must(r.setValue(currTab+"input.browser-address", "itch://new-tab\uE007"))
 	must(r.waitUntilTextExists(currTab+"h2", "Try one of these:"))
 	r.takeScreenshot("new tab page")
+
+	r.logf("navigating to the app log")
+	must(r.click(currTab + ".browser-address"))
+	must(r.setValue(currTab+"input.browser-address", "itch://applog\uE007"))
+	must(r.waitForVisible(currTab + ".msgcol"))
+	r.takeScreenshot("app log page")
 }
