@@ -40,8 +40,10 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
   return;
 }
 
-// must be the innermost middleware so reactors see the already-reduced
-// state
+// route() defers reactors to a later tick, so they always observe
+// committed state regardless of where this sits in the chain.
+// Reactors only get dispatch/getState: the cast papers over the rest of
+// the Store interface (subscribe etc.), which is undefined here.
 export const makeRouteMiddleware =
   (watcher: Watcher): Middleware =>
   (api) =>

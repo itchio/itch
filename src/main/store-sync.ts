@@ -40,14 +40,20 @@ const register = (contents: WebContents) => {
 
 const broadcast = (action: AnyAction, excludeId?: number) => {
   for (const contents of appWebContents) {
-    if (contents.id === excludeId || contents.isDestroyed()) {
+    // destroyed check first: any other member access throws once the
+    // native object is gone
+    if (contents.isDestroyed()) {
+      continue;
+    }
+    const id = contents.id;
+    if (id === excludeId) {
       continue;
     }
     try {
       contents.send(ACTION_CHANNEL, action);
     } catch (e) {
       logger.debug(
-        `Could not forward ${action.type} to webContents ${contents.id}: ${e}`
+        `Could not forward ${action.type} to webContents ${id}: ${e}`
       );
     }
   }
@@ -63,10 +69,12 @@ export const mainSyncMiddleware: Middleware = (api) => {
     if (!validateAction(action)) {
       return;
     }
+    // before the dispatch: the sender can be destroyed during it
+    const senderId = event.sender.id;
     const localAction = stopForwarding(action);
     api.dispatch(localAction);
     // Forward it to all of the other renderers
-    broadcast(localAction, event.sender.id);
+    broadcast(localAction, senderId);
   });
 
   return (next) => (action) => {

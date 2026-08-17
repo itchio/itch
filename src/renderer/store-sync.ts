@@ -4,6 +4,7 @@
 
 import { AnyAction, Middleware, Store } from "redux";
 import { ElectronReduxBridge, validateAction } from "common/util/store-sync";
+import { rendererLogger } from "renderer/logger";
 
 declare global {
   const __ElectronReduxBridge: ElectronReduxBridge;
@@ -35,10 +36,17 @@ export const rendererSyncMiddleware: Middleware = (api) => {
   }
   __ElectronReduxBridge.subscribeToActions(api);
   return (next) => (action) => {
+    // reduce first: a send that throws (e.g. unclonable payload) must
+    // not keep the action from being applied locally
+    const res = next(action);
     if (validateAction(action)) {
-      __ElectronReduxBridge.sendAction(action);
+      try {
+        __ElectronReduxBridge.sendAction(action);
+      } catch (e) {
+        rendererLogger.warn(`Could not forward ${action.type} to main: ${e}`);
+      }
     }
-    return next(action);
+    return res;
   };
 };
 

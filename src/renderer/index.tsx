@@ -60,7 +60,7 @@ async function start() {
     if (node) {
       node.textContent = `itch failed to start: ${e}`;
     }
-    throw e;
+    return;
   }
 
   await new Promise<void>((resolve) => {
@@ -82,18 +82,6 @@ async function start() {
     });
   });
 
-  // registered post-hydration: a dispatch before REPLACE_STATE lands
-  // would be forwarded to main but erased locally by the state snapshot
-  document.addEventListener("drop", (event) => {
-    event.preventDefault();
-    const urls = event.dataTransfer?.getData("text/uri-list");
-    if (urls) {
-      urls.split("\n").forEach((url) => {
-        store.dispatch(actions.navigate({ wind: ambientWind(), url }));
-      });
-    }
-  });
-
   render(App);
 
   // it isn't a guarantee that this code will run
@@ -110,6 +98,24 @@ async function start() {
 }
 
 start();
+
+// preventDefault must be registered from the start (a drop would
+// navigate the window away), but dispatching before hydration would be
+// erased by the REPLACE_STATE snapshot, so the navigate waits for it
+document.addEventListener("drop", (event) => {
+  event.preventDefault();
+  const urls = event.dataTransfer?.getData("text/uri-list");
+  if (urls) {
+    hydrated.then(
+      () => {
+        urls.split("\n").forEach((url) => {
+          store.dispatch(actions.navigate({ wind: ambientWind(), url }));
+        });
+      },
+      () => {}
+    );
+  }
+});
 
 // Catch unhandled form submissions that would navigate away from the app
 document.addEventListener("submit", (event) => {
