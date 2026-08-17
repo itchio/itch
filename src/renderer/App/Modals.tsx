@@ -498,9 +498,9 @@ class Modals extends React.PureComponent<Props, State> {
                 {tags || timeAgo ? (
                   <BigButtonRow>
                     {tags
-                      ? tags.map((tag) => {
+                      ? tags.map((tag, i) => {
                           return (
-                            <Tag>
+                            <Tag key={i}>
                               {tag.icon ? <Icon icon={tag.icon} /> : null}
                               {tag.label ? T(tag.label) : null}
                             </Tag>

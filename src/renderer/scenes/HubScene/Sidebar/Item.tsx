@@ -14,8 +14,11 @@ import styled, * as styles from "renderer/styles";
 import { darken } from "polished";
 import { isSecretClick } from "common/helpers/secret-click";
 
-const UnshrinkableIconButton = styled(IconButton)`
-  flex-shrink: 0;
+const CloseButton = styled(IconButton)`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 `;
 
 const ItemHeading = styled.div`
@@ -23,26 +26,12 @@ const ItemHeading = styled.div`
   padding: 0.2em 0;
 `;
 
-const ItemButton = styled.button`
-  ${styles.resetButton};
-  text-align: left;
-  width: 100%;
-
-  background: ${(props) => props.theme.sidebarBackground};
-  font-size: 14px;
-  border-radius: 0 4px 4px 0;
-  word-break: break-word;
-
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  margin: 2px 0;
-  margin-right: 0;
-  padding-left: 8px;
-  height: 32px;
-  justify-content: center;
-
+const ItemDiv = styled.div`
   position: relative;
+  flex-shrink: 0;
+  margin: 2px 0;
+  border-radius: 0 4px 4px 0;
+  background: ${(props) => props.theme.sidebarBackground};
 
   &.active {
     .icon-cross {
@@ -53,7 +42,7 @@ const ItemButton = styled.button`
         color: ${(props) => props.theme.secondaryTextHover}
       }
     }
-    
+
     background: ${(props) => props.theme.sidebarEntryFocusedBackground}
   }
 
@@ -66,6 +55,25 @@ const ItemButton = styled.button`
     .icon-cross {
       opacity: 1;
     }
+  }
+`;
+
+const ItemButton = styled.button`
+  ${styles.resetButton};
+  text-align: left;
+  width: 100%;
+
+  font-size: 14px;
+  word-break: break-word;
+
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+  height: 32px;
+  justify-content: center;
+
+  &.closable {
+    padding-right: 30px;
   }
 `;
 
@@ -167,39 +175,41 @@ class Item extends React.PureComponent<Props> {
     };
 
     return (
-      <ItemButton
-        className={classNames({ active })}
-        data-rh-at="right"
-        data-rh={sublabel ? JSON.stringify(sublabel) : null}
-        onClick={this.onClick}
-        onMouseUp={this.onMouseUp}
-        data-id={tab}
-        data-url={url}
-        data-resource={resource}
-      >
-        <Row>
-          <IconContainer>
-            {this.props.loading ? (
-              <LoadingCircle progress={-1} />
-            ) : this.props.iconImage ? (
-              <img className="icon-image" src={this.props.iconImage} />
-            ) : (
-              <Icon icon={this.props.icon || "tag"} />
-            )}
-          </IconContainer>
-          <ItemHeading>{T(label)}</ItemHeading>
-          {count > 0 ? <Bubble>{count}</Bubble> : null}
-          <Filler />
-          {progress !== null ? (
-            <ProgressOuter>
-              <div className="progress-inner" style={progressStyle} />
-            </ProgressOuter>
-          ) : null}
-          {onClose ? (
-            <UnshrinkableIconButton icon="cross" onClick={this.onCloseClick} />
-          ) : null}
-        </Row>
-      </ItemButton>
+      <ItemDiv className={classNames({ active })}>
+        <ItemButton
+          className={classNames({ closable: !!onClose })}
+          data-rh-at="right"
+          data-rh={sublabel ? JSON.stringify(sublabel) : null}
+          onClick={this.onClick}
+          onMouseUp={this.onMouseUp}
+          data-id={tab}
+          data-url={url}
+          data-resource={resource}
+        >
+          <Row>
+            <IconContainer>
+              {this.props.loading ? (
+                <LoadingCircle progress={-1} />
+              ) : this.props.iconImage ? (
+                <img className="icon-image" src={this.props.iconImage} />
+              ) : (
+                <Icon icon={this.props.icon || "tag"} />
+              )}
+            </IconContainer>
+            <ItemHeading>{T(label)}</ItemHeading>
+            {count > 0 ? <Bubble>{count}</Bubble> : null}
+            <Filler />
+            {progress !== null ? (
+              <ProgressOuter>
+                <div className="progress-inner" style={progressStyle} />
+              </ProgressOuter>
+            ) : null}
+          </Row>
+        </ItemButton>
+        {onClose ? (
+          <CloseButton icon="cross" onClick={this.onCloseClick} />
+        ) : null}
+      </ItemDiv>
     );
   }
 }
