@@ -170,10 +170,12 @@ class DownloadsPage extends React.PureComponent<Props> {
             </span>
           </Title>
           <FilterSpacer />
-          <Link
-            label={T(["status.downloads.update_all"])}
-            onClick={this.onUpdateAll}
-          />
+          {Object.values(updates).some((update) => update.direct) ? (
+            <Link
+              label={T(["status.downloads.update_all"])}
+              onClick={this.onUpdateAll}
+            />
+          ) : null}
           {updateCheckHappening ? (
             <>
               <div className="spacer" />

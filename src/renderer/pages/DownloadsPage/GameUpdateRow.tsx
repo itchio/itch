@@ -88,7 +88,11 @@ class GameUpdateRow extends React.PureComponent<Props> {
         <Filler />
         <GameUpdateControls>
           <Link
-            label={T(["pick_update_upload.buttons.update"])}
+            label={T([
+              update.direct
+                ? "pick_update_upload.buttons.update"
+                : "pick_update_upload.buttons.select_update",
+            ])}
             onClick={this.onUpdate}
           />
         </GameUpdateControls>
