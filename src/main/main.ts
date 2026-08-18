@@ -7,6 +7,10 @@ import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { isItchioURL } from "main/util/url";
 import { userAgent } from "main/util/useragent";
+import {
+  restrictSessionPermissions,
+  WEBVIEW_PERMISSIONS,
+} from "main/util/session-permissions";
 
 import { actions } from "common/actions";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -216,6 +220,10 @@ export function main() {
       if (contents.getType() === "window") {
         return;
       } // no checks on main window
+
+      if (contents.getType() === "webview") {
+        restrictSessionPermissions(contents.session, WEBVIEW_PERMISSIONS);
+      }
 
       contents.on("will-navigate", (e, navigationUrl) => {
         const parsedUrl = new URL(navigationUrl);
