@@ -6,6 +6,7 @@ import env from "main/env";
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { isItchioURL } from "main/util/url";
+import { isItchioOrigin } from "common/constants/urls";
 import { userAgent } from "main/util/useragent";
 import {
   restrictSessionPermissions,
@@ -226,12 +227,7 @@ export function main() {
       }
 
       contents.on("will-navigate", (e, navigationUrl) => {
-        const parsedUrl = new URL(navigationUrl);
-
-        if (
-          !parsedUrl.origin.endsWith(".itch.io") &&
-          !parsedUrl.origin.endsWith("/itch.io")
-        ) {
+        if (!isItchioOrigin(navigationUrl)) {
           e.preventDefault();
           store.dispatch(actions.openInExternalBrowser({ url: navigationUrl }));
         }

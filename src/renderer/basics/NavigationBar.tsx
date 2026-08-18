@@ -7,7 +7,7 @@ import {
   ambientWindState,
   ambientTab,
 } from "common/util/navigation";
-import { ITCH_URL_RE } from "common/constants/urls";
+import { ITCH_URL_RE, isItchioOrigin } from "common/constants/urls";
 import { transformUrl } from "renderer/util/url";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
@@ -320,14 +320,9 @@ class NavigationBar extends React.PureComponent<Props, State> {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
-      const parsedUrl = new URL(url);
       // If the supplied url is external to itch, then
       // open in a new external browser window
-      if (
-        parsedUrl.origin.endsWith(".itch.io") ||
-        parsedUrl.origin.endsWith("/itch.io") ||
-        ITCH_URL_RE.test(parsedUrl.origin)
-      ) {
+      if (isItchioOrigin(url) || ITCH_URL_RE.test(url)) {
         dispatchTabEvolve(this.props, { url, replace: false });
       } else {
         store.dispatch(actions.openInExternalBrowser({ url: url }));

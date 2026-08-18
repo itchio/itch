@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { ITCH_URL_RE } from "common/constants/urls";
+import { ITCH_URL_RE, isItchioOrigin } from "common/constants/urls";
 import { Space } from "common/helpers/space";
 import { Store, TabPage } from "common/types";
 import { Watcher } from "common/util/watcher";
@@ -42,11 +42,7 @@ function loadURL(wc: WebContents, url: string): boolean {
   // Because of restrictions elsewhere, this likely only
   // occurs if the most recent url in a given tab was an
   // external page back when the app permitted that
-  const parsedUrl = new URL(url);
-  if (
-    parsedUrl.origin.endsWith(".itch.io") ||
-    parsedUrl.origin.endsWith("/itch.io")
-  ) {
+  if (isItchioOrigin(url)) {
     wc.loadURL(url);
     return true;
   }

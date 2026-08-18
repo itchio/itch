@@ -7,6 +7,26 @@ const itchSetupRepo = "https://github.com/itchio/itch-setup";
 
 export const ITCH_URL_RE = /^itch:/i;
 
+/**
+ * True if the URL is on itch.io or a subdomain, over https. When
+ * WHEN_IN_ROME repoints the base origin, its scheme and host are
+ * matched instead.
+ */
+export function isItchioOrigin(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const base = new URL(itchio);
+    return (
+      parsed.protocol === base.protocol &&
+      parsed.port === base.port &&
+      (parsed.hostname === base.hostname ||
+        parsed.hostname.endsWith(`.${base.hostname}`))
+    );
+  } catch {
+    return false;
+  }
+}
+
 export default {
   itchRepo,
   butlerRepo,
