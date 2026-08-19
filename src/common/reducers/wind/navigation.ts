@@ -21,7 +21,7 @@ const initialState: NavigationState = {
 
 export default reducer<NavigationState>(initialState, (on) => {
   on(actions.tabOpened, (state, action) => {
-    const { tab, background } = action.payload;
+    const { tab, background, insertAfter } = action.payload;
     if (!tab) {
       return state;
     }
@@ -42,11 +42,12 @@ export default reducer<NavigationState>(initialState, (on) => {
     // and so on. Fixing that would require changing the structure of the app's
     // state, so let's not worry about it for now.
     const { openTabs } = state;
+    const anchor = insertAfter ?? state.tab;
     let newOpenTabs = [];
     let added = false;
     for (const openTab of openTabs) {
       newOpenTabs.push(openTab);
-      if (openTab === state.tab) {
+      if (openTab === anchor) {
         added = true;
         newOpenTabs.push(tab);
       }

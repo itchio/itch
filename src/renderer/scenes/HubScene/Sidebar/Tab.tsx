@@ -5,9 +5,11 @@ import {
   Dispatch,
   DownloadsState,
   LocalizedString,
+  MenuTemplate,
   TabInstance,
 } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
+import uuid from "common/util/uuid";
 import {
   getActiveDownload,
   getPendingDownloads,
@@ -38,6 +40,54 @@ class Tab extends React.PureComponent<Props> {
   onClose = () => {
     const { tab, dispatch } = this.props;
     dispatch(actions.closeTab({ wind: ambientWind(), tab }));
+  };
+
+  onContextMenu = (ev: React.MouseEvent<HTMLElement>) => {
+    const { tab, tabInstance, dispatch } = this.props;
+    ev.preventDefault();
+    const wind = ambientWind();
+
+    const template: MenuTemplate = [];
+
+    const { location } = tabInstance;
+    const url = location ? location.url : null;
+    if (url) {
+      template.push({
+        localizedLabel: ["sidebar.duplicate_tab"],
+        action: actions.tabOpened({
+          wind,
+          tab: uuid(),
+          insertAfter: tab,
+          url,
+          resource: tabInstance.resource
+            ? tabInstance.resource.value
+            : undefined,
+        }),
+      });
+      template.push({ type: "separator" });
+    }
+
+    template.push({
+      localizedLabel: ["sidebar.close_tab"],
+      action: actions.closeTab({ wind, tab }),
+    });
+    template.push({
+      localizedLabel: ["sidebar.close_other_tabs"],
+      action: actions.closeOtherTabs({ wind, tab }),
+    });
+    template.push({
+      localizedLabel: ["sidebar.close_tabs_below"],
+      action: actions.closeTabsBelow({ wind, tab }),
+    });
+
+    dispatch(
+      actions.popupContextMenu({
+        wind,
+        clientX: ev.clientX,
+        clientY: ev.clientY,
+        template,
+      })
+    );
   };
 
   override render() {
@@ -101,6 +151,7 @@ class Tab extends React.PureComponent<Props> {
       count,
       progress,
       onClose,
+      onContextMenu: this.onContextMenu,
       onExplore,
       sublabel,
       gameOverride,

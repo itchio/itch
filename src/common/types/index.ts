@@ -706,6 +706,9 @@ export interface OpenTabPayload extends NavigatePayload {
 
   /** the id of the new tab to open (generated) */
   tab: string;
+
+  /** insert the new tab right after this one instead of the focused tab */
+  insertAfter?: string;
 }
 
 export interface OpenContextMenuBase {

@@ -183,6 +183,7 @@ class Item extends React.PureComponent<Props> {
           data-rh={sublabel ? JSON.stringify(sublabel) : null}
           onClick={this.onClick}
           onMouseUp={this.onMouseUp}
+          onContextMenu={this.props.onContextMenu}
           data-id={tab}
           data-url={url}
           data-resource={resource}
@@ -236,6 +237,7 @@ interface Props {
 
   onClick?: () => void;
   onClose?: (() => void) | null;
+  onContextMenu?: React.MouseEventHandler<HTMLElement>;
   onExplore?: (tabId: string) => void;
   tabInstance?: TabInstance;
 }

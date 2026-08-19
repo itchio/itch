@@ -260,7 +260,7 @@ export class Space {
   }
 }
 
-const fallbackIcon = "moon";
+const fallbackIcon = "globe";
 
 export function internalPageToIcon(
   internalPage: string | null | undefined
