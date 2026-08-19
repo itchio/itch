@@ -6,13 +6,14 @@ import {
   readSync,
   closeSync,
   createReadStream,
+  realpathSync,
   statSync,
 } from "original-fs";
 import { Readable } from "stream";
 import { createGunzip } from "zlib";
 import { mainLogger } from "main/logger";
 import mime from "mime-types";
-import { join } from "path";
+import { join, resolve, sep } from "path";
 
 const registeredSessions = new Set<Session>();
 const WEBGAME_PROTOCOL = "itch-cave";
@@ -42,6 +43,9 @@ export async function registerItchCaveProtocol(
   if (registeredSessions.has(gameSession)) {
     return;
   }
+
+  const absoluteRoot = resolve(fileRoot);
+  const canonicalRoot = realpathSync(absoluteRoot);
   registeredSessions.add(gameSession);
 
   gameSession.protocol.handle(WEBGAME_PROTOCOL, (request) => {
@@ -51,19 +55,37 @@ export async function registerItchCaveProtocol(
     }
     const decodedPath = decodeURI(urlPath);
     const rootlessPath = decodedPath.replace(/^\//, "");
-    const filePath = join(fileRoot, rootlessPath);
+    const filePath = resolve(join(absoluteRoot, rootlessPath));
+
+    // Chromium collapses ".." at the URL layer, but this handler serves
+    // filesystem reads to a webSecurity:false window, so contain it here
+    // too
+    if (filePath !== absoluteRoot && !filePath.startsWith(absoluteRoot + sep)) {
+      return new Response(null, { status: 404 });
+    }
 
     try {
-      const stats = statSync(filePath);
+      // realpath resolves symlinks, so a link within the game cannot be used
+      // to escape its root. Read via the canonical path as well, avoiding a
+      // second traversal of the requested symlink.
+      const canonicalPath = realpathSync(filePath);
+      if (
+        canonicalPath !== canonicalRoot &&
+        !canonicalPath.startsWith(canonicalRoot + sep)
+      ) {
+        return new Response(null, { status: 404 });
+      }
+
+      const stats = statSync(canonicalPath);
       let contentType = mime.lookup(filePath) || "application/octet-stream";
-      let stream: Readable = createReadStream(filePath);
+      let stream: Readable = createReadStream(canonicalPath);
 
       // Decompress gzip/brotli files on the fly and serve the raw content.
       // Electron custom protocols don't support Content-Encoding, so we
       // can't rely on the browser to decompress — we do it ourselves.
       let compressed = false;
 
-      if (filePath.endsWith(".gz") && detectGzip(filePath)) {
+      if (filePath.endsWith(".gz") && detectGzip(canonicalPath)) {
         const realMime = mime.lookup(filePath.slice(0, -3));
         if (realMime) {
           contentType = realMime;
@@ -78,7 +100,7 @@ export async function registerItchCaveProtocol(
         const { createBrotliDecompress } = require("zlib");
         stream = stream.pipe(createBrotliDecompress());
         compressed = true;
-      } else if (filePath.endsWith(".unityweb") && detectGzip(filePath)) {
+      } else if (filePath.endsWith(".unityweb") && detectGzip(canonicalPath)) {
         // Older Unity WebGL builds use .unityweb for gzip-compressed files
         // (e.g. game.framework.js.unityweb, game.wasm.unityweb, game.data.unityweb)
         const basename = filePath.slice(0, -".unityweb".length);

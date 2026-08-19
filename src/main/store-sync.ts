@@ -15,6 +15,7 @@
 import { ipcMain, WebContents } from "electron";
 import { AnyAction, Middleware } from "redux";
 import { mainLogger } from "main/logger";
+import { isTrustedFrame } from "main/util/trusted-sender";
 import {
   ACTION_CHANNEL,
   FETCH_STATE_CHANNEL,
@@ -61,11 +62,17 @@ const broadcast = (action: AnyAction, excludeId?: number) => {
 
 export const mainSyncMiddleware: Middleware = (api) => {
   ipcMain.handle(FETCH_STATE_CHANNEL, (event) => {
+    if (!isTrustedFrame(event.senderFrame)) {
+      throw new Error("Untrusted sender for store sync");
+    }
     register(event.sender);
     return JSON.stringify(api.getState());
   });
 
   ipcMain.on(ACTION_CHANNEL, (event, action) => {
+    if (!isTrustedFrame(event.senderFrame)) {
+      return;
+    }
     if (!validateAction(action)) {
       return;
     }

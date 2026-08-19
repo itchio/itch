@@ -12,6 +12,7 @@ import {
   restrictSessionPermissions,
   WEBVIEW_PERMISSIONS,
 } from "main/util/session-permissions";
+import { isTrustedFrame } from "main/util/trusted-sender";
 
 import { actions } from "common/actions";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -46,6 +47,10 @@ const registerSync = (
   Object.entries(syncHandlers).forEach(
     ([eventName, callback]: [string, (arg: any) => any]): void => {
       ipcMain.on(eventName, (event: IpcMainEvent, arg: any): void => {
+        if (!isTrustedFrame(event.senderFrame)) {
+          event.returnValue = undefined;
+          return;
+        }
         event.returnValue = callback(arg);
       });
     }
@@ -55,6 +60,9 @@ const registerSync = (
       ipcMain.handle(
         eventName,
         (event: IpcMainInvokeEvent, arg: any): Promise<any> => {
+          if (!isTrustedFrame(event.senderFrame)) {
+            throw new Error(`Untrusted sender for ${eventName}`);
+          }
           return callback(arg);
         }
       );
@@ -94,7 +102,7 @@ export function main() {
     }
   }
 
-  if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
+  if (env.development && process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
   protocol.registerSchemesAsPrivileged([
@@ -216,6 +224,14 @@ export function main() {
           contents.id
         } type=${contents.getType()} url=${contents.getURL()}`
       );
+
+      // fires on the embedding window; our only webview (the in-app
+      // browser) uses no preload and no node
+      contents.on("will-attach-webview", (_e, webPreferences) => {
+        delete webPreferences.preload;
+        webPreferences.nodeIntegration = false;
+        webPreferences.contextIsolation = true;
+      });
 
       // navigation protection to prevent non itchio links from opening in the app browser
       if (contents.getType() === "window") {
