@@ -41,7 +41,6 @@
     "react-fast-compare": "^3.2.2",
     "react-hint": "^3.2.0",
     "react-intl": "^5.12.0",
-    "react-json-inspector": "^7.1.1",
     "react-redux": "^7.2.2",
     "react-tabs": "^4.3.0",
     "redux": "^4.0.5",

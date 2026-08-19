@@ -1,7 +1,6 @@
 import "../fonts/icomoon/style.css";
 import "../fonts/lato/latofonts-custom.css";
 import "react-hint/css/index.css";
-import "react-json-inspector/json-inspector.css";
 import "react-tabs/style/react-tabs.css";
 import { Dispatch } from "common/types";
 import React from "react";
