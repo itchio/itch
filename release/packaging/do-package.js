@@ -11,6 +11,7 @@ import ospath from "path";
 import fs from "fs";
 import { toUnixPath } from "./context.js";
 import { packager as electronPackager } from "@electron/packager";
+import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
 /** @param {import("./context.js").Context} cx */
 export async function doPackage(cx) {
@@ -48,10 +49,47 @@ export async function doPackage(cx) {
 
   console.log(`Built app is in ${buildPath}`);
 
+  await measure("flip fuses", async () => flipElectronFuses(cx, appPaths[0]));
+
   console.log(`Moving to ${cx.artifactDir}`);
   $(`rm -rf "${toUnixPath(cx.artifactDir)}"`);
   $(`mkdir -p artifacts`);
   $(`mv "${buildPath}" "${toUnixPath(cx.artifactDir)}"`);
+}
+
+/**
+ * Disable the escape hatches that would let a local attacker run the
+ * shipped binary as a generic Node runtime. Must happen before signing:
+ * it modifies the Electron binary in place.
+ *
+ * @param {import("./context.js").Context} cx
+ * @param {string} buildPath
+ */
+async function flipElectronFuses(cx, buildPath) {
+  const appName = getAppName();
+  let executablePath;
+  if (cx.os === "windows") {
+    executablePath = ospath.join(buildPath, `${appName}.exe`);
+  } else if (cx.os === "darwin") {
+    executablePath = ospath.join(
+      buildPath,
+      `${appName}.app`,
+      "Contents",
+      "MacOS",
+      appName
+    );
+  } else {
+    executablePath = ospath.join(buildPath, appName);
+  }
+
+  await flipFuses(executablePath, {
+    version: FuseVersion.V1,
+    resetAdHocDarwinSignature: cx.os === "darwin",
+    [FuseV1Options.RunAsNode]: false,
+    [FuseV1Options.EnableNodeCliInspectArguments]: false,
+    [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+  });
+  console.log(`Flipped fuses on ${executablePath}`);
 }
 
 /**
