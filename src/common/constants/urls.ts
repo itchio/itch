@@ -1,5 +1,9 @@
 const originalItchio = "https://itch.io";
-const itchio = process.env.WHEN_IN_ROME || originalItchio;
+// NODE_ENV is baked in at bundle time, so production builds can never be
+// repointed at another origin
+const itchio =
+  (process.env.NODE_ENV === "development" && process.env.WHEN_IN_ROME) ||
+  originalItchio;
 const manual = "https://itch.io/docs/itch";
 const itchRepo = "https://github.com/itchio/itch";
 const butlerRepo = "https://github.com/itchio/butler";

@@ -14,7 +14,7 @@ export function preferencesPath(): string {
 
 export function butlerDbPath(): string {
   let dbName = "butler.db";
-  if (process.env.WHEN_IN_ROME) {
+  if (urls.itchio !== urls.originalItchio) {
     dbName = `butler-${new URL(urls.itchio).host.replace(
       /^[A_Za-z\._\-]/g,
       "_"
