@@ -17,8 +17,9 @@ import { isSecretClick } from "common/helpers/secret-click";
 const CloseButton = styled(IconButton)`
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
 `;
 
 const ItemHeading = styled.div`
@@ -207,7 +208,11 @@ class Item extends React.PureComponent<Props> {
           </Row>
         </ItemButton>
         {onClose ? (
-          <CloseButton icon="cross" onClick={this.onCloseClick} />
+          <CloseButton
+            className="tab-close-button"
+            icon="cross"
+            onClick={this.onCloseClick}
+          />
         ) : null}
       </ItemDiv>
     );

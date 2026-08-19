@@ -6,7 +6,7 @@ import {
   ambientWindState,
 } from "common/util/navigation";
 import React from "react";
-import { arrayMove, SortableContainer } from "react-sortable-hoc";
+import { arrayMove, SortableContainer, SortEvent } from "react-sortable-hoc";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
@@ -113,6 +113,14 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   };
 
+  // the default only cancels when the event target is itself an interactive
+  // element, but clicks on the close button usually land on the icon span
+  // inside it, which would start a drag and swallow the click
+  shouldCancelStart = (e: SortEvent) => {
+    const target = e.target as HTMLElement;
+    return !!target.closest(".tab-close-button");
+  };
+
   onSortEnd = (params: SortEndParams) => {
     const { oldIndex, newIndex } = params;
     this.setState({
@@ -170,6 +178,7 @@ class Sidebar extends React.PureComponent<Props, State> {
             items={this.state.openTabs}
             sidebarProps={this.props}
             onSortEnd={this.onSortEnd}
+            shouldCancelStart={this.shouldCancelStart}
             distance={5}
             lockAxis="y"
           />
