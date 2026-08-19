@@ -16,20 +16,9 @@ import {
 } from "main/reactors/downloads/getters";
 import React from "react";
 import { injectIntl, IntlShape } from "react-intl";
-import { SortableElement } from "react-sortable-hoc";
 import { hookWithProps } from "renderer/hocs/hook";
 import modals from "renderer/modals";
 import Item from "renderer/scenes/HubScene/Sidebar/Item";
-
-interface SortableHubSidebarItemProps {
-  props: any & {
-    tab: string;
-  };
-}
-
-const SortableItem = SortableElement((props: SortableHubSidebarItemProps) => {
-  return <Item {...props.props} />;
-});
 
 class Tab extends React.PureComponent<Props> {
   onClick = () => {
@@ -91,7 +80,7 @@ class Tab extends React.PureComponent<Props> {
   };
 
   override render() {
-    const { tab, index, sortable, tabInstance, active } = this.props;
+    const { tab, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
 
     const { location, status } = tabInstance;
@@ -158,11 +147,7 @@ class Tab extends React.PureComponent<Props> {
       loading,
     };
 
-    if (sortable && index !== undefined) {
-      return <SortableItem key={tab} index={index} props={props} />;
-    } else {
-      return <Item key={tab} {...props} />;
-    }
+    return <Item key={tab} {...props} />;
   }
 
   onExplore = (tab: string) => {
@@ -186,7 +171,6 @@ class Tab extends React.PureComponent<Props> {
 
 interface Props {
   tab: string;
-  index?: number;
   active: boolean;
   sortable?: boolean;
 

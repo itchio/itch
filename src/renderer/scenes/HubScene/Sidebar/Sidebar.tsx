@@ -6,7 +6,6 @@ import {
   ambientWindState,
 } from "common/util/navigation";
 import React from "react";
-import { arrayMove, SortableContainer, SortEvent } from "react-sortable-hoc";
 import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
@@ -18,7 +17,7 @@ import {
   SidebarHeading,
   SidebarSection,
 } from "renderer/scenes/HubScene/Sidebar/styles";
-import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
+import SortableTabList from "renderer/scenes/HubScene/Sidebar/SortableTabList";
 import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
 import { actions } from "common/actions";
@@ -56,37 +55,6 @@ const SidebarItems = styled.div`
   }
 `;
 
-interface SortEndParams {
-  oldIndex: number;
-  newIndex: number;
-}
-
-interface SortableContainerParams {
-  items: string[];
-  sidebarProps: Props;
-}
-
-const SortableListContainer = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
-`;
-
-const SortableList = SortableContainer((params: SortableContainerParams) => {
-  const { sidebarProps, items } = params;
-  const currentTab = sidebarProps.tab;
-
-  return (
-    <SortableListContainer>
-      {items.map((tab, index) => {
-        const active = currentTab === tab;
-        return (
-          <Tab key={tab} tab={tab} active={active} index={index} sortable />
-        );
-      })}
-    </SortableListContainer>
-  );
-});
-
 class Sidebar extends React.PureComponent<Props, State> {
   constructor(props: Sidebar["props"], context: any) {
     super(props, context);
@@ -113,19 +81,11 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   };
 
-  // the default only cancels when the event target is itself an interactive
-  // element, but clicks on the close button usually land on the icon span
-  // inside it, which would start a drag and swallow the click
-  shouldCancelStart = (e: SortEvent) => {
-    const target = e.target as HTMLElement;
-    return !!target.closest(".tab-close-button");
-  };
-
-  onSortEnd = (params: SortEndParams) => {
-    const { oldIndex, newIndex } = params;
-    this.setState({
-      openTabs: arrayMove(this.state.openTabs, oldIndex, newIndex),
-    });
+  onSortEnd = (oldIndex: number, newIndex: number) => {
+    const openTabs = [...this.state.openTabs];
+    const [moved] = openTabs.splice(oldIndex, 1);
+    openTabs.splice(newIndex, 0, moved);
+    this.setState({ openTabs });
     const { dispatch } = this.props;
     dispatch(
       actions.moveTab({
@@ -174,13 +134,10 @@ class Sidebar extends React.PureComponent<Props, State> {
             />
           </SidebarSection>
 
-          <SortableList
+          <SortableTabList
             items={this.state.openTabs}
-            sidebarProps={this.props}
+            currentTab={this.props.tab}
             onSortEnd={this.onSortEnd}
-            shouldCancelStart={this.shouldCancelStart}
-            distance={5}
-            lockAxis="y"
           />
         </SidebarItems>
       </>

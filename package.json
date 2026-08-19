@@ -43,7 +43,6 @@
     "react-intl": "^5.12.0",
     "react-json-inspector": "^7.1.1",
     "react-redux": "^7.2.2",
-    "react-sortable-hoc": "^1.11.0",
     "react-tabs": "^4.3.0",
     "redux": "^4.0.5",
     "redux-cli-logger": "^2.1.0",
