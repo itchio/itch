@@ -1,6 +1,6 @@
 import { mainWorldSupplement } from "main/inject/inject-preload";
 
-const supplement = (window as unknown) as typeof mainWorldSupplement;
+const supplement = window as unknown as typeof mainWorldSupplement;
 
 export const url = {
   parse: supplement.nodeUrl.parse,
@@ -32,14 +32,12 @@ export const paths = {
   mainLogPath: supplement.paths.mainLogPath,
 };
 
-export const promisedFs = {
-  readFile: supplement.promisedFs.readFile,
+export const files = {
+  readTextFile: supplement.files.readTextFile,
 };
 
 export const sysinfo = {
-  cpu: supplement.sysinfo.cpu,
-  graphics: supplement.sysinfo.graphics,
-  osInfo: supplement.sysinfo.osInfo,
+  report: supplement.sysinfo.report,
 };
 
 export const butlerd = {

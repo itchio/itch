@@ -2,11 +2,47 @@ import { ipcRenderer, IpcRenderer, OpenDialogOptions } from "electron";
 
 export type InjectName = "game" | "preload";
 
+// subsets of the systeminformation results: only what the feedback
+// form reports crosses the IPC boundary
+export type SysinfoCpu = {
+  manufacturer: string;
+  brand: string;
+  vendor: string;
+  speed: number;
+  cores: number;
+};
+
+export type SysinfoGraphics = {
+  controllers: {
+    model: string;
+    vendor: string;
+    vram: number | null;
+  }[];
+};
+
+export type SysinfoOs = {
+  platform: string;
+  arch: string;
+  distro: string;
+  release: string;
+  codename: string;
+  logofile: string;
+};
+
+// sections that fail to probe come back as an error string
+export type SysinfoReport = {
+  cpu: SysinfoCpu | string;
+  graphics: SysinfoGraphics | string;
+  osInfo: SysinfoOs | string;
+};
+
 export type AsyncIpcHandlers = {
   showOpenDialog: (o: OpenDialogOptions) => Promise<string[]>;
   getUserCacheSize: (n: number) => Promise<number>;
   getGPUFeatureStatus: (x: undefined) => Promise<any>;
   fetchGitHubReleases: (url: string) => Promise<any>;
+  sysinfoReport: (x: undefined) => Promise<SysinfoReport>;
+  readTextFile: (path: string) => Promise<string>;
 };
 
 export type SyncIpcHandlers = {

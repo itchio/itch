@@ -20,7 +20,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { useWatcher } from "renderer/hooks/useWatcher";
-import { paths, electron, promisedFs } from "renderer/bridge";
+import { paths, electron, files } from "renderer/bridge";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -73,7 +73,7 @@ const AppLogPage = (props: Props) => {
       } else {
         filePath = paths.mainLogPath();
       }
-      const log = await promisedFs.readFile(filePath, { encoding: "utf8" });
+      const log = await files.readTextFile(filePath);
       if (stale) return;
       setLog(log);
       setError(null);

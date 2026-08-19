@@ -3,6 +3,9 @@ import { getErrorStack } from "common/butlerd/errors";
 
 import env from "main/env";
 
+import { promises as fsPromises } from "fs";
+import { cpu, graphics, osInfo } from "systeminformation";
+
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
 import { getImageURL, getInjectURL } from "main/util/resources";
 import { isItchioURL } from "main/util/url";
@@ -166,7 +169,45 @@ export function main() {
           return ourSession.getCacheSize();
         },
         getGPUFeatureStatus: async (_x) => {
-          return app.getGPUFeatureStatus;
+          return app.getGPUFeatureStatus();
+        },
+        sysinfoReport: async (_x) => {
+          const attempt = async <T>(
+            fn: () => Promise<T>
+          ): Promise<T | string> => {
+            try {
+              return await fn();
+            } catch (e) {
+              return `Could not get info: ${e}`;
+            }
+          };
+
+          const [cpuInfo, graphicsInfo, osInfoResult] = await Promise.all([
+            attempt(async () => {
+              const { manufacturer, brand, vendor, speed, cores } = await cpu();
+              return { manufacturer, brand, vendor, speed, cores };
+            }),
+            attempt(async () => {
+              const { controllers } = await graphics();
+              return {
+                controllers: controllers.map(({ model, vendor, vram }) => ({
+                  model,
+                  vendor,
+                  vram,
+                })),
+              };
+            }),
+            attempt(async () => {
+              const { platform, arch, distro, release, codename, logofile } =
+                await osInfo();
+              return { platform, arch, distro, release, codename, logofile };
+            }),
+          ]);
+
+          return { cpu: cpuInfo, graphics: graphicsInfo, osInfo: osInfoResult };
+        },
+        readTextFile: (path: string) => {
+          return fsPromises.readFile(path, { encoding: "utf8" });
         },
         fetchGitHubReleases: async (url: string) => {
           if (!url.startsWith("https://api.github.com/")) {

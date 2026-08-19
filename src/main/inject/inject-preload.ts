@@ -9,9 +9,7 @@ import { call } from "common/butlerd/net";
 import { createRequest } from "@itchio/butlerd";
 import type { Conversation } from "@itchio/butlerd";
 import { parse, format } from "url";
-import { cpu, graphics, osInfo } from "systeminformation";
 import qs from "querystring";
-import { promises } from "fs";
 import { Logger } from "common/logger";
 import { Message } from "common/helpers/bridge";
 import { emitAsyncIpcEvent, emitSyncIpcEvent } from "common/ipc";
@@ -117,7 +115,9 @@ export const mainWorldSupplement = {
       return emitSyncIpcEvent("userAgent", undefined);
     }),
   },
-  sysinfo: { cpu, graphics, osInfo },
+  sysinfo: {
+    report: () => emitAsyncIpcEvent("sysinfoReport", undefined),
+  },
   resources: {
     getImageURL: (path: string): string => {
       return emitSyncIpcEvent("getImageURL", path);
@@ -138,7 +138,9 @@ export const mainWorldSupplement = {
       return emitSyncIpcEvent("mainLogPath", undefined);
     }),
   },
-  promisedFs: { readFile: promises.readFile },
+  files: {
+    readTextFile: (path: string) => emitAsyncIpcEvent("readTextFile", path),
+  },
 };
 
 contextBridge.exposeInMainWorld("__ElectronReduxBridge", electronReduxBridge);
@@ -151,6 +153,6 @@ contextBridge.exposeInMainWorld("sysinfo", mainWorldSupplement.sysinfo);
 contextBridge.exposeInMainWorld("resources", mainWorldSupplement.resources);
 contextBridge.exposeInMainWorld("querystring", mainWorldSupplement.querystring);
 contextBridge.exposeInMainWorld("paths", mainWorldSupplement.paths);
-contextBridge.exposeInMainWorld("promisedFs", mainWorldSupplement.promisedFs);
+contextBridge.exposeInMainWorld("files", mainWorldSupplement.files);
 
 console.log("preload done");

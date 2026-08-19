@@ -137,46 +137,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
   override componentDidMount() {
     doAsync(async () => {
       try {
-        let cpu: object | string;
-        try {
-          const input = await sysinfo.cpu();
-          cpu = fillShape(input, {
-            manufacturer: true,
-            brand: true,
-            vendor: true,
-            speed: true,
-            cores: true,
-          });
-        } catch (e) {
-          cpu = `Could not get info: ${e}`;
-        }
-        let graphics: object | string;
-        try {
-          const input = await sysinfo.graphics();
-          graphics = fillShape(input, {
-            controllers: {
-              model: true,
-              vendor: true,
-              vram: true,
-            },
-          });
-        } catch (e) {
-          graphics = `Could not get info: ${e}`;
-        }
-        let osInfo: object | string;
-        try {
-          const input = await sysinfo.osInfo();
-          osInfo = fillShape(input, {
-            platform: true,
-            arch: true,
-            distro: true,
-            release: true,
-            codename: true,
-            logofile: true,
-          });
-        } catch (e) {
-          osInfo = `Could not get info: ${e}`;
-        }
+        const { cpu, graphics, osInfo } = await sysinfo.report();
         const broth = fillShape(this.props.brothPackages, {
           "*": {
             stage: true,
