@@ -7,7 +7,8 @@ import { withTab } from "renderer/hocs/withTab";
 import FilterInput from "renderer/pages/common/FilterInput";
 import { TString } from "renderer/t";
 import { debounce } from "common/util/rate-limit";
-import { IntlShape, injectIntl } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 
 class SearchControl extends React.PureComponent<Props> {
   override render(): JSX.Element {

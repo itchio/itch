@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "production") {
   };
 }
 
-import ReactDOM from "react-dom";
+import { createRoot, Root } from "react-dom/client";
 import { Provider } from "react-redux";
 
 import store, { hydrated } from "renderer/store";
@@ -21,24 +21,24 @@ import { actions } from "common/actions";
 import { ExtendedWindow } from "common/types";
 import { ambientWind } from "common/util/navigation";
 
-let appNode: Element | null;
+let appRoot: Root | null;
 
 function render(RealApp: typeof App) {
   document.querySelector("body")!.classList.remove("loading");
-  appNode = document.querySelector("#app");
+  const appNode = document.querySelector("#app")!;
 
-  ReactDOM.render(
+  appRoot = createRoot(appNode);
+  appRoot.render(
     <Provider store={store}>
       <RealApp />
-    </Provider>,
-    appNode
+    </Provider>
   );
 }
 
 window.addEventListener("beforeunload", () => {
-  if (appNode) {
-    ReactDOM.unmountComponentAtNode(appNode);
-    appNode = null;
+  if (appRoot) {
+    appRoot.unmount();
+    appRoot = null;
   }
 });
 

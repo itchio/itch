@@ -24,7 +24,8 @@ import {
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
 import { debounce } from "common/util/rate-limit";
-import { injectIntl, IntlShape } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {

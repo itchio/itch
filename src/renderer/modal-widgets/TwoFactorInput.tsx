@@ -14,7 +14,8 @@ import { actions } from "common/actions";
 import { ambientWind } from "common/util/navigation";
 import { ModalButtons } from "renderer/basics/modal-styles";
 import Button from "renderer/basics/Button";
-import { injectIntl, IntlShape } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 
 const CodeInput = styled.input`
   font-size: 36px !important;

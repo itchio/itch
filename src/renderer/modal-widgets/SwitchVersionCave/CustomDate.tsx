@@ -1,6 +1,7 @@
 import { DateFormat, DATE_FORMAT, formatDate } from "common/format/datetime";
 import React from "react";
-import { injectIntl, IntlShape } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 
 class CustomDate extends React.PureComponent<Props> {
   override render() {

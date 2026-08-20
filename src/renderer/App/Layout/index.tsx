@@ -14,7 +14,8 @@ import { hook } from "renderer/hocs/hook";
 import { ProfileProvider } from "renderer/hocs/withProfile";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { injectIntl, IntlShape } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 import GateScene from "renderer/scenes/GateScene";
 import HubScene from "renderer/scenes/HubScene";
 

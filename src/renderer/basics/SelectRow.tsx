@@ -1,6 +1,7 @@
 import { LocalizedString } from "common/types";
 import React from "react";
-import { IntlShape, injectIntl } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
 

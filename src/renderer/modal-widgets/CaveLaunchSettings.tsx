@@ -1,5 +1,6 @@
 import React from "react";
-import { IntlShape, injectIntl } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 
 import * as messages from "common/butlerd/messages";
 import { getErrorMessage } from "common/butlerd/errors";

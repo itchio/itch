@@ -15,7 +15,8 @@ import {
   getPendingDownloads,
 } from "main/reactors/downloads/getters";
 import React from "react";
-import { injectIntl, IntlShape } from "react-intl";
+import { IntlShape } from "react-intl";
+import { injectIntl } from "renderer/hocs/injectIntl";
 import { hookWithProps } from "renderer/hocs/hook";
 import modals from "renderer/modals";
 import Item from "renderer/scenes/HubScene/Sidebar/Item";
