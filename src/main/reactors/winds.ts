@@ -32,6 +32,11 @@ import {
 import fs from "fs";
 import { mainLogger } from "main/logger";
 import { registerItchProtocol } from "main/net/register-itch-protocol";
+import {
+  registerShellProtocol,
+  SHELL_ENTRY_PATH,
+  SHELL_ORIGIN,
+} from "main/net/register-shell-protocol";
 import { promisedModal } from "main/reactors/modals";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
@@ -39,7 +44,6 @@ import { basename, dirname } from "path";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "common/util/rate-limit";
-import { format as formatUrl, UrlObject } from "url";
 
 const logger = mainLogger.child(__filename);
 let dispatchedBoot = false;
@@ -572,14 +576,7 @@ interface AppURLParams extends ParsedUrlQueryInput {
 }
 
 function makeAppURL(params: AppURLParams): string {
-  let urlObject: UrlObject = {
-    pathname: getRendererFilePath("index.html"),
-    protocol: "file",
-    slashes: true,
-  };
-  urlObject.search = stringify(params);
-
-  return formatUrl(urlObject);
+  return `${SHELL_ORIGIN}${SHELL_ENTRY_PATH}?${stringify(params)}`;
 }
 
 function getIconPath(): string {
@@ -601,9 +598,7 @@ function commonBrowserWindowOpts(
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
-      // In development, the front-end is served by webpack-dev-server
-      // over HTTP, so we can't have websecurity
-      webSecurity: env.development ? false : true,
+      webSecurity: true,
       nodeIntegration: false,
       sandbox: false,
       contextIsolation: true,
@@ -627,6 +622,7 @@ function getAppSession(store: Store): Session {
 
     // this works around https://github.com/itchio/itch/issues/2039
     registerItchProtocol(store, _cachedAppSession);
+    registerShellProtocol(_cachedAppSession);
   }
 
   return _cachedAppSession;

@@ -49,7 +49,6 @@ export type SyncIpcHandlers = {
   buildApp: (x: undefined) => { name: string; isPackaged: boolean };
   userAgent: (x: undefined) => string;
   getImageURL: (p: string) => string;
-  getInjectURL: (p: InjectName) => string;
   legacyMarketPath: () => string;
   mainLogPath: () => string;
 };

@@ -7,7 +7,7 @@ import { promises as fsPromises } from "fs";
 import { cpu, graphics, osInfo } from "systeminformation";
 
 import { legacyMarketPath, mainLogPath } from "main/util/paths";
-import { getImageURL, getInjectURL } from "main/util/resources";
+import { getImageURL } from "main/util/resources";
 import { isItchioURL } from "main/util/url";
 import { isItchioOrigin } from "common/constants/urls";
 import { userAgent } from "main/util/useragent";
@@ -129,6 +129,14 @@ export function main() {
         corsEnabled: true,
       },
     },
+    {
+      scheme: "itch-shell",
+      privileges: {
+        standard: true,
+        secure: true,
+        supportFetchAPI: true,
+      },
+    },
   ]);
 
   let store: Store = require("main/store").default;
@@ -148,7 +156,6 @@ export function main() {
           return userAgent();
         },
         getImageURL,
-        getInjectURL,
         legacyMarketPath,
         mainLogPath,
       },

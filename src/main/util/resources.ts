@@ -1,5 +1,6 @@
 import { join } from "path";
 import { getAppPath } from "main/helpers/app";
+import { makeShellURL } from "main/net/register-shell-protocol";
 import type { InjectName } from "common/ipc";
 
 let absoluteAppPath = join(getAppPath(), "src");
@@ -21,7 +22,7 @@ export function getImagePath(path: string): string {
 }
 
 export function getImageURL(path: string): string {
-  return `file://${getImagePath(path)}`;
+  return makeShellURL("src/static/images/" + path);
 }
 
 export function getLocalePath(path: string): string {
@@ -36,10 +37,6 @@ export function getLocalesConfigPath(): string {
 
 export function getInjectPath(name: InjectName) {
   return join(absoluteMainDistPath, `inject-${name}.bundle.cjs`);
-}
-
-export function getInjectURL(name: InjectName) {
-  return `file://${getInjectPath(name)}`;
 }
 
 export function getRendererFilePath(name: string) {

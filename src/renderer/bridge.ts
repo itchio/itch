@@ -24,7 +24,6 @@ export const useragent = {
 
 export const resources = {
   getImageURL: supplement.resources.getImageURL,
-  getInjectURL: supplement.resources.getInjectURL,
 };
 
 export const paths = {
