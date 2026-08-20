@@ -30,10 +30,6 @@ if (rendererResult.metafile) {
 }
 console.log("Renderer built!");
 
-// Copy and process HTML
-const html = fs.readFileSync("src/index.html", "utf8");
-const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' http://127.0.0.1:* https://dale.itch.zone; style-src 'unsafe-inline'; img-src 'self' https://img.itch.zone https://weblate.itch.zone">`;
-const processedHtml = html.replace("</head>", `  ${csp}\n</head>`);
-fs.writeFileSync("dist/renderer/index.html", processedHtml);
+fs.copyFileSync("src/index.html", "dist/renderer/index.html");
 
 console.log("Build complete!");

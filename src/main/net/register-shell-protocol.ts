@@ -19,6 +19,18 @@ export function makeShellURL(relativePath: string): string {
 
 const logger = mainLogger.child(__filename);
 
+const SHELL_CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
+  "img-src 'self' https://img.itch.zone https://weblate.itch.zone",
+  "connect-src 'self' https://dale.itch.zone",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "frame-ancestors 'none'",
+].join("; ");
+
 const registered = new Set<Session>();
 
 /**
@@ -60,12 +72,16 @@ export function registerShellProtocol(ses: Session) {
       const stream = Readable.toWeb(
         createReadStream(filePath)
       ) as ReadableStream;
+      const headers: Record<string, string> = {
+        "content-type": contentType,
+        "content-length": `${stats.size}`,
+      };
+      if (contentType === "text/html") {
+        headers["content-security-policy"] = SHELL_CSP;
+      }
       return new Response(stream, {
         status: 200,
-        headers: {
-          "content-type": contentType,
-          "content-length": `${stats.size}`,
-        },
+        headers,
       });
     } catch (e) {
       if (getErrorCode(e) === "ENOENT") {

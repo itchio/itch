@@ -40,7 +40,6 @@ async function main() {
     fs.writeFileSync("dist/renderer/metafile.json", JSON.stringify(rendererResult.metafile));
   }
 
-  // Copy HTML for development (no CSP)
   fs.copyFileSync("src/index.html", "dist/renderer/index.html");
   console.log("Renderer built!");
 
