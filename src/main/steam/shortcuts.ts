@@ -13,12 +13,21 @@ import {
   getActiveUserId,
   isSteamRunning,
 } from "main/steam/steam-install";
-import { downloadGridArt, removeGridArt } from "main/steam/grid-art";
+import {
+  downloadGridArt,
+  removeGridArt,
+  renameGridArt,
+} from "main/steam/grid-art";
+import {
+  SteamShortcutEntrySummary,
+  SteamShortcutsSnapshot,
+} from "common/types/steam";
 import {
   copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
+  statSync,
   writeFileSync,
 } from "fs";
 import { homedir } from "os";
@@ -111,8 +120,8 @@ function resolveLauncher(): Launcher {
 // stable per-game id key: deriving from the title (as Steam does for its
 // own shortcuts) would collide across same-titled games and change on
 // renames
-function appidKey(game: Game): string {
-  return `itch-game-${game.id}`;
+function appidKey(gameId: number): string {
+  return `itch-game-${gameId}`;
 }
 
 // Quoted so Steam's shell invocation on Linux doesn't interpret ? and &
@@ -201,73 +210,150 @@ function serialized<T>(work: () => Promise<T>): Promise<T> {
   return run;
 }
 
-export function addShortcut(game: Game): Promise<void> {
-  return serialized(() => performAddShortcut(game));
+export interface ApplyShortcutsInput {
+  /**
+   * Games whose shortcuts should exist. Existing entries are rewritten
+   * in canonical form (healing stale launchers and old id schemes); new
+   * ones are appended with freshly downloaded grid art.
+   */
+  ensure: Game[];
+  /** game ids whose shortcuts should be removed */
+  removeGameIds: number[];
 }
 
-export function removeShortcut(gameId: number): Promise<void> {
-  return serialized(() => performRemoveShortcut(gameId));
+export function applyShortcuts(input: ApplyShortcutsInput): Promise<void> {
+  return serialized(() => performApply(input));
 }
 
-async function performAddShortcut(game: Game): Promise<void> {
+// Kept entries not covered by `ensure` (games no longer installed) are
+// also healed when their launcher went stale, from their stored fields.
+async function performApply(input: ApplyShortcutsInput): Promise<void> {
+  const ensure = input.ensure.filter(
+    (g) => !input.removeGameIds.includes(g.id)
+  );
+  const removeSet = new Set(input.removeGameIds);
   if (await isSteamRunning()) {
     // Steam rewrites shortcuts.vdf from memory on exit, discarding edits
     // made while it runs
     throw new SteamError("steam-running");
   }
   const ctx = resolveContext();
-
   const root = readShortcutsFile(ctx.shortcutsPath);
   const table = getShortcutsTable(root);
 
-  const launcher = resolveLauncher();
-  const exe = `"${launcher.exePath}"`;
-  const appid = shortcutEntryId(exe, appidKey(game));
-  const shortId = shortAppId(exe, appidKey(game));
-
-  let icon = "";
+  // removal must work without a launcher; only writing entries needs one
+  let launcher: Launcher | null;
   try {
-    icon = (await downloadGridArt(logger, ctx.configDir, shortId, game)) ?? "";
+    launcher = resolveLauncher();
   } catch (e) {
-    logger.warn(`could not download grid art for ${game.title}: ${e}`);
+    if (ensure.length > 0) {
+      throw e;
+    }
+    launcher = null;
   }
 
-  const existing = entriesOf(table).find((e) => entryGameId(e) === game.id);
-  if (existing) {
-    // refresh fields that may have gone stale (exe path changes across
-    // app updates, titles get renamed)
-    const oldAppid = getField(existing, "appid");
-    if (typeof oldAppid === "number" && oldAppid !== appid) {
-      removeGridArt(ctx.configDir, (oldAppid >>> 0).toString());
+  const kept: VdfObject[] = [];
+  const removed: VdfObject[] = [];
+  for (const entry of Object.values(table)) {
+    if (typeof entry !== "object") {
+      // reindexing would re-key values we don't understand; leave the
+      // file alone instead
+      throw new Error("unexpected non-object entry in shortcuts table");
     }
-    setField(existing, "AppName", game.title);
-    setField(existing, "Exe", exe);
-    setField(existing, "StartDir", `"${dirname(launcher.exePath)}"`);
-    setField(existing, "LaunchOptions", launchOptionsFor(launcher, game.id));
-    setField(existing, "appid", appid);
-    // deliberately reverts a manual re-enable, since the overlay breaks
-    // relaunch-while-running (see AllowOverlay below)
-    setField(existing, "AllowOverlay", 0);
-    if (icon) {
-      setField(existing, "icon", icon);
+    const entryId = entryGameId(entry);
+    if (entryId !== null && removeSet.has(entryId)) {
+      removed.push(entry);
+    } else {
+      kept.push(entry);
     }
-  } else {
-    const indices = Object.keys(table)
-      .map((k) => parseInt(k, 10))
-      .filter((n) => Number.isFinite(n));
-    const nextIndex = indices.length > 0 ? Math.max(...indices) + 1 : 0;
-    table[nextIndex.toString()] = {
-      appid,
+  }
+
+  let changed = removed.length > 0;
+
+  const makeCanonicalize =
+    (l: Launcher) =>
+    (entry: VdfObject, gameId: number): boolean => {
+      const exe = `"${l.exePath}"`;
+      const appid = shortcutEntryId(exe, appidKey(gameId));
+      const launchOptions = launchOptionsFor(l, gameId);
+      const startDir = `"${dirname(l.exePath)}"`;
+      if (
+        getField(entry, "Exe") === exe &&
+        getField(entry, "StartDir") === startDir &&
+        getField(entry, "LaunchOptions") === launchOptions &&
+        getField(entry, "appid") === appid &&
+        getField(entry, "AllowOverlay") === 0
+      ) {
+        return false;
+      }
+      const oldAppid = getField(entry, "appid");
+      if (typeof oldAppid === "number" && oldAppid !== appid) {
+        // grid art is named after the unsigned form of the appid; carry
+        // it over so healing an entry doesn't lose its art
+        const oldShortId = (oldAppid >>> 0).toString();
+        const newShortId = shortAppId(exe, appidKey(gameId));
+        renameGridArt(ctx.configDir, oldShortId, newShortId);
+        const icon = getField(entry, "icon");
+        if (typeof icon === "string" && icon.includes(oldShortId)) {
+          setField(entry, "icon", icon.split(oldShortId).join(newShortId));
+        }
+      }
+      setField(entry, "Exe", exe);
+      setField(entry, "StartDir", startDir);
+      setField(entry, "LaunchOptions", launchOptions);
+      setField(entry, "appid", appid);
+      // the overlay's LD_PRELOAD breaks Chromium's single-instance
+      // handshake, so launches silently no-op while the app is running;
+      // this deliberately reverts a manual re-enable
+      setField(entry, "AllowOverlay", 0);
+      return true;
+    };
+  const canonicalize = launcher ? makeCanonicalize(launcher) : null;
+
+  const byGameId = new Map<number, VdfObject>();
+  for (const entry of kept) {
+    const entryId = entryGameId(entry);
+    if (entryId !== null) {
+      byGameId.set(entryId, entry);
+    }
+  }
+
+  const ensuredIds = new Set<number>();
+  for (const game of ensure) {
+    // ensure is non-empty only when a launcher resolved
+    const l = launcher!;
+    const exe = `"${l.exePath}"`;
+    ensuredIds.add(game.id);
+    const existing = byGameId.get(game.id);
+    if (existing) {
+      if (canonicalize!(existing, game.id)) {
+        changed = true;
+      }
+      if (getField(existing, "AppName") !== game.title) {
+        setField(existing, "AppName", game.title);
+        changed = true;
+      }
+      continue;
+    }
+
+    const shortId = shortAppId(exe, appidKey(game.id));
+    let icon = "";
+    try {
+      icon =
+        (await downloadGridArt(logger, ctx.configDir, shortId, game)) ?? "";
+    } catch (e) {
+      logger.warn(`could not download grid art for ${game.title}: ${e}`);
+    }
+    kept.push({
+      appid: shortcutEntryId(exe, appidKey(game.id)),
       AppName: game.title,
       Exe: exe,
-      StartDir: `"${dirname(launcher.exePath)}"`,
+      StartDir: `"${dirname(l.exePath)}"`,
       icon,
       ShortcutPath: "",
-      LaunchOptions: launchOptionsFor(launcher, game.id),
+      LaunchOptions: launchOptionsFor(l, game.id),
       IsHidden: 0,
       AllowDesktopConfig: 1,
-      // the overlay's LD_PRELOAD breaks Chromium's single-instance
-      // handshake, so launches silently no-op while the app is running
       AllowOverlay: 0,
       OpenVR: 0,
       Devkit: 0,
@@ -276,42 +362,26 @@ async function performAddShortcut(game: Game): Promise<void> {
       LastPlayTime: 0,
       FlatpakAppID: "",
       tags: {},
-    };
+    });
+    changed = true;
   }
 
-  mkdirSync(ctx.configDir, { recursive: true });
-  writeShortcutsFile(ctx.shortcutsPath, root);
-  logger.info(`added Steam shortcut for ${game.title} (${game.id})`);
-}
+  if (canonicalize) {
+    for (const [entryId, entry] of byGameId) {
+      if (!ensuredIds.has(entryId) && canonicalize(entry, entryId)) {
+        changed = true;
+      }
+    }
+  }
 
-async function performRemoveShortcut(gameId: number): Promise<void> {
+  if (!changed) {
+    return;
+  }
+
+  // art downloads above can take a while: re-check that Steam didn't
+  // start in the meantime before replacing the file
   if (await isSteamRunning()) {
     throw new SteamError("steam-running");
-  }
-  const ctx = resolveContext();
-  if (!existsSync(ctx.shortcutsPath)) {
-    return;
-  }
-
-  const root = readShortcutsFile(ctx.shortcutsPath);
-  const table = getShortcutsTable(root);
-
-  const kept: VdfValue[] = [];
-  const removed: VdfObject[] = [];
-  for (const entry of Object.values(table)) {
-    if (typeof entry !== "object") {
-      // reindexing would re-key values we don't understand; leave the
-      // file alone instead
-      throw new Error("unexpected non-object entry in shortcuts table");
-    }
-    if (entryGameId(entry) === gameId) {
-      removed.push(entry);
-    } else {
-      kept.push(entry);
-    }
-  }
-  if (removed.length === 0) {
-    return;
   }
 
   const reindexed: VdfObject = {};
@@ -319,32 +389,122 @@ async function performRemoveShortcut(gameId: number): Promise<void> {
     reindexed[i.toString()] = entry;
   });
   setField(root, "shortcuts", reindexed);
+  mkdirSync(ctx.configDir, { recursive: true });
   writeShortcutsFile(ctx.shortcutsPath, root);
 
   for (const entry of removed) {
-    // grid art is named after the unsigned form of the entry's appid
     const appid = getField(entry, "appid");
     if (typeof appid === "number") {
       removeGridArt(ctx.configDir, (appid >>> 0).toString());
     }
   }
-  logger.info(`removed Steam shortcut for game ${gameId}`);
+  logger.info(
+    `applied Steam shortcuts: ensured ${ensure.length}, removed ${removed.length}`
+  );
 }
 
-/**
- * Sync so it can run while building a context menu. Returns null when
- * Steam (or its active user) can't be located, and never throws.
- */
-export function getShortcutState(gameId: number): "present" | "absent" | null {
+function unquote(s: string): string {
+  const m = /^"(.*)"$/.exec(s);
+  return m ? m[1] : s;
+}
+
+/** never throws: every failure becomes a snapshot field */
+export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
+  const snapshot: SteamShortcutsSnapshot = {
+    steamRoot: null,
+    userId: null,
+    shortcutsPath: null,
+    fileExists: false,
+    fileSize: null,
+    fileMtimeMs: null,
+    backupExists: false,
+    steamRunning: false,
+    totalEntries: null,
+    parseError: null,
+    lastOpError: null,
+    entries: [],
+  };
+
   try {
-    const ctx = resolveContext();
-    if (!existsSync(ctx.shortcutsPath)) {
-      return "absent";
-    }
-    const table = getShortcutsTable(readShortcutsFile(ctx.shortcutsPath));
-    const present = entriesOf(table).some((e) => entryGameId(e) === gameId);
-    return present ? "present" : "absent";
+    snapshot.steamRunning = await isSteamRunning();
   } catch (e) {
-    return null;
+    logger.warn(`could not check for running Steam: ${e}`);
   }
+
+  snapshot.steamRoot = getSteamRoot();
+  if (!snapshot.steamRoot) {
+    return snapshot;
+  }
+  snapshot.userId = getActiveUserId(snapshot.steamRoot);
+  if (!snapshot.userId) {
+    return snapshot;
+  }
+
+  const configDir = join(
+    snapshot.steamRoot,
+    "userdata",
+    snapshot.userId,
+    "config"
+  );
+  const shortcutsPath = join(configDir, "shortcuts.vdf");
+  snapshot.shortcutsPath = shortcutsPath;
+  snapshot.backupExists = existsSync(`${shortcutsPath}.itch-bak`);
+  if (!existsSync(shortcutsPath)) {
+    return snapshot;
+  }
+  snapshot.fileExists = true;
+  try {
+    const stats = statSync(shortcutsPath);
+    snapshot.fileSize = stats.size;
+    snapshot.fileMtimeMs = stats.mtimeMs;
+  } catch (e) {
+    // fine without stats
+  }
+
+  let table: VdfObject;
+  try {
+    table = getShortcutsTable(readShortcutsFile(shortcutsPath));
+  } catch (e) {
+    snapshot.parseError = String(e);
+    return snapshot;
+  }
+
+  let launcherExe: string | null = null;
+  try {
+    launcherExe = resolveLauncher().exePath;
+  } catch (e) {
+    // stale-exe detection degrades to an existence check
+  }
+
+  const all = Object.values(table);
+  snapshot.totalEntries = all.length;
+  for (const entry of all) {
+    if (typeof entry !== "object") {
+      continue;
+    }
+    const gameId = entryGameId(entry);
+    if (gameId === null) {
+      continue;
+    }
+    const appName = getField(entry, "AppName");
+    const exe = getField(entry, "Exe");
+    const launchOptions = getField(entry, "LaunchOptions");
+    const appid = getField(entry, "appid");
+    const exePath = typeof exe === "string" ? unquote(exe) : "";
+    const staleExe =
+      !exePath ||
+      !existsSync(exePath) ||
+      (launcherExe !== null && exePath !== launcherExe);
+    const summary: SteamShortcutEntrySummary = {
+      gameId,
+      appName: typeof appName === "string" ? appName : "",
+      appid: typeof appid === "number" ? appid : null,
+      exe: typeof exe === "string" ? exe : "",
+      launchOptions: typeof launchOptions === "string" ? launchOptions : "",
+      staleExe,
+    };
+    snapshot.entries.push(summary);
+  }
+
+  return snapshot;
 }

@@ -14,6 +14,8 @@ import {
   PrereqsStateResponse,
   SecretSettingsParams,
   SecretSettingsResponse,
+  SteamShortcutsParams,
+  SteamShortcutsResponse,
   SendFeedbackParams,
   ShowErrorParams,
   ShowErrorResponse,
@@ -121,6 +123,7 @@ export const prepModals = (uuid: () => string) => {
       SwitchVersionCaveResponse
     >(uuid),
     secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(uuid),
+    steamShortcuts: widget<SteamShortcutsParams, SteamShortcutsResponse>(uuid),
     showError: widget<ShowErrorParams, ShowErrorResponse>(uuid),
     twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
     sendFeedback: widget<SendFeedbackParams, void>(uuid),

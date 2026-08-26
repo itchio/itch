@@ -11,7 +11,6 @@ import { formatOperation } from "common/format/operation";
 import { Game } from "common/butlerd/messages";
 import { actionForGame } from "common/util/action-for-game";
 import urls from "common/constants/urls";
-import { getShortcutState } from "main/steam/shortcuts";
 
 export function concatTemplates(
   a: MenuTemplate,
@@ -111,20 +110,11 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
         action: actions.manageGame({ game }),
       });
 
-      const steamState = getShortcutState(game.id);
-      if (steamState === "present") {
-        uninstallReinstallItems.push({
-          id: "context--grid-item-remove-from-steam",
-          localizedLabel: ["grid.item.remove_from_steam"],
-          action: actions.removeGameFromSteam({ game }),
-        });
-      } else if (steamState === "absent") {
-        uninstallReinstallItems.push({
-          id: "context--grid-item-add-to-steam",
-          localizedLabel: ["grid.item.add_to_steam"],
-          action: actions.addGameToSteam({ game }),
-        });
-      }
+      uninstallReinstallItems.push({
+        id: "context--grid-item-steam-shortcuts",
+        localizedLabel: ["grid.item.steam_shortcuts"],
+        action: actions.openSteamShortcutsDialog({ gameId: game.id }),
+      });
 
       if (numCaves === 1) {
         uninstallReinstallItems.push({

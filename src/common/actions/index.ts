@@ -650,13 +650,15 @@ export const actions = wireActions({
     /** id of the cave to explore */
     caveId: string;
   }>(),
-  addGameToSteam: action<{
-    /** the game to create a Steam shortcut for */
-    game: Game;
+  openSteamShortcutsDialog: action<{
+    /** game to pre-stage a shortcut for, if any */
+    gameId?: number;
   }>(),
-  removeGameFromSteam: action<{
-    /** the game whose Steam shortcut to remove */
-    game: Game;
+  steamShortcutsSave: action<{
+    /** desired state: games that should have Steam shortcuts */
+    checkedGameIds: number[];
+    /** desired state: games that should not */
+    uncheckedGameIds: number[];
   }>(),
   forceCloseGameRequest: action<{
     /** the game we want to force-quit */

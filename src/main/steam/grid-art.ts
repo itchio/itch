@@ -1,7 +1,7 @@
 import { Game } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { downloadToFileWithRetry } from "main/net/download";
-import { copyFileSync, readdirSync, unlinkSync } from "fs";
+import { copyFileSync, readdirSync, renameSync, unlinkSync } from "fs";
 import { join } from "path";
 
 function extensionFor(url: string): string {
@@ -51,6 +51,38 @@ export async function downloadGridArt(
   return join(gridDir, `${shortId}_icon${ext}`);
 }
 
+const artFilePattern = (shortId: string) =>
+  new RegExp(`^${shortId}(p|_hero|_icon|_logo)?\\.(png|jpe?g)$`);
+
+/** carries art over when an entry's appid changes (repair, scheme change) */
+export function renameGridArt(
+  configDir: string,
+  oldShortId: string,
+  newShortId: string
+) {
+  const gridDir = join(configDir, "grid");
+  let entries: string[];
+  try {
+    entries = readdirSync(gridDir);
+  } catch (e) {
+    return;
+  }
+
+  const re = artFilePattern(oldShortId);
+  for (const name of entries) {
+    if (re.test(name)) {
+      try {
+        renameSync(
+          join(gridDir, name),
+          join(gridDir, newShortId + name.slice(oldShortId.length))
+        );
+      } catch (e) {
+        // best effort
+      }
+    }
+  }
+}
+
 export function removeGridArt(configDir: string, shortId: string) {
   const gridDir = join(configDir, "grid");
   let entries: string[];
@@ -60,7 +92,7 @@ export function removeGridArt(configDir: string, shortId: string) {
     return;
   }
 
-  const re = new RegExp(`^${shortId}(p|_hero|_icon|_logo)?\\.(png|jpe?g)$`);
+  const re = artFilePattern(shortId);
   for (const name of entries) {
     if (re.test(name)) {
       try {

@@ -12,6 +12,7 @@ import {
 } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
+import HintTooltip from "renderer/App/HintTooltip";
 import Button from "renderer/basics/Button";
 import { HoverCover } from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
@@ -360,6 +361,9 @@ class Modals extends React.PureComponent<Props, State> {
             {this.renderContent()}
           </div>
         )}
+        {/* the dialog is in the browser's top layer, where Layout's
+            tooltip instance can't paint */}
+        {modal && <HintTooltip />}
       </ModalDialog>
     );
   }

@@ -8,6 +8,7 @@ import forceCloseGameRequest from "main/reactors/dialogs/force-close-game-reques
 import showGameUpdate from "main/reactors/dialogs/show-game-update";
 import clearBrowsingData from "main/reactors/dialogs/clear-browsing-data";
 import scanInstallLocations from "main/reactors/dialogs/scan-install-locations";
+import steamShortcuts from "main/reactors/dialogs/steam-shortcuts";
 
 export default function (watcher: Watcher) {
   changeUser(watcher);
@@ -18,4 +19,5 @@ export default function (watcher: Watcher) {
   showGameUpdate(watcher);
   clearBrowsingData(watcher);
   scanInstallLocations(watcher);
+  steamShortcuts(watcher);
 }

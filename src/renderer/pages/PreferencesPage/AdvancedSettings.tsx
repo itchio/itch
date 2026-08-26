@@ -54,6 +54,11 @@ class AdvancedSettings extends React.PureComponent<Props> {
               {T(["preferences.advanced.clear_browsing_data"])}
             </LinkButton>
           </div>
+          <div className="section">
+            <LinkButton type="button" onClick={this.openSteamShortcuts}>
+              {T(["preferences.advanced.steam_shortcuts"])}
+            </LinkButton>
+          </div>
           <SettingsGroup>
             <Checkbox
               name="disableBrowser"
@@ -80,6 +85,12 @@ class AdvancedSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     e.preventDefault();
     dispatch(actions.navigate({ wind: "root", url: "itch://applog" }));
+  };
+
+  openSteamShortcuts = (e: React.MouseEvent<any>) => {
+    const { dispatch } = this.props;
+    e.preventDefault();
+    dispatch(actions.openSteamShortcutsDialog({}));
   };
 
   clearBrowsingData = (e: React.MouseEvent<any>) => {

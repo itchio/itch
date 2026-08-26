@@ -5,6 +5,7 @@ import {
   Upload,
   Build,
 } from "common/butlerd/messages";
+import { SteamShortcutsSnapshot } from "common/types/steam";
 
 export interface PushBuildParams {
   /**
@@ -48,6 +49,18 @@ export interface ShowErrorResponse {
 
 export interface SecretSettingsParams {}
 export interface SecretSettingsResponse {}
+
+//---------------------
+
+export interface SteamShortcutsParams {
+  snapshot: SteamShortcutsSnapshot;
+  /** games with at least one cave; unioned with snapshot entries */
+  installedGames: Game[];
+  /** pre-stage this game's checkbox when opened from its context menu */
+  initialGameId?: number;
+}
+
+export interface SteamShortcutsResponse {}
 
 //---------------------
 
