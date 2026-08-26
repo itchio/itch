@@ -46,6 +46,9 @@ const ModalDialog = styled.dialog.withConfig({
   max-height: none;
   color: inherit;
 
+  /* allow the box shadow to appear */
+  overflow: visible;
+
   /* Backdrop styling */
   &::backdrop {
     background-color: rgba(7, 4, 4, 0.74);
