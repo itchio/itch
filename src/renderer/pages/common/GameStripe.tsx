@@ -75,6 +75,8 @@ interface GenericProps<Params, Item> {
   renderTitleExtras?: () => JSX.Element | null;
   /** items without a game are skipped when rendering */
   getGame: (item: Item) => Game | undefined;
+  /** every game in this stripe is owned (e.g. owned-bundle contents) */
+  forceOwned?: boolean;
 
   dispatch: Dispatch;
   tab: string;
@@ -178,7 +180,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       }
 
       const doneSet = new Set<number>();
-      const { getGame } = this.props;
+      const { getGame, forceOwned } = this.props;
       return (
         <>
           {result.items.map((item) => {
@@ -193,6 +195,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
                 className="stripe--item"
                 data-game-id={game.id}
                 game={game}
+                forceOwned={forceOwned}
               />
             );
           })}
@@ -241,13 +244,14 @@ function renderNoop(): JSX.Element | null {
 class StripeItem extends React.PureComponent<
   {
     game?: Game;
+    forceOwned?: boolean;
   } & React.HTMLAttributes<HTMLDivElement>
 > {
   override render() {
-    const { game, ...restProps } = this.props;
+    const { game, forceOwned, ...restProps } = this.props;
     return (
       <StripeItemDiv {...restProps}>
-        <StandardGameCover game={game} showInfo />
+        <StandardGameCover game={game} showInfo forceOwned={forceOwned} />
       </StripeItemDiv>
     );
   }

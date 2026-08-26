@@ -63,6 +63,7 @@ class BundlePage extends React.PureComponent<Props> {
 
         <BundleGameSeries
           label={undefined}
+          forceOwned
           params={{
             profileId: profile.id,
             bundleId,

@@ -39,6 +39,7 @@ class BundleStripe extends React.PureComponent<Props> {
         params={{ profileId: profile.id, bundleId: bundle.id }}
         renderTitleExtras={this.renderTitleExtras}
         getGame={this.getGame}
+        forceOwned
       />
     );
   }

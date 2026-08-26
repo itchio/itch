@@ -98,6 +98,9 @@ class StandardGameCover extends React.PureComponent<Props> {
       children,
       showGifMarker = true,
       disableLink = false,
+      // not for the DOM: only read by onContextMenu, but it must not end
+      // up in restProps
+      forceOwned,
       ...restProps
     } = this.props;
 
@@ -139,7 +142,7 @@ class StandardGameCover extends React.PureComponent<Props> {
   }
 
   onContextMenu = (ev: React.MouseEvent) => {
-    const { game, dispatch } = this.props;
+    const { game, dispatch, forceOwned } = this.props;
     if (!game) {
       return;
     }
@@ -151,6 +154,7 @@ class StandardGameCover extends React.PureComponent<Props> {
         clientX,
         clientY,
         game,
+        forceOwned,
         wind,
       })
     );
@@ -164,6 +168,8 @@ interface Props {
   className?: string;
   showGifMarker?: boolean;
   disableLink?: boolean;
+  /** see openGameContextMenu's forceOwned */
+  forceOwned?: boolean;
   children?: JSX.Element | JSX.Element[];
 }
 

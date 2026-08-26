@@ -20,6 +20,8 @@ interface GenericExtraProps<Item> {
   renderItemExtras?: (item: Item) => JSX.Element | null;
   /** hide the game's short description and classification/platforms line */
   hideGameDetails?: boolean;
+  /** every game in this series is owned (e.g. owned-bundle contents) */
+  forceOwned?: boolean;
 }
 
 interface GameSeriesProps<Params, Item>
@@ -48,6 +50,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
         renderDescExtras: (props) => props.renderDescExtras,
         renderItemExtras: (props) => props.renderItemExtras,
         hideGameDetails: (props) => props.hideGameDetails,
+        forceOwned: (props) => props.forceOwned,
       });
     }
 
@@ -88,12 +91,13 @@ class GenericGameRecordComponent<Item> extends React.PureComponent<
       renderDescExtras = renderNoop,
       renderItemExtras = renderNoop,
       hideGameDetails,
+      forceOwned,
     } = this.props;
     const game = record;
     return (
       <Box className="gameseries--box" data-game-id={game.id}>
         <BoxInner>
-          <StandardGameCover game={game} />
+          <StandardGameCover game={game} forceOwned={forceOwned} />
           <FilterSpacer />
           <StandardGameDesc game={game} hideDetails={hideGameDetails}>
             {renderDescExtras(item)}

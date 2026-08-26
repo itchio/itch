@@ -463,6 +463,11 @@ export const actions = wireActions({
     OpenContextMenuBase & {
       /** game to open the context menu of */
       game: Game;
+      /**
+       * treat the game as owned even if commons has no download key —
+       * set by views that know about unmaterialized bundle ownership
+       */
+      forceOwned?: boolean;
     }
   >(),
   openUserMenu: action<OpenContextMenuBase>(),

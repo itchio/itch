@@ -106,10 +106,16 @@ export interface GameStatus {
  * Overlays ownership known from outside of commons (e.g. bundle ownership
  * reported by Fetch.GameOwnership) on top of a computed GameStatus, so
  * games owned through unmaterialized bundles show as installable instead
- * of purchasable.
+ * of purchasable. Also overrides press access: a materialized key beats
+ * the press branch in rawGetGameStatus, so deferred ownership should too
+ * ("Install", not "Review", for owned press-system games).
  */
 export function withOwnedAccess(status: GameStatus): GameStatus {
-  if (status.access === Access.None) {
+  if (
+    status.access === Access.None ||
+    status.access === Access.Press ||
+    status.access === Access.Demo
+  ) {
     return rawWithOwnedAccess(status);
   }
   return status;

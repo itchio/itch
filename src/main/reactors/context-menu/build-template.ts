@@ -5,6 +5,7 @@ import getGameStatus, {
   Access,
   OperationType,
   Operation,
+  withOwnedAccess,
 } from "common/helpers/get-game-status";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { formatOperation } from "common/format/operation";
@@ -27,10 +28,17 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
-export function gameControls(store: Store, game: Game): MenuTemplate {
+export function gameControls(
+  store: Store,
+  game: Game,
+  forceOwned?: boolean
+): MenuTemplate {
   let template: MenuTemplate = [];
 
-  const status = getGameStatus(store.getState(), game);
+  let status = getGameStatus(store.getState(), game);
+  if (forceOwned) {
+    status = withOwnedAccess(status);
+  }
   const { cave, numCaves, operation } = status;
 
   const mainAction = actionForGame(game, cave);

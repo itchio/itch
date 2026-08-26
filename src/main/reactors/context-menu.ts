@@ -28,8 +28,8 @@ function openMenu(
 
 export default function (watcher: Watcher) {
   watcher.on(actions.openGameContextMenu, async (store, action) => {
-    const { game } = action.payload;
-    const template = gameControls(store, game);
+    const { game, forceOwned } = action.payload;
+    const template = gameControls(store, game, forceOwned);
 
     const { wind, clientX, clientY } = action.payload;
     openMenu(store, template, { wind, clientX, clientY });

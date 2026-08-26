@@ -52,6 +52,10 @@ const BrowserContextDiv = styled.div`
 `;
 
 class BrowserContextGame extends React.PureComponent<Props> {
+  // last ownership answer, captured at render time so the context menu
+  // (opened later by user gesture) can carry the hint
+  private owned = false;
+
   override render() {
     const { game, profileId } = this.props;
 
@@ -74,9 +78,8 @@ class BrowserContextGame extends React.PureComponent<Props> {
 
   renderWithOwnership = FetchGameOwnership.renderCallback(({ result }) => {
     const { status } = this.props;
-    return this.renderContext(
-      result && result.owned ? withOwnedAccess(status) : status
-    );
+    this.owned = !!(result && result.owned);
+    return this.renderContext(this.owned ? withOwnedAccess(status) : status);
   });
 
   renderContext(status: GameStatus) {
@@ -88,7 +91,11 @@ class BrowserContextGame extends React.PureComponent<Props> {
         role="region"
         aria-label="Game"
       >
-        <SmallerGameCover game={game} showInfo={false} />
+        <SmallerGameCover
+          game={game}
+          showInfo={false}
+          forceOwned={this.owned}
+        />
         <Spacer />
         <GameStats game={game} status={status} />
         <Filler />
@@ -128,6 +135,7 @@ class BrowserContextGame extends React.PureComponent<Props> {
       actions.openGameContextMenu({
         wind: ambientWind(),
         game,
+        forceOwned: this.owned,
         clientX,
         clientY,
       })
