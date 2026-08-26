@@ -121,13 +121,13 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
 }
 
 const ClearBrowsingDataList = styled.div`
+  max-width: 540px;
+
   label {
     display: block;
+    background: ${(props) => props.theme.explanation};
     border-left: 3px solid ${(props) => props.theme.prefBorder};
-    padding: 5px 0;
-    padding-left: 5px;
-    margin: 3px 0;
-    margin-bottom: 10px;
+    padding: 10px 14px;
     transition: 0.2s border ease-in-out;
 
     &:hover {
@@ -140,16 +140,14 @@ const ClearBrowsingDataList = styled.div`
   }
 
   .checkbox {
-    margin: 0;
     display: flex;
     align-items: center;
     gap: 10px;
   }
 
   .checkbox-info {
-    margin: 0;
-    margin-top: 5px;
-    margin-left: 5px;
+    /* line up with the label text: 16px box + 10px gap */
+    margin: 4px 0 0 26px;
     font-size: 90%;
     color: ${(props) => props.theme.secondaryText};
   }
