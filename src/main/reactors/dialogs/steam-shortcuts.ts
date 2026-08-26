@@ -90,21 +90,40 @@ function updateSaveState(store: Store) {
   );
 }
 
-// cave ids from the latest successful FetchCaves, for resolving direct
-// launch targets; survives a butlerd outage alongside the games fallback
-let lastCaveIds = new Map<number, string>();
+// caves from the latest successful FetchCaves, for resolving direct launch
+// targets; survives a butlerd outage alongside the games fallback
+let lastCavesByGame = new Map<number, messages.Cave[]>();
+
+// when a game has several caves installed, direct shortcuts follow the
+// one the user actually plays: last touched, then most recently
+// installed. Retargeting after they switch installs surfaces as a
+// "Will update" in the dialog.
+function cavePreference(cave: messages.Cave): number {
+  const at =
+    cave.stats.localLastRunAt ??
+    cave.stats.lastTouchedAt ??
+    cave.stats.installedAt;
+  const ms = at ? new Date(at).getTime() : 0;
+  return isNaN(ms) ? 0 : ms;
+}
 
 async function fetchInstalledGames(): Promise<Game[]> {
   const { items } = await mcall(messages.FetchCaves, {});
   const byId = new Map<number, Game>();
-  const caveIds = new Map<number, string>();
+  const cavesByGame = new Map<number, messages.Cave[]>();
   for (const cave of items ?? []) {
-    if (cave.game && !byId.has(cave.game.id)) {
-      byId.set(cave.game.id, cave.game);
-      caveIds.set(cave.game.id, cave.id);
+    if (!cave.game) {
+      continue;
     }
+    const caves = cavesByGame.get(cave.game.id) ?? [];
+    caves.push(cave);
+    cavesByGame.set(cave.game.id, caves);
   }
-  lastCaveIds = caveIds;
+  for (const [gameId, caves] of cavesByGame) {
+    caves.sort((a, b) => cavePreference(b) - cavePreference(a));
+    byId.set(gameId, caves[0].game);
+  }
+  lastCavesByGame = cavesByGame;
   return [...byId.values()];
 }
 
@@ -139,6 +158,20 @@ async function resolveDirectTarget(
   return null;
 }
 
+// Prefer the cave with the most recent play/install activity, but do not let
+// a browser game or bonus-content cave mask an older native installation.
+async function resolveDirectTargetForGame(
+  gameId: number
+): Promise<SteamDirectTarget | null> {
+  for (const cave of lastCavesByGame.get(gameId) ?? []) {
+    const target = await resolveDirectTarget(cave.id);
+    if (target) {
+      return target;
+    }
+  }
+  return null;
+}
+
 async function forEachWithConcurrency<T>(
   items: T[],
   concurrency: number,
@@ -168,11 +201,11 @@ async function refreshDirectTargets(store: Store) {
   const generation = ++targetsGeneration;
   const results: NonNullable<SteamShortcutsParams["directTargets"]> = {};
   await forEachWithConcurrency(
-    [...lastCaveIds],
+    [...lastCavesByGame.keys()],
     6,
-    async ([gameId, caveId]) => {
+    async (gameId) => {
       try {
-        results[gameId] = await resolveDirectTarget(caveId);
+        results[gameId] = await resolveDirectTargetForGame(gameId);
       } catch (e) {
         results[gameId] = null;
       }
@@ -382,10 +415,9 @@ export default function (watcher: Watcher) {
           // re-resolve at save time: the target can move when the game
           // updates between staging and saving
           let target: SteamDirectTarget | null = null;
-          const caveId = lastCaveIds.get(game.id);
-          if (caveId) {
+          if (lastCavesByGame.has(game.id)) {
             try {
-              target = await resolveDirectTarget(caveId);
+              target = await resolveDirectTargetForGame(game.id);
             } catch (e) {
               logger.warn(`could not resolve target for ${game.title}: ${e}`);
             }
