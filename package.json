@@ -27,7 +27,7 @@
   "dependencies": {
     "@itchio/butlerd": "^15.0.0",
     "buffer": "^6.0.3",
-    "classnames": "^2.2.6",
+    "classnames": "^2.5.1",
     "fast-memoize": "^2.5.2",
     "intl-messageformat": "^9.4.6",
     "logrotate-stream": "^0.2.7",
@@ -62,7 +62,6 @@
     "@electron/osx-sign": "^2.5.0",
     "@electron/packager": "^20.0.2",
     "@itchio/bob": "^2.1.0",
-    "@types/classnames": "^2.2.11",
     "@types/debug": "^4.1.13",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.0.0",
