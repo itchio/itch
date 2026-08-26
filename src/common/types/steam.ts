@@ -7,6 +7,12 @@ import { LocalizedString } from "common/types";
  */
 export type SteamShortcutMode = "itch" | "direct";
 
+/** Canonical command Steam should use for a resolved native launch target. */
+export interface SteamDirectTarget {
+  path: string;
+  launchOptions: string;
+}
+
 /** one itch-created entry in Steam's shortcuts.vdf */
 export interface SteamShortcutEntrySummary {
   gameId: number;

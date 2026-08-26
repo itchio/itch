@@ -5,7 +5,7 @@ import {
   Upload,
   Build,
 } from "common/butlerd/messages";
-import { SteamShortcutsSnapshot } from "common/types/steam";
+import { SteamDirectTarget, SteamShortcutsSnapshot } from "common/types/steam";
 
 export interface PushBuildParams {
   /**
@@ -63,11 +63,11 @@ export interface SteamShortcutsParams {
   /** completed/total games whose shortcut data and artwork are being ensured */
   saveProgress: { completed: number; total: number } | null;
   /**
-   * Per installed game, the executable a "direct" mode shortcut would
-   * point at, or null when the game has none (browser games, missing
-   * native build). null overall while resolution is still in flight.
+   * Per installed game, the command a "direct" mode shortcut would use,
+   * or null when the game has none (browser games, missing native build).
+   * null overall while resolution is still in flight.
    */
-  directTargets: { [gameId: number]: string | null } | null;
+  directTargets: { [gameId: number]: SteamDirectTarget | null } | null;
 }
 
 export interface SteamShortcutsResponse {}

@@ -19,6 +19,7 @@ import {
   renameGridArt,
 } from "main/steam/grid-art";
 import {
+  SteamDirectTarget,
   SteamShortcutEntrySummary,
   SteamShortcutMode,
   SteamShortcutsSnapshot,
@@ -148,6 +149,37 @@ function appidKey(gameId: number): string {
   return `itch-game-${gameId}`;
 }
 
+function quoteWindowsArgument(arg: string): string {
+  // CommandLineToArgvW quoting: backslashes only need doubling when they
+  // precede a quote or the closing quote.
+  let result = '"';
+  let backslashes = 0;
+  for (const char of arg) {
+    if (char === "\\") {
+      backslashes++;
+      continue;
+    }
+    if (char === '"') {
+      result += "\\".repeat(backslashes * 2 + 1) + '"';
+    } else {
+      result += "\\".repeat(backslashes) + char;
+    }
+    backslashes = 0;
+  }
+  return result + "\\".repeat(backslashes * 2) + '"';
+}
+
+function quotePosixArgument(arg: string): string {
+  return `'${arg.replace(/'/g, `'\\''`)}'`;
+}
+
+/** Serializes an argv vector for Steam's non-Steam shortcut command line. */
+export function encodeSteamArguments(args: string[]): string {
+  const quote =
+    process.platform === "win32" ? quoteWindowsArgument : quotePosixArgument;
+  return args.map(quote).join(" ");
+}
+
 // Quoted so Steam's shell invocation on Linux doesn't interpret ? and &
 function launchOptionsFor(launcher: Launcher, gameId: number): string {
   const url = `itch://install?game_id=${gameId}&launch`;
@@ -187,12 +219,7 @@ function setField(entry: VdfObject, name: string, value: VdfValue) {
 interface CanonicalShortcutFields {
   exe: string;
   startDir: string;
-  /**
-   * null leaves the user's LaunchOptions alone except for stripping the
-   * itch marker: direct entries don't need any, and users may add their
-   * own game flags there
-   */
-  launchOptions: string | null;
+  launchOptions: string;
   appid: number;
   allowOverlay: number;
   devkitGameId: string;
@@ -216,14 +243,14 @@ function canonicalItchFields(
 }
 
 function canonicalDirectFields(
-  targetPath: string,
+  target: SteamDirectTarget,
   gameId: number
 ): CanonicalShortcutFields {
-  const exe = `"${targetPath}"`;
+  const exe = `"${target.path}"`;
   return {
     exe,
-    startDir: `"${dirname(targetPath)}"`,
-    launchOptions: null,
+    startDir: `"${dirname(target.path)}"`,
+    launchOptions: target.launchOptions,
     appid: shortcutEntryId(exe, appidKey(gameId)),
     allowOverlay: 1,
     devkitGameId: appidKey(gameId),
@@ -237,14 +264,10 @@ function entryNeedsRepair(
   fields: CanonicalShortcutFields
 ): boolean {
   const launchOptions = getField(entry, "LaunchOptions");
-  const launchOptionsStale =
-    fields.launchOptions !== null
-      ? launchOptions !== fields.launchOptions
-      : typeof launchOptions === "string" && markerRe.test(launchOptions);
   return (
     getField(entry, "Exe") !== fields.exe ||
     getField(entry, "StartDir") !== fields.startDir ||
-    launchOptionsStale ||
+    launchOptions !== fields.launchOptions ||
     getField(entry, "appid") !== fields.appid ||
     getField(entry, "AllowOverlay") !== fields.allowOverlay ||
     getField(entry, "DevkitGameID") !== fields.devkitGameId
@@ -308,8 +331,8 @@ function serialized<T>(work: () => Promise<T>): Promise<T> {
 export interface EnsureShortcut {
   game: Game;
   mode: SteamShortcutMode;
-  /** absolute path of the game executable; required for "direct" mode */
-  targetPath?: string;
+  /** canonical executable and arguments; required for "direct" mode */
+  target?: SteamDirectTarget;
 }
 
 export interface ApplyShortcutsInput {
@@ -393,16 +416,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
     }
     setField(entry, "Exe", fields.exe);
     setField(entry, "StartDir", fields.startDir);
-    if (fields.launchOptions !== null) {
-      setField(entry, "LaunchOptions", fields.launchOptions);
-    } else {
-      const launchOptions = getField(entry, "LaunchOptions");
-      if (typeof launchOptions === "string" && markerRe.test(launchOptions)) {
-        // switching to direct mode drops the whole itch launch command;
-        // the id lives in DevkitGameID from here on
-        setField(entry, "LaunchOptions", "");
-      }
-    }
+    setField(entry, "LaunchOptions", fields.launchOptions);
     setField(entry, "appid", fields.appid);
     setField(entry, "AllowOverlay", fields.allowOverlay);
     setField(entry, "DevkitGameID", fields.devkitGameId);
@@ -426,10 +440,10 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
 
   const fieldsFor = (item: EnsureShortcut): CanonicalShortcutFields => {
     if (item.mode === "direct") {
-      if (!item.targetPath) {
+      if (!item.target) {
         throw new SteamError("no-target");
       }
-      return canonicalDirectFields(item.targetPath, item.game.id);
+      return canonicalDirectFields(item.target, item.game.id);
     }
     return canonicalItchFields(launcher!, item.game.id);
   };
@@ -485,7 +499,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       StartDir: fields.startDir,
       icon,
       ShortcutPath: "",
-      LaunchOptions: fields.launchOptions ?? "",
+      LaunchOptions: fields.launchOptions,
       IsHidden: 0,
       AllowDesktopConfig: 1,
       AllowOverlay: fields.allowOverlay,
@@ -644,7 +658,17 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
       needsRepair =
         staleExe ||
         (typeof exe === "string" &&
-          entryNeedsRepair(entry, canonicalDirectFields(unquote(exe), gameId)));
+          entryNeedsRepair(
+            entry,
+            canonicalDirectFields(
+              {
+                path: unquote(exe),
+                launchOptions:
+                  typeof launchOptions === "string" ? launchOptions : "",
+              },
+              gameId
+            )
+          ));
     } else {
       needsRepair = launcher
         ? entryNeedsRepair(entry, canonicalItchFields(launcher, gameId))

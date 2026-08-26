@@ -6,7 +6,7 @@ import {
   SteamShortcutsResponse,
 } from "common/modals/types";
 import { Dispatch } from "common/types";
-import { SteamShortcutMode } from "common/types/steam";
+import { SteamDirectTarget, SteamShortcutMode } from "common/types/steam";
 import { ambientWind } from "common/util/navigation";
 import { lighten, transparentize } from "polished";
 import React from "react";
@@ -313,10 +313,10 @@ interface RowData {
   /** mode of the existing Steam entry, null when not in Steam */
   steamMode: SteamShortcutMode | null;
   /**
-   * executable a "direct" shortcut would point at: undefined while
-   * still resolving, null when the game has no native build
+   * command a "direct" shortcut would use: undefined while still
+   * resolving, null when the game has no supported native target
    */
-  directTarget: string | null | undefined;
+  directTarget: SteamDirectTarget | null | undefined;
 }
 
 interface Props
@@ -360,8 +360,9 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
       // detect a moved executable here where both sides are available
       const driftedTarget =
         entry.mode === "direct" &&
-        typeof existing.directTarget === "string" &&
-        unquote(entry.exe) !== existing.directTarget;
+        existing.directTarget != null &&
+        (unquote(entry.exe) !== existing.directTarget.path ||
+          entry.launchOptions !== existing.directTarget.launchOptions);
       // missing art only counts when installed: healing it needs the
       // game's cover url
       existing.needsRepair =
@@ -614,16 +615,22 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
 
   renderModeControl(row: RowData, checked: boolean) {
     const { saving } = this.props.modal.widgetParams;
-    // a mode can only be chosen for rows being kept, with a resolved
-    // native executable to point at
-    if (!row.installed || !checked || typeof row.directTarget !== "string") {
+    const hasDirectTarget = row.directTarget != null;
+    // Existing direct shortcuts must always be able to switch back to
+    // itch mode, even when their executable no longer resolves.
+    if (
+      !row.installed ||
+      !checked ||
+      (!hasDirectTarget && row.steamMode !== "direct")
+    ) {
       return null;
     }
     const mode = this.stagedMode(row);
+    const directUnavailable = mode === "itch" && !hasDirectTarget;
     return (
       <ModeButton
         type="button"
-        disabled={saving}
+        disabled={saving || directUnavailable}
         onClick={(e) => {
           // inside the row <label>: don't toggle the checkbox
           e.preventDefault();
@@ -631,7 +638,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           this.toggleMode(row.gameId);
         }}
         data-rh={JSON.stringify([
-          mode === "itch"
+          directUnavailable
+            ? "steam.dialog.mode_direct_unavailable_hint"
+            : mode === "itch"
             ? "steam.dialog.mode_itch_hint"
             : "steam.dialog.mode_direct_hint",
         ])}
@@ -821,6 +830,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
       (r) => r.gameId === gameId
     );
     if (!row) {
+      return;
+    }
+    if (this.stagedMode(row) === "itch" && !row.directTarget) {
       return;
     }
     const next: SteamShortcutMode =

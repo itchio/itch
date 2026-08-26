@@ -3,12 +3,14 @@ import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
 import { SteamShortcutsParams } from "common/modals/types";
 import { LocalizedString, Store } from "common/types";
+import { SteamDirectTarget } from "common/types/steam";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import modals from "main/modals";
 import {
   applyShortcuts,
+  encodeSteamArguments,
   EnsureShortcut,
   getSnapshot,
   SteamError,
@@ -112,10 +114,12 @@ const directFlavors: { [platform: string]: messages.Flavor[] } = {
   darwin: [messages.Flavor.NativeMacos, messages.Flavor.AppMacos],
 };
 
-// the executable a "direct" shortcut would point at: the first launch
-// target that is a native binary for this platform. html/jar/script
-// targets can't be launched by Steam without a wrapper.
-async function resolveDirectTarget(caveId: string): Promise<string | null> {
+// the command a "direct" shortcut would use: the first launch target
+// that is a native binary for this platform. html/jar/script targets
+// can't be launched by Steam without a wrapper.
+async function resolveDirectTarget(
+  caveId: string
+): Promise<SteamDirectTarget | null> {
   const { targets } = await mcall(messages.LaunchGetTargets, { caveId });
   const flavors = directFlavors[process.platform] ?? [];
   for (const target of targets ?? []) {
@@ -126,14 +130,34 @@ async function resolveDirectTarget(caveId: string): Promise<string | null> {
       strategy.candidate &&
       flavors.includes(strategy.candidate.flavor)
     ) {
-      return strategy.fullTargetPath;
+      return {
+        path: strategy.fullTargetPath,
+        launchOptions: encodeSteamArguments(target.action.args ?? []),
+      };
     }
   }
   return null;
 }
 
-// resolution fans out one butlerd call per installed game, so it runs
-// after the dialog is already up and pushes results in when done
+async function forEachWithConcurrency<T>(
+  items: T[],
+  concurrency: number,
+  work: (item: T) => Promise<void>
+) {
+  let nextIndex = 0;
+  const worker = async () => {
+    while (nextIndex < items.length) {
+      const item = items[nextIndex++];
+      await work(item);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, worker)
+  );
+}
+
+// Target discovery can refresh upload metadata, so cap concurrent calls.
+// It still runs after the dialog opens and pushes all results in when done.
 let targetsGeneration = 0;
 
 async function refreshDirectTargets(store: Store) {
@@ -142,15 +166,17 @@ async function refreshDirectTargets(store: Store) {
     return;
   }
   const generation = ++targetsGeneration;
-  const results: { [gameId: number]: string | null } = {};
-  await Promise.all(
-    [...lastCaveIds].map(async ([gameId, caveId]) => {
+  const results: NonNullable<SteamShortcutsParams["directTargets"]> = {};
+  await forEachWithConcurrency(
+    [...lastCaveIds],
+    6,
+    async ([gameId, caveId]) => {
       try {
         results[gameId] = await resolveDirectTarget(caveId);
       } catch (e) {
         results[gameId] = null;
       }
-    })
+    }
   );
   if (generation !== targetsGeneration || openModalId !== modalId) {
     return;
@@ -355,23 +381,23 @@ export default function (watcher: Watcher) {
         if (mode === "direct") {
           // re-resolve at save time: the target can move when the game
           // updates between staging and saving
-          let targetPath: string | null = null;
+          let target: SteamDirectTarget | null = null;
           const caveId = lastCaveIds.get(game.id);
           if (caveId) {
             try {
-              targetPath = await resolveDirectTarget(caveId);
+              target = await resolveDirectTarget(caveId);
             } catch (e) {
               logger.warn(`could not resolve target for ${game.title}: ${e}`);
             }
           }
-          if (!targetPath) {
-            targetPath =
+          if (!target) {
+            target =
               currentDialogParams(store)?.directTargets?.[game.id] ?? null;
           }
-          if (!targetPath) {
+          if (!target) {
             throw new SteamError("no-target");
           }
-          ensure.push({ game, mode, targetPath });
+          ensure.push({ game, mode, target });
         } else {
           ensure.push({ game, mode });
         }
