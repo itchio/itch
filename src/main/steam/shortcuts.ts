@@ -188,7 +188,28 @@ function entriesOf(table: VdfObject): VdfObject[] {
   );
 }
 
-export async function addShortcut(game: Game): Promise<void> {
+// serializes the read-modify-write cycles on shortcuts.vdf; concurrent
+// add/remove dispatches would otherwise clobber each other's writes
+let mutationQueue: Promise<void> = Promise.resolve();
+
+function serialized<T>(work: () => Promise<T>): Promise<T> {
+  const run = mutationQueue.then(work);
+  mutationQueue = run.then(
+    () => undefined,
+    () => undefined
+  );
+  return run;
+}
+
+export function addShortcut(game: Game): Promise<void> {
+  return serialized(() => performAddShortcut(game));
+}
+
+export function removeShortcut(gameId: number): Promise<void> {
+  return serialized(() => performRemoveShortcut(gameId));
+}
+
+async function performAddShortcut(game: Game): Promise<void> {
   if (await isSteamRunning()) {
     // Steam rewrites shortcuts.vdf from memory on exit, discarding edits
     // made while it runs
@@ -263,7 +284,7 @@ export async function addShortcut(game: Game): Promise<void> {
   logger.info(`added Steam shortcut for ${game.title} (${game.id})`);
 }
 
-export async function removeShortcut(gameId: number): Promise<void> {
+async function performRemoveShortcut(gameId: number): Promise<void> {
   if (await isSteamRunning()) {
     throw new SteamError("steam-running");
   }
