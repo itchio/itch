@@ -4,27 +4,29 @@ import { homedir } from "os";
 import { join } from "path";
 import { processes } from "systeminformation";
 
-// cached because getSteamRoot also runs during synchronous menu builds
-let registrySteamPath: string | null | undefined;
+// only hits are cached: a miss is re-queried so a Steam installed while
+// the app runs is still found
+let registrySteamPath: string | undefined;
 
 function windowsRegistrySteamPath(): string | null {
-  if (registrySteamPath === undefined) {
-    registrySteamPath = null;
-    try {
-      const out = execFileSync(
-        "reg",
-        ["query", "HKCU\\Software\\Valve\\Steam", "/v", "SteamPath"],
-        { encoding: "utf8" }
-      );
-      const m = /SteamPath\s+REG_SZ\s+(.+)/.exec(out);
-      if (m) {
-        registrySteamPath = m[1].trim();
-      }
-    } catch (e) {
-      // no registry entry, or reg.exe unavailable
-    }
+  if (registrySteamPath !== undefined) {
+    return registrySteamPath;
   }
-  return registrySteamPath;
+  try {
+    const out = execFileSync(
+      "reg",
+      ["query", "HKCU\\Software\\Valve\\Steam", "/v", "SteamPath"],
+      { encoding: "utf8" }
+    );
+    const m = /SteamPath\s+REG_SZ\s+(.+)/.exec(out);
+    if (m) {
+      registrySteamPath = m[1].trim();
+      return registrySteamPath;
+    }
+  } catch (e) {
+    // no registry entry, or reg.exe unavailable
+  }
+  return null;
 }
 
 export function getSteamRoot(): string | null {

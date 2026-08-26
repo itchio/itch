@@ -28,7 +28,13 @@ function readCString(r: Reader): string {
   if (end < 0) {
     throw new Error("unterminated string in binary VDF");
   }
-  const s = r.buffer.toString("utf8", r.offset, end);
+  const raw = r.buffer.subarray(r.offset, end);
+  const s = raw.toString("utf8");
+  if (!Buffer.from(s, "utf8").equals(raw)) {
+    // a lossy decode (e.g. latin-1 bytes from a third-party tool) would
+    // silently corrupt the string on the next write
+    throw new Error("invalid UTF-8 in binary VDF string");
+  }
   r.offset = end + 1;
   return s;
 }

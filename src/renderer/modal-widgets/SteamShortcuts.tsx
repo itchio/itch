@@ -274,6 +274,7 @@ interface RowData {
   title: string;
   installed: boolean;
   inSteam: boolean;
+  hasCoverArt: boolean;
   /** entry exists but its launcher fields or title need rewriting */
   needsRepair: boolean;
 }
@@ -296,6 +297,7 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
       title: game.title,
       installed: true,
       inSteam: false,
+      hasCoverArt: !!(game.stillCoverUrl || game.coverUrl),
       needsRepair: false,
     });
   }
@@ -303,14 +305,20 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
     const existing = byId.get(entry.gameId);
     if (existing) {
       existing.inSteam = true;
-      existing.needsRepair = entry.staleExe || entry.appName !== existing.title;
+      // missing art only counts when installed: healing it needs the
+      // game's cover url
+      existing.needsRepair =
+        entry.needsRepair ||
+        entry.appName !== existing.title ||
+        (entry.missingArt && existing.hasCoverArt);
     } else {
       byId.set(entry.gameId, {
         gameId: entry.gameId,
         title: entry.appName,
         installed: false,
         inSteam: true,
-        needsRepair: entry.staleExe,
+        hasCoverArt: false,
+        needsRepair: entry.needsRepair,
       });
     }
   }
@@ -680,15 +688,15 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
 
   onSave = () => {
     const rows = rowsOf(this.props.modal.widgetParams);
-    const { checked } = this.state;
+    const { toAdd, toRemove, toRepair } = this.pendingChanges(rows);
     this.props.dispatch(
       actions.steamShortcutsSave({
-        checkedGameIds: rows
-          .filter((r) => !!checked[r.gameId])
-          .map((r) => r.gameId),
-        uncheckedGameIds: rows
-          .filter((r) => !checked[r.gameId])
-          .map((r) => r.gameId),
+        ensureGameIds: [
+          ...toAdd.map((r) => r.gameId),
+          ...toRepair.filter((r) => r.installed).map((r) => r.gameId),
+        ],
+        repairGameIds: toRepair.map((r) => r.gameId),
+        removeGameIds: toRemove.map((r) => r.gameId),
       })
     );
   };

@@ -5,7 +5,7 @@ import { copyFileSync, readdirSync, renameSync, unlinkSync } from "fs";
 import { join } from "path";
 
 function extensionFor(url: string): string {
-  const m = /\.(png|jpe?g)(?:$|\?)/i.exec(url);
+  const m = /\.(png|jpe?g|gif|webp)(?:$|\?)/i.exec(url);
   return m ? `.${m[1].toLowerCase()}` : ".png";
 }
 
@@ -52,7 +52,7 @@ export async function downloadGridArt(
 }
 
 const artFilePattern = (shortId: string) =>
-  new RegExp(`^${shortId}(p|_hero|_icon|_logo)?\\.(png|jpe?g)$`);
+  new RegExp(`^${shortId}(p|_hero|_icon|_logo)?\\.(png|jpe?g|gif|webp)$`);
 
 /** carries art over when an entry's appid changes (repair, scheme change) */
 export function renameGridArt(

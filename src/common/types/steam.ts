@@ -9,6 +9,10 @@ export interface SteamShortcutEntrySummary {
   launchOptions: string;
   /** exe missing on disk, or not the launcher we'd write today */
   staleExe: boolean;
+  /** one or more launcher-derived fields differ from canonical values */
+  needsRepair: boolean;
+  /** entry has no grid art icon, or its file is gone */
+  missingArt: boolean;
 }
 
 /**

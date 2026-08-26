@@ -655,10 +655,12 @@ export const actions = wireActions({
     gameId?: number;
   }>(),
   steamShortcutsSave: action<{
-    /** desired state: games that should have Steam shortcuts */
-    checkedGameIds: number[];
-    /** desired state: games that should not */
-    uncheckedGameIds: number[];
+    /** installed games whose shortcuts should be created or refreshed */
+    ensureGameIds: number[];
+    /** existing shortcuts whose launcher-derived fields should be repaired */
+    repairGameIds: number[];
+    /** existing shortcuts that should be removed */
+    removeGameIds: number[];
   }>(),
   forceCloseGameRequest: action<{
     /** the game we want to force-quit */

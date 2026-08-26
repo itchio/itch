@@ -13,6 +13,7 @@ import { isSteamRunning } from "main/steam/steam-install";
 const logger = mainLogger.child(__filename);
 
 let openModalId: string | null = null;
+let openGeneration = 0;
 
 function steamErrorMessage(e: unknown): LocalizedString {
   if (e instanceof SteamError) {
@@ -30,13 +31,29 @@ function steamErrorMessage(e: unknown): LocalizedString {
   return ["steam.error.generic", { message: String(e) }];
 }
 
+function dialogParams(
+  store: Store,
+  modalId: string
+): SteamShortcutsParams | null {
+  const wind = store.getState().winds["root"];
+  if (!wind) {
+    return null;
+  }
+  const modal = wind.modals.find((m) => m.id === modalId);
+  return modal ? (modal.widgetParams as SteamShortcutsParams) : null;
+}
+
 function currentDialogParams(store: Store): SteamShortcutsParams | null {
   if (!openModalId) {
     return null;
   }
-  const { modals } = store.getState().winds["root"];
-  const modal = modals.find((m) => m.id === openModalId);
-  return modal ? (modal.widgetParams as SteamShortcutsParams) : null;
+  const modal = dialogParams(store, openModalId);
+  if (!modal) {
+    // the dialog was closed
+    openModalId = null;
+    return null;
+  }
+  return modal;
 }
 
 async function fetchInstalledGames(): Promise<Game[]> {
@@ -50,88 +67,92 @@ async function fetchInstalledGames(): Promise<Game[]> {
   return [...byId.values()];
 }
 
+// tolerates a butlerd outage by reusing the open dialog's last known
+// library; the rows would otherwise collapse to "nothing installed",
+// staging removals of games that are actually installed
+async function fetchInstalledGamesWithFallback(
+  store: Store,
+  fallback?: Game[]
+): Promise<Game[]> {
+  try {
+    return await fetchInstalledGames();
+  } catch (e) {
+    const installedGames =
+      fallback ?? currentDialogParams(store)?.installedGames;
+    if (installedGames) {
+      logger.warn(`could not fetch installed games, reusing last list: ${e}`);
+      return installedGames;
+    }
+    throw e;
+  }
+}
+
 async function refreshDialog(
   store: Store,
   lastOpError: LocalizedString | null
 ) {
-  if (!currentDialogParams(store)) {
+  const modalId = openModalId;
+  if (!modalId) {
+    return;
+  }
+  const previous = dialogParams(store, modalId);
+  if (!previous) {
     return;
   }
   const snapshot = await getSnapshot();
   snapshot.lastOpError = lastOpError;
-  let installedGames: Game[] = [];
-  try {
-    installedGames = await fetchInstalledGames();
-  } catch (e) {
-    logger.warn(`could not fetch installed games: ${e}`);
+  const installedGames = await fetchInstalledGamesWithFallback(
+    store,
+    previous.installedGames
+  );
+  if (openModalId !== modalId || !dialogParams(store, modalId)) {
+    return;
   }
   store.dispatch(
     actions.updateModalWidgetParams(
       modals.steamShortcuts.update({
-        id: openModalId!,
+        id: modalId,
         widgetParams: { snapshot, installedGames },
       })
     )
   );
 }
 
-export default function (watcher: Watcher) {
-  watcher.on(actions.openSteamShortcutsDialog, async (store, action) => {
-    const { gameId } = action.payload;
+// Save is disabled in the dialog while Steam runs; poll so quitting
+// Steam un-disables it without a refresh button. Scoped to the dialog's
+// lifetime: processes() enumerates every process on the system.
+let pollTimer: NodeJS.Timeout | null = null;
+let polling = false;
 
-    const snapshot = await getSnapshot();
-    let installedGames: Game[] = [];
-    try {
-      installedGames = await fetchInstalledGames();
-    } catch (e) {
-      logger.warn(`could not fetch installed games: ${e}`);
-    }
+function stopSteamPoll() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
 
-    const modal = modals.steamShortcuts.make({
-      wind: "root",
-      title: ["steam.dialog.title"],
-      message: "",
-      widgetParams: { snapshot, installedGames, initialGameId: gameId },
-    });
-    openModalId = modal.id;
-    store.dispatch(actions.openModal(modal));
-  });
-
-  watcher.on(actions.steamShortcutsSave, async (store, action) => {
-    const { checkedGameIds, uncheckedGameIds } = action.payload;
-    let error: LocalizedString | null = null;
-    try {
-      const installed = await fetchInstalledGames();
-      const checked = new Set(checkedGameIds);
-      await applyShortcuts({
-        ensure: installed.filter((g) => checked.has(g.id)),
-        removeGameIds: uncheckedGameIds,
-      });
-    } catch (e) {
-      logger.warn(`could not apply Steam shortcuts: ${e}`);
-      error = steamErrorMessage(e);
-    }
-    await refreshDialog(store, error);
-  });
-
-  // Save is disabled in the dialog while Steam runs; keep that flag
-  // fresh so quitting Steam un-disables it without a refresh button
-  let checkingSteam = false;
-  let tickCount = 0;
-  watcher.on(actions.tick, async (store, action) => {
-    tickCount++;
-    if (tickCount % 5 !== 0 || checkingSteam) {
+function startSteamPoll(store: Store) {
+  stopSteamPoll();
+  pollTimer = setInterval(async () => {
+    if (polling) {
       return;
     }
     const params = currentDialogParams(store);
     if (!params) {
+      stopSteamPoll();
       return;
     }
-    checkingSteam = true;
+    polling = true;
     try {
       const running = await isSteamRunning();
       const current = currentDialogParams(store);
       if (current && current.snapshot.steamRunning !== running) {
+        if (current.snapshot.steamRunning && !running) {
+          // Steam writes its in-memory shortcut state while exiting.
+          // Reload the file before enabling Save against that new state.
+          await refreshDialog(store, null);
+          return;
+        }
         store.dispatch(
           actions.updateModalWidgetParams(
             modals.steamShortcuts.update({
@@ -145,9 +166,63 @@ export default function (watcher: Watcher) {
         );
       }
     } catch (e) {
-      // next tick retries
+      // next interval retries
     } finally {
-      checkingSteam = false;
+      polling = false;
     }
+  }, 5000);
+}
+
+export default function (watcher: Watcher) {
+  watcher.on(actions.openSteamShortcutsDialog, async (store, action) => {
+    const { gameId } = action.payload;
+    const generation = ++openGeneration;
+
+    if (currentDialogParams(store)) {
+      // a second dialog would orphan the first from updates
+      store.dispatch(actions.closeModal({ wind: "root", id: openModalId! }));
+      openModalId = null;
+      stopSteamPoll();
+    }
+
+    const snapshot = await getSnapshot();
+    let installedGames: Game[] = [];
+    try {
+      installedGames = await fetchInstalledGames();
+    } catch (e) {
+      logger.warn(`could not fetch installed games: ${e}`);
+    }
+    if (generation !== openGeneration) {
+      return;
+    }
+
+    const modal = modals.steamShortcuts.make({
+      wind: "root",
+      title: ["steam.dialog.title"],
+      message: "",
+      widgetParams: { snapshot, installedGames, initialGameId: gameId },
+    });
+    openModalId = modal.id;
+    store.dispatch(actions.openModal(modal));
+    startSteamPoll(store);
+  });
+
+  watcher.on(actions.steamShortcutsSave, async (store, action) => {
+    const { ensureGameIds, repairGameIds, removeGameIds } = action.payload;
+    let error: LocalizedString | null = null;
+    try {
+      const ensureSet = new Set(ensureGameIds);
+      const installed =
+        ensureSet.size > 0 ? await fetchInstalledGamesWithFallback(store) : [];
+      await applyShortcuts({
+        ensure: installed.filter((g) => ensureSet.has(g.id)),
+        repairGameIds,
+        removeGameIds,
+      });
+    } catch (e) {
+      logger.warn(`could not apply Steam shortcuts: ${e}`);
+      error = steamErrorMessage(e);
+    }
+    await refreshDialog(store, error);
   });
 }
