@@ -7,7 +7,12 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import modals from "main/modals";
-import { applyShortcuts, getSnapshot, SteamError } from "main/steam/shortcuts";
+import {
+  applyShortcuts,
+  EnsureShortcut,
+  getSnapshot,
+  SteamError,
+} from "main/steam/shortcuts";
 import { isSteamRunning } from "main/steam/steam-install";
 
 const logger = mainLogger.child(__filename);
@@ -26,6 +31,8 @@ function steamErrorMessage(e: unknown): LocalizedString {
         return ["steam.error.no_user"];
       case "no-launcher":
         return ["steam.error.no_launcher"];
+      case "no-target":
+        return ["steam.error.no_target"];
       case "steam-running":
         return ["steam.error.running"];
     }
@@ -81,15 +88,85 @@ function updateSaveState(store: Store) {
   );
 }
 
+// cave ids from the latest successful FetchCaves, for resolving direct
+// launch targets; survives a butlerd outage alongside the games fallback
+let lastCaveIds = new Map<number, string>();
+
 async function fetchInstalledGames(): Promise<Game[]> {
   const { items } = await mcall(messages.FetchCaves, {});
   const byId = new Map<number, Game>();
+  const caveIds = new Map<number, string>();
   for (const cave of items ?? []) {
-    if (cave.game) {
+    if (cave.game && !byId.has(cave.game.id)) {
       byId.set(cave.game.id, cave.game);
+      caveIds.set(cave.game.id, cave.id);
     }
   }
+  lastCaveIds = caveIds;
   return [...byId.values()];
+}
+
+const directFlavors: { [platform: string]: messages.Flavor[] } = {
+  linux: [messages.Flavor.NativeLinux],
+  win32: [messages.Flavor.NativeWindows],
+  darwin: [messages.Flavor.NativeMacos, messages.Flavor.AppMacos],
+};
+
+// the executable a "direct" shortcut would point at: the first launch
+// target that is a native binary for this platform. html/jar/script
+// targets can't be launched by Steam without a wrapper.
+async function resolveDirectTarget(caveId: string): Promise<string | null> {
+  const { targets } = await mcall(messages.LaunchGetTargets, { caveId });
+  const flavors = directFlavors[process.platform] ?? [];
+  for (const target of targets ?? []) {
+    const { strategy } = target;
+    if (
+      strategy?.strategy === messages.LaunchStrategy.Native &&
+      strategy.fullTargetPath &&
+      strategy.candidate &&
+      flavors.includes(strategy.candidate.flavor)
+    ) {
+      return strategy.fullTargetPath;
+    }
+  }
+  return null;
+}
+
+// resolution fans out one butlerd call per installed game, so it runs
+// after the dialog is already up and pushes results in when done
+let targetsGeneration = 0;
+
+async function refreshDirectTargets(store: Store) {
+  const modalId = openModalId;
+  if (!modalId) {
+    return;
+  }
+  const generation = ++targetsGeneration;
+  const results: { [gameId: number]: string | null } = {};
+  await Promise.all(
+    [...lastCaveIds].map(async ([gameId, caveId]) => {
+      try {
+        results[gameId] = await resolveDirectTarget(caveId);
+      } catch (e) {
+        results[gameId] = null;
+      }
+    })
+  );
+  if (generation !== targetsGeneration || openModalId !== modalId) {
+    return;
+  }
+  const current = dialogParams(store, modalId);
+  if (!current) {
+    return;
+  }
+  store.dispatch(
+    actions.updateModalWidgetParams(
+      modals.steamShortcuts.update({
+        id: modalId,
+        widgetParams: { ...current, directTargets: results },
+      })
+    )
+  );
 }
 
 // tolerates a butlerd outage by reusing the open dialog's last known
@@ -142,10 +219,14 @@ async function refreshDialog(
           installedGames,
           saving: saveInProgress,
           saveProgress,
+          directTargets: previous.directTargets,
         },
       })
     )
   );
+  refreshDirectTargets(store).catch((e) => {
+    logger.warn(`could not refresh direct launch targets: ${e}`);
+  });
 }
 
 // Save is disabled in the dialog while Steam runs; poll so quitting
@@ -236,11 +317,15 @@ export default function (watcher: Watcher) {
         initialGameId: gameId,
         saving: saveInProgress,
         saveProgress,
+        directTargets: null,
       },
     });
     openModalId = modal.id;
     store.dispatch(actions.openModal(modal));
     startSteamPoll(store);
+    refreshDirectTargets(store).catch((e) => {
+      logger.warn(`could not resolve direct launch targets: ${e}`);
+    });
   });
 
   watcher.on(actions.steamShortcutsSave, async (store, action) => {
@@ -251,13 +336,46 @@ export default function (watcher: Watcher) {
     saveProgress = null;
     updateSaveState(store);
 
-    const { ensureGameIds, repairGameIds, removeGameIds } = action.payload;
+    const {
+      ensure: ensureItems,
+      repairGameIds,
+      removeGameIds,
+    } = action.payload;
     let error: LocalizedString | null = null;
     try {
-      const ensureSet = new Set(ensureGameIds);
+      const modeById = new Map(ensureItems.map((e) => [e.gameId, e.mode]));
       const installed =
-        ensureSet.size > 0 ? await fetchInstalledGamesWithFallback(store) : [];
-      const ensure = installed.filter((g) => ensureSet.has(g.id));
+        modeById.size > 0 ? await fetchInstalledGamesWithFallback(store) : [];
+      const ensure: EnsureShortcut[] = [];
+      for (const game of installed) {
+        const mode = modeById.get(game.id);
+        if (!mode) {
+          continue;
+        }
+        if (mode === "direct") {
+          // re-resolve at save time: the target can move when the game
+          // updates between staging and saving
+          let targetPath: string | null = null;
+          const caveId = lastCaveIds.get(game.id);
+          if (caveId) {
+            try {
+              targetPath = await resolveDirectTarget(caveId);
+            } catch (e) {
+              logger.warn(`could not resolve target for ${game.title}: ${e}`);
+            }
+          }
+          if (!targetPath) {
+            targetPath =
+              currentDialogParams(store)?.directTargets?.[game.id] ?? null;
+          }
+          if (!targetPath) {
+            throw new SteamError("no-target");
+          }
+          ensure.push({ game, mode, targetPath });
+        } else {
+          ensure.push({ game, mode });
+        }
+      }
       if (ensure.length > 0) {
         saveProgress = { completed: 0, total: ensure.length };
         updateSaveState(store);

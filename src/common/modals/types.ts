@@ -62,6 +62,12 @@ export interface SteamShortcutsParams {
   saving: boolean;
   /** completed/total games whose shortcut data and artwork are being ensured */
   saveProgress: { completed: number; total: number } | null;
+  /**
+   * Per installed game, the executable a "direct" mode shortcut would
+   * point at, or null when the game has none (browser games, missing
+   * native build). null overall while resolution is still in flight.
+   */
+  directTargets: { [gameId: number]: string | null } | null;
 }
 
 export interface SteamShortcutsResponse {}

@@ -38,6 +38,7 @@ import {
   TaskName,
   WindRole,
 } from "common/types";
+import { SteamShortcutMode } from "common/types/steam";
 
 export interface ActionCreator<PayloadType extends Object> {
   payload: PayloadType;
@@ -656,7 +657,7 @@ export const actions = wireActions({
   }>(),
   steamShortcutsSave: action<{
     /** installed games whose shortcuts should be created or refreshed */
-    ensureGameIds: number[];
+    ensure: { gameId: number; mode: SteamShortcutMode }[];
     /** existing shortcuts whose launcher-derived fields should be repaired */
     repairGameIds: number[];
     /** existing shortcuts that should be removed */

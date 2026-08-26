@@ -7,7 +7,7 @@ import {
   VdfObject,
   VdfValue,
 } from "main/steam/binary-vdf";
-import { shortcutEntryId, shortAppId } from "main/steam/appid";
+import { shortcutEntryId } from "main/steam/appid";
 import {
   getSteamRoot,
   getActiveUserId,
@@ -20,6 +20,7 @@ import {
 } from "main/steam/grid-art";
 import {
   SteamShortcutEntrySummary,
+  SteamShortcutMode,
   SteamShortcutsSnapshot,
 } from "common/types/steam";
 import {
@@ -40,6 +41,7 @@ export type SteamErrorCode =
   | "no-steam"
   | "no-user"
   | "no-launcher"
+  | "no-target"
   | "steam-running";
 
 export class SteamError extends Error {
@@ -66,18 +68,39 @@ function resolveContext(): SteamContext {
   return { configDir, shortcutsPath: join(configDir, "shortcuts.vdf") };
 }
 
-// Our shortcuts are identified by this marker in LaunchOptions, not by
-// title or exe path: those can change between add and remove, and titles
-// can collide with shortcuts the user created themselves.
+// Our shortcuts are identified by one of two markers, not by title or
+// exe path: those can change between add and remove, and titles can
+// collide with shortcuts the user created themselves. "itch" mode
+// entries carry an itch:// url in LaunchOptions; "direct" mode entries
+// have no url, so they carry the id in DevkitGameID, a Steam schema
+// field verified to survive Steam's rewrite-on-exit (an invented key
+// would be dropped).
 const markerRe = /itch:\/\/install\?game_id=(\d+)/;
+const devkitRe = /^itch-game-(\d+)$/;
 
 function entryGameId(entry: VdfObject): number | null {
   const launchOptions = getField(entry, "LaunchOptions");
-  if (typeof launchOptions !== "string") {
-    return null;
+  if (typeof launchOptions === "string") {
+    const m = markerRe.exec(launchOptions);
+    if (m) {
+      return parseInt(m[1], 10);
+    }
   }
-  const m = markerRe.exec(launchOptions);
-  return m ? parseInt(m[1], 10) : null;
+  const devkit = getField(entry, "DevkitGameID");
+  if (typeof devkit === "string") {
+    const m = devkitRe.exec(devkit);
+    if (m) {
+      return parseInt(m[1], 10);
+    }
+  }
+  return null;
+}
+
+function entryMode(entry: VdfObject): SteamShortcutMode {
+  const launchOptions = getField(entry, "LaunchOptions");
+  return typeof launchOptions === "string" && markerRe.test(launchOptions)
+    ? "itch"
+    : "direct";
 }
 
 interface Launcher {
@@ -164,11 +187,18 @@ function setField(entry: VdfObject, name: string, value: VdfValue) {
 interface CanonicalShortcutFields {
   exe: string;
   startDir: string;
-  launchOptions: string;
+  /**
+   * null leaves the user's LaunchOptions alone except for stripping the
+   * itch marker: direct entries don't need any, and users may add their
+   * own game flags there
+   */
+  launchOptions: string | null;
   appid: number;
+  allowOverlay: number;
+  devkitGameId: string;
 }
 
-function canonicalFields(
+function canonicalItchFields(
   launcher: Launcher,
   gameId: number
 ): CanonicalShortcutFields {
@@ -178,21 +208,46 @@ function canonicalFields(
     startDir: `"${dirname(launcher.exePath)}"`,
     launchOptions: launchOptionsFor(launcher, gameId),
     appid: shortcutEntryId(exe, appidKey(gameId)),
+    // the overlay's LD_PRELOAD breaks Chromium's single-instance
+    // handshake, so launches silently no-op while the app is running
+    allowOverlay: 0,
+    devkitGameId: appidKey(gameId),
   };
 }
 
+function canonicalDirectFields(
+  targetPath: string,
+  gameId: number
+): CanonicalShortcutFields {
+  const exe = `"${targetPath}"`;
+  return {
+    exe,
+    startDir: `"${dirname(targetPath)}"`,
+    launchOptions: null,
+    appid: shortcutEntryId(exe, appidKey(gameId)),
+    allowOverlay: 1,
+    devkitGameId: appidKey(gameId),
+  };
+}
+
+// titles are deliberately not checked here; the ensure path compares
+// them against the fresh game record instead
 function entryNeedsRepair(
   entry: VdfObject,
-  launcher: Launcher,
-  gameId: number
+  fields: CanonicalShortcutFields
 ): boolean {
-  const fields = canonicalFields(launcher, gameId);
+  const launchOptions = getField(entry, "LaunchOptions");
+  const launchOptionsStale =
+    fields.launchOptions !== null
+      ? launchOptions !== fields.launchOptions
+      : typeof launchOptions === "string" && markerRe.test(launchOptions);
   return (
     getField(entry, "Exe") !== fields.exe ||
     getField(entry, "StartDir") !== fields.startDir ||
-    getField(entry, "LaunchOptions") !== fields.launchOptions ||
+    launchOptionsStale ||
     getField(entry, "appid") !== fields.appid ||
-    getField(entry, "AllowOverlay") !== 0
+    getField(entry, "AllowOverlay") !== fields.allowOverlay ||
+    getField(entry, "DevkitGameID") !== fields.devkitGameId
   );
 }
 
@@ -250,14 +305,26 @@ function serialized<T>(work: () => Promise<T>): Promise<T> {
   return run;
 }
 
+export interface EnsureShortcut {
+  game: Game;
+  mode: SteamShortcutMode;
+  /** absolute path of the game executable; required for "direct" mode */
+  targetPath?: string;
+}
+
 export interface ApplyShortcutsInput {
   /**
    * Games whose shortcuts should exist. Existing entries are rewritten
-   * in canonical form (healing stale launchers and old id schemes); new
-   * ones are appended with freshly downloaded grid art.
+   * in canonical form for the requested mode (healing stale launchers,
+   * old id schemes, and mode switches); new ones are appended with
+   * freshly downloaded grid art.
    */
-  ensure: Game[];
-  /** existing entries whose launcher-derived fields should be rewritten */
+  ensure: EnsureShortcut[];
+  /**
+   * Existing entries whose launcher-derived fields should be rewritten.
+   * Only applies to "itch" mode entries: repairing a direct entry needs
+   * a fresh target path, which only the ensure path carries.
+   */
   repairGameIds: number[];
   /** game ids whose shortcuts should be removed */
   removeGameIds: number[];
@@ -271,7 +338,7 @@ export function applyShortcuts(input: ApplyShortcutsInput): Promise<void> {
 
 async function performApply(input: ApplyShortcutsInput): Promise<void> {
   const removeSet = new Set(input.removeGameIds);
-  const ensure = input.ensure.filter((g) => !removeSet.has(g.id));
+  const ensure = input.ensure.filter((e) => !removeSet.has(e.game.id));
   const repairSet = new Set(
     input.repairGameIds.filter((gameId) => !removeSet.has(gameId))
   );
@@ -305,35 +372,42 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
 
   let changed = removed.length > 0;
 
-  const makeCanonicalize =
-    (l: Launcher) =>
-    (entry: VdfObject, gameId: number): boolean => {
-      const fields = canonicalFields(l, gameId);
-      if (!entryNeedsRepair(entry, l, gameId)) {
-        return false;
+  const canonicalize = (
+    entry: VdfObject,
+    fields: CanonicalShortcutFields
+  ): boolean => {
+    if (!entryNeedsRepair(entry, fields)) {
+      return false;
+    }
+    const oldAppid = getField(entry, "appid");
+    if (typeof oldAppid === "number" && oldAppid !== fields.appid) {
+      // grid art is named after the unsigned form of the appid; carry
+      // it over so healing an entry doesn't lose its art
+      const oldShortId = (oldAppid >>> 0).toString();
+      const newShortId = (fields.appid >>> 0).toString();
+      renameGridArt(ctx.configDir, oldShortId, newShortId);
+      const icon = getField(entry, "icon");
+      if (typeof icon === "string" && icon.includes(oldShortId)) {
+        setField(entry, "icon", icon.split(oldShortId).join(newShortId));
       }
-      const oldAppid = getField(entry, "appid");
-      if (typeof oldAppid === "number" && oldAppid !== fields.appid) {
-        // grid art is named after the unsigned form of the appid; carry
-        // it over so healing an entry doesn't lose its art
-        const oldShortId = (oldAppid >>> 0).toString();
-        const newShortId = shortAppId(fields.exe, appidKey(gameId));
-        renameGridArt(ctx.configDir, oldShortId, newShortId);
-        const icon = getField(entry, "icon");
-        if (typeof icon === "string" && icon.includes(oldShortId)) {
-          setField(entry, "icon", icon.split(oldShortId).join(newShortId));
-        }
-      }
-      setField(entry, "Exe", fields.exe);
-      setField(entry, "StartDir", fields.startDir);
+    }
+    setField(entry, "Exe", fields.exe);
+    setField(entry, "StartDir", fields.startDir);
+    if (fields.launchOptions !== null) {
       setField(entry, "LaunchOptions", fields.launchOptions);
-      setField(entry, "appid", fields.appid);
-      // the overlay's LD_PRELOAD breaks Chromium's single-instance
-      // handshake, so launches silently no-op while the app is running;
-      // this deliberately reverts a manual re-enable
-      setField(entry, "AllowOverlay", 0);
-      return true;
-    };
+    } else {
+      const launchOptions = getField(entry, "LaunchOptions");
+      if (typeof launchOptions === "string" && markerRe.test(launchOptions)) {
+        // switching to direct mode drops the whole itch launch command;
+        // the id lives in DevkitGameID from here on
+        setField(entry, "LaunchOptions", "");
+      }
+    }
+    setField(entry, "appid", fields.appid);
+    setField(entry, "AllowOverlay", fields.allowOverlay);
+    setField(entry, "DevkitGameID", fields.devkitGameId);
+    return true;
+  };
 
   const byGameId = new Map<number, VdfObject>();
   for (const entry of kept) {
@@ -343,22 +417,32 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
     }
   }
 
-  // Pure removals do not depend on the itch launcher. Additions and
-  // explicitly requested repairs do.
+  // Pure removals and direct-mode work do not depend on the itch
+  // launcher. Itch-mode additions and explicitly requested repairs do.
   const launcher =
-    ensure.length > 0 || repairSet.size > 0 ? resolveLauncher() : null;
-  const canonicalize = launcher ? makeCanonicalize(launcher) : null;
+    ensure.some((e) => e.mode === "itch") || repairSet.size > 0
+      ? resolveLauncher()
+      : null;
+
+  const fieldsFor = (item: EnsureShortcut): CanonicalShortcutFields => {
+    if (item.mode === "direct") {
+      if (!item.targetPath) {
+        throw new SteamError("no-target");
+      }
+      return canonicalDirectFields(item.targetPath, item.game.id);
+    }
+    return canonicalItchFields(launcher!, item.game.id);
+  };
 
   const ensuredIds = new Set<number>();
-  for (const [gameIndex, game] of ensure.entries()) {
-    // ensure is non-empty only when a launcher resolved
-    const l = launcher!;
-    const fields = canonicalFields(l, game.id);
-    const exe = fields.exe;
+  for (const [gameIndex, item] of ensure.entries()) {
+    const { game } = item;
+    const fields = fieldsFor(item);
+    const shortId = (fields.appid >>> 0).toString();
     ensuredIds.add(game.id);
     const existing = byGameId.get(game.id);
     if (existing) {
-      if (canonicalize!(existing, game.id)) {
+      if (canonicalize(existing, fields)) {
         changed = true;
       }
       if (getField(existing, "AppName") !== game.title) {
@@ -369,7 +453,6 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       const icon = getField(existing, "icon");
       if (typeof icon !== "string" || icon === "" || !existsSync(icon)) {
         try {
-          const shortId = shortAppId(exe, appidKey(game.id));
           const newIcon = await downloadGridArt(
             logger,
             ctx.configDir,
@@ -388,7 +471,6 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       continue;
     }
 
-    const shortId = shortAppId(exe, appidKey(game.id));
     let icon = "";
     try {
       icon =
@@ -397,19 +479,19 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       logger.warn(`could not download grid art for ${game.title}: ${e}`);
     }
     kept.push({
-      appid: shortcutEntryId(exe, appidKey(game.id)),
+      appid: fields.appid,
       AppName: game.title,
-      Exe: exe,
-      StartDir: `"${dirname(l.exePath)}"`,
+      Exe: fields.exe,
+      StartDir: fields.startDir,
       icon,
       ShortcutPath: "",
-      LaunchOptions: launchOptionsFor(l, game.id),
+      LaunchOptions: fields.launchOptions ?? "",
       IsHidden: 0,
       AllowDesktopConfig: 1,
-      AllowOverlay: 0,
+      AllowOverlay: fields.allowOverlay,
       OpenVR: 0,
       Devkit: 0,
-      DevkitGameID: "",
+      DevkitGameID: fields.devkitGameId,
       DevkitOverrideAppID: 0,
       LastPlayTime: 0,
       FlatpakAppID: "",
@@ -419,10 +501,13 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
     input.onProgress?.(gameIndex + 1, ensure.length);
   }
 
-  if (canonicalize) {
+  if (launcher) {
     for (const entryId of repairSet) {
       const entry = byGameId.get(entryId);
-      if (entry && !ensuredIds.has(entryId) && canonicalize(entry, entryId)) {
+      if (!entry || ensuredIds.has(entryId) || entryMode(entry) === "direct") {
+        continue;
+      }
+      if (canonicalize(entry, canonicalItchFields(launcher, entryId))) {
         changed = true;
       }
     }
@@ -545,14 +630,26 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
     const launchOptions = getField(entry, "LaunchOptions");
     const appid = getField(entry, "appid");
     const icon = getField(entry, "icon");
+    const mode = entryMode(entry);
     const exePath = typeof exe === "string" ? unquote(exe) : "";
     const staleExe =
       !exePath ||
       !existsSync(exePath) ||
-      (launcher !== null && exePath !== launcher.exePath);
-    const needsRepair = launcher
-      ? entryNeedsRepair(entry, launcher, gameId)
-      : staleExe;
+      (mode === "itch" && launcher !== null && exePath !== launcher.exePath);
+    let needsRepair: boolean;
+    if (mode === "direct") {
+      // whether the exe still matches the game's current launch target
+      // needs butlerd, which this module can't reach; the dialog layers
+      // that check on top
+      needsRepair =
+        staleExe ||
+        (typeof exe === "string" &&
+          entryNeedsRepair(entry, canonicalDirectFields(unquote(exe), gameId)));
+    } else {
+      needsRepair = launcher
+        ? entryNeedsRepair(entry, canonicalItchFields(launcher, gameId))
+        : staleExe;
+    }
     const missingArt =
       typeof icon !== "string" || icon === "" || !existsSync(icon);
     const summary: SteamShortcutEntrySummary = {
@@ -561,6 +658,7 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
       appid: typeof appid === "number" ? appid : null,
       exe: typeof exe === "string" ? exe : "",
       launchOptions: typeof launchOptions === "string" ? launchOptions : "",
+      mode,
       staleExe,
       needsRepair,
       missingArt,

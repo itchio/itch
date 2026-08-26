@@ -1,5 +1,12 @@
 import { LocalizedString } from "common/types";
 
+/**
+ * "itch" shortcuts launch through the itch app via an itch:// url;
+ * "direct" shortcuts point at the game's own executable, which gives up
+ * update-before-play but gains the Steam overlay.
+ */
+export type SteamShortcutMode = "itch" | "direct";
+
 /** one itch-created entry in Steam's shortcuts.vdf */
 export interface SteamShortcutEntrySummary {
   gameId: number;
@@ -7,6 +14,7 @@ export interface SteamShortcutEntrySummary {
   appid: number | null;
   exe: string;
   launchOptions: string;
+  mode: SteamShortcutMode;
   /** exe missing on disk, or not the launcher we'd write today */
   staleExe: boolean;
   /** one or more launcher-derived fields differ from canonical values */

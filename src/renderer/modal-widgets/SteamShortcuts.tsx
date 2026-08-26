@@ -6,6 +6,7 @@ import {
   SteamShortcutsResponse,
 } from "common/modals/types";
 import { Dispatch } from "common/types";
+import { SteamShortcutMode } from "common/types/steam";
 import { ambientWind } from "common/util/navigation";
 import { lighten, transparentize } from "polished";
 import React from "react";
@@ -161,6 +162,29 @@ const Row = styled.label`
   }
 `;
 
+const ModeButton = styled.button`
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 1px solid ${(props) => props.theme.inputBorder};
+  background: none;
+  color: ${(props) => props.theme.secondaryText};
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: ${(props) => props.theme.inputBorderFocused};
+    color: ${(props) => props.theme.baseText};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+`;
+
 const TagSpan = styled.span`
   display: flex;
   align-items: center;
@@ -286,6 +310,13 @@ interface RowData {
   hasCoverArt: boolean;
   /** entry exists but its launcher fields or title need rewriting */
   needsRepair: boolean;
+  /** mode of the existing Steam entry, null when not in Steam */
+  steamMode: SteamShortcutMode | null;
+  /**
+   * executable a "direct" shortcut would point at: undefined while
+   * still resolving, null when the game has no native build
+   */
+  directTarget: string | null | undefined;
 }
 
 interface Props
@@ -295,10 +326,18 @@ interface Props
 
 interface State {
   checked: { [gameId: number]: boolean };
+  /** staged mode overrides; a row's default is its entry's current mode */
+  modes: { [gameId: number]: SteamShortcutMode };
   baselineKey: string;
 }
 
+function unquote(s: string): string {
+  const m = /^"(.*)"$/.exec(s);
+  return m ? m[1] : s;
+}
+
 function rowsOf(params: SteamShortcutsParams): RowData[] {
+  const targets = params.directTargets;
   const byId = new Map<number, RowData>();
   for (const game of params.installedGames) {
     byId.set(game.id, {
@@ -308,16 +347,26 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
       inSteam: false,
       hasCoverArt: !!(game.stillCoverUrl || game.coverUrl),
       needsRepair: false,
+      steamMode: null,
+      directTarget: targets ? targets[game.id] ?? null : undefined,
     });
   }
   for (const entry of params.snapshot.entries) {
     const existing = byId.get(entry.gameId);
     if (existing) {
       existing.inSteam = true;
+      existing.steamMode = entry.mode;
+      // the snapshot can't know the game's current launch target;
+      // detect a moved executable here where both sides are available
+      const driftedTarget =
+        entry.mode === "direct" &&
+        typeof existing.directTarget === "string" &&
+        unquote(entry.exe) !== existing.directTarget;
       // missing art only counts when installed: healing it needs the
       // game's cover url
       existing.needsRepair =
         entry.needsRepair ||
+        driftedTarget ||
         entry.appName !== existing.title ||
         (entry.missingArt && existing.hasCoverArt);
     } else {
@@ -327,7 +376,11 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
         installed: false,
         inSteam: true,
         hasCoverArt: false,
-        needsRepair: entry.needsRepair,
+        // itch-mode launcher fields are repairable without the game
+        // installed; a direct entry's target is not
+        needsRepair: entry.mode === "itch" && entry.needsRepair,
+        steamMode: entry.mode,
+        directTarget: null,
       });
     }
   }
@@ -338,7 +391,12 @@ function rowsOf(params: SteamShortcutsParams): RowData[] {
 
 function baselineKeyOf(params: SteamShortcutsParams): string {
   return rowsOf(params)
-    .map((r) => `${r.gameId}:${r.installed ? 1 : 0}${r.inSteam ? 1 : 0}`)
+    .map(
+      (r) =>
+        `${r.gameId}:${r.installed ? 1 : 0}${r.inSteam ? 1 : 0}${
+          r.steamMode === "direct" ? "d" : "i"
+        }`
+    )
     .join(",");
 }
 
@@ -359,7 +417,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     if (initialGameId && checked[initialGameId] === false) {
       checked[initialGameId] = true;
     }
-    this.state = { checked, baselineKey: baselineKeyOf(params) };
+    this.state = { checked, modes: {}, baselineKey: baselineKeyOf(params) };
   }
 
   override componentDidUpdate() {
@@ -368,8 +426,16 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     const params = this.props.modal.widgetParams;
     const key = baselineKeyOf(params);
     if (key !== this.state.baselineKey) {
-      this.setState({ checked: baselineChecked(params), baselineKey: key });
+      this.setState({
+        checked: baselineChecked(params),
+        modes: {},
+        baselineKey: key,
+      });
     }
+  }
+
+  stagedMode(row: RowData): SteamShortcutMode {
+    return this.state.modes[row.gameId] ?? row.steamMode ?? "itch";
   }
 
   override render() {
@@ -460,6 +526,15 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
             )}
           </Rows>
         </List>
+        {rows.some(
+          (r) =>
+            !!this.state.checked[r.gameId] && this.stagedMode(r) === "direct"
+        ) ? (
+          <Callout>
+            <Icon icon="warning" />
+            <span>{T(["steam.dialog.direct_warning"])}</span>
+          </Callout>
+        ) : null}
         {this.renderDetailsLine()}
         {this.renderFooter(rows)}
       </>
@@ -485,7 +560,8 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     const checked = !!this.state.checked[row.gameId];
     const willAdd = checked && !row.inSteam;
     const willRemove = !checked && row.inSteam;
-    const pending = willAdd || willRemove;
+    const willUpdate = checked && row.inSteam && this.rowWillUpdate(row);
+    const pending = willAdd || willRemove || willUpdate;
 
     let tag: JSX.Element | null = null;
     if (willAdd) {
@@ -498,9 +574,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           {T(["steam.dialog.will_remove"])}
         </TagSpan>
       );
-    } else if (row.needsRepair) {
+    } else if (willUpdate) {
       tag = (
-        <TagSpan className="caution">{T(["steam.dialog.will_repair"])}</TagSpan>
+        <TagSpan className="caution">{T(["steam.dialog.will_update"])}</TagSpan>
       );
     } else if (row.inSteam && !row.installed) {
       tag = (
@@ -530,8 +606,43 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           <span className="hint">{T(["steam.dialog.not_installed_hint"])}</span>
         ) : null}
         <span className="filler" />
+        {this.renderModeControl(row, checked)}
         {tag}
       </Row>
+    );
+  }
+
+  renderModeControl(row: RowData, checked: boolean) {
+    const { saving } = this.props.modal.widgetParams;
+    // a mode can only be chosen for rows being kept, with a resolved
+    // native executable to point at
+    if (!row.installed || !checked || typeof row.directTarget !== "string") {
+      return null;
+    }
+    const mode = this.stagedMode(row);
+    return (
+      <ModeButton
+        type="button"
+        disabled={saving}
+        onClick={(e) => {
+          // inside the row <label>: don't toggle the checkbox
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleMode(row.gameId);
+        }}
+        data-rh={JSON.stringify([
+          mode === "itch"
+            ? "steam.dialog.mode_itch_hint"
+            : "steam.dialog.mode_direct_hint",
+        ])}
+        data-rh-at="top"
+      >
+        {T([
+          mode === "itch"
+            ? "steam.dialog.mode_itch"
+            : "steam.dialog.mode_direct",
+        ])}
+      </ModeButton>
     );
   }
 
@@ -612,9 +723,32 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
 
   renderFooter(rows: RowData[]) {
     const { snapshot, saving, saveProgress } = this.props.modal.widgetParams;
-    const { toAdd, toRemove, toRepair } = this.pendingChanges(rows);
+    const { toAdd, toRemove, toUpdate } = this.pendingChanges(rows);
     const dirty =
-      toAdd.length > 0 || toRemove.length > 0 || toRepair.length > 0;
+      toAdd.length > 0 || toRemove.length > 0 || toUpdate.length > 0;
+
+    const parts: JSX.Element[] = [];
+    if (toAdd.length > 0) {
+      parts.push(
+        <span className="add" key="add">
+          {T(["steam.dialog.summary_add", { count: toAdd.length }])}
+        </span>
+      );
+    }
+    if (toRemove.length > 0) {
+      parts.push(
+        <span className="remove" key="remove">
+          {T(["steam.dialog.summary_remove", { count: toRemove.length }])}
+        </span>
+      );
+    }
+    if (toUpdate.length > 0) {
+      parts.push(
+        <span key="update">
+          {T(["steam.dialog.summary_update", { count: toUpdate.length }])}
+        </span>
+      );
+    }
 
     return (
       <Footer>
@@ -632,25 +766,12 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           </div>
         ) : dirty ? (
           <div className="summary">
-            {toAdd.length > 0 ? (
-              <span className="add">
-                {T(["steam.dialog.summary_add", { count: toAdd.length }])}
-              </span>
-            ) : null}
-            {toAdd.length > 0 && toRemove.length > 0 ? " · " : null}
-            {toRemove.length > 0 ? (
-              <span className="remove">
-                {T(["steam.dialog.summary_remove", { count: toRemove.length }])}
-              </span>
-            ) : null}
-            {(toAdd.length > 0 || toRemove.length > 0) && toRepair.length > 0
-              ? " · "
-              : null}
-            {toRepair.length > 0 ? (
-              <span>
-                {T(["steam.dialog.summary_repair", { count: toRepair.length }])}
-              </span>
-            ) : null}
+            {parts.map((part, i) => (
+              <React.Fragment key={part.key}>
+                {i > 0 ? " · " : null}
+                {part}
+              </React.Fragment>
+            ))}
           </div>
         ) : (
           <div className="summary clean">{T(["steam.dialog.no_changes"])}</div>
@@ -670,19 +791,42 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     );
   }
 
+  /** a kept entry whose fields will be rewritten: repair or mode switch */
+  rowWillUpdate(row: RowData): boolean {
+    const willSwitch =
+      row.installed &&
+      row.steamMode !== null &&
+      this.stagedMode(row) !== row.steamMode;
+    return row.needsRepair || willSwitch;
+  }
+
   pendingChanges(rows: RowData[]) {
     const { checked } = this.state;
     const toAdd = rows.filter((r) => !!checked[r.gameId] && !r.inSteam);
     const toRemove = rows.filter((r) => !checked[r.gameId] && r.inSteam);
-    const toRepair = rows.filter(
-      (r) => !!checked[r.gameId] && r.inSteam && r.needsRepair
+    const toUpdate = rows.filter(
+      (r) => !!checked[r.gameId] && r.inSteam && this.rowWillUpdate(r)
     );
-    return { toAdd, toRemove, toRepair };
+    return { toAdd, toRemove, toUpdate };
   }
 
   toggle(gameId: number) {
     this.setState((state) => ({
       checked: { ...state.checked, [gameId]: !state.checked[gameId] },
+    }));
+  }
+
+  toggleMode(gameId: number) {
+    const row = rowsOf(this.props.modal.widgetParams).find(
+      (r) => r.gameId === gameId
+    );
+    if (!row) {
+      return;
+    }
+    const next: SteamShortcutMode =
+      this.stagedMode(row) === "itch" ? "direct" : "itch";
+    this.setState((state) => ({
+      modes: { ...state.modes, [gameId]: next },
     }));
   }
 
@@ -717,14 +861,19 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
       return;
     }
     const rows = rowsOf(this.props.modal.widgetParams);
-    const { toAdd, toRemove, toRepair } = this.pendingChanges(rows);
+    const { toAdd, toRemove, toUpdate } = this.pendingChanges(rows);
+    const ensure = new Map<number, SteamShortcutMode>();
+    for (const r of [...toAdd, ...toUpdate]) {
+      if (r.installed) {
+        ensure.set(r.gameId, this.stagedMode(r));
+      }
+    }
     this.props.dispatch(
       actions.steamShortcutsSave({
-        ensureGameIds: [
-          ...toAdd.map((r) => r.gameId),
-          ...toRepair.filter((r) => r.installed).map((r) => r.gameId),
-        ],
-        repairGameIds: toRepair.map((r) => r.gameId),
+        ensure: [...ensure].map(([gameId, mode]) => ({ gameId, mode })),
+        // uninstalled entries can't go through ensure; the repair path
+        // still heals their launcher-derived fields
+        repairGameIds: toUpdate.map((r) => r.gameId),
         removeGameIds: toRemove.map((r) => r.gameId),
       })
     );
