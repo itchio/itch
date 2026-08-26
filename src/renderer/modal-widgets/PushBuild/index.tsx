@@ -5,6 +5,7 @@ import { PushBuildParams, PushBuildResponse } from "common/modals/types";
 import { Dispatch, PreviewState, RootState } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
+import Checkbox from "renderer/basics/Checkbox";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import ChannelList from "renderer/modal-widgets/PushBuild/ChannelList";
@@ -176,11 +177,7 @@ class PushBuild extends React.PureComponent<Props, State> {
           </UserVersionLabel>
           {isNewChannel ? (
             <HiddenLabel title="When checked, the new channel will be created hidden. It won't be visible on your project page or in downloads until you unhide it from the itch.io dashboard. Subsequent pushes to the same channel keep it hidden until you change it.">
-              <input
-                type="checkbox"
-                checked={hidden}
-                onChange={this.handleHiddenChange}
-              />
+              <Checkbox checked={hidden} onChange={this.handleHiddenChange} />
               <span>{T(_("upload.hidden_on_creation"))}</span>
             </HiddenLabel>
           ) : null}

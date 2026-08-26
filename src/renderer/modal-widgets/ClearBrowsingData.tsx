@@ -7,6 +7,7 @@ import {
 import { partitionForUser } from "common/util/partition-for-user";
 import { electron } from "renderer/bridge";
 import React from "react";
+import Checkbox from "renderer/basics/Checkbox";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
@@ -77,8 +78,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
         <ClearBrowsingDataList>
           <label className={classNames({ active: clearCache })}>
             <div className="checkbox">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="clear-cache-checkbox"
                 checked={clearCache}
                 onChange={this.toggleCache}
@@ -103,8 +103,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
           </label>
           <label className={classNames({ active: clearCookies })}>
             <div className="checkbox">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="clear-cookies-checkbox"
                 checked={clearCookies}
                 onChange={this.toggleCookies}
@@ -144,10 +143,7 @@ const ClearBrowsingDataList = styled.div`
     margin: 0;
     display: flex;
     align-items: center;
-
-    input[type="checkbox"] {
-      margin-right: 10px;
-    }
+    gap: 10px;
   }
 
   .checkbox-info {

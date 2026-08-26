@@ -18,15 +18,12 @@ const Label = styled.label
   font-size: 14px;
   display: flex;
   align-items: center;
+  gap: 8px;
 
   ${styles.prefChunk};
 
   &.active {
     ${styles.prefChunkActive};
-  }
-
-  input[type="checkbox"] {
-    margin-right: 8px;
   }
 `;
 

@@ -8,6 +8,7 @@ import {
 import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
+import Checkbox from "renderer/basics/Checkbox";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
@@ -35,11 +36,8 @@ const ControlsDiv = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 6px;
     border-left: 2px solid ${(props) => props.theme.prefBorder};
-  }
-
-  input[type="checkbox"] {
-    margin-right: 0.4em;
   }
 `;
 
@@ -51,9 +49,7 @@ class SecretSettings extends React.PureComponent<Props> {
       <ModalWidgetDiv>
         <ControlsDiv>
           <label className="control">
-            <input
-              type="checkbox"
-              value="Redux logging"
+            <Checkbox
               checked={status.reduxLoggingEnabled}
               onChange={this.toggleReduxLogging}
             />

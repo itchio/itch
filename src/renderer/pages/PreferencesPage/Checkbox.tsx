@@ -1,17 +1,18 @@
 import { actions } from "common/actions";
 import { Dispatch, PreferencesState } from "common/types";
 import React from "react";
+import Checkbox from "renderer/basics/Checkbox";
 import { hookWithProps } from "renderer/hocs/hook";
 import Label from "renderer/pages/PreferencesPage/Label";
 
-class Checkbox extends React.PureComponent<Props> {
+class PreferencesCheckbox extends React.PureComponent<Props> {
   override render() {
     const { active, children, label } = this.props;
     const checked = !!active;
 
     return (
       <Label active={checked}>
-        <input type="checkbox" checked={checked} onChange={this.onChange} />
+        <Checkbox checked={checked} onChange={this.onChange} />
         <span> {label} </span>
         {children}
       </Label>
@@ -48,6 +49,6 @@ interface Props {
   active: boolean | undefined;
 }
 
-export default hookWithProps(Checkbox)((map) => ({
+export default hookWithProps(PreferencesCheckbox)((map) => ({
   active: map((rs, props) => rs.preferences[props.name]),
-}))(Checkbox);
+}))(PreferencesCheckbox);

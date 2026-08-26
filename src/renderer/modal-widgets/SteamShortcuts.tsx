@@ -10,6 +10,7 @@ import { ambientWind } from "common/util/navigation";
 import { lighten, transparentize } from "polished";
 import React from "react";
 import Button from "renderer/basics/Button";
+import Checkbox from "renderer/basics/Checkbox";
 import Icon from "renderer/basics/Icon";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
@@ -140,11 +141,9 @@ const Row = styled.label`
     text-decoration: line-through;
   }
 
-  .game-id,
   .hint {
     font-size: ${(props) => props.theme.fontSizes.small};
     color: ${(props) => props.theme.ternaryText};
-    font-family: monospace;
   }
 
   .filler {
@@ -506,13 +505,8 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     ].join(" ");
     return (
       <Row key={row.gameId} className={classNames}>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={() => this.toggle(row.gameId)}
-        />
+        <Checkbox checked={checked} onChange={() => this.toggle(row.gameId)} />
         <span className="title">{row.title}</span>
-        <span className="game-id">#{row.gameId}</span>
         {willRemove && !row.installed ? (
           <span className="hint">{T(["steam.dialog.not_installed_hint"])}</span>
         ) : null}

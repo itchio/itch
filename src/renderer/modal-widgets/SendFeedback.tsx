@@ -8,6 +8,7 @@ import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import Button from "renderer/basics/Button";
+import Checkbox from "renderer/basics/Checkbox";
 import Filler from "renderer/basics/Filler";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { doAsync } from "renderer/helpers/doAsync";
@@ -221,8 +222,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
             </InfoBlock>
             <p>{T(["send_feedback.consent.system_info_helps_us"])}</p>
             <OurLabel active={includeSystemInfo}>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={includeSystemInfo}
                 onChange={this.onIncludeSystemInfo}
               />

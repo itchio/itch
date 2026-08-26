@@ -8,6 +8,7 @@ import {
 import { ShowErrorParams, ShowErrorResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import React from "react";
+import Checkbox from "renderer/basics/Checkbox";
 import Cover from "renderer/basics/Cover";
 import Link from "renderer/basics/Link";
 import { hook } from "renderer/hocs/hook";
@@ -66,12 +67,7 @@ const ReportLabel = styled.label`
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  input[type="checkbox"] {
-    display: block;
-    margin-left: 0;
-    margin-right: 6px;
-  }
+  gap: 6px;
 
   &:hover {
     cursor: pointer;
@@ -189,8 +185,7 @@ class ShowError extends React.PureComponent<Props, State> {
           <ReportLabel
             className={classNames({ enabled: this.state.sendReport })}
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={this.state.sendReport}
               onChange={this.onSendReportChange}
             />
