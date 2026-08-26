@@ -73,7 +73,7 @@
     "@types/styled-components": "^5.1.36",
     "@types/vivus": "^0.4.3",
     "@types/which": "^3.0.4",
-    "@types/yauzl": "^2.10.3",
+    "@types/yauzl": "^3.4.0",
     "cross-env": "^10.1.0",
     "debug": "^4.4.3",
     "electron": "^43.0.0",
