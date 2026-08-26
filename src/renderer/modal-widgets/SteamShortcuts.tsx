@@ -12,6 +12,7 @@ import React from "react";
 import Button from "renderer/basics/Button";
 import Checkbox from "renderer/basics/Checkbox";
 import Icon from "renderer/basics/Icon";
+import LoadingCircle from "renderer/basics/LoadingCircle";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
@@ -101,8 +102,13 @@ const MiniButton = styled.button`
   background: #242020;
   cursor: pointer;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: ${(props) => props.theme.inputBorderFocused};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 `;
 
@@ -127,6 +133,10 @@ const Row = styled.label`
 
   &.pending {
     background: #1d1a17;
+  }
+
+  &.disabled {
+    cursor: default;
   }
 
   .title {
@@ -396,7 +406,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
   }
 
   renderBody() {
-    const { snapshot } = this.props.modal.widgetParams;
+    const { snapshot, saving } = this.props.modal.widgetParams;
 
     if (!snapshot.steamRoot) {
       return this.renderUnavailable(["steam.error.not_found"]);
@@ -413,6 +423,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           <ListHeader>
             <div className="label">{T(["steam.dialog.list_header"])}</div>
             <MiniButton
+              disabled={saving}
               onClick={this.onAddInstalled}
               data-rh={JSON.stringify(["steam.dialog.add_installed_hint"])}
               data-rh-at="top"
@@ -421,6 +432,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
               {T(["steam.dialog.add_installed"])}
             </MiniButton>
             <MiniButton
+              disabled={saving}
               onClick={this.onRemoveMissing}
               data-rh={JSON.stringify(["steam.dialog.remove_missing_hint"])}
               data-rh-at="top"
@@ -429,6 +441,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
               {T(["steam.dialog.remove_missing"])}
             </MiniButton>
             <MiniButton
+              disabled={saving}
               onClick={this.onRemoveAll}
               data-rh={JSON.stringify(["steam.dialog.remove_all_hint"])}
               data-rh-at="top"
@@ -468,6 +481,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
   }
 
   renderRow(row: RowData) {
+    const { saving } = this.props.modal.widgetParams;
     const checked = !!this.state.checked[row.gameId];
     const willAdd = checked && !row.inSteam;
     const willRemove = !checked && row.inSteam;
@@ -502,10 +516,15 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     const classNames = [
       pending ? "pending" : "",
       willRemove ? "removing" : "",
+      saving ? "disabled" : "",
     ].join(" ");
     return (
       <Row key={row.gameId} className={classNames}>
-        <Checkbox checked={checked} onChange={() => this.toggle(row.gameId)} />
+        <Checkbox
+          checked={checked}
+          disabled={saving}
+          onChange={() => this.toggle(row.gameId)}
+        />
         <span className="title">{row.title}</span>
         {willRemove && !row.installed ? (
           <span className="hint">{T(["steam.dialog.not_installed_hint"])}</span>
@@ -592,14 +611,26 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
   }
 
   renderFooter(rows: RowData[]) {
-    const { snapshot } = this.props.modal.widgetParams;
+    const { snapshot, saving, saveProgress } = this.props.modal.widgetParams;
     const { toAdd, toRemove, toRepair } = this.pendingChanges(rows);
     const dirty =
       toAdd.length > 0 || toRemove.length > 0 || toRepair.length > 0;
 
     return (
       <Footer>
-        {dirty ? (
+        {saving ? (
+          <div className="summary">
+            {saveProgress && saveProgress.total > 0
+              ? T([
+                  "steam.dialog.saving_progress",
+                  {
+                    completed: saveProgress.completed,
+                    total: saveProgress.total,
+                  },
+                ])
+              : T(["steam.dialog.saving"])}
+          </div>
+        ) : dirty ? (
           <div className="summary">
             {toAdd.length > 0 ? (
               <span className="add">
@@ -629,8 +660,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           <ModalButtonSpacer />
           <Button
             primary
-            disabled={!dirty || snapshot.steamRunning}
-            label={T(["steam.dialog.save"])}
+            disabled={saving || !dirty || snapshot.steamRunning}
+            iconComponent={saving ? <LoadingCircle progress={-1} /> : undefined}
+            label={T([saving ? "steam.dialog.saving" : "steam.dialog.save"])}
             onClick={this.onSave}
           />
         </ModalButtons>
@@ -681,6 +713,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
   };
 
   onSave = () => {
+    if (this.props.modal.widgetParams.saving) {
+      return;
+    }
     const rows = rowsOf(this.props.modal.widgetParams);
     const { toAdd, toRemove, toRepair } = this.pendingChanges(rows);
     this.props.dispatch(

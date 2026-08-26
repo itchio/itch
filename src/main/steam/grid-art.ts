@@ -1,7 +1,8 @@
 import { Game } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { downloadToFileWithRetry } from "main/net/download";
-import { copyFileSync, readdirSync, renameSync, unlinkSync } from "fs";
+import { readdirSync, renameSync, unlinkSync } from "fs";
+import { copyFile } from "fs/promises";
 import { join } from "path";
 
 function extensionFor(url: string): string {
@@ -45,9 +46,7 @@ export async function downloadGridArt(
     join(gridDir, `${shortId}_hero${ext}`),
     join(gridDir, `${shortId}_icon${ext}`),
   ];
-  for (const target of copies) {
-    copyFileSync(capsule, target);
-  }
+  await Promise.all(copies.map((target) => copyFile(capsule, target)));
   return join(gridDir, `${shortId}_icon${ext}`);
 }
 

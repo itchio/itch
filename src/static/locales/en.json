@@ -88,6 +88,8 @@
   "steam.dialog.summary_remove": "{count} to remove",
   "steam.dialog.no_changes": "No changes yet",
   "steam.dialog.save": "Save",
+  "steam.dialog.saving": "Saving…",
+  "steam.dialog.saving_progress": "Saving {completed} of {total}…",
   "steam.dialog.details.steam_root": "Steam folder",
   "steam.dialog.details.user": "Steam user",
   "steam.dialog.details.file": "File",

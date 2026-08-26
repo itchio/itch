@@ -58,6 +58,10 @@ export interface SteamShortcutsParams {
   installedGames: Game[];
   /** pre-stage this game's checkbox when opened from its context menu */
   initialGameId?: number;
+  /** a save is currently being applied in the main process */
+  saving: boolean;
+  /** completed/total games whose shortcut data and artwork are being ensured */
+  saveProgress: { completed: number; total: number } | null;
 }
 
 export interface SteamShortcutsResponse {}

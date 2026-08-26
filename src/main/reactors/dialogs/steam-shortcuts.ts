@@ -14,6 +14,8 @@ const logger = mainLogger.child(__filename);
 
 let openModalId: string | null = null;
 let openGeneration = 0;
+let saveInProgress = false;
+let saveProgress: SteamShortcutsParams["saveProgress"] = null;
 
 function steamErrorMessage(e: unknown): LocalizedString {
   if (e instanceof SteamError) {
@@ -54,6 +56,29 @@ function currentDialogParams(store: Store): SteamShortcutsParams | null {
     return null;
   }
   return modal;
+}
+
+function updateSaveState(store: Store) {
+  const modalId = openModalId;
+  if (!modalId) {
+    return;
+  }
+  const current = dialogParams(store, modalId);
+  if (!current) {
+    return;
+  }
+  store.dispatch(
+    actions.updateModalWidgetParams(
+      modals.steamShortcuts.update({
+        id: modalId,
+        widgetParams: {
+          ...current,
+          saving: saveInProgress,
+          saveProgress,
+        },
+      })
+    )
+  );
 }
 
 async function fetchInstalledGames(): Promise<Game[]> {
@@ -112,7 +137,12 @@ async function refreshDialog(
     actions.updateModalWidgetParams(
       modals.steamShortcuts.update({
         id: modalId,
-        widgetParams: { snapshot, installedGames },
+        widgetParams: {
+          snapshot,
+          installedGames,
+          saving: saveInProgress,
+          saveProgress,
+        },
       })
     )
   );
@@ -200,7 +230,13 @@ export default function (watcher: Watcher) {
       wind: "root",
       title: ["steam.dialog.title"],
       message: "",
-      widgetParams: { snapshot, installedGames, initialGameId: gameId },
+      widgetParams: {
+        snapshot,
+        installedGames,
+        initialGameId: gameId,
+        saving: saveInProgress,
+        saveProgress,
+      },
     });
     openModalId = modal.id;
     store.dispatch(actions.openModal(modal));
@@ -208,21 +244,39 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.steamShortcutsSave, async (store, action) => {
+    if (saveInProgress || !currentDialogParams(store)) {
+      return;
+    }
+    saveInProgress = true;
+    saveProgress = null;
+    updateSaveState(store);
+
     const { ensureGameIds, repairGameIds, removeGameIds } = action.payload;
     let error: LocalizedString | null = null;
     try {
       const ensureSet = new Set(ensureGameIds);
       const installed =
         ensureSet.size > 0 ? await fetchInstalledGamesWithFallback(store) : [];
+      const ensure = installed.filter((g) => ensureSet.has(g.id));
+      if (ensure.length > 0) {
+        saveProgress = { completed: 0, total: ensure.length };
+        updateSaveState(store);
+      }
       await applyShortcuts({
-        ensure: installed.filter((g) => ensureSet.has(g.id)),
+        ensure,
         repairGameIds,
         removeGameIds,
+        onProgress: (completed, total) => {
+          saveProgress = { completed, total };
+          updateSaveState(store);
+        },
       });
     } catch (e) {
       logger.warn(`could not apply Steam shortcuts: ${e}`);
       error = steamErrorMessage(e);
     }
+    saveInProgress = false;
+    saveProgress = null;
     await refreshDialog(store, error);
   });
 }

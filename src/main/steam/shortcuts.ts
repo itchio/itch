@@ -261,6 +261,8 @@ export interface ApplyShortcutsInput {
   repairGameIds: number[];
   /** game ids whose shortcuts should be removed */
   removeGameIds: number[];
+  /** reports completed games while ensuring shortcut data and artwork */
+  onProgress?: (completed: number, total: number) => void;
 }
 
 export function applyShortcuts(input: ApplyShortcutsInput): Promise<void> {
@@ -348,7 +350,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
   const canonicalize = launcher ? makeCanonicalize(launcher) : null;
 
   const ensuredIds = new Set<number>();
-  for (const game of ensure) {
+  for (const [gameIndex, game] of ensure.entries()) {
     // ensure is non-empty only when a launcher resolved
     const l = launcher!;
     const fields = canonicalFields(l, game.id);
@@ -382,6 +384,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
           logger.warn(`could not download grid art for ${game.title}: ${e}`);
         }
       }
+      input.onProgress?.(gameIndex + 1, ensure.length);
       continue;
     }
 
@@ -413,6 +416,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       tags: {},
     });
     changed = true;
+    input.onProgress?.(gameIndex + 1, ensure.length);
   }
 
   if (canonicalize) {
