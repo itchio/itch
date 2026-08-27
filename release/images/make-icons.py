@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
-"""Generates the macOS icons (.icns + dock PNGs under
-src/static/images/window/) from icon1024.png for each app variant.
+"""Generates all app icons from itch-icons/source.png:
 
-Masks the artwork into the standard macOS icon shape
-(macos-squircle-mask-1024.png) and applies a background gradient, rim
-light, and glyph shadow. Expects source art with a solid background and a
-white glyph.
+- kitch-icons/source.png (hue-rotated copy of the itch source)
+- iconNN.png at every size for both variants
+- itch.ico for Windows (single 256px entry, same as before)
+- tray PNGs under src/static/images/tray/
+- macOS itch.icns + dock PNGs under src/static/images/window/, masked into
+  the standard macOS icon shape (macos-squircle-mask-1024.png) with a
+  background gradient, rim light, and glyph shadow applied
+
+The macOS part expects source art with a solid background and a white
+glyph. Replaces the old resize-icons.rb (ruby + ImageMagick).
+
+Note: Pillow's Lanczos resampling differs slightly from ImageMagick's, so
+rerunning this regenerates every output with small pixel diffs. Only run
+it when the source art actually changes.
 
 Needs Pillow + numpy, plus iconutil. Run from this directory:
-python3 make-macos-icns.py
+python3 make-icons.py
 """
 
 import os
@@ -20,15 +29,20 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+STATIC_IMAGES = os.path.join(HERE, "..", "..", "src", "static", "images")
 MASK_PATH = os.path.join(HERE, "macos-squircle-mask-1024.png")
+
+PNG_SIZES = [16, 32, 36, 48, 64, 72, 114, 128, 144, 150, 256, 512, 1024]
+
+# equivalent of the old `convert -modulate 100,100,15`: (15 - 100) * 1.8
+KITCH_HUE_ROTATE = -153.0
 
 CANVAS = 1024
 SQUIRCLE = 824  # solid artwork size on Apple's 1024 grid
 OVERFILL = 8  # bleed past the mask edge to avoid fringing, per side
 
-# (name, @1x size) pairs required by iconutil; @2x is derived
+# @1x sizes required by iconutil; @2x is derived
 ICONSET_SIZES = [16, 32, 128, 256, 512]
-
 
 # squircle vertical extent on the canvas, for gradient/rim math
 SQ_TOP = (CANVAS - SQUIRCLE) // 2
@@ -46,6 +60,43 @@ RIM_WIDTH = 9  # erosion kernel; rim band is about half this
 RIM_BLUR = 2.5
 # rim light strength at the top edge / sides / bottom edge
 RIM_TOP, RIM_MID, RIM_BOTTOM = 0.55, 0.16, 0.30
+
+
+def hue_rotate(img, degrees):
+    """Rotate the hue of an RGBA image, leaving alpha alone."""
+    rgba = np.asarray(img.convert("RGBA")).astype(np.float64) / 255.0
+    r, g, b = rgba[..., 0], rgba[..., 1], rgba[..., 2]
+    mx = rgba[..., :3].max(axis=-1)
+    mn = rgba[..., :3].min(axis=-1)
+    c = mx - mn
+
+    h = np.zeros_like(mx)
+    m = c > 0
+    with np.errstate(invalid="ignore", divide="ignore"):
+        idx = m & (mx == r)
+        h[idx] = ((g - b)[idx] / c[idx]) % 6
+        idx = m & (mx == g) & (mx != r)
+        h[idx] = (b - r)[idx] / c[idx] + 2
+        idx = m & (mx == b) & (mx != r) & (mx != g)
+        h[idx] = (r - g)[idx] / c[idx] + 4
+
+    h = (h + degrees / 60.0) % 6
+    x = c * (1 - np.abs(h % 2 - 1))
+    z = np.zeros_like(c)
+    hi = h.astype(int) % 6
+    comps = [(c, x, z), (x, c, z), (z, c, x), (z, x, c), (x, z, c), (c, z, x)]
+    conds = [hi == i for i in range(6)]
+    base = mx - c
+    out = np.stack(
+        [
+            np.select(conds, [t[0] for t in comps]) + base,
+            np.select(conds, [t[1] for t in comps]) + base,
+            np.select(conds, [t[2] for t in comps]) + base,
+            rgba[..., 3],
+        ],
+        axis=-1,
+    )
+    return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8))
 
 
 def compose_flat(src_path):
@@ -124,7 +175,7 @@ def compose_master(src_path, mask):
         dtype=np.float64,
     ) / 255.0
     shadow = np.roll(shadow, GLYPH_SHADOW_OFFSET, axis=0)
-    shadow[: GLYPH_SHADOW_OFFSET, :] = 0.0
+    shadow[:GLYPH_SHADOW_OFFSET, :] = 0.0
     out *= 1.0 - shadow[..., None] * GLYPH_SHADOW_OPACITY
 
     # the glyph itself, back on top in white
@@ -169,17 +220,45 @@ def build_icns(master, out_path):
 
 
 def main():
+    itch_dir = os.path.join(HERE, "itch-icons")
+    kitch_dir = os.path.join(HERE, "kitch-icons")
+
+    itch_source = Image.open(os.path.join(itch_dir, "source.png")).convert("RGBA")
+    kitch_source = hue_rotate(itch_source, KITCH_HUE_ROTATE)
+    kitch_source.save(os.path.join(kitch_dir, "source.png"))
+    print("kitch: wrote source.png")
+
     mask = Image.open(MASK_PATH).convert("L")
-    for app in ("itch", "kitch"):
+    for app, source in (("itch", itch_source), ("kitch", kitch_source)):
         icons_dir = os.path.join(HERE, f"{app}-icons")
+
+        for size in PNG_SIZES:
+            resized = source.resize((size, size), Image.LANCZOS)
+            resized.save(os.path.join(icons_dir, f"icon{size}.png"))
+        print(f"{app}: wrote icon{{{','.join(map(str, PNG_SIZES))}}}.png")
+
+        Image.open(os.path.join(icons_dir, "icon256.png")).save(
+            os.path.join(icons_dir, "itch.ico"), sizes=[(256, 256)]
+        )
+        print(f"{app}: wrote itch.ico")
+
+        shutil.copyfile(
+            os.path.join(icons_dir, "icon256.png"),
+            os.path.join(STATIC_IMAGES, "tray", f"{app}.png"),
+        )
+        shutil.copyfile(
+            os.path.join(icons_dir, "icon16.png"),
+            os.path.join(STATIC_IMAGES, "tray", f"{app}-small.png"),
+        )
+        print(f"{app}: wrote tray PNGs")
+
         master = compose_master(os.path.join(icons_dir, "icon1024.png"), mask)
         master.save(os.path.join(icons_dir, "icon1024-macos.png"))
         build_icns(master, os.path.join(icons_dir, "itch.icns"))
         # runtime dock icon, used by app.dock.setIcon (see winds.ts getIconPath)
-        window_icon = os.path.join(
-            HERE, "..", "..", "src", "static", "images", "window", app, "icon-macos.png"
+        master.resize((512, 512), Image.LANCZOS).save(
+            os.path.join(STATIC_IMAGES, "window", app, "icon-macos.png")
         )
-        master.resize((512, 512), Image.LANCZOS).save(window_icon)
         print(f"{app}: wrote icon1024-macos.png + itch.icns + icon-macos.png")
 
 
