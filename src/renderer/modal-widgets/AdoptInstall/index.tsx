@@ -280,7 +280,9 @@ class AdoptInstall extends React.PureComponent<Props, State> {
         </IntroDiv>
         {this.renderMain()}
         <ModalButtons>
-          <Button onClick={this.onCancel}>{T(["prompt.action.cancel"])}</Button>
+          <Button onClick={this.onCancel} disabled={this.state.adopting}>
+            {T(["prompt.action.cancel"])}
+          </Button>
           <Filler />
           <Button
             disabled={!this.canAdopt()}
@@ -296,7 +298,7 @@ class AdoptInstall extends React.PureComponent<Props, State> {
   }
 
   renderMain() {
-    const { busy, adopting, pickedFolderPath } = this.state;
+    const { busy, adopting, pickedFolderPath, error, uploads } = this.state;
 
     if (busy || adopting) {
       return (
@@ -308,6 +310,11 @@ class AdoptInstall extends React.PureComponent<Props, State> {
           <Floater />
         </LoadingStateDiv>
       );
+    }
+
+    // uploads never loaded: the form below is a dead end without them
+    if (error && !uploads) {
+      return this.renderError();
     }
 
     if (!pickedFolderPath) {
@@ -388,17 +395,15 @@ class AdoptInstall extends React.PureComponent<Props, State> {
 
     return (
       <>
-        {uploadOptions.length > 1 ? (
-          <UploadQuestionDiv>
-            <div>{T(_("adopt_install.which_download"))}</div>
-            <SimpleSelect
-              onChange={this.onUploadChange}
-              value={uploadValue}
-              options={uploadOptions}
-              OptionComponent={UploadOptionComponent}
-            />
-          </UploadQuestionDiv>
-        ) : null}
+        <UploadQuestionDiv>
+          <div>{T(_("adopt_install.which_download"))}</div>
+          <SimpleSelect
+            onChange={this.onUploadChange}
+            value={uploadValue}
+            options={uploadOptions}
+            OptionComponent={UploadOptionComponent}
+          />
+        </UploadQuestionDiv>
         <CautionCallout>
           <Icon icon="warning" />
           <span>{T(_("adopt_install.caution", { title: game.title }))}</span>
@@ -669,7 +674,9 @@ class AdoptInstall extends React.PureComponent<Props, State> {
     if (!split) {
       return null;
     }
-    const caseInsensitive = this.props.systemPlatform !== Platform.Linux;
+    // fold case only for Windows drive-letter differences; elsewhere an
+    // exact match guarantees butler joins to exactly the picked folder
+    const caseInsensitive = this.props.systemPlatform === Platform.Windows;
     const parent = normalizeFolderPath(split.parent, caseInsensitive);
     for (const location of this.state.installLocations) {
       if (normalizeFolderPath(location.path, caseInsensitive) === parent) {

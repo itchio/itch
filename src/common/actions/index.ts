@@ -470,7 +470,7 @@ export const actions = wireActions({
       forceOwned?: boolean;
       /**
        * show only the "link existing folder" item instead of the game
-       * controls — set by the install dialog's thumbnail, so the
+       * controls. Set by the install dialog's thumbnail, so the
        * advanced action stays out of the regular game context menus
        */
       showAdoptInstall?: boolean;
