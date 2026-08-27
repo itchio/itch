@@ -18,6 +18,7 @@ import {
   removeGridArt,
   renameGridArt,
 } from "main/steam/grid-art";
+import { syncItchCollection } from "main/steam/collections";
 import {
   SteamDirectTarget,
   SteamShortcutEntrySummary,
@@ -394,6 +395,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
   }
 
   let changed = removed.length > 0;
+  const retiredAppids: number[] = [];
 
   const canonicalize = (
     entry: VdfObject,
@@ -408,6 +410,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       // it over so healing an entry doesn't lose its art
       const oldShortId = (oldAppid >>> 0).toString();
       const newShortId = (fields.appid >>> 0).toString();
+      retiredAppids.push(oldAppid >>> 0);
       renameGridArt(ctx.configDir, oldShortId, newShortId);
       const icon = getField(entry, "icon");
       if (typeof icon === "string" && icon.includes(oldShortId)) {
@@ -548,8 +551,30 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
   for (const entry of removed) {
     const appid = getField(entry, "appid");
     if (typeof appid === "number") {
+      retiredAppids.push(appid >>> 0);
       removeGridArt(ctx.configDir, (appid >>> 0).toString());
     }
+  }
+
+  // cosmetic: a failure here must not fail the save, the shortcuts
+  // themselves are already written
+  try {
+    const collectionIds: number[] = [];
+    for (const entry of kept) {
+      if (entryGameId(entry) === null) {
+        continue;
+      }
+      const appid = getField(entry, "appid");
+      if (typeof appid === "number") {
+        collectionIds.push(appid >>> 0);
+      }
+    }
+    syncItchCollection(ctx.configDir, {
+      ensure: collectionIds,
+      remove: retiredAppids,
+    });
+  } catch (e) {
+    logger.warn(`could not sync Steam collection: ${e}`);
   }
   logger.info(
     `applied Steam shortcuts: ensured ${ensure.length}, repaired ${repairSet.size}, removed ${removed.length}`
