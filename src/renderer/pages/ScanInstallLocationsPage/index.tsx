@@ -41,12 +41,33 @@ enum Stage {
 const coverHeight = 20;
 const coverWidth = (coverHeight / standardCoverHeight) * standardCoverWidth;
 
+/*
+ * Log sizes itself with a height: 100% chain, which only works under an
+ * ancestor with a definite height; here it must instead fill whatever
+ * space is left above the button row, so the container, the table and
+ * the scrolling tbody are all turned into min-height: 0 flex items.
+ */
 const StyledLog = styled(Log)`
-  tbody {
-    min-height: 240px;
+  flex-grow: 1;
+  min-height: 0;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1em;
+
+  table {
+    flex-grow: 1;
+    min-height: 0;
+    height: auto;
+    display: flex;
+    flex-direction: column;
   }
 
-  padding-bottom: 1em;
+  tbody {
+    flex-grow: 1;
+    min-height: 0;
+    height: auto;
+  }
 `;
 
 const TinyCover = styled(StandardGameCover)`
@@ -70,6 +91,13 @@ const WideBox = styled(Box)`
 const ListDiv = styled.div`
   flex-grow: 1000; /* Filler is 100 */
   flex-shrink: 0;
+`;
+
+const DoneDiv = styled.div`
+  flex-grow: 1000; /* Filler is 100 */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ListDivSpacer = styled.div`
@@ -295,7 +323,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
   renderDone() {
     const { didImport, numItems, showLog, log } = this.state;
     return (
-      <ListDiv>
+      <DoneDiv>
         {didImport ? (
           <p>
             {T(
@@ -316,7 +344,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
             onClick={this.onShowLog}
           />
         )}
-      </ListDiv>
+      </DoneDiv>
     );
   }
 
