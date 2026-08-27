@@ -594,6 +594,7 @@
   "adopt_install.open_location": "Open",
   "adopt_install.change_folder": "Change...",
   "adopt_install.which_download": "Which download is in this folder?",
+  "adopt_install.no_uploads": "This game has no downloads available to link. Downloads that are already installed or currently downloading can't be linked again.",
   "adopt_install.folder_outside_location": "This folder isn't inside your install location, so the app can't manage it from here.",
   "adopt_install.move_folder_hint": "Move the folder into <code>{location}</code> first, then choose it again.",
   "adopt_install.folder_has_receipt": "This folder was already installed by the app - it contains an install receipt.",

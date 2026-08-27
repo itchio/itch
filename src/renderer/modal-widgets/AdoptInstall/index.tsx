@@ -207,6 +207,12 @@ const CautionCallout = styled.div`
   }
 `;
 
+const HintParagraph = styled.div`
+  line-height: 1.4;
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+`;
+
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -312,9 +318,15 @@ class AdoptInstall extends React.PureComponent<Props, State> {
       );
     }
 
-    // uploads never loaded: the form below is a dead end without them
-    if (error && !uploads) {
+    // the form below is a dead end without uploads and locations
+    if (error && (!uploads || this.state.installLocations.length === 0)) {
       return this.renderError();
+    }
+    if (
+      uploads &&
+      uploads.length + (this.state.incompatibleUploads?.length ?? 0) === 0
+    ) {
+      return <HintParagraph>{T(_("adopt_install.no_uploads"))}</HintParagraph>;
     }
 
     if (!pickedFolderPath) {
@@ -601,6 +613,10 @@ class AdoptInstall extends React.PureComponent<Props, State> {
     this.setState({ adopting: true, error: undefined });
     doAsync(async () => {
       const { dispatch, profileId } = this.props;
+      const { wind, id } = this.props.modal;
+      // block the header X and Escape while butler takes ownership of
+      // the folder; closing mid-RPC would not stop it
+      dispatch(actions.setModalUnclosable({ wind, id, unclosable: true }));
       const recLogger = recordingLogger(logger);
       try {
         await rcall(
@@ -623,6 +639,7 @@ class AdoptInstall extends React.PureComponent<Props, State> {
         );
       } catch (e) {
         logger.error(`While adopting folder: ${getErrorStack(e)}`);
+        dispatch(actions.setModalUnclosable({ wind, id, unclosable: false }));
         this.setState({
           adopting: false,
           error: asError(e),
@@ -674,12 +691,13 @@ class AdoptInstall extends React.PureComponent<Props, State> {
     if (!split) {
       return null;
     }
-    // fold case only for Windows drive-letter differences; elsewhere an
-    // exact match guarantees butler joins to exactly the picked folder
-    const caseInsensitive = this.props.systemPlatform === Platform.Windows;
-    const parent = normalizeFolderPath(split.parent, caseInsensitive);
+    // beyond the drive letter, an exact match guarantees butler joins
+    // to exactly the picked folder; a spurious case mismatch only shows
+    // the outside-location message, never adopts the wrong folder
+    const foldDriveLetter = this.props.systemPlatform === Platform.Windows;
+    const parent = normalizeFolderPath(split.parent, foldDriveLetter);
     for (const location of this.state.installLocations) {
-      if (normalizeFolderPath(location.path, caseInsensitive) === parent) {
+      if (normalizeFolderPath(location.path, foldDriveLetter) === parent) {
         return { location, name: split.name };
       }
     }
@@ -706,11 +724,15 @@ class AdoptInstall extends React.PureComponent<Props, State> {
 
   loadInstallLocations() {
     doAsync(async () => {
-      const { installLocations } = await rcall(
-        messages.InstallLocationsList,
-        {}
-      );
-      this.setState({ installLocations });
+      try {
+        const { installLocations } = await rcall(
+          messages.InstallLocationsList,
+          {}
+        );
+        this.setState({ installLocations });
+      } catch (e) {
+        this.setState({ error: asError(e) });
+      }
     });
   }
 
@@ -750,12 +772,15 @@ class AdoptInstall extends React.PureComponent<Props, State> {
 }
 
 /** strip trailing separators and unify to forward slashes for comparison */
-function normalizeFolderPath(p: string, caseInsensitive: boolean): string {
+function normalizeFolderPath(p: string, foldDriveLetter: boolean): string {
   let out = p.replace(/\\/g, "/");
   while (out.length > 1 && out.endsWith("/")) {
     out = out.slice(0, -1);
   }
-  return caseInsensitive ? out.toLowerCase() : out;
+  if (foldDriveLetter && /^[A-Za-z]:/.test(out)) {
+    out = out.slice(0, 1).toLowerCase() + out.slice(1);
+  }
+  return out;
 }
 
 function splitFolderPath(p: string): { parent: string; name: string } | null {

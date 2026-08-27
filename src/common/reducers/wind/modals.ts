@@ -21,6 +21,16 @@ export default reducer<ModalsState>(initialState, (on) => {
     });
   });
 
+  on(actions.setModalUnclosable, (state, action) => {
+    const { id, unclosable } = action.payload;
+    return state.map((modal) => {
+      if (modal.id === id) {
+        return { ...modal, unclosable };
+      }
+      return modal;
+    });
+  });
+
   on(actions.modalClosed, (state, action) => {
     const { id } = action.payload;
     return state.filter((modal) => modal.id !== id);

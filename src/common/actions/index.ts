@@ -130,6 +130,15 @@ export const actions = wireActions({
 
   openModal: action<TypedModal<any, any>>(),
   updateModalWidgetParams: action<TypedModalUpdate<any>>(),
+  setModalUnclosable: action<{
+    wind: string;
+
+    /** id of the modal to update */
+    id: string;
+
+    /** when true, hides the header close button and ignores Escape */
+    unclosable: boolean;
+  }>(),
   closeModal: action<{
     wind: string;
 
