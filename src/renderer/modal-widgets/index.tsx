@@ -6,6 +6,7 @@ import SwitchVersionCave from "renderer/modal-widgets/SwitchVersionCave";
 import ExploreJson from "renderer/modal-widgets/ExploreJson";
 import ManageCave from "renderer/modal-widgets/ManageCave";
 import ManageGame from "renderer/modal-widgets/ManageGame";
+import AdoptInstall from "renderer/modal-widgets/AdoptInstall";
 import PlanInstall from "renderer/modal-widgets/PlanInstall";
 import PrereqsState from "renderer/modal-widgets/PrereqsState";
 import PushBuild from "renderer/modal-widgets/PushBuild";
@@ -35,6 +36,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   manageCave: ManageCave,
   manageGame: ManageGame,
   planInstall: PlanInstall,
+  adoptInstall: AdoptInstall,
   prereqsState: PrereqsState,
   pushBuild: PushBuild,
   sendFeedback: SendFeedback,

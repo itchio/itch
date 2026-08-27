@@ -1,5 +1,7 @@
 import { actions } from "common/actions";
 import {
+  AdoptInstallParams,
+  AdoptInstallResponse,
   ClearBrowsingDataParams,
   ClearBrowsingDataResponse,
   ExploreJsonParams,
@@ -117,6 +119,7 @@ export const prepModals = (uuid: () => string) => {
     manageGame: widget<ManageGameParams, ManageGameResponse>(uuid),
     manageCave: widget<ManageCaveParams, ManageCaveResponse>(uuid),
     planInstall: widget<PlanInstallParams, PlanInstallResponse>(uuid),
+    adoptInstall: widget<AdoptInstallParams, AdoptInstallResponse>(uuid),
     prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(uuid),
     switchVersionCave: widget<
       SwitchVersionCaveParams,

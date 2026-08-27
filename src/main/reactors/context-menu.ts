@@ -9,6 +9,7 @@ import {
 import { Watcher } from "common/util/watcher";
 import { Menu, MenuItemConstructorOptions } from "electron";
 import {
+  adoptInstallMenu,
   gameControls,
   userMenu,
 } from "main/reactors/context-menu/build-template";
@@ -28,8 +29,10 @@ function openMenu(
 
 export default function (watcher: Watcher) {
   watcher.on(actions.openGameContextMenu, async (store, action) => {
-    const { game, forceOwned } = action.payload;
-    const template = gameControls(store, game, forceOwned);
+    const { game, forceOwned, showAdoptInstall } = action.payload;
+    const template = showAdoptInstall
+      ? adoptInstallMenu(game)
+      : gameControls(store, game, forceOwned);
 
     const { wind, clientX, clientY } = action.payload;
     openMenu(store, template, { wind, clientX, clientY });

@@ -1,10 +1,11 @@
-import { asError, getErrorStack } from "common/butlerd/errors";
+import { asError, asRequestError, getErrorStack } from "common/butlerd/errors";
 import classNames from "classnames";
 import { lighten, transparentize } from "polished";
 import uuid from "common/util/uuid";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import {
+  Code,
   DownloadReason,
   Game,
   InstallLocationSummary,
@@ -141,6 +142,13 @@ const StyledSelect = styled.select`
 
   background: rgba(0, 0, 0, 0.1);
   font-size: ${(props) => props.theme.fontSizes.large};
+`;
+
+const AdoptHintParagraph = styled.div`
+  margin-top: 0.6em;
+  line-height: 1.4;
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.baseText};
 `;
 
 const NoCompatibleParagraph = styled.div`
@@ -288,7 +296,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       <>
         <WideBox>
           <BoxInner>
-            <StandardGameCover game={game} />
+            <StandardGameCover game={game} showAdoptInstall />
             <FilterSpacer />
             <StandardGameDesc game={game} />
             <FilterSpacer />
@@ -410,18 +418,27 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
   renderError() {
     const { error } = this.state;
+    const unsupportedHost =
+      asRequestError(error)?.rpcError.code === Code.UnsupportedHost;
     return (
-      <ErrorContainer>
-        <ErrorParagraph>
-          <Icon icon="error" /> {T(formatError(error))}
-        </ErrorParagraph>
-        <ErrorButtons>
-          <Button
-            label={T(["grid.item.view_details"])}
-            onClick={this.onShowError}
-          />
-        </ErrorButtons>
-      </ErrorContainer>
+      <>
+        <ErrorContainer>
+          <ErrorParagraph>
+            <Icon icon="error" /> {T(formatError(error))}
+          </ErrorParagraph>
+          <ErrorButtons>
+            <Button
+              label={T(["grid.item.view_details"])}
+              onClick={this.onShowError}
+            />
+          </ErrorButtons>
+        </ErrorContainer>
+        {unsupportedHost ? (
+          <AdoptHintParagraph>
+            {T(_("plan_install.adopt_hint"))}
+          </AdoptHintParagraph>
+        ) : null}
+      </>
     );
   }
 

@@ -468,6 +468,12 @@ export const actions = wireActions({
        * set by views that know about unmaterialized bundle ownership
        */
       forceOwned?: boolean;
+      /**
+       * show only the "link existing folder" item instead of the game
+       * controls — set by the install dialog's thumbnail, so the
+       * advanced action stays out of the regular game context menus
+       */
+      showAdoptInstall?: boolean;
     }
   >(),
   openUserMenu: action<OpenContextMenuBase>(),
@@ -631,6 +637,13 @@ export const actions = wireActions({
   manageGame: action<{
     /** which game to manage */
     game: Game;
+  }>(),
+  adoptGameInstall: action<{
+    /** the game to link an existing folder to */
+    game: Game;
+
+    /** upload preselected in the adopt dialog */
+    uploadId?: number;
   }>(),
   manageCave: action<{
     /** which cave to manage */

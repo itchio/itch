@@ -28,6 +28,21 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
+/**
+ * Menu for the install dialog's thumbnail: only the advanced
+ * link-existing-folder action, none of the regular game controls -
+ * everything else the game menu offers is already on that screen.
+ */
+export function adoptInstallMenu(game: Game): MenuTemplate {
+  return [
+    {
+      id: "context--grid-item-adopt-install",
+      localizedLabel: ["adopt_install.link_existing_folder"],
+      action: actions.adoptGameInstall({ game }),
+    },
+  ];
+}
+
 export function gameControls(
   store: Store,
   game: Game,

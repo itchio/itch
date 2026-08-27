@@ -369,7 +369,7 @@ export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
  * Result for Search.Local
  */
 export interface SearchLocalResult {
-  /** Locally-cached games matching the query */
+  /** Games in the profile's library matching the query */
   games: Game[];
   /** Bundles owned by the profile matching the query */
   bundles: Bundle[];
@@ -381,9 +381,10 @@ export interface SearchLocalResult {
  * Searches butler's local database for games, bundles, and collections.
  * Does not perform any API requests.
  *
- * Games are searched across everything locally cached. Bundles and
- * collections are scoped to the given profile: only bundles the profile
- * owns and collections in the profile's collection list are returned.
+ * Results are scoped to the given profile: games in the profile's library
+ * (owned, in an owned bundle, in one of their collections, on their
+ * dashboard, or installed), bundles the profile owns, and collections in
+ * the profile's collection list.
  */
 export const SearchLocal = createRequest<SearchLocalParams, SearchLocalResult>(
   "Search.Local"
@@ -1146,6 +1147,25 @@ export const GameFindUploads = createRequest<
   GameFindUploadsParams,
   GameFindUploadsResult
 >("Game.FindUploads");
+
+/**
+ * Result for Install.Adopt
+ */
+export interface InstallAdoptResult {
+  /** undocumented */
+  cave: Cave;
+}
+
+/**
+ * Registers an existing, ready-to-run folder as an installed item without
+ * downloading or copying its contents. Adoption transfers management of the
+ * entire folder to butler: uninstalling the resulting cave deletes the folder
+ * and all of its contents.
+ */
+export const InstallAdopt = createRequest<
+  InstallAdoptParams,
+  InstallAdoptResult
+>("Install.Adopt");
 
 /**
  * Result for Install.Queue
@@ -3564,7 +3584,7 @@ export interface SearchUsersParams {
  * Params for Search.Local
  */
 export interface SearchLocalParams {
-  /** Profile whose owned bundles and collections are searched */
+  /** Profile whose library, bundles, and collections are searched */
   profileId: number;
   /** undocumented */
   query: string;
@@ -3904,6 +3924,31 @@ export interface GameFindUploadsParams {
    * Profile to scope bundle ownership materialization to (this endpoint
    * has install intent, so it may claim a download key for a bundle-owned
    * game). When zero, falls back to any suitable profile.
+   */
+  profileId?: number;
+}
+
+/**
+ * Params for Install.Adopt
+ */
+export interface InstallAdoptParams {
+  /** undocumented */
+  gameId: number;
+  /** undocumented */
+  uploadId: number;
+  /**
+   * Exact build represented by the folder, including a historical build.
+   * When omitted for a wharf upload, the upload's latest advertised build is
+   * used.
+   */
+  buildId?: number;
+  /** undocumented */
+  installLocationId: string;
+  /** A single folder name directly beneath the install location. */
+  installFolderName: string;
+  /**
+   * Profile to use when resolving access to the game. When zero, falls back
+   * to any suitable profile.
    */
   profileId?: number;
 }

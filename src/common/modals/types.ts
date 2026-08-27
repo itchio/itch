@@ -131,6 +131,15 @@ export interface PlanInstallResponse {}
 
 //---------------------
 
+export interface AdoptInstallParams {
+  uploadId?: number;
+  game: Game;
+}
+
+export interface AdoptInstallResponse {}
+
+//---------------------
+
 export interface ExploreJsonParams {
   data: any;
 }
