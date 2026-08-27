@@ -14,4 +14,5 @@ end
   system("cp -f #{app}-icons/icon16.png ../../src/static/images/tray/#{app}-small.png")
 end
 
-puts "done - don't forget to optimize + .icns / .ico!"
+puts "done - don't forget to optimize + .ico!"
+puts "for the macOS .icns files, run: python3 make-macos-icns.py"

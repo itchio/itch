@@ -583,6 +583,9 @@ function getIconPath(): string {
   let iconName = "icon";
   if (process.platform === "win32") {
     iconName = "icon-32";
+  } else if (process.platform === "darwin") {
+    // squircle variant matching the modern macOS icon style
+    iconName = "icon-macos";
   }
 
   return getImagePath("window/" + env.appName + "/" + iconName + ".png");
