@@ -631,6 +631,26 @@ function getAppSession(store: Store): Session {
   return _cachedAppSession;
 }
 
+function hookMouseNavigationButtons(
+  store: Store,
+  wind: string,
+  contents: Electron.WebContents
+) {
+  contents.on("input-event", (_e, inputEvent) => {
+    if (inputEvent.type !== "mouseUp") {
+      return;
+    }
+    // the InputEvent typings omit `button`, and "back"/"forward" values
+    // (mouse buttons 4/5) aren't in MouseInputEvent's declared union
+    const { button } = inputEvent as { button?: string };
+    if (button === "back") {
+      store.dispatch(actions.commandGoBack({ wind }));
+    } else if (button === "forward") {
+      store.dispatch(actions.commandGoForward({ wind }));
+    }
+  });
+}
+
 function hookNativeWindow(
   store: Store,
   wind: string,
@@ -699,6 +719,16 @@ function hookNativeWindow(
       // ignore unknown app commands
     }
   });
+
+  if (macOs) {
+    // macOS never emits "app-command", so handle back/forward mouse
+    // buttons at the input-event level, for both the window itself and
+    // any attached webview (the in-app browser)
+    hookMouseNavigationButtons(store, wind, nativeWindow.webContents);
+    nativeWindow.webContents.on("did-attach-webview", (_e, webContents) => {
+      hookMouseNavigationButtons(store, wind, webContents);
+    });
+  }
 
   const debouncedBounds = debounce(() => {
     if (nativeWindow.isDestroyed()) {
