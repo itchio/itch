@@ -140,7 +140,18 @@ function resolveLauncher(): Launcher {
       throw new SteamError("no-launcher");
     }
   }
-  return { exePath: app.getPath("exe"), prefixArgs: [] };
+  if (app.isPackaged) {
+    return { exePath: app.getPath("exe"), prefixArgs: [] };
+  }
+  // in dev, app.getPath("exe") is the bare Electron binary, which would
+  // treat the itch:// url argument as an app path to load
+  for (const dir of ["/Applications", join(homedir(), "Applications")]) {
+    const exe = join(dir, "itch.app", "Contents", "MacOS", "itch");
+    if (existsSync(exe)) {
+      return { exePath: exe, prefixArgs: [] };
+    }
+  }
+  throw new SteamError("no-launcher");
 }
 
 // stable per-game id key: deriving from the title (as Steam does for its
