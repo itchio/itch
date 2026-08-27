@@ -352,12 +352,14 @@ class AdoptInstall extends React.PureComponent<Props, State> {
           </Button>
         </DropZone>
         <RequirementDiv>
-          {T(_("adopt_install.folder_requirement"))}{" "}
-          {location ? <code>{location.path}</code> : null}
-          <RequirementLink
-            label={T(_("adopt_install.open_location"))}
-            onClick={this.onBrowseLocation}
-          />
+          {T(_("adopt_install.folder_requirement"))}
+          <div>
+            {location ? <code>{location.path}</code> : null}
+            <RequirementLink
+              label={T(_("adopt_install.open_location"))}
+              onClick={this.onBrowseLocation}
+            />
+          </div>
         </RequirementDiv>
       </>
     );

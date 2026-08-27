@@ -53,7 +53,7 @@ import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { recordingLogger } from "common/logger";
 import { hookLogging } from "common/helpers/bridge";
@@ -84,6 +84,33 @@ const ErrorParagraph = styled.div`
 
 const WideBox = styled(Box)`
   width: 100%;
+  position: relative;
+`;
+
+const MoreActionsButton = styled.button`
+  ${styles.resetButton};
+
+  position: absolute;
+  top: 8px;
+  right: 10px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4em;
+
+  font-size: ${(props) => props.theme.fontSizes.baseText};
+  color: ${(props) => props.theme.secondaryText};
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${(props) => props.theme.secondaryTextHover};
+  }
+
+  /* the icon font only has a vertical "more" glyph, so rotate it */
+  .icon {
+    transform: rotate(90deg);
+  }
 `;
 
 const SizeTable = styled.table`
@@ -296,11 +323,19 @@ class PlanInstall extends React.PureComponent<Props, State> {
       <>
         <WideBox>
           <BoxInner>
-            <StandardGameCover game={game} showAdoptInstall />
+            <StandardGameCover game={game} showAdoptInstall disableLink />
             <FilterSpacer />
-            <StandardGameDesc game={game} />
+            <StandardGameDesc game={game} disableLink />
             <FilterSpacer />
           </BoxInner>
+          <MoreActionsButton
+            type="button"
+            className="plan-install--more-actions"
+            onClick={this.onMoreActions}
+          >
+            <Icon icon="more_vert" />
+            {T(_("plan_install.more_actions"))}
+          </MoreActionsButton>
         </WideBox>
         <SelectGroup>
           <SelectHeader>{T(_("plan_install.select_upload"))}</SelectHeader>
@@ -574,6 +609,22 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
   onShowIncompatible = () => {
     this.setState({ showingIncompatible: true });
+  };
+
+  // same menu as right-clicking the cover, but discoverable
+  onMoreActions = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    ev.preventDefault();
+    const { dispatch } = this.props;
+    const { game } = this.state;
+    dispatch(
+      actions.openGameContextMenu({
+        wind: ambientWind(),
+        clientX: ev.clientX,
+        clientY: ev.clientY,
+        game,
+        showAdoptInstall: true,
+      })
+    );
   };
 
   /** compatible + incompatible uploads, in display order */

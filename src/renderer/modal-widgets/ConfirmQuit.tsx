@@ -23,9 +23,9 @@ class RunningGame extends React.PureComponent<{ gameId: number }> {
       return (
         <Box>
           <BoxInner>
-            <StandardGameCover game={game} />
+            <StandardGameCover game={game} disableLink />
             <FilterSpacer />
-            <StandardGameDesc game={game} />
+            <StandardGameDesc game={game} disableLink />
             <FilterSpacer />
           </BoxInner>
         </Box>

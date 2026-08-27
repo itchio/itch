@@ -8,13 +8,17 @@ import { T } from "renderer/t";
 // `hideDetails` drops the short description and the classification/platforms
 // line - for lists where the game is already installed and only the title
 // and per-install info matter.
+// `disableLink` renders the title as plain text - for dialogs, where
+// navigating away behind the modal is bad UX.
 const StandardGameDesc = ({
   game,
   hideDetails,
+  disableLink,
   children,
 }: {
   game: Game | undefined;
   hideDetails?: boolean;
+  disableLink?: boolean;
   children?: any;
 }) => {
   if (!game) {
@@ -24,13 +28,20 @@ const StandardGameDesc = ({
       </TitleBox>
     );
   }
+  const title = (
+    <Title>
+      <div className="gamedesc--title">{game.title}</div>
+    </Title>
+  );
   return (
     <TitleBox>
-      <a href={urlForGame(game.id)} className="gamedesc--titlelink">
-        <Title>
-          <div className="gamedesc--title">{game.title}</div>
-        </Title>
-      </a>
+      {disableLink ? (
+        title
+      ) : (
+        <a href={urlForGame(game.id)} className="gamedesc--titlelink">
+          {title}
+        </a>
+      )}
       {hideDetails ? null : <div>{game.shortText}</div>}
       {children}
       <Filler />
