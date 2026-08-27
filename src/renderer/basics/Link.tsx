@@ -16,9 +16,6 @@ const LinkButton = styled.button`
   ${styles.secondaryLink};
 
   transition: color 0.4s;
-  flex-shrink: 0.1;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
 `;
 
 const Link: React.FC<Props> = (props) => {
