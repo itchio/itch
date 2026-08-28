@@ -33,7 +33,7 @@ class BrothComponents extends React.Component<Props> {
 
   checkForUpdates = () => {
     const { dispatch } = this.props;
-    dispatch(actions.checkForComponentUpdates({}));
+    dispatch(actions.checkForComponentUpdates({ manual: true }));
   };
 }
 

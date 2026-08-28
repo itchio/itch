@@ -6,7 +6,7 @@ import { Store } from "common/types";
 import { relaunchLogPath } from "main/util/paths";
 import { Watcher } from "common/util/watcher";
 import fs from "fs";
-import { ISM } from "main/broth/itch-setup";
+import { ISM, syncItchSetupLauncher } from "main/broth/itch-setup";
 import { mainLogger } from "main/logger";
 import { manager } from "main/reactors/setup";
 import ospath, { dirname } from "path";
@@ -39,6 +39,9 @@ export default function (watcher: Watcher) {
   watcher.on(actions.checkForComponentUpdates, async (store, action) => {
     rescheduleComponentsUpdate(store);
     await manager.upgrade({ logger: mainLogger });
+    if (action.payload.manual) {
+      await syncItchSetupLauncher(store, mainLogger);
+    }
   });
 
   watcher.on(actions.relaunchRequest, async (store, action) => {

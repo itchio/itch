@@ -33,6 +33,23 @@ export interface RunItchSetupOpts {
   onMessage: (msg: ISM) => void;
 }
 
+// postSwitch only fires on package switches the running app performs;
+// this heals launchers that went stale while an app without that hook
+// updated the package
+export async function syncItchSetupLauncher(store: Store, logger: Logger) {
+  try {
+    await itchSetupLock.with(logger, "sync launcher", async () => {
+      await runItchSetup(store, {
+        logger,
+        args: ["--sync-launcher"],
+        onMessage: () => {},
+      });
+    });
+  } catch (e) {
+    logger.warn(`could not sync itch-setup launcher: ${e}`);
+  }
+}
+
 export async function runItchSetup(
   store: Store,
   opts: RunItchSetupOpts

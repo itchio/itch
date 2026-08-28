@@ -504,7 +504,9 @@ export const actions = wireActions({
       template: MenuTemplate;
     }
   >(),
-  checkForComponentUpdates: action<{}>(),
+  checkForComponentUpdates: action<{
+    manual?: boolean;
+  }>(),
 
   cancelQuit: action<{}>(),
   quit: action<{}>(),
