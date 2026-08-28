@@ -64,8 +64,9 @@ const ButtonStyled = styled.button`
     min-width: 160px;
     justify-content: center;
     font-size: ${(props) => props.theme.fontSizes.large};
-    padding-top: 16px;
-    padding-bottom: 12px;
+    /* rebalances the 4px decorative top border so the label centers visually */
+    padding-top: 12px;
+    padding-bottom: 16px;
     padding-left: 20px;
     padding-right: 20px;
     font-weight: normal;
