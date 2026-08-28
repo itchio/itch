@@ -2,6 +2,7 @@ import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
 import { urlForGame } from "common/util/navigation";
+import { app, BrowserWindow } from "electron";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
@@ -9,6 +10,11 @@ export default function (watcher: Watcher) {
     if (download.error) {
       // don't show notifications for these
       return;
+    }
+
+    if (!BrowserWindow.getFocusedWindow()) {
+      // macOS only, `dock` is undefined elsewhere
+      app.dock?.bounce("informational");
     }
 
     const prefs = store.getState().preferences || { readyNotification: true };
