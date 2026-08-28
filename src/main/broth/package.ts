@@ -387,6 +387,23 @@ export class Package implements PackageLike {
     logger.info(`Validated!`);
     await this.writeChosenVersion(logger, latestVersion);
     this.refreshPrefix(logger, latestVersion);
+
+    const { postSwitch } = this.formula;
+    if (postSwitch) {
+      // best effort: the switch already happened, and the freshly
+      // installed binary may predate what postSwitch asks of it
+      try {
+        await postSwitch(
+          new MinimalContext(),
+          logger,
+          this.getVersionPrefix(latestVersion)
+        );
+      } catch (e) {
+        logger.warn(
+          `post-switch for (${this.name}) failed: ${getErrorStack(e)}`
+        );
+      }
+    }
   }
 
   async hasInstallMarker(version: Version): Promise<boolean> {

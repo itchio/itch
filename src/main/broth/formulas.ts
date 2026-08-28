@@ -13,6 +13,12 @@ export interface FormulaSpec {
     logger: Logger,
     versionPrefix: string
   ) => Promise<void>;
+  /** runs after the package switches to a new chosen version */
+  postSwitch?: (
+    ctx: MinimalContext,
+    logger: Logger,
+    versionPrefix: string
+  ) => Promise<void>;
   transformChannel?: (channel: string) => string;
   getSemverConstraint?: () => string | null;
   requiredAtStartup?: boolean;
@@ -71,6 +77,17 @@ describeFormula("itch-setup", {
       logger,
       command: ospath.join(versionPrefix, "itch-setup"),
       args: ["--version"],
+    });
+  },
+  // itch-setup updates independently of app releases, and only app
+  // update events otherwise refresh the stable launcher copy that shims
+  // and shortcuts point at; a new itch-setup must propagate itself there
+  postSwitch: async (ctx, logger, versionPrefix) => {
+    await spawn({
+      ctx,
+      logger,
+      command: ospath.join(versionPrefix, "itch-setup"),
+      args: ["--appname", env.appName, "--sync-launcher"],
     });
   },
   transformChannel: (channel) => {
