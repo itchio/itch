@@ -247,6 +247,18 @@ export function main() {
       });
     }
 
+    // launchers (itch-setup --run-game) pass the profile via the
+    // environment rather than argv, keeping it out of Chromium's switch
+    // parsing; env also can't reach an already-running instance, which
+    // keeps whatever profile state it has
+    const startupProfileId = parseInt(process.env.ITCH_PROFILE_ID || "", 10);
+    if (!isNaN(startupProfileId) && startupProfileId > 0) {
+      // don't leak into butlerd and the games it launches
+      delete process.env.ITCH_PROFILE_ID;
+      store.dispatch(
+        actions.useSavedLoginById({ profileId: startupProfileId })
+      );
+    }
     store.dispatch(
       actions.processUrlArguments({
         args: process.argv,

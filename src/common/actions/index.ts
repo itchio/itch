@@ -110,6 +110,9 @@ export const actions = wireActions({
     /** these are command-line arguments */
     args: string[];
   }>(),
+  useSavedLoginById: action<{
+    profileId: number;
+  }>(),
   handleItchioURI: action<{
     /** example: itchio:///games/3 */
     uri: string;

@@ -249,6 +249,26 @@ export default function (watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.useSavedLoginById, async (store, action) => {
+    const { profileId } = action.payload;
+    if (store.getState().profile.profile) {
+      // never switch an already active profile
+      return;
+    }
+    logger.info(`Startup profile ${profileId} requested, attempting login`);
+    try {
+      const { profiles } = await mcall(messages.ProfileList, {});
+      const profile = (profiles ?? []).find((p) => p.id === profileId);
+      if (!profile) {
+        logger.warn(`No saved profile ${profileId}, showing the gate instead`);
+        return;
+      }
+      store.dispatch(actions.useSavedLogin({ profile }));
+    } catch (e) {
+      logger.warn(`Could not look up saved profiles: ${getErrorStack(e)}`);
+    }
+  });
+
   watcher.on(actions.useSavedLogin, async (store, action) => {
     const profileId = action.payload.profile.id;
     logger.info(`Attempting saved login for profile ${profileId}`);
