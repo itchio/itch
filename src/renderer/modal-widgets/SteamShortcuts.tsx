@@ -615,22 +615,29 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
 
   renderModeControl(row: RowData, checked: boolean) {
     const { saving } = this.props.modal.widgetParams;
-    const hasDirectTarget = row.directTarget != null;
-    // Existing direct shortcuts must always be able to switch back to
-    // itch mode, even when their executable no longer resolves.
-    if (
-      !row.installed ||
-      !checked ||
-      (!hasDirectTarget && row.steamMode !== "direct")
-    ) {
+    if (!row.installed || !checked) {
       return null;
     }
     const mode = this.stagedMode(row);
-    const directUnavailable = mode === "itch" && !hasDirectTarget;
+    const stuck = this.nextMode(row) === mode;
+    // A control with nothing to switch to only renders for a direct
+    // entry whose target vanished, as a disabled explanation of why it
+    // will fall back to itch mode on save.
+    if (stuck && !(mode === "itch" && row.steamMode === "direct")) {
+      return null;
+    }
+    const hints: { [K in SteamShortcutMode]: string } = {
+      itch: "steam.dialog.mode_itch_hint",
+      direct: "steam.dialog.mode_direct_hint",
+    };
+    const labels: { [K in SteamShortcutMode]: string } = {
+      itch: "steam.dialog.mode_itch",
+      direct: "steam.dialog.mode_direct",
+    };
     return (
       <ModeButton
         type="button"
-        disabled={saving || directUnavailable}
+        disabled={saving || stuck}
         onClick={(e) => {
           // inside the row <label>: don't toggle the checkbox
           e.preventDefault();
@@ -638,19 +645,11 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           this.toggleMode(row.gameId);
         }}
         data-rh={JSON.stringify([
-          directUnavailable
-            ? "steam.dialog.mode_direct_unavailable_hint"
-            : mode === "itch"
-            ? "steam.dialog.mode_itch_hint"
-            : "steam.dialog.mode_direct_hint",
+          stuck ? "steam.dialog.mode_direct_unavailable_hint" : hints[mode],
         ])}
         data-rh-at="top"
       >
-        {T([
-          mode === "itch"
-            ? "steam.dialog.mode_itch"
-            : "steam.dialog.mode_direct",
-        ])}
+        {T([labels[mode]])}
       </ModeButton>
     );
   }
@@ -825,6 +824,18 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     }));
   }
 
+  /**
+   * The mode a click switches to. Direct is unavailable without a
+   * resolved target; returns the current mode when there is nothing to
+   * switch to.
+   */
+  nextMode(row: RowData): SteamShortcutMode {
+    if (this.stagedMode(row) === "direct") {
+      return "itch";
+    }
+    return row.directTarget != null ? "direct" : "itch";
+  }
+
   toggleMode(gameId: number) {
     const row = rowsOf(this.props.modal.widgetParams).find(
       (r) => r.gameId === gameId
@@ -832,11 +843,10 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     if (!row) {
       return;
     }
-    if (this.stagedMode(row) === "itch" && !row.directTarget) {
+    const next = this.nextMode(row);
+    if (next === this.stagedMode(row)) {
       return;
     }
-    const next: SteamShortcutMode =
-      this.stagedMode(row) === "itch" ? "direct" : "itch";
     this.setState((state) => ({
       modes: { ...state.modes, [gameId]: next },
     }));

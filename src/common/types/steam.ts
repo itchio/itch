@@ -1,9 +1,12 @@
 import { LocalizedString } from "common/types";
 
 /**
- * "itch" shortcuts launch through the itch app via an itch:// url;
- * "direct" shortcuts point at the game's own executable, which gives up
- * update-before-play but gains the Steam overlay.
+ * "itch" shortcuts launch through itch-setup and butler, which run the
+ * game headlessly (Steam overlay and playtime tracking work) and boot
+ * the app only when they must (html games, login needed). On macOS they
+ * launch the app with an url instead (see macos-runner-parity.md).
+ * "direct" shortcuts point at the game's own executable, skipping itch's
+ * runtime configuration entirely.
  */
 export type SteamShortcutMode = "itch" | "direct";
 

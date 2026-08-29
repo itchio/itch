@@ -431,7 +431,13 @@ export default function (watcher: Watcher) {
           }
           ensure.push({ game, mode, target });
         } else {
-          ensure.push({ game, mode });
+          // bake the active profile in so play sessions attribute to
+          // the account that created the shortcut
+          ensure.push({
+            game,
+            mode,
+            profileId: store.getState().profile.profile?.id,
+          });
         }
       }
       if (ensure.length > 0) {

@@ -1,5 +1,6 @@
 import { app } from "electron";
 import { Game } from "common/butlerd/messages";
+import env from "main/env";
 import { mainLogger } from "main/logger";
 import {
   parseBinaryVdf,
@@ -73,12 +74,15 @@ function resolveContext(): SteamContext {
 // Our shortcuts are identified by one of two markers, not by title or
 // exe path: those can change between add and remove, and titles can
 // collide with shortcuts the user created themselves. "itch" mode
-// entries carry an itch:// url in LaunchOptions; "direct" mode entries
-// have no url, so they carry the id in DevkitGameID, a Steam schema
-// field verified to survive Steam's rewrite-on-exit (an invented key
-// would be dropped).
-const markerRe = /itch:\/\/install\?game_id=(\d+)/;
+// entries carry an itch:// (or kitch://) url in LaunchOptions on macOS
+// and --run-game arguments elsewhere. Entries with neither carry the id
+// in DevkitGameID, a Steam schema field verified to survive Steam's
+// rewrite-on-exit (an invented key would be dropped); every entry we
+// write sets it.
+const markerRe = /(?:itch|kitch):\/\/install\?game_id=(\d+)/;
 const devkitRe = /^itch-game-(\d+)$/;
+const runnerRe = /--run-game/;
+const runnerProfileRe = /--profile-id"?\s+"?(\d+)/;
 
 function entryGameId(entry: VdfObject): number | null {
   const launchOptions = getField(entry, "LaunchOptions");
@@ -98,11 +102,28 @@ function entryGameId(entry: VdfObject): number | null {
   return null;
 }
 
+// both the url form (macOS) and the --run-game form count as "itch";
+// entries in the wrong form for this platform heal through repair
 function entryMode(entry: VdfObject): SteamShortcutMode {
   const launchOptions = getField(entry, "LaunchOptions");
-  return typeof launchOptions === "string" && markerRe.test(launchOptions)
-    ? "itch"
-    : "direct";
+  if (typeof launchOptions === "string") {
+    if (markerRe.test(launchOptions) || runnerRe.test(launchOptions)) {
+      return "itch";
+    }
+  }
+  return "direct";
+}
+
+/** profile baked into an itch entry's LaunchOptions, if any */
+function entryProfileId(entry: VdfObject): number | undefined {
+  const launchOptions = getField(entry, "LaunchOptions");
+  if (typeof launchOptions === "string") {
+    const m = runnerProfileRe.exec(launchOptions);
+    if (m) {
+      return parseInt(m[1], 10);
+    }
+  }
+  return undefined;
 }
 
 interface Launcher {
@@ -110,31 +131,32 @@ interface Launcher {
   prefixArgs: string[];
 }
 
+// macOS lacks the stable itch-setup copy and arg forwarding needed for
+// --run-game (see macos-runner-parity.md), so it keeps launching the app
+// with an url instead
+const runnerPlatform =
+  process.platform === "linux" || process.platform === "win32";
+
 // The versioned app exe moves on every self-update, so shortcuts target
-// the stable itch-setup launcher, same as the desktop shortcuts the
-// installer creates. Dev and canary builds deliberately point at the
-// stable itch install too. No launcher means an error rather than a
-// fallback to the versioned exe, which would break on the next update.
-// macOS keeps the app bundle exe: its path is stable and itch-setup
-// doesn't forward args there.
+// the stable itch-setup copy, same one the installer maintains. No
+// launcher means an error rather than a fallback to the versioned exe,
+// which would break on the next update.
 function resolveLauncher(): Launcher {
+  const appName = env.appName;
   switch (process.platform) {
     case "linux": {
-      const shim = join(homedir(), ".itch", "itch");
-      if (existsSync(shim)) {
-        return { exePath: shim, prefixArgs: [] };
+      const setup = join(homedir(), `.${appName}`, "itch-setup");
+      if (existsSync(setup)) {
+        return { exePath: setup, prefixArgs: ["--appname", appName] };
       }
       throw new SteamError("no-launcher");
     }
     case "win32": {
       const localAppData = process.env.LOCALAPPDATA;
       if (localAppData) {
-        const setup = join(localAppData, "itch", "itch-setup.exe");
+        const setup = join(localAppData, appName, "itch-setup.exe");
         if (existsSync(setup)) {
-          return {
-            exePath: setup,
-            prefixArgs: ["--prefer-launch", "--appname", "itch", "--"],
-          };
+          return { exePath: setup, prefixArgs: ["--appname", appName] };
         }
       }
       throw new SteamError("no-launcher");
@@ -146,7 +168,7 @@ function resolveLauncher(): Launcher {
   // in dev, app.getPath("exe") is the bare Electron binary, which would
   // treat the itch:// url argument as an app path to load
   for (const dir of ["/Applications", join(homedir(), "Applications")]) {
-    const exe = join(dir, "itch.app", "Contents", "MacOS", "itch");
+    const exe = join(dir, `${appName}.app`, "Contents", "MacOS", appName);
     if (existsSync(exe)) {
       return { exePath: exe, prefixArgs: [] };
     }
@@ -193,17 +215,10 @@ export function encodeSteamArguments(args: string[]): string {
 }
 
 // Quoted so Steam's shell invocation on Linux doesn't interpret ? and &
-function launchOptionsFor(launcher: Launcher, gameId: number): string {
-  const url = `itch://install?game_id=${gameId}&launch`;
-  const args = [...launcher.prefixArgs, url].map((arg) => `"${arg}"`).join(" ");
-  if (process.platform === "linux") {
-    // Steam LD_PRELOADs gameoverlayrenderer.so even with the overlay
-    // toggle off (the game recording pipeline shares the hook), and it
-    // crashes Chromium's sandboxed zygote, deadlocking app startup.
-    // %command% expands to the shortcut's Exe.
-    return `LD_PRELOAD="" %command% ${args}`;
-  }
-  return args;
+function appUrlLaunchOptions(launcher: Launcher, gameId: number): string {
+  // kitch only handles kitch:// urls, so the scheme follows the app
+  const url = `${env.appName}://install?game_id=${gameId}&launch`;
+  return [...launcher.prefixArgs, url].map((arg) => `"${arg}"`).join(" ");
 }
 
 function getField(entry: VdfObject, name: string): VdfValue | undefined {
@@ -239,17 +254,34 @@ interface CanonicalShortcutFields {
 
 function canonicalItchFields(
   launcher: Launcher,
-  gameId: number
+  gameId: number,
+  profileId: number | undefined
 ): CanonicalShortcutFields {
   const exe = `"${launcher.exePath}"`;
+  if (!runnerPlatform) {
+    return {
+      exe,
+      startDir: `"${dirname(launcher.exePath)}"`,
+      launchOptions: appUrlLaunchOptions(launcher, gameId),
+      appid: shortcutEntryId(exe, appidKey(gameId)),
+      // the overlay's preload breaks Chromium's single-instance
+      // handshake, so launches silently no-op while the app is running
+      allowOverlay: 0,
+      devkitGameId: appidKey(gameId),
+    };
+  }
+  // the game runs as a child of this process tree and should get Steam's
+  // overlay preload; the app-handoff path strips it on the itch-setup side
+  const args = [...launcher.prefixArgs, "--run-game", String(gameId)];
+  if (profileId) {
+    args.push("--profile-id", String(profileId));
+  }
   return {
     exe,
     startDir: `"${dirname(launcher.exePath)}"`,
-    launchOptions: launchOptionsFor(launcher, gameId),
+    launchOptions: args.map((arg) => `"${arg}"`).join(" "),
     appid: shortcutEntryId(exe, appidKey(gameId)),
-    // the overlay's LD_PRELOAD breaks Chromium's single-instance
-    // handshake, so launches silently no-op while the app is running
-    allowOverlay: 0,
+    allowOverlay: 1,
     devkitGameId: appidKey(gameId),
   };
 }
@@ -345,14 +377,16 @@ export interface EnsureShortcut {
   mode: SteamShortcutMode;
   /** canonical executable and arguments; required for "direct" mode */
   target?: SteamDirectTarget;
+  /** profile play sessions are attributed to; "itch" mode only */
+  profileId?: number;
 }
 
 export interface ApplyShortcutsInput {
   /**
    * Games whose shortcuts should exist. Existing entries are rewritten
-   * in canonical form for the requested mode (healing stale launchers,
-   * old id schemes, and mode switches); new ones are appended with
-   * freshly downloaded grid art.
+   * in canonical form for the requested mode (healing stale launchers
+   * and mode switches); new ones are appended with freshly downloaded
+   * grid art.
    */
   ensure: EnsureShortcut[];
   /**
@@ -459,7 +493,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       }
       return canonicalDirectFields(item.target, item.game.id);
     }
-    return canonicalItchFields(launcher!, item.game.id);
+    return canonicalItchFields(launcher!, item.game.id, item.profileId);
   };
 
   const ensuredIds = new Set<number>();
@@ -535,7 +569,14 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       if (!entry || ensuredIds.has(entryId) || entryMode(entry) === "direct") {
         continue;
       }
-      if (canonicalize(entry, canonicalItchFields(launcher, entryId))) {
+      // the baked profile is preserved: only the launcher-derived
+      // fields are being healed
+      if (
+        canonicalize(
+          entry,
+          canonicalItchFields(launcher, entryId, entryProfileId(entry))
+        )
+      ) {
         changed = true;
       }
     }
@@ -707,7 +748,10 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
           ));
     } else {
       needsRepair = launcher
-        ? entryNeedsRepair(entry, canonicalItchFields(launcher, gameId))
+        ? entryNeedsRepair(
+            entry,
+            canonicalItchFields(launcher, gameId, entryProfileId(entry))
+          )
         : staleExe;
     }
     const missingArt =
