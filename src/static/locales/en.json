@@ -187,6 +187,8 @@
   "notification.download_updated": "{title} was updated!",
   "notification.download_reverted": "{title} was switched to {version}!",
   "notification.download_healed": "{title} verified and repaired!",
+  "notification.download_verified": "{title} verified, no repairs needed!",
+  "notification.download_reinstalled": "{title} was re-installed!",
   "notification.push_processing": "{title}: {channel} pushed, server is processing the build",
   "outlinks.manage_collections": "Manage collections",
   "sandbox.setup.title": "itch sandbox setup",

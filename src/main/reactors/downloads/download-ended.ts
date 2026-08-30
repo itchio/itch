@@ -6,7 +6,7 @@ import { app, BrowserWindow } from "electron";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
-    const { download } = action.payload;
+    const { download, events } = action.payload;
     if (download.error) {
       // don't show notifications for these
       return;
@@ -30,9 +30,20 @@ export default function (watcher: Watcher) {
         case "install":
           notificationMessage = "notification.download_installed";
           break;
-        case "reinstall":
-          notificationMessage = "notification.download_healed";
+        case "reinstall": {
+          // a heal event means butler verified the install against the
+          // build signature; without one (plain zip, or a butler that
+          // predates events) it was just re-downloaded
+          const heal = events?.find((ev) => ev.heal)?.heal;
+          if (!heal) {
+            notificationMessage = "notification.download_reinstalled";
+          } else if (heal.totalCorrupted > 0) {
+            notificationMessage = "notification.download_healed";
+          } else {
+            notificationMessage = "notification.download_verified";
+          }
           break;
+        }
         case "update":
           notificationMessage = "notification.download_updated";
           break;

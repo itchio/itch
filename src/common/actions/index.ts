@@ -6,6 +6,7 @@ import {
   Game,
   GameUpdate,
   GameUpdateChoice,
+  InstallEvent,
   Profile,
   InstallLocationSummary,
   PublishPushComparison,
@@ -601,6 +602,8 @@ export const actions = wireActions({
   }>(),
   downloadEnded: action<{
     download: Download;
+    /** absent when driven by a butler that predates them */
+    events?: InstallEvent[];
   }>(),
   clearFinishedDownloads: action<{}>(),
   prioritizeDownload: action<{

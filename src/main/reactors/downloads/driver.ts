@@ -94,9 +94,9 @@ async function driverPoll(store: Store) {
 
             convo.onNotification(
               messages.DownloadsDriveFinished,
-              async ({ download }) => {
+              async ({ download, events }) => {
                 await refreshDownloads(store);
-                store.dispatch(actions.downloadEnded({ download }));
+                store.dispatch(actions.downloadEnded({ download, events }));
               }
             );
 

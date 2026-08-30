@@ -1724,6 +1724,12 @@ export const DownloadsDriveErrored =
 export interface DownloadsDriveFinishedNotification {
   /** undocumented */
   download: Download;
+  /**
+   * Events recorded during the operation (install, upgrade, heal...).
+   * Not persisted with the download, so this notification is the only
+   * place to get them.
+   */
+  events?: InstallEvent[];
 }
 
 /**
@@ -1932,6 +1938,24 @@ export const LaunchGetTargets = createRequest<
   LaunchGetTargetsParams,
   LaunchGetTargetsResult
 >("Launch.GetTargets");
+
+/**
+ * Client-supplied launch defaults, applied below per-cave settings.
+ * See @@LaunchParams.
+ */
+export interface LaunchDefaults {
+  /**
+   * Sandbox default. Absent (not false) when the frontend has no global
+   * sandbox preference, so a manifest opt-in still applies.
+   */
+  sandbox?: boolean;
+  /** Default sandbox runner type. */
+  sandboxType?: SandboxType;
+  /** Default for cutting network access inside the sandbox. */
+  sandboxNoNetwork?: boolean;
+  /** Default extra environment variables allowed through the sandbox. */
+  sandboxAllowEnv?: string[];
+}
 
 /**
  * undocumented
@@ -2181,6 +2205,9 @@ export enum Code {
   // The launch target explicitly requested via LaunchParams.target
   // did not match any launch target
   LaunchTargetNotFound = 5001,
+  // The selected target's strategy is not in
+  // LaunchParams.allowedStrategies
+  LaunchStrategyNotAllowed = 5002,
   // Java Runtime Environment is required to launch this title.
   JavaRuntimeNeeded = 6000,
   // There is no Internet connection
@@ -4470,21 +4497,32 @@ export interface LaunchGetTargetsParams {
 export interface LaunchParams {
   /** The ID of the cave to launch */
   caveId: string;
-  /** The directory to use to store installer files for prerequisites */
-  prereqsDir: string;
+  /**
+   * The directory to use to store installer files for prerequisites.
+   * When empty, launching a title that turns out to require
+   * prerequisites fails (via the PrereqsFailed flow); most titles
+   * require none.
+   */
+  prereqsDir?: string;
   /** Force installing all prerequisites, even if they're already marked as installed */
   forcePrereqs?: boolean;
   /**
-   * Sandbox preference for this launch. When omitted, the manifest may enable
-   * sandboxing. An explicit value overrides the manifest preference.
+   * Sandbox preference for this launch. When omitted, the cave's sandbox
+   * setting applies, then the manifest opt-in. An explicit value overrides
+   * both.
    */
   sandbox?: boolean;
-  /** Sandbox configuration options. Only applied when sandbox is enabled. */
+  /**
+   * Sandbox configuration options. Only applied when sandbox is enabled.
+   * When omitted, the cave's persisted sandbox overrides merge per knob
+   * over the client defaults; an explicit value replaces both as a whole.
+   */
   sandboxOptions?: SandboxOptions;
   /**
    * Command template applied to native launches. Use %command% as a standalone
    * token to place the resolved game command. Without it, tokens are appended
-   * as arguments to the resolved command.
+   * as arguments to the resolved command. When omitted, the cave's
+   * commandTemplate setting applies.
    */
   commandTemplate?: string;
   /**
@@ -4500,6 +4538,27 @@ export interface LaunchParams {
    * Butler resolves any suitable profile (legacy behavior).
    */
   profileId?: number;
+  /**
+   * When non-empty, declares the launch strategies this client can
+   * serve. Targets using other strategies are excluded from selection;
+   * if none remain, or an explicit target or the cave's saved launch
+   * target names an excluded one, the launch fails with
+   * CodeLaunchStrategyNotAllowed before any launcher or session side
+   * effects. Checked under the install folder lock, so it is
+   * not subject to the Launch.GetTargets race. Target discovery may still
+   * refresh metadata over the network before this check.
+   */
+  allowedStrategies?: LaunchStrategy[];
+  /**
+   * Client-supplied defaults for knobs that both the explicit params and
+   * the cave's settings leave unset, typically sourced from a frontend's
+   * global preferences. Resolution order: explicit params, then cave
+   * settings, then these defaults, then the manifest (for the sandbox
+   * opt-in). Sandbox options resolve per knob between settings and
+   * defaults, but an explicit sandboxOptions param replaces both as a
+   * whole.
+   */
+  defaults?: LaunchDefaults;
 }
 
 /**
