@@ -27,7 +27,7 @@ export const FilterGroup = styled.div`
 const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 17%, 1),hsla(355, 43%, 11%, 1))`;
 const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
 const borderColor = `#843442`;
-const borderRadius = `4px`;
+const borderRadius = `12px`;
 
 export const optionButtonLike = css`
   display: flex;
@@ -35,6 +35,7 @@ export const optionButtonLike = css`
   align-items: center;
 
   background: ${inactiveBg};
+  corner-shape: squircle;
   padding: 0.5em 1em;
   margin: 0;
   border: 1px solid ${borderColor};

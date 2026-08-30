@@ -25,8 +25,7 @@ const RowButtonStyled = styled.button`
   margin: 8px 0;
 
   border: 1px solid;
-  border-width: 4px 1px 1px 1px;
-  border-radius: 4px;
+  ${styles.squircle("16px")};
   box-shadow: 0 1px 3px ${(props) => props.theme.inputBoxShadow};
 
   color: ${(props) => props.theme.baseText};
@@ -49,8 +48,6 @@ const RowButtonStyled = styled.button`
     transform: translateY(1px);
   }
 
-  border-width: 1px;
-  border-radius: 2px;
   box-shadow: none;
 
   display: flex;

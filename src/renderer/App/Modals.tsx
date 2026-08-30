@@ -67,6 +67,8 @@ const ModalDialog = styled.dialog.withConfig({
     overflow-y: auto;
 
     &.fullscreen {
+      corner-shape: round;
+      border-radius: 0;
       min-width: 100vw;
       max-width: 100vw;
       min-height: 100vh;
@@ -83,7 +85,8 @@ const ModalDialog = styled.dialog.withConfig({
     }
 
     padding: 0px;
-    ${styles.windowBorder};
+    border: 1px solid ${(props) => props.theme.windowBorder};
+    ${styles.squircle("18px")};
     background-color: ${colors.codGray};
     box-shadow: 0 0 32px black;
   }

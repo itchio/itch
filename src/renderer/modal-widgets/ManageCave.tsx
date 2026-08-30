@@ -21,7 +21,7 @@ import UploadIcon from "renderer/basics/UploadIcon";
 import { hook } from "renderer/hocs/hook";
 import CaveLaunchSettings from "renderer/modal-widgets/CaveLaunchSettings";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { ModalWidgetProps } from "common/modals";
 import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
@@ -105,18 +105,12 @@ const QuickAction = styled.button`
   text-align: left;
 
   padding: 11px 14px;
-  background: ${(props) => props.theme.itemBackground};
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: ${(props) => props.theme.borderRadii.explanation};
-  color: ${(props) => props.theme.baseText};
+  border: 1px solid;
+  ${styles.squircle("12px")};
+  ${styles.secondaryButtonSurface};
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-
-  &:hover {
-    background: #262626;
-    border-color: rgba(255, 255, 255, 0.12);
-  }
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 `;
 
 const QuickActionIcon = styled(Icon)`

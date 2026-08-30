@@ -280,11 +280,18 @@ export const animations = {
 
 // mixins
 
+// squircle corners read as square unless the radius is generous
+export const squircle = (radius: string = "12px") => css`
+  corner-shape: squircle;
+  border-radius: ${radius};
+`;
+
 export const heavyInput = css`
   font-size: ${(props) => props.theme.fontSizes.baseText};
   padding: 12px 10px 9px 10px;
   margin: 8px 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  ${squircle("12px")};
 
   background-color: rgba(0, 0, 0, 0.4);
   color: ${(props) => props.theme.inputText};
@@ -416,6 +423,20 @@ export const boxy = css`
 export const windowBorder = css`
   border: 1px solid ${(props) => props.theme.windowBorder};
   border-radius: 2px;
+`;
+
+// shared by the secondary <Button> and the quick actions in ManageCave, so
+// the two don't drift apart
+export const secondaryButtonSurface = css`
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.11);
+  color: #e8e2df;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: ${(props) => props.theme.baseText};
+  }
 `;
 
 export const resetButton = css`

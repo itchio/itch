@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { lighten } from "polished";
-import styled, { css, singleLine } from "renderer/styles";
+import styled, { css, singleLine, squircle } from "renderer/styles";
 import DefaultOptionComponent, {
   OptionComponentProps,
 } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
@@ -47,7 +47,7 @@ const SimpleSelectButton = styled.button`
 
   background: ${(props) => props.theme.inputBackground};
   border: 1px solid ${(props) => props.theme.inputBorder};
-  border-radius: 2px;
+  ${squircle("12px")};
   color: inherit;
   font: inherit;
   text-align: left;
@@ -168,7 +168,7 @@ const OptionsDiv = styled.div`
   width: max-content;
   max-width: 400px;
   padding: 4px 0;
-  border-radius: 2px;
+  ${squircle("12px")};
 
   background: ${(props) => props.theme.inputBackground};
   border: 1px solid ${(props) => props.theme.inputBorder};

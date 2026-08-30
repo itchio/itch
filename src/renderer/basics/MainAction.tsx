@@ -25,10 +25,13 @@ class MainAction extends React.PureComponent<Props> {
     let iconComponent: JSX.Element | undefined;
     let icon: string | undefined;
     let label: LocalizedString | undefined;
-    let primary = false;
+    // every state is a call to action except an operation in flight, which
+    // is a status readout
+    let primary = true;
 
     if (operation) {
       const { type, progress } = operation;
+      primary = false;
       translucent = true;
       if (operation.paused) {
         iconComponent = <Icon icon="stopwatch" />;
@@ -83,7 +86,6 @@ class MainAction extends React.PureComponent<Props> {
         } else {
           icon = "play2";
         }
-        primary = true;
       }
     } else {
       if (access === Access.Demo || access === Access.Press) {
