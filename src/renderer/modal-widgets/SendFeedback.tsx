@@ -83,7 +83,6 @@ const BigButton = styled(Button)`
 
 const SystemInfo = styled.div`
   em {
-    font-weight: lighter;
     color: ${(props) => props.theme.secondaryText};
   }
 `;
