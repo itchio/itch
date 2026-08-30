@@ -19,9 +19,17 @@ import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
+import styled from "renderer/styles";
 import { _ } from "renderer/t";
 
 const ProfileGameSeries = makeGameSeries(messages.FetchProfileGames);
+
+const ItemExtras = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+`;
 
 class DashboardPage extends React.PureComponent<Props> {
   override render() {
@@ -68,10 +76,10 @@ class DashboardPage extends React.PureComponent<Props> {
     </SortsAndFilters>
   );
   renderItemExtras = ProfileGameSeries.renderItemExtrasCallback((pg) => (
-    <>
+    <ItemExtras>
       <ProfileGameStats pg={pg} />
       <StandardMainAction game={pg.game} />
-    </>
+    </ItemExtras>
   ));
 
   renderPaidStatusFilter(): JSX.Element {

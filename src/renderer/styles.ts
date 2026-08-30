@@ -127,6 +127,10 @@ export const borderRadii = {
   explanation: "4px",
 };
 
+// shared height for the controls sitting in the filters bar, so they line up
+// with IconButton's own 30px
+export const controlHeight = 30;
+
 export const widths = {
   searchSidebar: "500px",
   handle: "8px",

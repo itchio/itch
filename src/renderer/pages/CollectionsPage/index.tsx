@@ -11,7 +11,6 @@ import makeCollectionSeries from "renderer/series/CollectionSeries";
 import * as messages from "common/butlerd/messages";
 import SearchControl from "renderer/pages/common/SearchControl";
 import {
-  FilterSpacer,
   SortsAndFilters,
   FilterGroup,
 } from "renderer/pages/common/SortsAndFilters";
@@ -56,7 +55,6 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <>
         <SearchControl />
-        <FilterSpacer />
         <IconButton icon="more_vert" onClick={this.onMore} />
       </>
     );

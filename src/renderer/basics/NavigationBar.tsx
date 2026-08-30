@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
@@ -14,7 +13,7 @@ import IconButton from "renderer/basics/IconButton";
 import { hook, hookWithProps } from "renderer/hocs/hook";
 import store from "renderer/store";
 import * as styles from "renderer/styles";
-import styled, { css } from "renderer/styles";
+import styled, { controlHeight, css } from "renderer/styles";
 import { Watcher } from "common/util/watcher";
 import { watchStore } from "renderer/hooks/useWatcher";
 import { withTab } from "renderer/hocs/withTab";
@@ -37,36 +36,20 @@ const NavigationBarDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  padding-right: 4px;
+  gap: 4px;
 
   flex-grow: 1;
   flex-shrink: 1;
   overflow: hidden;
-  position: relative;
-
-  &.loading {
-    &::after {
-      position: absolute;
-      bottom: -6px;
-      content: " ";
-      width: 100%;
-      height: 2px;
-      background: ${(props) => props.theme.accent};
-      animation: ${styles.animations.lineSpinner} 2s ease-in-out infinite;
-    }
-  }
 `;
 
-const browserAddressSizing = css`
-  height: 28px;
-  line-height: 28px;
-  border-radius: 2px;
-`;
+const addressBorderWidth = 1;
 
 const browserAddressStyle = css`
-  ${browserAddressSizing};
   ${styles.singleLine};
+  height: 100%;
+  line-height: ${controlHeight - addressBorderWidth * 2}px;
+  border-radius: 2px;
   font-size: 14px;
   text-shadow: 0 0 1px black;
   padding: 0;
@@ -75,7 +58,7 @@ const browserAddressStyle = css`
   width: 100%;
   color: #fdfdfd;
 
-  border: none;
+  border: ${addressBorderWidth}px solid transparent;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: none;
 
@@ -85,20 +68,16 @@ const browserAddressStyle = css`
 `;
 
 const AddressWrapper = styled.div`
-  ${browserAddressSizing};
-  margin: 0 6px;
-  transition: all 0.4s;
-  border: 1px solid transparent;
+  height: ${controlHeight}px;
   flex-grow: 1;
-
-  &.editing {
-    border-color: rgba(255, 255, 255, 0.4);
-  }
+  min-width: 0;
 `;
 
 const AddressInput = styled.input`
   ${browserAddressStyle};
 
+  /* only rendered while editing, so the focused border is unconditional */
+  border-color: rgba(255, 255, 255, 0.4);
   text-shadow: 0 0 1px transparent;
   color: white;
 `;
@@ -189,10 +168,10 @@ class NavigationBar extends React.PureComponent<Props, State> {
   }
 
   override render() {
-    const { canGoBack, canGoForward, loading } = this.props;
+    const { canGoBack, canGoForward } = this.props;
 
     return (
-      <NavigationBarDiv className={classNames({ loading })}>
+      <NavigationBarDiv>
         <IconButton
           icon="arrow-left"
           hint={_("browser.back")}
@@ -236,7 +215,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
             onClick={this.reload}
           />
         )}
-        <AddressWrapper className={classNames({ editing: editingAddress })}>
+        <AddressWrapper>
           {editingAddress ? (
             <AddressInput
               className="browser-address"
@@ -248,7 +227,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
             />
           ) : (
             <AddressDiv
-              className={classNames("browser-address")}
+              className="browser-address"
               ref={this.onBrowserAddress}
               onClick={this.startEditingAddress}
             >

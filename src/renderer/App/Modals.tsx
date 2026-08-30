@@ -67,7 +67,6 @@ const ModalDialog = styled.dialog.withConfig({
     overflow-y: auto;
 
     &.fullscreen {
-      corner-shape: round;
       border-radius: 0;
       min-width: 100vw;
       max-width: 100vw;

@@ -8,6 +8,10 @@ export const SortsAndFilters = styled(FiltersContainerDiv)`
   flex-flow: row wrap;
   height: auto;
 
+  /* groups here are separated by explicit FilterSpacers, so drop the
+     base container's gap rather than stacking the two */
+  gap: 0;
+
   /* the base container clips, but dropdown filters (FilterDropdown) pop
      their options out below the bar */
   overflow: visible;

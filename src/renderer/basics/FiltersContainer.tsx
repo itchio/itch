@@ -8,6 +8,8 @@ export const filtersContainerHeight = 40;
 export const FiltersContainerDiv = styled.section`
   display: flex;
   align-items: center;
+  gap: 8px;
+  /* keeps content clear of the loading bar pinned to the bottom edge */
   padding-bottom: 2px;
   width: 100%;
   overflow: hidden;
