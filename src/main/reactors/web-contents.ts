@@ -362,7 +362,11 @@ async function hookWebContents(
   wc.setWindowOpenHandler(({ url }) => {
     logger.debug(`new-window fired for ${url}`);
 
-    if (!loadURL(wc, url)) {
+    // itch:// links open a new window when the page is embedded (e.g. the
+    // randomizer's iframe renders game pages with target="_blank" links)
+    if (ITCH_URL_RE.test(url)) {
+      store.dispatch(actions.handleItchioURI({ uri: url }));
+    } else if (!loadURL(wc, url)) {
       // only open http/https URLs in external browser, ignore
       // about:blank and other non-navigable URLs
       if (url.startsWith("https:") || url.startsWith("http:")) {

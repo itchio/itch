@@ -1,5 +1,4 @@
 /* node's standard url module - re-exported for legacy usage */
-import env from "main/env";
 import { shell } from "electron";
 import { mainLogger } from "main/logger";
 export * from "url";
@@ -34,7 +33,10 @@ export function subdomainToDomain(subdomain: string): string {
   return parts.join(".");
 }
 
-const handledProtocols = [`${env.appName}io:`, `${env.appName}:`];
+// web pages always emit itch:// links regardless of which flavor is
+// running, so both flavors' protocols are accepted here; OS-level flavor
+// separation happens via setAsDefaultProtocolClient in preboot
+const handledProtocols = ["itchio:", "itch:", "kitchio:", "kitch:"];
 
 export function isItchioURL(s: string): boolean {
   try {
