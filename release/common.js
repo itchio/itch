@@ -9,11 +9,8 @@ export const OSES = {
   linux: {},
 };
 
-/** @type {{[key: string]: {electronArch: "ia32" | "x64" | "arm64"}}} */
+/** @type {{[key: string]: {electronArch: "x64" | "arm64"}}} */
 export const ARCHES = {
-  "386": {
-    electronArch: "ia32",
-  },
   amd64: {
     electronArch: "x64",
   },

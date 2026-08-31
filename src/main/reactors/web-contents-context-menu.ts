@@ -87,11 +87,7 @@ export function hookWebContentsContextMenu(
           id: "copyLink",
           label: t(i18n, _("web.context_menu.copy_link")),
           click() {
-            if (process.platform === "darwin") {
-              electron.clipboard.writeBookmark(props.linkText, props.linkURL);
-            } else {
-              electron.clipboard.writeText(props.linkURL);
-            }
+            electron.clipboard.writeText(props.linkURL);
           },
         },
         {

@@ -129,12 +129,9 @@ async function updateOpenAtLoginState(
       store.dispatch(actions.openAtLoginError({ error: null }));
     }
   } else {
-    // macOS, Windows
-    const settings: any = { openAtLogin };
-    if (process.platform === "win32") {
-      settings.openAsHidden = openAsHidden;
-    }
-    app.setLoginItemSettings(settings);
+    // macOS, Windows: no login item flag to start hidden, so openAsHidden
+    // is ignored here.
+    app.setLoginItemSettings({ openAtLogin });
   }
 }
 

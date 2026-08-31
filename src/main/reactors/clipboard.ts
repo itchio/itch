@@ -7,7 +7,7 @@ import { actions } from "common/actions";
 export default function (watcher: Watcher) {
   watcher.on(actions.copyToClipboard, async (store, action) => {
     const text: string = action.payload.text;
-    clipboard.writeText(text);
+    await clipboard.writeText(text);
     store.dispatch(
       actions.statusMessage({
         message: ["status.copied_to_clipboard"],

@@ -130,7 +130,7 @@ func chromeDriverURL(r *runner) string {
 	suffix := ""
 	switch runtime.GOOS {
 	case "windows":
-		suffix = "win32-ia32"
+		suffix = "win32-x64"
 	case "linux":
 		suffix = "linux-x64"
 	case "darwin":

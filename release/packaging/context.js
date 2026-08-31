@@ -12,7 +12,7 @@ import { chalk } from "@itchio/bob";
  *  appVersion: string,
  *  os: string,
  *  arch: string,
- *  archInfo: {electronArch: "ia32" | "x64" | "arm64"},
+ *  archInfo: {electronArch: "x64" | "arm64"},
  *  projectDir: string,
  *  artifactDir: string,
  *  binarySubdir: string,
@@ -80,15 +80,9 @@ export async function parseContext() {
     );
   }
 
-  // ok let's just add either mingw64 or mingw32 to the path if we're on 32-bit or 64-bit windows
-  if (os === "windows") {
-    if (arch === "386") {
-      console.log("Adding mingw32 to PATH");
-      process.env.PATH = `/mingw32/bin:${process.env.PATH}`;
-    } else if (arch === "amd64") {
-      console.log("Adding mingw64 to PATH");
-      process.env.PATH = `/mingw64/bin:${process.env.PATH}`;
-    }
+  if (os === "windows" && arch === "amd64") {
+    console.log("Adding mingw64 to PATH");
+    process.env.PATH = `/mingw64/bin:${process.env.PATH}`;
   }
 
   const projectDir = process.cwd();

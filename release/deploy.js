@@ -5,7 +5,7 @@ import { $ } from "@itchio/bob";
 import { getAppName, getBuildVersion, OSES } from "./common.js";
 import ospath from "path";
 
-const VALID_ARCHES = ["amd64", "arm64", "universal", "386"];
+const VALID_ARCHES = ["amd64", "arm64", "universal"];
 
 /**
  * Parse artifact directory name to extract os and arch.
