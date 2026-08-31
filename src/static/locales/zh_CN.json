@@ -1,16 +1,12 @@
 {
     "action.name.editor": "编辑器",
     "grid.item.install": "安装",
-    "collection.empty": "收藏夹中没有任何游戏",
-    "grid.item.report_problem": "发送反馈",
     "grid.item.uninstall": "卸载",
     "action.name.manual": "用户手册",
     "grid.item.buy_now": "立即购买",
     "action.name.play": "立即游玩",
     "grid.item.downloading": "正在下载…",
     "grid.item.launch": "启动",
-    "grid.item.probe": "检查故障原因",
-    "grid.item.purchase_or_donate": "购买或捐赠物品",
     "grid.item.queued": "等待",
-    "grid.item.retry": "尝试再次下载/安装/启动此程序"
+    "collection.item_count": "{{itemCount}}个物品"
 }
