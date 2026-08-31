@@ -304,6 +304,7 @@
   "prompt.revert.version": "version {version}",
   "prompt.revert.no_other_version": "No other version is available.",
   "prompt.self_update.title": "itch v{version} is available for download",
+  "prompt.self_update_ready.action.release_notes": "Release notes",
   "prompt.self_update_ready.action.restart": "Restart now",
   "prompt.self_update_ready.action.snooze": "Snooze",
   "prompt.self_update_ready.message": "Choose ''{restart}' to apply the update immediately.\n\nIf you don't, the update will be active the next time the app is restarted.",

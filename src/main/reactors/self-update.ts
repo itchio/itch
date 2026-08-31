@@ -2,6 +2,7 @@ import { getErrorStack } from "common/butlerd/errors";
 import childProcess from "child_process";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
+import urls from "common/constants/urls";
 import { Store } from "common/types";
 import { relaunchLogPath } from "main/util/paths";
 import { Watcher } from "common/util/watcher";
@@ -60,6 +61,14 @@ export default function (watcher: Watcher) {
           title: ["prompt.self_update.title", { version }],
           message: ["prompt.self_update_ready.message", { restart }],
           buttons: [
+            {
+              label: ["prompt.self_update_ready.action.release_notes"],
+              className: "secondary",
+              left: true,
+              action: actions.openInExternalBrowser({
+                url: urls.releasesPage,
+              }),
+            },
             {
               label: ["prompt.self_update_ready.action.restart"],
               action: actions.relaunch({}),
