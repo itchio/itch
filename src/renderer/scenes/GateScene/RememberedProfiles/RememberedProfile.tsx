@@ -77,7 +77,7 @@ const RememberedProfileRow = styled.div`
   position: relative;
   flex-shrink: 0;
   min-width: 380px;
-  border-radius: 2px;
+  ${styles.squircle("16px")};
   box-shadow: 0 0 4px ${(props) => props.theme.sidebarBackground};
   display: flex;
   align-items: center;
