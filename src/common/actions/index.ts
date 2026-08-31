@@ -480,6 +480,12 @@ export const actions = wireActions({
        * controls. Used for when game is being displayed in install dialog.
        */
       showAdoptInstall?: boolean;
+      /**
+       * add an "Upload new build" item that opens the push build dialog
+       * with this game preselected. Used by views listing the user's own
+       * games (dashboard).
+       */
+      showUploadBuild?: boolean;
     }
   >(),
   openUserMenu: action<OpenContextMenuBase>(),

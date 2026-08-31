@@ -143,7 +143,8 @@ class StandardGameCover extends React.PureComponent<Props> {
   }
 
   onContextMenu = (ev: React.MouseEvent) => {
-    const { game, dispatch, forceOwned, showAdoptInstall } = this.props;
+    const { game, dispatch, forceOwned, showAdoptInstall, showUploadBuild } =
+      this.props;
     if (!game) {
       return;
     }
@@ -157,6 +158,7 @@ class StandardGameCover extends React.PureComponent<Props> {
         game,
         forceOwned,
         showAdoptInstall,
+        showUploadBuild,
         wind,
       })
     );
@@ -174,6 +176,8 @@ interface Props {
   forceOwned?: boolean;
   /** see openGameContextMenu's showAdoptInstall */
   showAdoptInstall?: boolean;
+  /** see openGameContextMenu's showUploadBuild */
+  showUploadBuild?: boolean;
   children?: JSX.Element | JSX.Element[];
 }
 

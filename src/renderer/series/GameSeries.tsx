@@ -22,6 +22,8 @@ interface GenericExtraProps<Item> {
   hideGameDetails?: boolean;
   /** every game in this series is owned (e.g. owned-bundle contents) */
   forceOwned?: boolean;
+  /** see openGameContextMenu's showUploadBuild */
+  showUploadBuild?: boolean;
 }
 
 interface GameSeriesProps<Params, Item>
@@ -51,6 +53,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
         renderItemExtras: (props) => props.renderItemExtras,
         hideGameDetails: (props) => props.hideGameDetails,
         forceOwned: (props) => props.forceOwned,
+        showUploadBuild: (props) => props.showUploadBuild,
       });
     }
 
@@ -92,12 +95,17 @@ class GenericGameRecordComponent<Item> extends React.PureComponent<
       renderItemExtras = renderNoop,
       hideGameDetails,
       forceOwned,
+      showUploadBuild,
     } = this.props;
     const game = record;
     return (
       <Box className="gameseries--box" data-game-id={game.id}>
         <BoxInner>
-          <StandardGameCover game={game} forceOwned={forceOwned} />
+          <StandardGameCover
+            game={game}
+            forceOwned={forceOwned}
+            showUploadBuild={showUploadBuild}
+          />
           <FilterSpacer />
           <StandardGameDesc game={game} hideDetails={hideGameDetails}>
             {renderDescExtras(item)}

@@ -54,6 +54,7 @@ class DashboardPage extends React.PureComponent<Props> {
             },
           }}
           getRecord={this.getRecord}
+          showUploadBuild
           renderMainFilters={this.renderMainFilters}
           renderExtraFilters={this.renderExtraFilters}
           renderItemExtras={this.renderItemExtras}

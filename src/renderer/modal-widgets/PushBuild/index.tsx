@@ -3,7 +3,7 @@ import { Game, Profile } from "common/butlerd/messages";
 import { ModalWidgetProps } from "common/modals";
 import { PushBuildParams, PushBuildResponse } from "common/modals/types";
 import { Dispatch, PreviewState, RootState } from "common/types";
-import { ambientWind } from "common/util/navigation";
+import { ambientNavigation, ambientWind } from "common/util/navigation";
 import React from "react";
 import Checkbox from "renderer/basics/Checkbox";
 import { hook } from "renderer/hocs/hook";
@@ -71,6 +71,8 @@ interface OwnProps
 interface MappedProps {
   profile: Profile | null;
   preview: PreviewState | null;
+  /** the active tab is already showing itch://upload */
+  onUploadPage: boolean;
 }
 
 type Props = OwnProps & MappedProps & { dispatch: Dispatch };
@@ -197,7 +199,7 @@ class PushBuild extends React.PureComponent<Props, State> {
           hidden={isNewChannel ? hidden : false}
           pendingPushConfirm={pendingPushConfirm}
           onSetPendingPushConfirm={this.setPendingPushConfirm}
-          onPushStarted={this.close}
+          onPushStarted={this.onPushStarted}
         />
       </PushBuildDialog>
     );
@@ -253,6 +255,19 @@ class PushBuild extends React.PureComponent<Props, State> {
         action: actions.modalResponse({}),
       })
     );
+  };
+
+  onPushStarted = () => {
+    const { dispatch, onUploadPage } = this.props;
+    if (!onUploadPage) {
+      dispatch(
+        actions.navigate({
+          wind: ambientWind(),
+          url: "itch://upload",
+        })
+      );
+    }
+    this.close();
   };
 
   handleGameChange = (game: Game | null) => {
@@ -314,4 +329,9 @@ class PushBuild extends React.PureComponent<Props, State> {
 export default hook<MappedProps>((map) => ({
   profile: map((rs: RootState) => rs.profile?.profile ?? null),
   preview: map((rs: RootState) => rs.upload.currentPreview ?? null),
+  onUploadPage: map((rs: RootState) => {
+    const tab = ambientNavigation(rs).tab;
+    const instance = rs.winds[ambientWind()].tabInstances[tab];
+    return instance?.location?.internalPage === "upload";
+  }),
 }))(PushBuild as any);

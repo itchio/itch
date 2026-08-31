@@ -12,6 +12,7 @@ import { formatOperation } from "common/format/operation";
 import { Game } from "common/butlerd/messages";
 import { actionForGame } from "common/util/action-for-game";
 import urls from "common/constants/urls";
+import modals from "main/modals";
 
 export function concatTemplates(
   a: MenuTemplate,
@@ -46,7 +47,8 @@ export function adoptInstallMenu(game: Game): MenuTemplate {
 export function gameControls(
   store: Store,
   game: Game,
-  forceOwned?: boolean
+  forceOwned?: boolean,
+  showUploadBuild?: boolean
 ): MenuTemplate {
   let template: MenuTemplate = [];
 
@@ -180,6 +182,23 @@ export function gameControls(
 
   // prepend status items
   template = concatTemplates(statusItems, template);
+
+  if (showUploadBuild) {
+    template = concatTemplates(template, [
+      {
+        id: "context--grid-item-upload-build",
+        localizedLabel: ["upload.menu.push_new_build"],
+        action: actions.openModal(
+          modals.pushBuild.make({
+            wind: "root",
+            title: "Push new build",
+            message: "",
+            widgetParams: { prefilledGame: game },
+          })
+        ),
+      },
+    ]);
+  }
 
   return template;
 }
