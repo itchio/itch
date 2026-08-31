@@ -29,14 +29,14 @@ export default function (watcher: Watcher) {
           message: "",
           buttons: [
             {
-              icon: "install",
-              label: ["prompt.manage_game.install_other"],
-              left: true,
-              action: actions.queueGameInstall({ game }),
-            },
-            {
               label: ["prompt.action.close"],
               className: "secondary",
+              left: true,
+            },
+            {
+              icon: "install",
+              label: ["prompt.manage_game.install_other"],
+              action: actions.queueGameInstall({ game }),
             },
           ],
           widgetParams,

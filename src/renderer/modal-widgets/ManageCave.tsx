@@ -279,7 +279,9 @@ class ManageCave extends React.PureComponent<Props> {
             <Button icon="arrow-left" onClick={this.onBack}>
               {T(["prompt.action.back"])}
             </Button>
-          ) : null}
+          ) : (
+            <Button onClick={this.onClose}>{T(["prompt.action.close"])}</Button>
+          )}
           <Filler />
           <Button
             icon="repeat"
@@ -310,6 +312,12 @@ class ManageCave extends React.PureComponent<Props> {
         action: actions.switchVersionCaveRequest({ cave }),
       })
     );
+  };
+
+  onClose = () => {
+    const { dispatch } = this.props;
+    const { wind, id } = this.props.modal;
+    dispatch(actions.closeModal({ wind, id }));
   };
 
   onBack = () => {

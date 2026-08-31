@@ -16,7 +16,8 @@ import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
-import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
+import { ModalButtons } from "renderer/basics/modal-styles";
+import Filler from "renderer/basics/Filler";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -551,6 +552,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
         </Callout>
         <ModalButtons>
           <Button label={T(["prompt.action.close"])} onClick={this.onClose} />
+          <Filler />
         </ModalButtons>
       </>
     );
@@ -786,7 +788,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
         )}
         <ModalButtons>
           <Button label={T(["prompt.action.close"])} onClick={this.onClose} />
-          <ModalButtonSpacer />
+          <Filler />
           <Button
             primary
             disabled={saving || !dirty || snapshot.steamRunning}

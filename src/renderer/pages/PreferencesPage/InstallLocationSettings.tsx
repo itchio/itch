@@ -7,8 +7,7 @@ import Button from "renderer/basics/Button";
 import { actions } from "common/actions";
 
 const ControlButtonsDiv = styled.div`
-  padding: 12px;
-  padding-top: 24px;
+  padding: 0 15px;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -75,6 +75,7 @@ export default function (watcher: Watcher) {
             },
             {
               label: ["prompt.self_update_ready.action.snooze"],
+              className: "secondary",
               action: actions.closeModal({ wind: "root" }),
             },
           ],
