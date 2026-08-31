@@ -19,7 +19,7 @@ import { hook } from "renderer/hocs/hook";
 import { ModalButtons } from "renderer/basics/modal-styles";
 import Filler from "renderer/basics/Filler";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import styled from "renderer/styles";
+import styled, { squircle } from "renderer/styles";
 import { T } from "renderer/t";
 
 const Container = styled.div`
@@ -100,7 +100,7 @@ const MiniButton = styled.button`
   font-size: 13px;
   color: ${(props) => props.theme.baseText};
   border: 1px solid ${(props) => props.theme.inputBorder};
-  border-radius: 3px;
+  ${squircle("12px")};
   background: #242020;
   cursor: pointer;
 
@@ -234,6 +234,24 @@ const DetailsBox = styled.details`
       font-size: 9px;
       transition: transform 0.1s;
     }
+
+    .filler {
+      flex-grow: 1;
+    }
+
+    .changes {
+      &.clean {
+        color: ${(props) => props.theme.ternaryText};
+      }
+
+      .add {
+        color: ${(props) => props.theme.success};
+      }
+
+      .remove {
+        color: ${(props) => props.theme.error};
+      }
+    }
   }
 
   &[open] summary .icon {
@@ -268,37 +286,6 @@ const DetailsBox = styled.details`
       &.caution {
         color: ${(props) => props.theme.caution};
       }
-    }
-  }
-`;
-
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-
-  /* ModalButtons is width: 100%, which overflows next to the summary */
-  ${ModalButtons} {
-    width: auto;
-    flex-grow: 1;
-    min-width: 0;
-  }
-
-  .summary {
-    font-size: ${(props) => props.theme.fontSizes.small};
-    color: ${(props) => props.theme.secondaryText};
-
-    .add {
-      color: ${(props) => props.theme.success};
-    }
-
-    .remove {
-      color: ${(props) => props.theme.error};
-    }
-
-    &.clean {
-      color: ${(props) => props.theme.ternaryText};
     }
   }
 `;
@@ -537,7 +524,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
             <span>{T(["steam.dialog.direct_warning"])}</span>
           </Callout>
         ) : null}
-        {this.renderDetailsLine()}
+        {this.renderDetailsLine(rows)}
         {this.renderFooter(rows)}
       </>
     );
@@ -656,7 +643,7 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     );
   }
 
-  renderDetailsLine() {
+  renderDetailsLine(rows: RowData[]) {
     const { snapshot } = this.props.modal.widgetParams;
     if (!snapshot.steamRoot || !snapshot.userId) {
       return null;
@@ -672,6 +659,8 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
         <summary>
           <Icon icon="triangle-right" />
           <span>shortcuts.vdf</span>
+          <span className="filler" />
+          {this.renderChangesStatus(rows)}
         </summary>
         <div className="grid">
           <div className="label">{T(["steam.dialog.details.steam_root"])}</div>
@@ -731,12 +720,26 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     );
   }
 
-  renderFooter(rows: RowData[]) {
-    const { snapshot, saving, saveProgress } = this.props.modal.widgetParams;
-    const { toAdd, toRemove, toUpdate } = this.pendingChanges(rows);
-    const dirty =
-      toAdd.length > 0 || toRemove.length > 0 || toUpdate.length > 0;
+  renderChangesStatus(rows: RowData[]) {
+    const { saving, saveProgress } = this.props.modal.widgetParams;
 
+    if (saving) {
+      return (
+        <span className="changes">
+          {saveProgress && saveProgress.total > 0
+            ? T([
+                "steam.dialog.saving_progress",
+                {
+                  completed: saveProgress.completed,
+                  total: saveProgress.total,
+                },
+              ])
+            : T(["steam.dialog.saving"])}
+        </span>
+      );
+    }
+
+    const { toAdd, toRemove, toUpdate } = this.pendingChanges(rows);
     const parts: JSX.Element[] = [];
     if (toAdd.length > 0) {
       parts.push(
@@ -760,44 +763,41 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
       );
     }
 
+    if (parts.length === 0) {
+      return (
+        <span className="changes clean">{T(["steam.dialog.no_changes"])}</span>
+      );
+    }
     return (
-      <Footer>
-        {saving ? (
-          <div className="summary">
-            {saveProgress && saveProgress.total > 0
-              ? T([
-                  "steam.dialog.saving_progress",
-                  {
-                    completed: saveProgress.completed,
-                    total: saveProgress.total,
-                  },
-                ])
-              : T(["steam.dialog.saving"])}
-          </div>
-        ) : dirty ? (
-          <div className="summary">
-            {parts.map((part, i) => (
-              <React.Fragment key={part.key}>
-                {i > 0 ? " · " : null}
-                {part}
-              </React.Fragment>
-            ))}
-          </div>
-        ) : (
-          <div className="summary clean">{T(["steam.dialog.no_changes"])}</div>
-        )}
-        <ModalButtons>
-          <Button label={T(["prompt.action.close"])} onClick={this.onClose} />
-          <Filler />
-          <Button
-            primary
-            disabled={saving || !dirty || snapshot.steamRunning}
-            iconComponent={saving ? <LoadingCircle progress={-1} /> : undefined}
-            label={T([saving ? "steam.dialog.saving" : "steam.dialog.save"])}
-            onClick={this.onSave}
-          />
-        </ModalButtons>
-      </Footer>
+      <span className="changes">
+        {parts.map((part, i) => (
+          <React.Fragment key={part.key}>
+            {i > 0 ? " · " : null}
+            {part}
+          </React.Fragment>
+        ))}
+      </span>
+    );
+  }
+
+  renderFooter(rows: RowData[]) {
+    const { snapshot, saving } = this.props.modal.widgetParams;
+    const { toAdd, toRemove, toUpdate } = this.pendingChanges(rows);
+    const dirty =
+      toAdd.length > 0 || toRemove.length > 0 || toUpdate.length > 0;
+
+    return (
+      <ModalButtons>
+        <Button label={T(["prompt.action.close"])} onClick={this.onClose} />
+        <Filler />
+        <Button
+          primary
+          disabled={saving || !dirty || snapshot.steamRunning}
+          iconComponent={saving ? <LoadingCircle progress={-1} /> : undefined}
+          label={T([saving ? "steam.dialog.saving" : "steam.dialog.save"])}
+          onClick={this.onSave}
+        />
+      </ModalButtons>
     );
   }
 
