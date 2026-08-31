@@ -1,3 +1,5 @@
+export const titleBarHeight = 40;
+
 export interface WindowInitialParams {
   width?: number;
   height?: number;

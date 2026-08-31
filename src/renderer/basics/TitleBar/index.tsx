@@ -1,11 +1,12 @@
+import classNames from "classnames";
 import { actions } from "common/actions";
 import env from "renderer/env";
 import { Space } from "common/helpers/space";
+import { titleBarHeight } from "common/constants/windows";
 import { ExtendedWindow, TabInstance } from "common/types";
 import { Dispatch } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
-import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -28,25 +29,6 @@ const Spacer = styled.div`
   flex-shrink: 0;
 `;
 
-export const titleBarHeight = 40;
-
-const WindowButton = styled(IconButton)`
-  align-self: flex-start;
-  flex-shrink: 0;
-  width: ${titleBarHeight * 1.1}px;
-  height: ${titleBarHeight * 0.8}px;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  &.exit:hover {
-    background: rgba(174, 8, 7, 1);
-  }
-`;
-
 const DraggableDivInner = styled.div`
   flex: 1 1;
   display: flex;
@@ -59,6 +41,12 @@ const Filler = styled.div`
   flex: 1 1;
 `;
 
+/*
+ * Window controls are native (macOS traffic lights / titleBarOverlay
+ * elsewhere) and float above the page in window coordinates, so we inset
+ * with the titlebar-area env vars. The env fallbacks make both insets
+ * resolve to 0 where there's no overlay (macOS).
+ */
 const TitleBarDiv = styled.div`
   display: flex;
   align-items: center;
@@ -66,6 +54,15 @@ const TitleBarDiv = styled.div`
   background: ${(props) => props.theme.sidebarBackground};
   padding-left: 10px;
   height: ${titleBarHeight}px;
+
+  padding-right: calc(
+    100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw)
+  );
+
+  /* when no sidebar sits to our left, controls may also cover our left edge */
+  &.full-width {
+    padding-left: max(10px, env(titlebar-area-x, 0px));
+  }
 `;
 
 const TitleDiv = styled.div`
@@ -95,7 +92,11 @@ class TitleBar extends React.PureComponent<Props> {
     }
 
     return (
-      <TitleBarDiv className="title-bar">
+      <TitleBarDiv
+        className={classNames("title-bar", {
+          "full-width": secondary || !loggedIn,
+        })}
+      >
         <DraggableDiv id="title-draggable" onClick={this.onClick}>
           <DraggableDivInner>
             {secondary ? <Filler /> : null}
@@ -110,43 +111,7 @@ class TitleBar extends React.PureComponent<Props> {
           </>
         )}
         <Spacer />
-        {this.renderIcons()}
       </TitleBarDiv>
-    );
-  }
-
-  renderIcons() {
-    const { macos, maximized } = this.props;
-    if (macos) {
-      return null;
-    }
-
-    const iw = (window as unknown as ExtendedWindow).windSpec;
-    const secondary = iw.role == "secondary";
-
-    return (
-      <>
-        {secondary ? null : (
-          <>
-            <WindowButton
-              icon="minus"
-              onClick={this.minimizeClick}
-              aria-label="Minimize"
-            />
-            <WindowButton
-              icon={maximized ? "window-restore" : "window-maximize"}
-              onClick={this.maximizeRestoreClick}
-              aria-label={maximized ? "Restore" : "Maximize"}
-            />
-          </>
-        )}
-        <WindowButton
-          className="exit"
-          icon="cross"
-          onClick={this.closeClick}
-          aria-label="Close"
-        />
-      </>
     );
   }
 
@@ -166,36 +131,13 @@ class TitleBar extends React.PureComponent<Props> {
       return;
     }
   };
-
-  preferencesClick = () => {
-    const { dispatch } = this.props;
-    dispatch(actions.navigate({ wind: "root", url: "itch://preferences" }));
-  };
-
-  minimizeClick = () => {
-    const { dispatch } = this.props;
-    dispatch(actions.minimizeWind({ wind: ambientWind() }));
-  };
-
-  maximizeRestoreClick = () => {
-    const { dispatch } = this.props;
-    dispatch(actions.toggleMaximizeWind({ wind: ambientWind() }));
-  };
-
-  closeClick = () => {
-    const { dispatch } = this.props;
-    dispatch(actions.hideWind({ wind: ambientWind() }));
-  };
 }
 
 interface Props {
   tab: string;
-  secondary?: boolean;
 
   dispatch: Dispatch;
   tabInstance: TabInstance;
-  maximized: boolean;
-  focused: boolean;
   macos: boolean;
 }
 
@@ -203,7 +145,5 @@ export default hookWithProps(TitleBar)((map) => ({
   tabInstance: map(
     (rs, props) => ambientWindState(rs).tabInstances[props.tab] || emptyObj
   ),
-  maximized: map((rs, props) => rs.winds[ambientWind()].native.maximized),
-  focused: map((rs, props) => rs.winds[ambientWind()].native.focused),
   macos: map((rs, props) => rs.system.macos),
 }))(TitleBar);

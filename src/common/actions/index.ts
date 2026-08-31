@@ -331,12 +331,6 @@ export const actions = wireActions({
   hideWind: action<{
     wind: string;
   }>(),
-  minimizeWind: action<{
-    wind: string;
-  }>(),
-  toggleMaximizeWind: action<{
-    wind: string;
-  }>(),
 
   // navigation
   tabOpened: action<OpenTabPayload>(),

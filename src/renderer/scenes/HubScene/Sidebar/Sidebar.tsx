@@ -22,6 +22,7 @@ import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
 import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
+import { titleBarHeight } from "common/constants/windows";
 import equal from "react-fast-compare";
 import PrimeDownload from "renderer/scenes/HubScene/Sidebar/PrimeDownload";
 
@@ -41,6 +42,18 @@ const SidebarDiv = styled.div`
   display: flex;
   align-items: stretch;
   flex-direction: column;
+`;
+
+/*
+ * When the system button layout puts native window controls on the left
+ * (titlebar-area-x > 0), they float over the sidebar's top corner; reserve
+ * a strip so they don't cover the logo. The * 9999 collapses the height to
+ * either 0 or the full titleBarHeight, since CSS has no conditionals.
+ */
+const WindowControlsSpacer = styled.div`
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+  height: min(calc(env(titlebar-area-x, 0px) * 9999), ${titleBarHeight}px);
 `;
 
 const SidebarItems = styled.div`
@@ -101,6 +114,7 @@ class Sidebar extends React.PureComponent<Props, State> {
 
     return (
       <SidebarDiv id="sidebar" role="navigation">
+        <WindowControlsSpacer />
         <Logo />
 
         <Search />

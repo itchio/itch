@@ -1,7 +1,11 @@
 import { getErrorStack } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
-import { normalizeURL, opensInWindow } from "common/constants/windows";
+import {
+  normalizeURL,
+  opensInWindow,
+  titleBarHeight,
+} from "common/constants/windows";
 import env from "main/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
@@ -209,24 +213,6 @@ async function hideWindow() {
   }
 }
 
-async function minimizeWindow() {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
-    window.minimize();
-  }
-}
-
-async function toggleMaximizeWindow() {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
-    if (window.isMaximized()) {
-      window.unmaximize();
-    } else {
-      window.maximize();
-    }
-  }
-}
-
 async function exitFullScreen() {
   const nativeWindow = BrowserWindow.getFocusedWindow();
   if (nativeWindow && nativeWindow.isFullScreen()) {
@@ -326,14 +312,6 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.hideWind, async (store, action) => {
     hideWindow();
-  });
-
-  watcher.on(actions.minimizeWind, async (store, action) => {
-    minimizeWindow();
-  });
-
-  watcher.on(actions.toggleMaximizeWind, async (store, action) => {
-    toggleMaximizeWindow();
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
@@ -599,7 +577,17 @@ function commonBrowserWindowOpts(
     autoHideMenuBar: true,
     backgroundColor: codGray,
     titleBarStyle: "hidden",
-    frame: false,
+    // macOS keeps its native traffic lights; elsewhere the overlay draws
+    // native controls that follow the system's button layout and order.
+    ...(process.platform === "darwin"
+      ? {}
+      : {
+          titleBarOverlay: {
+            color: codGray,
+            symbolColor: "#dad2d2",
+            height: titleBarHeight,
+          },
+        }),
     webPreferences: {
       webSecurity: true,
       nodeIntegration: false,
