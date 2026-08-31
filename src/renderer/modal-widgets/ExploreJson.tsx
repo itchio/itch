@@ -19,7 +19,7 @@ const ExploreJson = (props: Props) => {
 
 const JSONTreeContainer = styled.div`
   width: 100%;
-  user-select: initial;
+  user-select: text;
 `;
 
 interface Props

@@ -46,6 +46,8 @@ const ModalDialog = styled.dialog.withConfig({
   max-height: none;
   color: inherit;
 
+  user-select: none;
+
   /* allow the box shadow to appear */
   overflow: visible;
 
@@ -145,7 +147,7 @@ const ModalsDiv = styled.div.withConfig({
       padding: 0 20px;
       overflow-y: auto;
       max-height: 460px;
-      -webkit-user-select: initial;
+      user-select: text;
       /* locale strings use \n\n for paragraph breaks */
       white-space: pre-line;
 
