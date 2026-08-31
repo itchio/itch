@@ -89,6 +89,9 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.analyzePage, async (store, action) => {
     const { wind, tab, url } = action.payload;
+    if (!isItchioOrigin(url)) {
+      return;
+    }
     await withWebContents(store, wind, tab, async (wc) => {
       const onNewPath = (url: string, resource: string) => {
         if (resource) {
@@ -422,6 +425,14 @@ async function hookWebContents(
     didNavigate(url, NavMode.Append);
   };
   wc.on("did-navigate", (event, url) => {
+    commit("did-navigate", event, url);
+  });
+  // keeps the tab's URL in sync with pushState/hash navigation, so a later
+  // analyzePage's evolveTab (onlyIfMatchingURL) matches the current page
+  wc.on("did-navigate-in-page", (event, url, isMainFrame) => {
+    if (!isMainFrame) {
+      return;
+    }
     commit("did-navigate", event, url);
   });
 }

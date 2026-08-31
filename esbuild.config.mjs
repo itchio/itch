@@ -19,6 +19,7 @@ export const mainConfig = {
     main: "src/main/index.ts",
     "inject-game": "src/main/inject/inject-game.ts",
     "inject-preload": "src/main/inject/inject-preload.ts",
+    "inject-browser": "src/main/inject/inject-browser.ts",
   },
   bundle: true,
   platform: "node",

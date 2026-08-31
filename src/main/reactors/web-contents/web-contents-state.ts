@@ -20,6 +20,19 @@ export function getWebContents(wind: string, tab: string): WebContents | null {
   return webContents[wind][tab];
 }
 
+export function findWebContentsTab(
+  wcId: number
+): { wind: string; tab: string } | null {
+  for (const wind of Object.keys(webContents)) {
+    for (const tab of Object.keys(webContents[wind])) {
+      if (webContents[wind][tab].id === wcId) {
+        return { wind, tab };
+      }
+    }
+  }
+  return null;
+}
+
 export function forgetWebContents(wind: string, tab: string) {
   if (!(wind in webContents)) {
     return;

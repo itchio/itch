@@ -1,6 +1,14 @@
 import { ipcRenderer, IpcRenderer, OpenDialogOptions } from "electron";
 
-export type InjectName = "game" | "preload";
+export type InjectName = "game" | "preload" | "browser";
+
+/**
+ * Channel for the in-app browser bridge (inject-browser.ts). Carries no
+ * payload: it only asks the main process to re-run analyzePage for the
+ * sending tab. Guarded by an itch.io origin check on the sender frame in
+ * main.ts, separately from the app shell handlers below.
+ */
+export const BROWSER_REFRESH_PAGE_CHANNEL = "browser-refresh-page";
 
 // subsets of the systeminformation results: only what the feedback
 // form reports crosses the IPC boundary

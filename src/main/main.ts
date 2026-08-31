@@ -35,7 +35,13 @@ import {
 
 import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
-import { AsyncIpcHandlers, SyncIpcHandlers } from "common/ipc";
+import {
+  AsyncIpcHandlers,
+  BROWSER_REFRESH_PAGE_CHANNEL,
+  SyncIpcHandlers,
+} from "common/ipc";
+import { getInjectPath } from "main/util/resources";
+import { findWebContentsTab } from "main/reactors/web-contents/web-contents-state";
 import { mainLogger } from "main/logger";
 import { stopForwarding } from "common/util/store-sync";
 
@@ -278,6 +284,36 @@ export function main() {
       store.dispatch(actions.quit({}));
     });
 
+    // pokes from the in-app browser bridge (inject-browser.ts). No payload
+    // is read; the sender must be the main frame of a tracked browser tab,
+    // on an itch.io origin, and pokes are throttled per webContents.
+    const lastRefreshPokes = new Map<number, number>();
+    ipcMain.on(BROWSER_REFRESH_PAGE_CHANNEL, (event) => {
+      const frame = event.senderFrame;
+      if (!frame || frame !== event.sender.mainFrame) {
+        return;
+      }
+      if (!isItchioOrigin(frame.url)) {
+        return;
+      }
+      const loc = findWebContentsTab(event.sender.id);
+      if (!loc) {
+        return;
+      }
+      const now = Date.now();
+      if (now - (lastRefreshPokes.get(event.sender.id) ?? 0) < 250) {
+        return;
+      }
+      lastRefreshPokes.set(event.sender.id, now);
+      store.dispatch(
+        actions.analyzePage({
+          wind: loc.wind,
+          tab: loc.tab,
+          url: event.sender.getURL(),
+        })
+      );
+    });
+
     app.on("web-contents-created", (_event, contents) => {
       mainLogger.info(
         `web-contents-created: id=${
@@ -286,9 +322,10 @@ export function main() {
       );
 
       // fires on the embedding window; our only webview (the in-app
-      // browser) uses no preload and no node
+      // browser) runs no node and only our own preload, never a
+      // page-supplied one
       contents.on("will-attach-webview", (_e, webPreferences) => {
-        delete webPreferences.preload;
+        webPreferences.preload = getInjectPath("browser");
         webPreferences.nodeIntegration = false;
         webPreferences.contextIsolation = true;
       });
