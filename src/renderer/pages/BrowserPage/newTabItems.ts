@@ -1,6 +1,19 @@
+import { ComponentType } from "react";
+import { LocalizedString } from "common/types";
 import urls from "common/constants/urls";
+import JamJarIcon from "renderer/basics/icons/JamJarIcon";
+import { SvgIconProps } from "renderer/basics/icons/SvgIcon";
 
-export const newTabPrimaryItems = [
+export interface NewTabItem {
+  label: LocalizedString;
+  url: string;
+  /** icomoon glyph name, rendered via Icon */
+  icon?: string;
+  /** standalone SVG icon component, takes precedence over icon */
+  iconComponent?: ComponentType<SvgIconProps>;
+}
+
+export const newTabPrimaryItems: NewTabItem[] = [
   {
     label: ["sidebar.explore"],
     icon: "earth",
@@ -28,7 +41,7 @@ export const newTabPrimaryItems = [
   },
 ];
 
-export const newTabSecondaryItems = [
+export const newTabSecondaryItems: NewTabItem[] = [
   {
     label: ["new_tab.random"],
     icon: "shuffle",
@@ -48,5 +61,10 @@ export const newTabSecondaryItems = [
     label: ["new_tab.devlogs"],
     icon: "fire",
     url: urls.itchio + "/devlogs",
+  },
+  {
+    label: ["new_tab.jams"],
+    iconComponent: JamJarIcon,
+    url: urls.itchio + "/jams",
   },
 ];

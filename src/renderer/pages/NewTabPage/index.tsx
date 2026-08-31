@@ -6,6 +6,7 @@ import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import {
+  NewTabItem as NewTabItemData,
   newTabPrimaryItems,
   newTabSecondaryItems,
 } from "renderer/pages/BrowserPage/newTabItems";
@@ -55,7 +56,7 @@ const NewTabItem = styled.a`
 
   min-width: 160px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  ${styles.squircle("16px")};
 
   .icon {
     font-size: 70px;
@@ -70,6 +71,16 @@ const Title = styled.h2`
   font-size: ${(props) => props.theme.fontSizes.huge};
 `;
 
+const ItemIcon = ({ item }: { item: NewTabItemData }) => {
+  if (item.iconComponent) {
+    return <item.iconComponent />;
+  }
+  if (item.icon) {
+    return <Icon icon={item.icon} />;
+  }
+  return null;
+};
+
 class NewTabPage extends React.PureComponent<Props> {
   override render() {
     return (
@@ -78,11 +89,11 @@ class NewTabPage extends React.PureComponent<Props> {
         <NewTabMain>
           <NewTabGrid>
             {newTabPrimaryItems.map((item) => {
-              const { label, icon, url } = item;
+              const { label, url } = item;
 
               return (
                 <NewTabItem key={url} href={url}>
-                  <Icon icon={icon} />
+                  <ItemIcon item={item} />
                   <span>{T(label)}</span>
                 </NewTabItem>
               );
@@ -92,11 +103,11 @@ class NewTabPage extends React.PureComponent<Props> {
           <NewTabGrid>
             <Title>{T(["new_tab.titles.buttons"])}</Title>
             {newTabSecondaryItems.map((item) => {
-              const { label, icon, url } = item;
+              const { label, url } = item;
 
               return (
                 <NewTabItem key={url} href={url}>
-                  <Icon icon={icon} />
+                  <ItemIcon item={item} />
                   <span>{T(label)}</span>
                 </NewTabItem>
               );
