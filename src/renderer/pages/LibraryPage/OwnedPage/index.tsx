@@ -1,9 +1,12 @@
+import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { GameClassification, Profile } from "common/butlerd/messages";
+import urls from "common/constants/urls";
 import { classificationFromQuery } from "common/helpers/classification-from-query";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
@@ -64,7 +67,21 @@ class OwnedPage extends React.PureComponent<Props> {
   renderItemExtras = OwnedSeries.renderItemExtrasCallback((cave) => (
     <>{cave.game ? <StandardMainAction game={cave.game} /> : null}</>
   ));
-  renderMainFilters = () => <SearchControl />;
+  renderMainFilters = () => (
+    <>
+      <SearchControl />
+      <MoreMenuButton
+        template={[
+          {
+            localizedLabel: ["outlinks.manage_collections"],
+            action: actions.openInExternalBrowser({
+              url: urls.myCollections,
+            }),
+          },
+        ]}
+      />
+    </>
+  );
   renderExtraFilters = () => (
     <SortsAndFilters>
       <FilterGroup>

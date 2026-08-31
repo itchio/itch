@@ -4,7 +4,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { Dispatch } from "common/types";
 import { withTab } from "renderer/hocs/withTab";
 import { hookWithProps } from "renderer/hocs/hook";
-import { ambientTab, ambientWind } from "common/util/navigation";
+import { ambientTab } from "common/util/navigation";
 import { withProfile } from "renderer/hocs/withProfile";
 import { Profile } from "common/butlerd/messages";
 import makeCollectionSeries from "renderer/series/CollectionSeries";
@@ -14,7 +14,7 @@ import {
   SortsAndFilters,
   FilterGroup,
 } from "renderer/pages/common/SortsAndFilters";
-import IconButton from "renderer/basics/IconButton";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { SortOption } from "renderer/pages/common/Sort";
@@ -55,7 +55,16 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <>
         <SearchControl />
-        <IconButton icon="more_vert" onClick={this.onMore} />
+        <MoreMenuButton
+          template={[
+            {
+              localizedLabel: ["outlinks.manage_collections"],
+              action: actions.openInExternalBrowser({
+                url: urls.myCollections,
+              }),
+            },
+          ]}
+        />
       </>
     );
   };
@@ -71,27 +80,6 @@ class CollectionsPage extends React.PureComponent<Props> {
           />
         </FilterGroup>
       </SortsAndFilters>
-    );
-  };
-
-  onMore = (ev: React.MouseEvent<HTMLElement>) => {
-    const { dispatch, tab, url } = this.props;
-    const { clientX, clientY } = ev;
-    dispatch(
-      actions.popupContextMenu({
-        wind: ambientWind(),
-        clientX,
-        clientY,
-        template: [
-          {
-            localizedLabel: ["outlinks.manage_collections"],
-            action: actions.navigate({
-              wind: ambientWind(),
-              url: urls.myCollections,
-            }),
-          },
-        ],
-      })
     );
   };
 }

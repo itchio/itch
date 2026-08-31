@@ -6,7 +6,7 @@ import { classificationFromQuery } from "common/helpers/classification-from-quer
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import IconButton from "renderer/basics/IconButton";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
@@ -89,17 +89,24 @@ class BundlePage extends React.PureComponent<Props> {
   renderItemExtras = BundleGameSeries.renderItemExtrasCallback((bg) => (
     <StandardMainAction game={bg.game} forceOwned />
   ));
-  renderMainFilters = () => (
-    <>
-      <IconButton
-        icon="redo"
-        hint={_("browser.popout")}
-        hintPosition="bottom"
-        onClick={this.popOutBrowser}
-      />
-      <SearchControl />
-    </>
-  );
+  renderMainFilters = () => {
+    const { bundleId } = this.props;
+    // we don't know the slug, the website will redirect to the proper one
+    const url = `${urls.itchio}/b/${bundleId}/hello`;
+    return (
+      <>
+        <SearchControl />
+        <MoreMenuButton
+          template={[
+            {
+              localizedLabel: ["browser.popout"],
+              action: actions.openInExternalBrowser({ url }),
+            },
+          ]}
+        />
+      </>
+    );
+  };
 
   renderExtraFilters = (): JSX.Element => {
     return (
@@ -135,14 +142,6 @@ class BundlePage extends React.PureComponent<Props> {
     }
     dispatchTabPageUpdate(this.props, { label });
   });
-
-  popOutBrowser = () => {
-    const { dispatch, bundleId } = this.props;
-
-    // we don't know the slug, the website will redirect to the proper one
-    let url = `${urls.itchio}/b/${bundleId}/hello`;
-    dispatch(actions.openInExternalBrowser({ url }));
-  };
 }
 
 interface Props extends MeatProps {

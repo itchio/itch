@@ -1,8 +1,11 @@
+import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
+import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
@@ -28,7 +31,18 @@ class LibraryPage extends React.PureComponent<Props> {
 
     return (
       <Page>
-        <FiltersContainer loading={false} />
+        <FiltersContainer loading={false}>
+          <MoreMenuButton
+            template={[
+              {
+                localizedLabel: ["outlinks.manage_collections"],
+                action: actions.openInExternalBrowser({
+                  url: urls.myCollections,
+                }),
+              },
+            ]}
+          />
+        </FiltersContainer>
 
         <ItemList>
           <OwnedGameStripe

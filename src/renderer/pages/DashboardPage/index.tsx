@@ -1,8 +1,11 @@
+import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Profile } from "common/butlerd/messages";
+import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
@@ -60,7 +63,19 @@ class DashboardPage extends React.PureComponent<Props> {
   }
 
   getRecord = ProfileGameSeries.getRecordCallback((pg) => pg.game);
-  renderMainFilters = () => <SearchControl />;
+  renderMainFilters = () => (
+    <>
+      <SearchControl />
+      <MoreMenuButton
+        template={[
+          {
+            localizedLabel: ["browser.popout"],
+            action: actions.openInExternalBrowser({ url: urls.dashboard }),
+          },
+        ]}
+      />
+    </>
+  );
   renderExtraFilters = () => (
     <SortsAndFilters>
       <FilterGroup>

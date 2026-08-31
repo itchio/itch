@@ -6,7 +6,7 @@ import { classificationFromQuery } from "common/helpers/classification-from-quer
 import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import IconButton from "renderer/basics/IconButton";
+import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
 import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
@@ -88,17 +88,24 @@ class CollectionPage extends React.PureComponent<Props> {
   renderItemExtras = CollectionGameSeries.renderItemExtrasCallback((cave) => (
     <StandardMainAction game={cave.game} />
   ));
-  renderMainFilters = () => (
-    <>
-      <IconButton
-        icon="redo"
-        hint={_("browser.popout")}
-        hintPosition="bottom"
-        onClick={this.popOutBrowser}
-      />
-      <SearchControl />
-    </>
-  );
+  renderMainFilters = () => {
+    const { collectionId } = this.props;
+    // we don't know the slug, the website will redirect to the proper one
+    const url = `${urls.itchio}/c/${collectionId}/hello`;
+    return (
+      <>
+        <SearchControl />
+        <MoreMenuButton
+          template={[
+            {
+              localizedLabel: ["browser.popout"],
+              action: actions.openInExternalBrowser({ url }),
+            },
+          ]}
+        />
+      </>
+    );
+  };
 
   onFetchedCollection = FetchCollection.onResultCallback((result) => {
     let label = "Collection not found";
@@ -129,14 +136,6 @@ class CollectionPage extends React.PureComponent<Props> {
         <FilterGroupGameClassification />
       </SortsAndFilters>
     );
-  };
-
-  popOutBrowser = () => {
-    const { dispatch, collectionId } = this.props;
-
-    // we don't know the slug, the website will redirect to the proper one
-    let url = `${urls.itchio}/c/${collectionId}/hello`;
-    dispatch(actions.openInExternalBrowser({ url }));
   };
 }
 

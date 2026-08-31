@@ -16,6 +16,7 @@ class BrowserBar extends React.PureComponent<Props> {
         <IconButton
           icon="more_vert"
           hint={_("browser.more_menu")}
+          hintPosition="left"
           onClick={this.onMore}
         />
       </FiltersContainer>
