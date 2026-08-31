@@ -119,10 +119,6 @@ const TagDiv = styled.div`
   text-shadow: none;
 
   font-size: 80%;
-  padding-right: 8px;
-  &:last-child {
-    padding-right: 0;
-  }
 
   border-radius: ${(props) => props.theme.borderRadii.explanation};
 `;
@@ -136,6 +132,7 @@ export const BigButtonContent = styled.div`
 export const BigButtonRow = styled.div`
   display: flex;
   flex-direction: row;
+  gap: 8px;
   margin: 0.3em 0.1em;
 `;
 

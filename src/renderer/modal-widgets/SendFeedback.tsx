@@ -71,10 +71,7 @@ const CallToAction = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  & > :first-child {
-    margin-bottom: 1em;
-  }
+  gap: 1em;
 `;
 
 const BigButton = styled(Button)`
@@ -247,13 +244,11 @@ class ReportIssue extends React.PureComponent<Props, State> {
                 icon={"upload-to-cloud"}
                 fat
                 wide
+                primary
                 onClick={this.onSend}
               >
                 {T(["send_feedback.send.do_send"])}
               </BigButton>
-              <ExternalLink onClick={this.onBailOut}>
-                {T(["send_feedback.send.dont_send"])}
-              </ExternalLink>
             </CallToAction>
             <p>{T(["send_feedback.final_thanks"])}</p>
           </TabPanel>
@@ -274,6 +269,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           <ModalButtonSpacer />
           <Button
             icon={"arrow-right"}
+            primary
             disabled={tabIndex >= 2}
             onClick={this.onGoForward}
           >

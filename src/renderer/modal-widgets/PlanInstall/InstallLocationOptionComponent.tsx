@@ -23,9 +23,7 @@ export default function InstallLocationOptionComponent(
     return (
       <SelectValueDiv>
         <Icon icon="plus" />
-        <div className="spacer" />
         <div className="title">{T(props.option.label)}</div>
-        <div className="spacer" />
       </SelectValueDiv>
     );
   }
@@ -33,15 +31,12 @@ export default function InstallLocationOptionComponent(
   return (
     <SelectValueDiv>
       <Icon icon="folder-open" />
-      <div className="spacer" />
       <div className="title" title={l.path}>
         {l.path}
       </div>
-      <div className="spacer" />
       {l.sizeInfo ? (
         <div className="tag">{fileSize(l.sizeInfo.freeSize)}</div>
       ) : null}
-      <div className="spacer" />
     </SelectValueDiv>
   );
 }

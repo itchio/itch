@@ -50,16 +50,14 @@ const PreferencesContentDiv = styled.div`
   }
 
   .advanced-form {
-    .section {
-      margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-      &.component {
-        margin-left: 16px;
-      }
-
-      &:first-child {
-        margin-top: 0;
-      }
+    /* nested inside the components section, out of reach of the gap above */
+    .section.component {
+      margin-left: 16px;
+      margin-top: 8px;
     }
 
     .button:hover {

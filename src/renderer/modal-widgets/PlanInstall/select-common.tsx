@@ -8,15 +8,12 @@ export const SelectValueDiv = styled.div`
   /* allow the row to shrink inside the option/value wrapper so a long
      title can ellipsize instead of overflowing or wrapping */
   min-width: 0;
+  gap: 0.5em;
 
-  /* everything (icons, size tag, spacers) keeps its size; only the title
+  /* everything (icons, size tags) keeps its size; only the title
      gives way, so the filename truncates while the metadata stays visible */
   > * {
     flex-shrink: 0;
-  }
-
-  .spacer {
-    width: 0.5em;
   }
 
   .title {
@@ -31,10 +28,6 @@ export const SelectValueDiv = styled.div`
     text-shadow: none;
 
     font-size: 80%;
-    padding-right: 8px;
-    &:last-child {
-      padding-right: 0;
-    }
 
     border-radius: ${(props) => props.theme.borderRadii.explanation};
     ${singleLine};

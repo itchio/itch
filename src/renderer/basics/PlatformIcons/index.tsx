@@ -5,13 +5,9 @@ import Icon from "renderer/basics/Icon";
 import { PlatformHolder, hasPlatforms } from "common/constants/platform-data";
 
 const PlatformIconsDiv = styled.span`
-  .icon {
-    margin-left: 8px;
-
-    &:first-child {
-      margin-left: 0;
-    }
-  }
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 class PlatformIcons extends React.PureComponent<Props> {

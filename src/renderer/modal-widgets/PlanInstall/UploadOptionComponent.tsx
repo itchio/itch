@@ -33,7 +33,6 @@ export default function UploadOptionComponent(
     return (
       <SelectValueDiv className="action">
         <Icon icon="plus" className="action-glyph" />
-        <div className="spacer" />
         <div className="title">{T(option.label)}</div>
       </SelectValueDiv>
     );
@@ -48,35 +47,17 @@ export default function UploadOptionComponent(
       className={classNames({ incompatible: props.option.incompatible })}
     >
       {props.option.incompatible ? (
-        <>
-          <Icon icon="warning" className="warning-glyph" />
-          <div className="spacer" />
-        </>
+        <Icon icon="warning" className="warning-glyph" />
       ) : null}
       <UploadIcon upload={u} />
-      <div className="spacer" />
       <div className="title" title={formatUploadTitle(u)}>
         {formatUploadTitleFancy(u)}
       </div>
-      <PlatformIcon
-        target={u}
-        field="windows"
-        before={<div className="spacer" />}
-      />
-      <PlatformIcon
-        target={u}
-        field="linux"
-        before={<div className="spacer" />}
-      />
-      <PlatformIcon
-        target={u}
-        field="osx"
-        before={<div className="spacer" />}
-      />
-      <div className="spacer" />
+      <PlatformIcon target={u} field="windows" />
+      <PlatformIcon target={u} field="linux" />
+      <PlatformIcon target={u} field="osx" />
       {u.size > 0 ? <div className="tag">{fileSize(u.size)}</div> : null}
       {u.demo ? <div className="tag">demo</div> : null}
-      <div className="spacer" />
     </SelectValueDiv>
   );
 }

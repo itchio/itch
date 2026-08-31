@@ -249,10 +249,7 @@ const ButtonsDiv = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 20px;
-
-  & > * {
-    margin-left: 8px;
-  }
+  gap: 8px;
 `;
 
 const BigButtonsDiv = styled.div`
@@ -261,10 +258,7 @@ const BigButtonsDiv = styled.div`
   padding: 20px;
   width: 100%;
   justify-content: stretch;
-
-  & > * {
-    margin-bottom: 12px;
-  }
+  gap: 12px;
 `;
 
 class Modals extends React.PureComponent<Props, State> {

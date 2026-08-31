@@ -412,19 +412,18 @@ const ChangelogContainer = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;
 
 const ReleaseSection = styled.section`
-  margin: 0 0 12px;
   padding: 12px 14px 14px;
   border: 1px solid ${(props) => props.theme.prefBorder};
   border-left-width: 3px;
   border-left-color: ${(props) => props.theme.accent};
   background: ${(props) => props.theme.sidebarBackground};
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 `;
 
 const ReleaseHeader = styled.div`
