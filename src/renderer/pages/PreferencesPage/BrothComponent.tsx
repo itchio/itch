@@ -1,11 +1,12 @@
-import { PackageState } from "common/types";
+import { actions } from "common/actions";
+import { Dispatch, PackageState } from "common/types";
 import urls from "common/constants/urls";
 import React from "react";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hookWithProps } from "renderer/hocs/hook";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 
 const BrothComponentButton = styled.button`
   display: flex;
@@ -54,7 +55,24 @@ const ComponentDetails = styled.div`
     user-select: text;
     word-break: break-all;
   }
+
+  .detail-link {
+    ${styles.resetButton};
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border-bottom: 1px solid;
+    user-select: text;
+    word-break: break-all;
+  }
 `;
+
+const releasesPages: Record<string, string> = {
+  itch: urls.releasesPage,
+  kitch: urls.releasesPage,
+  butler: urls.butlerReleasesPage,
+  "itch-setup": urls.itchSetupReleasesPage,
+};
 
 interface State {
   expanded: boolean;
@@ -67,6 +85,14 @@ class BrothComponent extends React.PureComponent<Props, State> {
 
   toggleExpanded = () => {
     this.setState((state) => ({ expanded: !state.expanded }));
+  };
+
+  openReleaseNotes = () => {
+    const { name, dispatch } = this.props;
+    const url = releasesPages[name];
+    if (url) {
+      dispatch(actions.openInExternalBrowser({ url }));
+    }
   };
 
   override render() {
@@ -108,6 +134,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
     const sourceUrl = pkg.channel
       ? `${urls.brothRepo}/${name}/${pkg.channel}`
       : null;
+    const releasesUrl = releasesPages[name];
 
     return (
       <ComponentDetails>
@@ -137,6 +164,18 @@ class BrothComponent extends React.PureComponent<Props, State> {
           <div className="detail-row">
             <span className="detail-label">Source:</span>
             <span className="detail-value">{sourceUrl}</span>
+          </div>
+        )}
+        {releasesUrl && (
+          <div className="detail-row">
+            <span className="detail-label">Release Notes:</span>
+            <button
+              type="button"
+              className="detail-link"
+              onClick={this.openReleaseNotes}
+            >
+              {releasesUrl}
+            </button>
           </div>
         )}
       </ComponentDetails>
@@ -205,6 +244,7 @@ class BrothComponent extends React.PureComponent<Props, State> {
 
 interface Props {
   name: string;
+  dispatch: Dispatch;
 
   pkg: PackageState;
 }
