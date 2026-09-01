@@ -23,7 +23,7 @@ let proxyTested = false;
 // with the launcher at <installRoot>\itch-setup.exe. Deriving the root from
 // process.execPath handles custom install locations; the default location
 // is a fallback for when the app isn't running from a versioned folder.
-function resolveWindowsLauncherPath(appName: string): string | null {
+export function resolveWindowsLauncherPath(appName: string): string | null {
   const candidates = [
     path.resolve(path.dirname(process.execPath), "..", "itch-setup.exe"),
   ];
@@ -40,7 +40,7 @@ function resolveWindowsLauncherPath(appName: string): string | null {
   logger.warn(
     `No itch-setup launcher found (tried ${candidates.join(
       ", "
-    )}), skipping protocol registration`
+    )}), skipping launcher registration`
   );
   return null;
 }

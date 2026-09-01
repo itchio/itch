@@ -6,6 +6,8 @@ import { mainLogger } from "main/logger";
 import ospath from "path";
 import { createSelector } from "reselect";
 import { exists, mkdir, readFile, unlink, writeFile } from "main/os/sf";
+import { resolveWindowsLauncherPath } from "main/reactors/preboot";
+import env from "main/env";
 
 const logger = mainLogger.child(__filename);
 
@@ -128,9 +130,24 @@ async function updateOpenAtLoginState(
 
       store.dispatch(actions.openAtLoginError({ error: null }));
     }
+  } else if (process.platform === "win32") {
+    // Without an explicit path the Run key points at process.execPath,
+    // the versioned app-X.Y.Z executable, which goes stale on the next
+    // self-update. No login item flag to start hidden, so openAsHidden
+    // is ignored.
+    const launcherPath = resolveWindowsLauncherPath(env.appName);
+    if (launcherPath) {
+      app.setLoginItemSettings({
+        openAtLogin,
+        path: launcherPath,
+        args: ["--prefer-launch", "--appname", env.appName],
+      });
+    } else {
+      app.setLoginItemSettings({ openAtLogin });
+    }
   } else {
-    // macOS, Windows: no login item flag to start hidden, so openAsHidden
-    // is ignored here.
+    // macOS: no login item flag to start hidden, so openAsHidden is
+    // ignored here.
     app.setLoginItemSettings({ openAtLogin });
   }
 }

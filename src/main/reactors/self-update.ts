@@ -139,6 +139,11 @@ export default function (watcher: Watcher) {
       }
     }
     const child = childProcess.spawn(command, args, {
+      // itch-setup must not inherit our working directory: if we were
+      // launched from a versioned app folder, Windows would refuse to
+      // rename that folder during update promotion while itch-setup
+      // sits in it
+      cwd: rs.system.userDataPath,
       stdio,
       detached: true,
     });
