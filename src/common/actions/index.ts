@@ -198,6 +198,7 @@ export const actions = wireActions({
   packageNeedRestart: action<{
     name: string;
     availableVersion: string;
+    needsElevation?: boolean;
   }>(),
   packageProgress: action<{
     name: string;

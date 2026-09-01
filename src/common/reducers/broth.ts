@@ -62,7 +62,7 @@ export default reducer<BrothState>(initialState, (on) => {
   });
 
   on(actions.packageNeedRestart, (state, action) => {
-    const { name, availableVersion } = action.payload;
+    const { name, availableVersion, needsElevation } = action.payload;
 
     let oldPackage = state.packages[name];
     if (oldPackage) {
@@ -75,6 +75,7 @@ export default reducer<BrothState>(initialState, (on) => {
             progressInfo: undefined,
             stage: "need-restart",
             availableVersion,
+            needsElevation: !!needsElevation,
           },
         },
       };

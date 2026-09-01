@@ -7,6 +7,7 @@ import {
   RunItchSetupOpts,
   ISM_UpdateFailed,
   ISM_UpdateReady,
+  ISM_UpdateRequiresElevation,
   ISM_Progress,
   ISM_Log,
 } from "main/broth/itch-setup";
@@ -72,6 +73,19 @@ export class SelfPackage implements PackageLike {
         actions.packageNeedRestart({
           name: this.name,
           availableVersion: pp.version,
+        })
+      );
+    } else if (msg.type === "update-requires-elevation") {
+      // nothing was downloaded: the elevated relaunch does that
+      const pp = msg.payload as ISM_UpdateRequiresElevation;
+      logger.info(
+        `Version ${pp.version} is available, install folder needs elevation to update`
+      );
+      this.store.dispatch(
+        actions.packageNeedRestart({
+          name: this.name,
+          availableVersion: pp.version,
+          needsElevation: true,
         })
       );
     } else if (msg.type === "progress") {

@@ -95,6 +95,7 @@ export interface ISM {
     | "progress"
     | "installing-update"
     | "update-ready"
+    | "update-requires-elevation"
     | "no-update-available"
     | "update-failed"
     | "ready-to-relaunch";
@@ -117,6 +118,10 @@ export interface ISM_InstallingUpdate {
 }
 
 export interface ISM_UpdateReady {
+  version: string;
+}
+
+export interface ISM_UpdateRequiresElevation {
   version: string;
 }
 

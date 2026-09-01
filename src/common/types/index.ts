@@ -167,6 +167,9 @@ export interface PackageState {
   channel?: string;
   progressInfo?: ProgressInfo;
   availableVersion?: string;
+  /** the install folder isn't writable by the current user: applying
+   * availableVersion needs itch-setup to run elevated (Windows) */
+  needsElevation?: boolean;
 }
 
 export interface CommonsState {
