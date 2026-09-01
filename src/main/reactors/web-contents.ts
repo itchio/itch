@@ -374,17 +374,23 @@ async function hookWebContents(
         // shift+click
         store.dispatch(actions.openInExternalBrowser({ url }));
       } else if (
-        store.getState().preferences.enableTabs &&
-        (disposition === "foreground-tab" || disposition === "background-tab")
+        disposition === "foreground-tab" ||
+        disposition === "background-tab"
       ) {
         // cmd/ctrl+click, middle click, target="_blank"
-        store.dispatch(
-          actions.navigate({
-            wind,
-            url,
-            background: disposition === "background-tab",
-          })
-        );
+        if (store.getState().preferences.enableTabs) {
+          store.dispatch(
+            actions.navigate({
+              wind,
+              url,
+              background: disposition === "background-tab",
+            })
+          );
+        } else {
+          // no in-app tab to open it in, so hand it to the system browser
+          // like shift+click does
+          store.dispatch(actions.openInExternalBrowser({ url }));
+        }
       } else {
         wc.loadURL(url);
       }
