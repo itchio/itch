@@ -359,19 +359,39 @@ async function hookWebContents(
     });
   });
 
-  wc.setWindowOpenHandler(({ url }) => {
-    logger.debug(`new-window fired for ${url}`);
+  wc.setWindowOpenHandler(({ url, disposition }) => {
+    logger.debug(`new-window fired for ${url} (${disposition})`);
 
     // itch:// links open a new window when the page is embedded (e.g. the
     // randomizer's iframe renders game pages with target="_blank" links)
     if (ITCH_URL_RE.test(url)) {
       store.dispatch(actions.handleItchioURI({ uri: url }));
-    } else if (!loadURL(wc, url)) {
+      return { action: "deny" };
+    }
+
+    if (isItchioOrigin(url)) {
+      if (disposition === "new-window") {
+        // shift+click
+        store.dispatch(actions.openInExternalBrowser({ url }));
+      } else if (
+        store.getState().preferences.enableTabs &&
+        (disposition === "foreground-tab" || disposition === "background-tab")
+      ) {
+        // cmd/ctrl+click, middle click, target="_blank"
+        store.dispatch(
+          actions.navigate({
+            wind,
+            url,
+            background: disposition === "background-tab",
+          })
+        );
+      } else {
+        wc.loadURL(url);
+      }
+    } else if (url.startsWith("https:") || url.startsWith("http:")) {
       // only open http/https URLs in external browser, ignore
       // about:blank and other non-navigable URLs
-      if (url.startsWith("https:") || url.startsWith("http:")) {
-        store.dispatch(actions.openInExternalBrowser({ url: url }));
-      }
+      store.dispatch(actions.openInExternalBrowser({ url: url }));
     }
     return { action: "deny" };
   });
