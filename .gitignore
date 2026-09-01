@@ -1,4 +1,5 @@
 .env
+BuildPatchTool_1.8.8/
 
 # package manager stuff
 /node_modules
@@ -52,6 +53,7 @@ npm-debug.log
 # integration tests temp
 .chromedriver
 *.log.txt
+integration-tests/integration-tests
 
 # OS-specific junk
 .DS_Store
