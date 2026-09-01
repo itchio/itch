@@ -1,6 +1,6 @@
 # Changelog
 
-## [26.19.0] - 2026-08-31
+## [26.20.0] - 2026-08-31
 
 This release adds a Steam shortcuts manager, a method for linking downloads you already have on disk to your library, and a UI refresh over many shared components of the app. Electron has been updated to version 44, and we did a round of security hardening and code and dependency cleanup.
 
@@ -24,6 +24,10 @@ Not every launch can run this way. HTML5 games need a browser window, soundtrack
 
 If you've downloaded a game on itch.io outside the app, but want it to be registered within the app you can now use the "Link existing folder...". Consider this a power user tool, as no files are verified when you do this. This features exists as an escape hatch to get your games showing up in the app without having to redownload them, or if the game itself doesn't support a download that the app can process (like external download links). [#3493](https://github.com/itchio/itch/issues/3493)
 
+### Elevate mode for `itch-steup`
+
+`itch-setup` now supports an *elevate* mode for applying updates in scenarios where the app has been installed into a protected folder on Windows like Program Files. Previously, auto-update would fail and the app would never get updated. Note that in order for this to take effect, you may have to manually apply at least one update pass by re-running itch-setup.
+
 ### Misc changes
 
 - The custom titlebar buttons have been replaced with native window controls ([#3496](https://github.com/itchio/itch/issues/3496))
@@ -41,6 +45,7 @@ If you've downloaded a game on itch.io outside the app, but want it to be regist
 - The downloads dialog shows richer information about what happened in the status message, eg. if a heal took place vs a reinstall
 - Search autocomplete results return only games associated with the current profile, and not all games in the local db
 - Support `ITCH_PROFILE_ID` environment variable to auto-login the app to specified profile when starting
+- The components section of preferences now has links to the release notes for each component.
 
 ### Browsing
 
@@ -69,6 +74,9 @@ Thank you to all our contributors who contributed translations for this version.
 - Fixed the log display in the scan library window
 - The stop button in the browser navigation bar did nothing when clicked
 - Fixed broken retry logic for broth downloads
+- Windows protocol handlers are now registered through itch-setup instead of the direct app version.
+- Open at login now points to itch-setup instead of the direct app version.
+- Attempt to fix a bunch of scenarios where auto-update would get stuck in a loop in Windows, booting the old app instead of the new one.
 
 ## [26.18.0] - 2026-08-02
 
