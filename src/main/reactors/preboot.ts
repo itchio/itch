@@ -19,6 +19,67 @@ const logger = mainLogger.child(__filename);
 let testProxy = false;
 let proxyTested = false;
 
+// Installed layout on Windows: <installRoot>\app-<version>\<appName>.exe,
+// with the launcher at <installRoot>\itch-setup.exe. Deriving the root from
+// process.execPath handles custom install locations; the default location
+// is a fallback for when the app isn't running from a versioned folder.
+function resolveWindowsLauncherPath(appName: string): string | null {
+  const candidates = [
+    path.resolve(path.dirname(process.execPath), "..", "itch-setup.exe"),
+  ];
+  const localAppData = process.env.LOCALAPPDATA;
+  if (localAppData) {
+    candidates.push(path.join(localAppData, appName, "itch-setup.exe"));
+  }
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  logger.warn(
+    `No itch-setup launcher found (tried ${candidates.join(
+      ", "
+    )}), skipping protocol registration`
+  );
+  return null;
+}
+
+function registerUrlProtocols(appName: string) {
+  const protocols =
+    appName === "kitch" ? ["kitchio", "kitch"] : ["itchio", "itch"];
+
+  if (process.platform === "win32") {
+    // Registering without an explicit path points the protocol at
+    // process.execPath, the versioned app-X.Y.Z executable, which goes
+    // stale on the next self-update. Route through the stable itch-setup
+    // launcher instead. itch-setup registers these itself on install and
+    // upgrade; doing it here too heals installs running an older
+    // itch-setup.
+    const launcherPath = resolveWindowsLauncherPath(appName);
+    if (!launcherPath) {
+      return;
+    }
+    for (const proto of protocols) {
+      const ok = app.setAsDefaultProtocolClient(proto, launcherPath, [
+        "--prefer-launch",
+        "--appname",
+        appName,
+        "--",
+      ]);
+      if (!ok) {
+        logger.warn(`Could not register ${proto}: to ${launcherPath}`);
+      }
+    }
+  } else {
+    for (const proto of protocols) {
+      if (!app.setAsDefaultProtocolClient(proto)) {
+        logger.warn(`Could not register ${proto}: protocol`);
+      }
+    }
+  }
+}
+
 export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     let t1 = Date.now();
@@ -87,21 +148,12 @@ export default function (watcher: Watcher) {
         );
       }
 
-      if (env.production && env.appName === "itch") {
+      if (
+        (env.production && env.appName === "itch") ||
+        env.appName === "kitch"
+      ) {
         try {
-          app.setAsDefaultProtocolClient("itchio");
-          app.setAsDefaultProtocolClient("itch");
-        } catch (e) {
-          logger.error(
-            `Could not set app as default protocol client: ${
-              getErrorStack(e) || getErrorMessage(e) || e
-            }`
-          );
-        }
-      } else if (env.appName === "kitch") {
-        try {
-          app.setAsDefaultProtocolClient("kitchio");
-          app.setAsDefaultProtocolClient("kitch");
+          registerUrlProtocols(env.appName);
         } catch (e) {
           logger.error(
             `Could not set app as default protocol client: ${

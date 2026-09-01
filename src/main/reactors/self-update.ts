@@ -165,6 +165,10 @@ export default function (watcher: Watcher) {
       }
       await delay(250);
     }
+
+    logger.error(
+      `itch-setup never signaled ready-to-relaunch (see ${logPath}), staying on current version`
+    );
   });
 }
 
