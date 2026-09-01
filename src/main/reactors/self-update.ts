@@ -132,7 +132,19 @@ export default function (watcher: Watcher) {
         logger.warn(`relaunch: need-restart without a version, ignoring`);
         return;
       }
-      args.push("--elevate", "--upgrade", "--log-file", logPath);
+      // The elevated copy may run under a different administrator's
+      // account, whose profile and registry don't know where we're
+      // installed. Our executable sits in a versioned folder directly
+      // under the install root.
+      const installDir = dirname(dirname(process.execPath));
+      args.push(
+        "--elevate",
+        "--upgrade",
+        "--install-dir",
+        installDir,
+        "--log-file",
+        logPath
+      );
     }
 
     const fail = (message: string) => {
