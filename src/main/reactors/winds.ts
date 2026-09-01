@@ -708,10 +708,12 @@ function hookNativeWindow(
     }
   });
 
-  if (macOs) {
-    // macOS never emits "app-command", so handle back/forward mouse
+  if (macOs || process.platform === "win32") {
+    // macOS never emits "app-command", and on Windows it stops firing
+    // after loadURL (electron#17134), so handle back/forward mouse
     // buttons at the input-event level, for both the window itself and
-    // any attached webview (the in-app browser)
+    // any attached webview (the in-app browser). Linux sticks with
+    // "app-command" alone, otherwise both paths fire per click.
     hookMouseNavigationButtons(store, wind, nativeWindow.webContents);
     nativeWindow.webContents.on("did-attach-webview", (_e, webContents) => {
       hookMouseNavigationButtons(store, wind, webContents);
