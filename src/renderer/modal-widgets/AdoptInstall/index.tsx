@@ -347,7 +347,7 @@ class AdoptInstall extends React.PureComponent<Props, State> {
         >
           <Icon icon="folder-open" className="drop-icon" />
           <div className="drop-hint">{T(_("adopt_install.drop_hint"))}</div>
-          <Button icon="folder-open" onClick={this.onChooseFolder}>
+          <Button primary icon="folder-open" onClick={this.onChooseFolder}>
             {T(_("adopt_install.choose_folder"))}
           </Button>
         </DropZone>
