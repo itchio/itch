@@ -1,8 +1,11 @@
 import { execFileSync } from "child_process";
-import { existsSync, readdirSync, readFileSync } from "fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import { processes } from "systeminformation";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 // only hits are cached: a miss is re-queried so a Steam installed while
 // the app runs is still found
@@ -80,8 +83,9 @@ export function getSteamRoot(): string | null {
 
 /**
  * The userdata folder name for the most recently logged-in Steam account,
- * from loginusers.vdf. Falls back to the only userdata folder when there's
- * exactly one; null when the user can't be determined.
+ * from loginusers.vdf. When that gives nothing (Steam signed out, or a
+ * "remember me" login never happened), falls back to the userdata folder
+ * whose localconfig.vdf Steam touched last; null when there are none.
  */
 export function getActiveUserId(root: string): string | null {
   const fromLoginUsers = mostRecentLoginUser(root);
@@ -89,16 +93,44 @@ export function getActiveUserId(root: string): string | null {
     return fromLoginUsers;
   }
 
+  const userdata = join(root, "userdata");
   let folders: string[];
   try {
-    folders = readdirSync(join(root, "userdata"), { withFileTypes: true })
+    folders = readdirSync(userdata, { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => d.name)
       .filter((name) => name !== "0" && name !== "ac" && /^\d+$/.test(name));
   } catch (e) {
+    logger.warn(`could not list ${userdata}: ${e}`);
     return null;
   }
-  return folders.length === 1 ? folders[0] : null;
+  if (folders.length === 0) {
+    logger.warn(
+      `no Steam user found: loginusers.vdf gave ${fromLoginUsers}, ` +
+        `no account folders in ${userdata}`
+    );
+    return null;
+  }
+  if (folders.length === 1) {
+    return folders[0];
+  }
+
+  // Steam rewrites localconfig.vdf throughout a session, so the newest
+  // one belongs to the account that was signed in last
+  const lastActiveAt = (name: string): number => {
+    try {
+      return statSync(join(userdata, name, "config", "localconfig.vdf"))
+        .mtimeMs;
+    } catch (e) {
+      return -1;
+    }
+  };
+  folders.sort((a, b) => lastActiveAt(b) - lastActiveAt(a));
+  logger.warn(
+    `loginusers.vdf gave ${fromLoginUsers}, picking ${folders[0]} ` +
+      `by activity from ${folders.length} accounts in ${userdata}`
+  );
+  return folders[0];
 }
 
 function mostRecentLoginUser(root: string): string | null {
