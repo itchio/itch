@@ -5,7 +5,11 @@ import {
   Upload,
   Build,
 } from "common/butlerd/messages";
-import { SteamDirectTarget, SteamShortcutsSnapshot } from "common/types/steam";
+import {
+  SteamDirectTarget,
+  SteamShortcutMode,
+  SteamShortcutsSnapshot,
+} from "common/types/steam";
 
 export interface PushBuildParams {
   /**
@@ -58,6 +62,8 @@ export interface SteamShortcutsParams {
   installedGames: Game[];
   /** pre-stage this game's checkbox when opened from its context menu */
   initialGameId?: number;
+  /** mode to pre-stage for initialGameId, once its direct target is known */
+  initialMode?: SteamShortcutMode;
   /** a save is currently being applied in the main process */
   saving: boolean;
   /** completed/total games whose shortcut data and artwork are being ensured */

@@ -369,7 +369,7 @@ function startSteamPoll(store: Store) {
 
 export default function (watcher: Watcher) {
   watcher.on(actions.openSteamShortcutsDialog, async (store, action) => {
-    const { gameId } = action.payload;
+    const { gameId, mode } = action.payload;
     const generation = ++openGeneration;
 
     if (currentDialogParams(store)) {
@@ -398,6 +398,7 @@ export default function (watcher: Watcher) {
         snapshot,
         installedGames,
         initialGameId: gameId,
+        initialMode: mode,
         saving: saveInProgress,
         saveProgress,
         directTargets: null,

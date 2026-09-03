@@ -689,6 +689,8 @@ export const actions = wireActions({
   openSteamShortcutsDialog: action<{
     /** game to pre-stage a shortcut for, if any */
     gameId?: number;
+    /** mode to pre-stage for that game; applied once its target resolves */
+    mode?: SteamShortcutMode;
   }>(),
   steamShortcutsSave: action<{
     /** installed games whose shortcuts should be created or refreshed */

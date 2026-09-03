@@ -317,6 +317,8 @@ interface State {
   /** staged mode overrides; a row's default is its entry's current mode */
   modes: { [gameId: number]: SteamShortcutMode };
   baselineKey: string;
+  /** initialMode still to apply, waiting for direct targets to resolve */
+  pendingInitialMode: boolean;
 }
 
 function unquote(s: string): string {
@@ -406,7 +408,12 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     if (initialGameId && checked[initialGameId] === false) {
       checked[initialGameId] = true;
     }
-    this.state = { checked, modes: {}, baselineKey: baselineKeyOf(params) };
+    this.state = {
+      checked,
+      modes: {},
+      baselineKey: baselineKeyOf(params),
+      pendingInitialMode: !!(initialGameId && params.initialMode),
+    };
   }
 
   override componentDidUpdate() {
@@ -420,6 +427,21 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
         modes: {},
         baselineKey: key,
       });
+      return;
+    }
+    // a requested direct mode only applies once the game is known to
+    // have a direct target; otherwise the row stays in itch mode
+    const { initialGameId, initialMode, directTargets } = params;
+    if (this.state.pendingInitialMode && directTargets && initialGameId) {
+      const canApply =
+        initialMode === "itch" || directTargets[initialGameId] != null;
+      this.setState((state) => ({
+        pendingInitialMode: false,
+        modes:
+          canApply && initialMode
+            ? { ...state.modes, [initialGameId]: initialMode }
+            : state.modes,
+      }));
     }
   }
 

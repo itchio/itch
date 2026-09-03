@@ -1,6 +1,7 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Store } from "common/types";
+import { SteamShortcutMode } from "common/types/steam";
 import { isItchioURL, openExternalURL } from "main/util/url";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
@@ -142,6 +143,22 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
   logger.info(`Processing itchio uri (${uri})`);
   let url = uri.replace(/^[^:]+:/, "itch:");
   const parsedURL = urlParser.parse(url);
+  if (parsedURL.hostname === "steam-shortcuts") {
+    // itch://steam-shortcuts?game_id=N&mode=direct opens the Steam
+    // shortcuts dialog with that game pre-checked in that mode; nothing
+    // is written until the user saves
+    const queryParams = querystring.parse(parsedURL.query || "");
+    const gameId = parseInt(queryParams["game_id"] as string, 10);
+    const rawMode = queryParams["mode"];
+    const mode: SteamShortcutMode | undefined =
+      rawMode === "direct" || rawMode === "itch" ? rawMode : undefined;
+    store.dispatch(
+      actions.openSteamShortcutsDialog(
+        Number.isFinite(gameId) ? { gameId, mode } : {}
+      )
+    );
+    return true;
+  }
   if (parsedURL.hostname === "install") {
     doAsync(async () => {
       const queryParams = querystring.parse(parsedURL.query || "");
