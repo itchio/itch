@@ -89,6 +89,7 @@
     "codex": "codex -c 'mcp_servers.chrome-devtools.command=\"npx\"' -c 'mcp_servers.chrome-devtools.args=[\"chrome-devtools-mcp@latest\",\"--browser-url=http://127.0.0.1:9223\"]'",
     "compile": "cross-env NODE_ENV=production node build.mjs",
     "clean": "rm -rf artifacts dist prefix build .chromedriver *.log.txt",
+    "test": "node unit-tests.mjs",
     "integration-tests": "node release/test.js --detect-osarch",
     "ts-check": "npm run ts-check:app && npm run ts-check:release",
     "ts-check:app": "tsc -b",

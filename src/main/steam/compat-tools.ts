@@ -17,10 +17,9 @@ import { join } from "path";
 
 const logger = mainLogger.child(__filename);
 
-// Steam only runs a non-Steam shortcut through Proton when config.vdf
-// maps the shortcut's appid to a compatibility tool (verified: without a
-// mapping Steam execs the .exe natively and it dies). The tool is named
-// by its internal id, e.g. "proton_experimental" or "GE-Proton9-20".
+// Steam runs a non-Steam shortcut's .exe natively, where it dies, unless
+// config.vdf maps the shortcut's appid to a compatibility tool. Tools are
+// named by their internal id, e.g. "proton_experimental" or "GE-Proton9-20".
 
 /**
  * The tool every Windows-exe shortcut is mapped to. Steam installs it on

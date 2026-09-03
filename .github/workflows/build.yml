@@ -26,6 +26,10 @@ jobs:
       run: |
         npm run ts-check
 
+    - name: Unit tests
+      run: |
+        npm test
+
     - name: Build and package
       run: |
         node release/package-all.js --os linux --arch amd64

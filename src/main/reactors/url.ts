@@ -144,9 +144,7 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
   let url = uri.replace(/^[^:]+:/, "itch:");
   const parsedURL = urlParser.parse(url);
   if (parsedURL.hostname === "steam-shortcuts") {
-    // itch://steam-shortcuts?game_id=N&mode=direct opens the Steam
-    // shortcuts dialog with that game pre-checked in that mode; nothing
-    // is written until the user saves
+    // only opens the dialog; nothing reaches Steam until the user saves
     const queryParams = querystring.parse(parsedURL.query || "");
     const gameId = parseInt(queryParams["game_id"] as string, 10);
     const rawMode = queryParams["mode"];

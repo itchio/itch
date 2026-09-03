@@ -81,7 +81,6 @@ function readToken(r: Reader): Token {
     // write would silently drop that file's contents
     throw new Error("directives are not supported in text VDF");
   }
-  // bare token: runs until whitespace or a brace
   const start = r.offset;
   while (r.offset < r.text.length && !/[\s{}"]/.test(r.text[r.offset])) {
     r.offset++;
