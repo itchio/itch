@@ -45,6 +45,10 @@ import { findWebContentsTab } from "main/reactors/web-contents/web-contents-stat
 import { mainLogger } from "main/logger";
 import { stopForwarding } from "common/util/store-sync";
 
+// command-line flag that asks the running instance to quit; a flag
+// rather than an itch:// url so a web page can't trigger it
+const SHUTDOWN_FLAG = "--shutdown";
+
 const appUserModelId = "io.itch.itch";
 
 const registerSync = (
@@ -241,9 +245,20 @@ export function main() {
         app.exit(0);
         return;
       }
+      if (process.argv.includes(SHUTDOWN_FLAG)) {
+        // nothing was running to shut down; don't boot just to quit
+        app.exit(0);
+        return;
+      }
       app.on("second-instance", (event, argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance
+        if (argv.includes(SHUTDOWN_FLAG)) {
+          // `itch --shutdown`: same path as File > Quit, so a running
+          // game still gets its confirmation prompt
+          store.dispatch(actions.quit({}));
+          return;
+        }
         store.dispatch(
           actions.processUrlArguments({
             args: argv,
