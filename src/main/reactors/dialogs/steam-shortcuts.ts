@@ -15,6 +15,7 @@ import {
   getSnapshot,
   SteamError,
 } from "main/steam/shortcuts";
+import { DEFAULT_COMPAT_TOOL } from "main/steam/compat-tools";
 import { isSteamRunning } from "main/steam/steam-install";
 
 const logger = mainLogger.child(__filename);
@@ -133,29 +134,52 @@ const directFlavors: { [platform: string]: messages.Flavor[] } = {
   darwin: [messages.Flavor.NativeMacos, messages.Flavor.AppMacos],
 };
 
+function nativeTargetWithFlavor(
+  targets: messages.LaunchTarget[],
+  flavors: messages.Flavor[]
+): messages.LaunchTarget | undefined {
+  return targets.find(({ strategy }) => {
+    return (
+      strategy?.strategy === messages.LaunchStrategy.Native &&
+      !!strategy.fullTargetPath &&
+      !!strategy.candidate &&
+      flavors.includes(strategy.candidate.flavor)
+    );
+  });
+}
+
 // the command a "direct" shortcut would use: the first launch target
-// that is a native binary for this platform. html/jar/script targets
+// that is a native binary for this platform, else on Linux a Windows
+// binary, which Steam runs through Proton. html/jar/script targets
 // can't be launched by Steam without a wrapper.
 async function resolveDirectTarget(
   caveId: string
 ): Promise<SteamDirectTarget | null> {
   const { targets } = await mcall(messages.LaunchGetTargets, { caveId });
-  const flavors = directFlavors[process.platform] ?? [];
-  for (const target of targets ?? []) {
-    const { strategy } = target;
-    if (
-      strategy?.strategy === messages.LaunchStrategy.Native &&
-      strategy.fullTargetPath &&
-      strategy.candidate &&
-      flavors.includes(strategy.candidate.flavor)
-    ) {
-      return {
-        path: strategy.fullTargetPath,
-        launchOptions: encodeSteamArguments(target.action.args ?? []),
-      };
-    }
+  const native = nativeTargetWithFlavor(
+    targets ?? [],
+    directFlavors[process.platform] ?? []
+  );
+  if (native) {
+    return {
+      path: native.strategy.fullTargetPath,
+      launchOptions: encodeSteamArguments(native.action.args ?? []),
+    };
   }
-  return null;
+  if (process.platform !== "linux") {
+    return null;
+  }
+  const windows = nativeTargetWithFlavor(targets ?? [], [
+    messages.Flavor.NativeWindows,
+  ]);
+  if (!windows) {
+    return null;
+  }
+  return {
+    path: windows.strategy.fullTargetPath,
+    launchOptions: encodeSteamArguments(windows.action.args ?? []),
+    compatTool: DEFAULT_COMPAT_TOOL,
+  };
 }
 
 // Prefer the cave with the most recent play/install activity, but do not let

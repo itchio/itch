@@ -88,6 +88,8 @@
   "steam.dialog.mode_itch_hint": "Launches the game through itch, with the Steam overlay available. Click to switch to launching the game's executable directly.",
   "steam.dialog.mode_direct_hint": "Launches the game's executable directly, skipping itch's runtime configuration. Click to switch to launching through itch.",
   "steam.dialog.mode_direct_unavailable_hint": "The previous direct target is no longer available. Save to switch this shortcut back to launching through the itch app.",
+  "steam.dialog.mode_direct_proton_hint": "Launches the game's Windows executable through Steam's {tool} compatibility tool, skipping itch's runtime configuration. Click to switch to launching through itch.",
+  "steam.dialog.direct_proton_note": "Windows games run through Steam's {tool} compatibility tool. To use a different one, edit the shortcut's properties in Steam.",
   "steam.dialog.not_installed": "Not installed",
   "steam.dialog.not_installed_hint": "not installed",
   "steam.dialog.summary_add": "{count} to add",

@@ -21,6 +21,12 @@ import {
 } from "main/steam/grid-art";
 import { syncItchCollection } from "main/steam/collections";
 import {
+  CompatToolSync,
+  DEFAULT_COMPAT_TOOL,
+  readCompatToolMappings,
+  syncCompatToolMappings,
+} from "main/steam/compat-tools";
+import {
   SteamDirectTarget,
   SteamShortcutEntrySummary,
   SteamShortcutMode,
@@ -54,6 +60,7 @@ export class SteamError extends Error {
 }
 
 interface SteamContext {
+  root: string;
   configDir: string;
   shortcutsPath: string;
 }
@@ -68,7 +75,11 @@ function resolveContext(): SteamContext {
     throw new SteamError("no-user");
   }
   const configDir = join(root, "userdata", userId, "config");
-  return { configDir, shortcutsPath: join(configDir, "shortcuts.vdf") };
+  return {
+    root,
+    configDir,
+    shortcutsPath: join(configDir, "shortcuts.vdf"),
+  };
 }
 
 // Our shortcuts are identified by one of two markers, not by title or
@@ -174,6 +185,15 @@ function resolveLauncher(): Launcher {
     }
   }
   throw new SteamError("no-launcher");
+}
+
+// Steam only runs a Windows executable through Proton when config.vdf
+// maps the shortcut to a compatibility tool, so on Linux direct entries
+// for .exe targets carry such a mapping (see compat-tools.ts)
+const compatPlatform = process.platform === "linux";
+
+function isWindowsExe(path: string): boolean {
+  return /\.exe$/i.test(path);
 }
 
 // stable per-game id key: deriving from the title (as Steam does for its
@@ -441,6 +461,8 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
 
   let changed = removed.length > 0;
   const retiredAppids: number[] = [];
+  // new unsigned appid -> old one, for entries healed to a new id
+  const appidRenames = new Map<number, number>();
 
   const canonicalize = (
     entry: VdfObject,
@@ -456,6 +478,7 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       const oldShortId = (oldAppid >>> 0).toString();
       const newShortId = (fields.appid >>> 0).toString();
       retiredAppids.push(oldAppid >>> 0);
+      appidRenames.set(fields.appid >>> 0, oldAppid >>> 0);
       renameGridArt(ctx.configDir, oldShortId, newShortId);
       const icon = getField(entry, "icon");
       if (typeof icon === "string" && icon.includes(oldShortId)) {
@@ -582,7 +605,14 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
     }
   }
 
-  if (!changed) {
+  const compatSync = compatPlatform
+    ? planCompatToolSync(ctx.root, kept, removed, ensure, appidRenames)
+    : null;
+  const compatChanged =
+    compatSync !== null &&
+    (compatSync.ensure.size > 0 || compatSync.remove.length > 0);
+
+  if (!changed && !compatChanged) {
     return;
   }
 
@@ -590,6 +620,29 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
   // start in the meantime before replacing the file
   if (await isSteamRunning()) {
     throw new SteamError("steam-running");
+  }
+
+  // Mappings are added before the shortcuts write and removed after it,
+  // so a failure in between never leaves a .exe entry without its
+  // mapping (Steam would exec it natively); a stray extra mapping on an
+  // entry that failed to switch is harmless.
+  let compatBackupTaken = false;
+  if (compatSync && compatSync.ensure.size > 0) {
+    syncCompatToolMappings(ctx.root, { ensure: compatSync.ensure, remove: [] });
+    compatBackupTaken = true;
+  }
+  const removeCompatMappings = () => {
+    if (compatSync && compatSync.remove.length > 0) {
+      syncCompatToolMappings(
+        ctx.root,
+        { ensure: new Map(), remove: compatSync.remove },
+        { backup: !compatBackupTaken }
+      );
+    }
+  };
+  if (!changed) {
+    removeCompatMappings();
+    return;
   }
 
   const reindexed: VdfObject = {};
@@ -607,6 +660,9 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
       removeGridArt(ctx.configDir, (appid >>> 0).toString());
     }
   }
+  // a failure here leaves the entry mapped; the snapshot flags that as
+  // a repair so the next save removes it
+  removeCompatMappings();
 
   // cosmetic: a failure here must not fail the save, the shortcuts
   // themselves are already written
@@ -636,6 +692,72 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
 function unquote(s: string): string {
   const m = /^"(.*)"$/.exec(s);
   return m ? m[1] : s;
+}
+
+/**
+ * Which of our entries need a compatibility tool mapping and which must
+ * lose theirs. Ensured entries follow their resolved target; other
+ * direct entries pointing at a .exe get a mapping healed in with the
+ * default tool; everything else (itch mode, removed, retired appids)
+ * must not be mapped, or itch-setup itself would run under Proton.
+ */
+function planCompatToolSync(
+  root: string,
+  kept: VdfObject[],
+  removed: VdfObject[],
+  ensure: EnsureShortcut[],
+  appidRenames: Map<number, number>
+): CompatToolSync {
+  const existing = readCompatToolMappings(root);
+  const sync: CompatToolSync = { ensure: new Map(), remove: [] };
+  const ensuredTools = new Map<number, string | undefined>();
+  for (const item of ensure) {
+    ensuredTools.set(
+      item.game.id,
+      item.mode === "direct" ? item.target?.compatTool : undefined
+    );
+  }
+  for (const entry of kept) {
+    const gameId = entryGameId(entry);
+    const appid = getField(entry, "appid");
+    if (gameId === null || typeof appid !== "number") {
+      continue;
+    }
+    const unsignedId = appid >>> 0;
+    const exe = getField(entry, "Exe");
+    const mappingKey = unsignedId.toString();
+    const hasMapping = existing.has(mappingKey);
+    const mappedTool = existing.get(mappingKey) || undefined;
+    let wantsTool: string | undefined;
+    if (ensuredTools.has(gameId)) {
+      wantsTool = ensuredTools.get(gameId);
+    } else if (
+      entryMode(entry) === "direct" &&
+      typeof exe === "string" &&
+      isWindowsExe(unquote(exe))
+    ) {
+      wantsTool = DEFAULT_COMPAT_TOOL;
+    }
+    if (wantsTool && !mappedTool) {
+      // an entry healed to a new appid keeps the tool the user had
+      const previous = appidRenames.get(unsignedId);
+      const carried =
+        previous !== undefined ? existing.get(previous.toString()) : undefined;
+      sync.ensure.set(unsignedId, carried || wantsTool);
+    } else if (!wantsTool && hasMapping) {
+      sync.remove.push(unsignedId);
+    }
+  }
+  const gone = [
+    ...appidRenames.values(),
+    ...removed.map((entry) => getField(entry, "appid")),
+  ];
+  for (const appid of gone) {
+    if (typeof appid === "number" && existing.has((appid >>> 0).toString())) {
+      sync.remove.push(appid >>> 0);
+    }
+  }
+  return sync;
 }
 
 /** never throws: every failure becomes a snapshot field */
@@ -705,6 +827,16 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
   } catch (e) {
     // repair detection degrades to an existence check
   }
+  // null when config.vdf is unreadable: nothing is flagged then, since
+  // a repair could never succeed
+  let compatMappings: Map<string, string> | null = null;
+  if (compatPlatform) {
+    try {
+      compatMappings = readCompatToolMappings(snapshot.steamRoot);
+    } catch (e) {
+      logger.warn(`could not read Steam compat tool mappings: ${e}`);
+    }
+  }
 
   const all = Object.values(table);
   snapshot.totalEntries = all.length;
@@ -727,6 +859,19 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
       !exePath ||
       !existsSync(exePath) ||
       (mode === "itch" && launcher !== null && exePath !== launcher.exePath);
+    const mappingKey =
+      typeof appid === "number" ? (appid >>> 0).toString() : null;
+    const hasMapping =
+      mappingKey !== null && (compatMappings?.has(mappingKey) ?? false);
+    const mappedTool =
+      mappingKey !== null ? compatMappings?.get(mappingKey) : undefined;
+    const wantsMapping = mode === "direct" && isWindowsExe(exePath);
+    const missingCompatTool =
+      wantsMapping && compatMappings !== null && !mappedTool;
+    // a mapping left on an entry that no longer targets a .exe (a save
+    // that failed after writing shortcuts.vdf) would run the launcher
+    // under Proton; the next save removes it
+    const strayCompatTool = !wantsMapping && hasMapping;
     let needsRepair: boolean;
     if (mode === "direct") {
       // whether the exe still matches the game's current launch target
@@ -734,6 +879,8 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
       // that check on top
       needsRepair =
         staleExe ||
+        missingCompatTool ||
+        strayCompatTool ||
         (typeof exe === "string" &&
           entryNeedsRepair(
             entry,
@@ -747,12 +894,14 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
             )
           ));
     } else {
-      needsRepair = launcher
-        ? entryNeedsRepair(
-            entry,
-            canonicalItchFields(launcher, gameId, entryProfileId(entry))
-          )
-        : staleExe;
+      needsRepair =
+        strayCompatTool ||
+        (launcher
+          ? entryNeedsRepair(
+              entry,
+              canonicalItchFields(launcher, gameId, entryProfileId(entry))
+            )
+          : staleExe);
     }
     const missingArt =
       typeof icon !== "string" || icon === "" || !existsSync(icon);
@@ -766,6 +915,7 @@ export async function getSnapshot(): Promise<SteamShortcutsSnapshot> {
       staleExe,
       needsRepair,
       missingArt,
+      missingCompatTool,
     };
     snapshot.entries.push(summary);
   }

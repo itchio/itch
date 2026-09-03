@@ -5,7 +5,7 @@ import {
   SteamShortcutsParams,
   SteamShortcutsResponse,
 } from "common/modals/types";
-import { Dispatch } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 import { SteamDirectTarget, SteamShortcutMode } from "common/types/steam";
 import { ambientWind } from "common/util/navigation";
 import { lighten, transparentize } from "polished";
@@ -515,17 +515,36 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
             )}
           </Rows>
         </List>
-        {rows.some(
-          (r) =>
-            !!this.state.checked[r.gameId] && this.stagedMode(r) === "direct"
-        ) ? (
-          <Callout>
-            <Icon icon="warning" />
-            <span>{T(["steam.dialog.direct_warning"])}</span>
-          </Callout>
-        ) : null}
+        {this.renderDirectCallouts(rows)}
         {this.renderDetailsLine(rows)}
         {this.renderFooter(rows)}
+      </>
+    );
+  }
+
+  renderDirectCallouts(rows: RowData[]) {
+    const staged = rows.filter(
+      (r) => !!this.state.checked[r.gameId] && this.stagedMode(r) === "direct"
+    );
+    // the tool every staged Windows target resolved against
+    const stagedTool = staged.find((r) => r.directTarget?.compatTool)
+      ?.directTarget?.compatTool;
+    return (
+      <>
+        {staged.length > 0 ? (
+          <Callout>
+            <Icon icon="warning" />
+            <span>
+              {T(["steam.dialog.direct_warning"])}
+              {stagedTool ? (
+                <>
+                  {" "}
+                  {T(["steam.dialog.direct_proton_note", { tool: stagedTool }])}
+                </>
+              ) : null}
+            </span>
+          </Callout>
+        ) : null}
       </>
     );
   }
@@ -615,9 +634,14 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
     if (stuck && !(mode === "itch" && row.steamMode === "direct")) {
       return null;
     }
-    const hints: { [K in SteamShortcutMode]: string } = {
-      itch: "steam.dialog.mode_itch_hint",
-      direct: "steam.dialog.mode_direct_hint",
+    const hints: { [K in SteamShortcutMode]: LocalizedString } = {
+      itch: ["steam.dialog.mode_itch_hint"],
+      direct: row.directTarget?.compatTool
+        ? [
+            "steam.dialog.mode_direct_proton_hint",
+            { tool: row.directTarget.compatTool },
+          ]
+        : ["steam.dialog.mode_direct_hint"],
     };
     const labels: { [K in SteamShortcutMode]: string } = {
       itch: "steam.dialog.mode_itch",
@@ -633,9 +657,9 @@ class SteamShortcuts extends React.PureComponent<Props, State> {
           e.stopPropagation();
           this.toggleMode(row.gameId);
         }}
-        data-rh={JSON.stringify([
-          stuck ? "steam.dialog.mode_direct_unavailable_hint" : hints[mode],
-        ])}
+        data-rh={JSON.stringify(
+          stuck ? ["steam.dialog.mode_direct_unavailable_hint"] : hints[mode]
+        )}
         data-rh-at="top"
       >
         {T([labels[mode]])}

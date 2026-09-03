@@ -14,6 +14,12 @@ export type SteamShortcutMode = "itch" | "direct";
 export interface SteamDirectTarget {
   path: string;
   launchOptions: string;
+  /**
+   * Steam compatibility tool (Proton) the shortcut must be mapped to;
+   * set for Windows executables on Linux, where Steam otherwise execs
+   * the .exe natively
+   */
+  compatTool?: string;
 }
 
 /** one itch-created entry in Steam's shortcuts.vdf */
@@ -30,6 +36,8 @@ export interface SteamShortcutEntrySummary {
   needsRepair: boolean;
   /** entry has no grid art icon, or its file is gone */
   missingArt: boolean;
+  /** Windows executable on Linux with no compatibility tool mapped in Steam */
+  missingCompatTool: boolean;
 }
 
 /**
