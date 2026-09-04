@@ -35,6 +35,8 @@ import {
   GameCollectionsResponse,
   EditCollectionParams,
   EditCollectionResponse,
+  ConfirmDeleteCollectionParams,
+  ConfirmDeleteCollectionResponse,
 } from "common/modals/types";
 import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
 
@@ -139,6 +141,10 @@ export const prepModals = (uuid: () => string) => {
       uuid
     ),
     editCollection: widget<EditCollectionParams, EditCollectionResponse>(uuid),
+    confirmDeleteCollection: widget<
+      ConfirmDeleteCollectionParams,
+      ConfirmDeleteCollectionResponse
+    >(uuid),
 
     // dummy widgets
 

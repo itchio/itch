@@ -269,6 +269,7 @@
   "prompt.delete_collection.title": "Delete collection",
   "prompt.delete_collection.message": "Are you sure you want to delete {title}? Its contents are not affected.",
   "prompt.delete_collection.confirm": "Delete",
+  "prompt.delete_collection.understand": "I understand this can't be undone.",
   "prompt.force_close_game.title": "Force program closure?",
   "prompt.force_close_game.message": "Do you want to force {title} to close?",
   "prompt.show_error.generic_message": "Something went wrong",

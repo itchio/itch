@@ -45,23 +45,11 @@ export default function (watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modals.naked.make({
+        modals.confirmDeleteCollection.make({
           wind: "root",
           title: ["prompt.delete_collection.title"],
-          message: [
-            "prompt.delete_collection.message",
-            { title: collection.title },
-          ],
-          buttons: [
-            {
-              label: ["prompt.delete_collection.confirm"],
-              id: "modal-delete-collection",
-              action: actions.deleteCollection({ collectionId, tab }),
-              icon: "delete",
-            },
-            "cancel",
-          ],
-          widgetParams: null,
+          message: "",
+          widgetParams: { collection, tab },
         })
       )
     );

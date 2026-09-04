@@ -202,3 +202,10 @@ export interface EditCollectionParams {
   tab?: string;
 }
 export interface EditCollectionResponse {}
+
+export interface ConfirmDeleteCollectionParams {
+  collection: Collection;
+  /** tab showing the collection, sent back to the list once deleted */
+  tab?: string;
+}
+export interface ConfirmDeleteCollectionResponse {}

@@ -76,7 +76,13 @@ const Footer = styled(ModalButtons)`
   gap: 8px;
 
   .delete {
-    color: ${(props) => props.theme.error};
+    min-width: 0;
+    padding-left: 0;
+    color: ${(props) => props.theme.secondaryText};
+
+    &:hover:not(:disabled) {
+      color: ${(props) => props.theme.error};
+    }
   }
 `;
 
@@ -139,6 +145,7 @@ class EditCollection extends React.PureComponent<Props, State> {
           {collection ? (
             <Button
               className="delete"
+              translucent
               onClick={this.onDelete}
               disabled={saving}
             >

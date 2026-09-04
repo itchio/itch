@@ -19,6 +19,7 @@ import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
 import ViewChangelog from "renderer/modal-widgets/ViewChangelog";
 import GameCollections from "renderer/modal-widgets/GameCollections";
 import EditCollection from "renderer/modal-widgets/EditCollection";
+import ConfirmDeleteCollection from "renderer/modal-widgets/ConfirmDeleteCollection";
 
 type ModalRegistry = typeof modals;
 
@@ -50,6 +51,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   viewChangelog: ViewChangelog,
   gameCollections: GameCollections,
   editCollection: EditCollection,
+  confirmDeleteCollection: ConfirmDeleteCollection,
 
   // dummies
   pickManifestAction: null,
