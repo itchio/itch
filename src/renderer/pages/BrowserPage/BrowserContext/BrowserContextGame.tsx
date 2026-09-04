@@ -11,6 +11,7 @@ import { Dispatch } from "redux";
 import Filler from "renderer/basics/Filler";
 import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
+import PlaylistAddIcon from "renderer/basics/icons/PlaylistAddIcon";
 import MainAction from "renderer/basics/MainAction";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -26,6 +27,13 @@ const FetchGameOwnership = butlerCaller(messages.FetchGameOwnership);
 
 const Spacer = styled.div`
   flex-basis: 16px;
+  flex-shrink: 0;
+`;
+
+// round icon buttons have less visual mass than the main action, so they
+// sit closer to each other than to it
+const IconSpacer = styled.div`
+  flex-basis: 8px;
   flex-shrink: 0;
 `;
 
@@ -102,6 +110,15 @@ class BrowserContextGame extends React.PureComponent<Props> {
         <MainAction game={game} status={status} wide />
         <Spacer />
         <IconButton
+          className="game-collections"
+          huge
+          emphasized
+          icon={<PlaylistAddIcon />}
+          hint={_("collection.dialog.hint")}
+          onClick={this.onCollections}
+        />
+        <IconSpacer />
+        <IconButton
           className="manage-game"
           huge
           emphasized
@@ -145,6 +162,11 @@ class BrowserContextGame extends React.PureComponent<Props> {
   onManage = () => {
     const { game, dispatch } = this.props;
     dispatch(actions.manageGame({ game }));
+  };
+
+  onCollections = () => {
+    const { game, dispatch } = this.props;
+    dispatch(actions.openGameCollectionsDialog({ gameId: game.id }));
   };
 }
 

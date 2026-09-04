@@ -686,6 +686,22 @@ export const actions = wireActions({
     /** id of the cave to explore */
     caveId: string;
   }>(),
+  openGameCollectionsDialog: action<{
+    /** game whose collection membership to edit */
+    gameId: number;
+  }>(),
+  requestCollectionDelete: action<{
+    /** collection to delete, after confirmation */
+    collectionId: number;
+    /** tab showing the collection, sent back to the collections list once deleted */
+    tab?: string;
+  }>(),
+  deleteCollection: action<{
+    collectionId: number;
+    tab?: string;
+  }>(),
+  /** a collection was created, edited, deleted, or had its games changed */
+  collectionsChanged: action<{}>(),
   openSteamShortcutsDialog: action<{
     /** game to pre-stage a shortcut for, if any */
     gameId?: number;

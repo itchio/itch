@@ -17,6 +17,8 @@ import ShowError from "renderer/modal-widgets/ShowError";
 import TwoFactorInput from "renderer/modal-widgets/TwoFactorInput";
 import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
 import ViewChangelog from "renderer/modal-widgets/ViewChangelog";
+import GameCollections from "renderer/modal-widgets/GameCollections";
+import EditCollection from "renderer/modal-widgets/EditCollection";
 
 type ModalRegistry = typeof modals;
 
@@ -46,6 +48,8 @@ export const modalWidgets: ModalWidgetRegistry = {
   twoFactorInput: TwoFactorInput,
   confirmQuit: ConfirmQuit,
   viewChangelog: ViewChangelog,
+  gameCollections: GameCollections,
+  editCollection: EditCollection,
 
   // dummies
   pickManifestAction: null,

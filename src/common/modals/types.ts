@@ -4,6 +4,7 @@ import {
   Cave,
   Upload,
   Build,
+  Collection,
 } from "common/butlerd/messages";
 import {
   SteamDirectTarget,
@@ -187,3 +188,17 @@ export interface ConfirmQuitResponse {}
 
 export interface ViewChangelogParams {}
 export interface ViewChangelogResponse {}
+
+export interface GameCollectionsParams {
+  /** the game whose collection membership is being edited */
+  game: Game;
+}
+export interface GameCollectionsResponse {}
+
+export interface EditCollectionParams {
+  /** the collection to edit; omitted when creating a new one */
+  collection?: Collection;
+  /** tab showing the collection, sent back to the list if it gets deleted */
+  tab?: string;
+}
+export interface EditCollectionResponse {}

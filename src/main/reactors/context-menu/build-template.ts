@@ -183,6 +183,14 @@ export function gameControls(
   // prepend status items
   template = concatTemplates(statusItems, template);
 
+  template = concatTemplates(template, [
+    {
+      id: "context--grid-item-collections",
+      localizedLabel: ["grid.item.collections"],
+      action: actions.openGameCollectionsDialog({ gameId: game.id }),
+    },
+  ]);
+
   if (showUploadBuild) {
     template = concatTemplates(template, [
       {

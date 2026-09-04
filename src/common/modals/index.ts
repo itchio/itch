@@ -31,6 +31,10 @@ import {
   ConfirmQuitResponse,
   ViewChangelogParams,
   ViewChangelogResponse,
+  GameCollectionsParams,
+  GameCollectionsResponse,
+  EditCollectionParams,
+  EditCollectionResponse,
 } from "common/modals/types";
 import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
 
@@ -131,6 +135,10 @@ export const prepModals = (uuid: () => string) => {
     twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
     sendFeedback: widget<SendFeedbackParams, void>(uuid),
     pushBuild: widget<PushBuildParams, PushBuildResponse>(uuid),
+    gameCollections: widget<GameCollectionsParams, GameCollectionsResponse>(
+      uuid
+    ),
+    editCollection: widget<EditCollectionParams, EditCollectionResponse>(uuid),
 
     // dummy widgets
 

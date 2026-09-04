@@ -26,3 +26,8 @@ invalidators.set(messages.InstallLocationsList, [
   actions.commonsUpdated,
   actions.installLocationsChanged,
 ]);
+invalidators.set(messages.FetchProfileCollections, [
+  actions.collectionsChanged,
+]);
+invalidators.set(messages.FetchCollection, [actions.collectionsChanged]);
+invalidators.set(messages.FetchCollectionGames, [actions.collectionsChanged]);

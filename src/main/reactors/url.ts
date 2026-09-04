@@ -157,6 +157,17 @@ export function handleItchioUrl(store: Store, uri: string): boolean {
     );
     return true;
   }
+  if (parsedURL.hostname === "game-collections") {
+    // itch://game-collections?game_id=N
+    const queryParams = querystring.parse(parsedURL.query || "");
+    const gameId = parseInt(queryParams["game_id"] as string, 10);
+    if (Number.isFinite(gameId)) {
+      store.dispatch(actions.openGameCollectionsDialog({ gameId }));
+    } else {
+      logger.warn(`Ignoring ${url}: missing game_id`);
+    }
+    return true;
+  }
   if (parsedURL.hostname === "install") {
     doAsync(async () => {
       const queryParams = querystring.parse(parsedURL.query || "");

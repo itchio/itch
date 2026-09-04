@@ -1,9 +1,13 @@
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import { GameClassification, Profile } from "common/butlerd/messages";
+import {
+  Collection,
+  GameClassification,
+  Profile,
+} from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { classificationFromQuery } from "common/helpers/classification-from-query";
-import { Dispatch } from "common/types";
+import { Dispatch, MenuTemplate } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
 import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
@@ -28,11 +32,24 @@ import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
 import { _ } from "renderer/t";
+import modals from "renderer/modals";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = makeGameSeries(messages.FetchCollectionGames);
 
-class CollectionPage extends React.PureComponent<Props> {
+interface State {
+  collection: Collection | null;
+}
+
+class CollectionPage extends React.PureComponent<Props, State> {
+  override state: State = { collection: null };
+
+  override componentDidUpdate(prevProps: Props) {
+    if (prevProps.collectionId !== this.props.collectionId) {
+      this.setState({ collection: null });
+    }
+  }
+
   override render() {
     const {
       profile,
@@ -89,30 +106,58 @@ class CollectionPage extends React.PureComponent<Props> {
     <StandardMainAction game={cave.game} />
   ));
   renderMainFilters = () => {
-    const { collectionId } = this.props;
+    const { collectionId, profile, tab } = this.props;
+    const { collection } = this.state;
     // we don't know the slug, the website will redirect to the proper one
     const url = `${urls.itchio}/c/${collectionId}/hello`;
+    const template: MenuTemplate = [
+      {
+        localizedLabel: ["browser.popout"],
+        action: actions.openInExternalBrowser({ url }),
+      },
+    ];
+    if (
+      collection &&
+      collection.id === collectionId &&
+      collection.userId === profile.user.id
+    ) {
+      template.push(
+        { type: "separator" },
+        {
+          localizedLabel: ["collection.menu.edit"],
+          action: actions.openModal(
+            modals.editCollection.make({
+              wind: "root",
+              title: ["collection.edit.title"],
+              message: "",
+              widgetParams: { collection, tab },
+            })
+          ),
+        },
+        {
+          localizedLabel: ["collection.menu.delete"],
+          action: actions.requestCollectionDelete({
+            collectionId: collection.id,
+            tab,
+          }),
+        }
+      );
+    }
     return (
       <>
         <SearchControl />
-        <MoreMenuButton
-          template={[
-            {
-              localizedLabel: ["browser.popout"],
-              action: actions.openInExternalBrowser({ url }),
-            },
-          ]}
-        />
+        <MoreMenuButton template={template} />
       </>
     );
   };
 
   onFetchedCollection = FetchCollection.onResultCallback((result) => {
     let label = "Collection not found";
-    if (result && result.collection) {
-      const c = result.collection;
-      label = `${c.title} (${c.gamesCount})`;
+    const collection = result?.collection ?? null;
+    if (collection) {
+      label = `${collection.title} (${collection.gamesCount})`;
     }
+    this.setState({ collection });
     dispatchTabPageUpdate(this.props, { label });
   });
 

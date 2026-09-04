@@ -19,6 +19,7 @@ import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { SortOption } from "renderer/pages/common/Sort";
 import { _ } from "renderer/t";
+import modals from "renderer/modals";
 
 const ProfileCollectionsSeries = makeCollectionSeries(
   messages.FetchProfileCollections
@@ -57,6 +58,17 @@ class CollectionsPage extends React.PureComponent<Props> {
         <SearchControl />
         <MoreMenuButton
           template={[
+            {
+              localizedLabel: ["collection.menu.new"],
+              action: actions.openModal(
+                modals.editCollection.make({
+                  wind: "root",
+                  title: ["collection.edit.new_title"],
+                  message: "",
+                  widgetParams: {},
+                })
+              ),
+            },
             {
               localizedLabel: ["outlinks.manage_collections"],
               action: actions.openInExternalBrowser({
