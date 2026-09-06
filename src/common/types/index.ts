@@ -67,6 +67,40 @@ export interface RootState {
   broth: BrothState;
   butlerd: ButlerdState;
   upload: UploadState;
+  steamSync: SteamSyncState;
+}
+
+/** Mirror of Publish.SteamSync.GetStatus */
+export interface SteamSyncStatus {
+  loggedIn: boolean;
+  accountName?: string;
+  steamId?: string;
+  hasPublisherKey: boolean;
+}
+
+export interface SteamSyncApp {
+  id: number;
+  name: string;
+  type: string;
+}
+
+export interface SteamSyncLogin {
+  id: string;
+  /** Challenge URL to render as a QR code, once Steam has issued one */
+  challengeUrl?: string;
+}
+
+export interface SteamSyncState {
+  /** null until the first Publish.SteamSync.GetStatus answers */
+  status: SteamSyncStatus | null;
+  login: SteamSyncLogin | null;
+  loginError?: LocalizedString;
+  keySaving: boolean;
+  keyError?: LocalizedString;
+  /** null until fetched; refetched when the key changes */
+  apps: SteamSyncApp[] | null;
+  appsLoading: boolean;
+  appsError?: LocalizedString;
 }
 
 export type PushJobStatus = "pushing" | "processing" | "failed" | "cancelled";

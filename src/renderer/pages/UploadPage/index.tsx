@@ -29,6 +29,7 @@ import UploadSearch from "renderer/pages/UploadPage/UploadSearch";
 import Page from "renderer/pages/common/Page";
 import { Title as BaseTitle, TitleBox } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import env from "renderer/env";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
@@ -342,6 +343,11 @@ class UploadPage extends React.PureComponent<Props, State> {
                       }
                     />
                     <Spacer />
+                    {env.isCanary ? (
+                      <Button icon="steam" onClick={this.handleSteamSync}>
+                        {T(_("upload.sync_from_steam"))}
+                      </Button>
+                    ) : null}
                     <Button
                       primary
                       icon="upload"
@@ -408,6 +414,10 @@ class UploadPage extends React.PureComponent<Props, State> {
       replace: true,
       url: urlWithParams(url, { search }),
     });
+  };
+
+  handleSteamSync = () => {
+    this.props.dispatch(actions.steamSyncOpen({}));
   };
 
   handlePushNewBuild = () => {

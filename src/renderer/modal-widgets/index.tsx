@@ -13,6 +13,8 @@ import PushBuild from "renderer/modal-widgets/PushBuild";
 import SendFeedback from "renderer/modal-widgets/SendFeedback";
 import SecretSettings from "renderer/modal-widgets/SecretSettings";
 import SteamShortcuts from "renderer/modal-widgets/SteamShortcuts";
+import SteamSyncOnboarding from "renderer/modal-widgets/SteamSyncOnboarding";
+import SteamSyncApps from "renderer/modal-widgets/SteamSyncApps";
 import ShowError from "renderer/modal-widgets/ShowError";
 import TwoFactorInput from "renderer/modal-widgets/TwoFactorInput";
 import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
@@ -45,6 +47,8 @@ export const modalWidgets: ModalWidgetRegistry = {
   sendFeedback: SendFeedback,
   secretSettings: SecretSettings,
   steamShortcuts: SteamShortcuts,
+  steamSyncOnboarding: SteamSyncOnboarding,
+  steamSyncApps: SteamSyncApps,
   showError: ShowError,
   twoFactorInput: TwoFactorInput,
   confirmQuit: ConfirmQuit,

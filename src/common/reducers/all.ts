@@ -17,6 +17,7 @@ import broth from "common/reducers/broth";
 import butlerd from "common/reducers/butlerd";
 import winds from "common/reducers/winds";
 import upload from "common/reducers/upload";
+import steamSync from "common/reducers/steam-sync";
 
 const reducer = combineReducers<RootState>({
   system,
@@ -35,5 +36,6 @@ const reducer = combineReducers<RootState>({
   butlerd,
   winds,
   upload,
+  steamSync,
 });
 export default reducer;

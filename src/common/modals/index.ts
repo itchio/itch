@@ -18,6 +18,10 @@ import {
   SecretSettingsResponse,
   SteamShortcutsParams,
   SteamShortcutsResponse,
+  SteamSyncOnboardingParams,
+  SteamSyncOnboardingResponse,
+  SteamSyncAppsParams,
+  SteamSyncAppsResponse,
   SendFeedbackParams,
   ShowErrorParams,
   ShowErrorResponse,
@@ -133,6 +137,11 @@ export const prepModals = (uuid: () => string) => {
     >(uuid),
     secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(uuid),
     steamShortcuts: widget<SteamShortcutsParams, SteamShortcutsResponse>(uuid),
+    steamSyncOnboarding: widget<
+      SteamSyncOnboardingParams,
+      SteamSyncOnboardingResponse
+    >(uuid),
+    steamSyncApps: widget<SteamSyncAppsParams, SteamSyncAppsResponse>(uuid),
     showError: widget<ShowErrorParams, ShowErrorResponse>(uuid),
     twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
     sendFeedback: widget<SendFeedbackParams, void>(uuid),

@@ -81,6 +81,16 @@ export interface SteamShortcutsResponse {}
 
 //---------------------
 
+export interface SteamSyncOnboardingParams {}
+
+export interface SteamSyncOnboardingResponse {}
+
+export interface SteamSyncAppsParams {}
+
+export interface SteamSyncAppsResponse {}
+
+//---------------------
+
 export interface SendFeedbackParams {
   log?: string;
 }

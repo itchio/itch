@@ -2336,6 +2336,17 @@ export enum Code {
   SandboxNotAvailable = 19000,
   // The profile explicitly requested for an operation does not exist
   NoSuchProfile = 20000,
+  // No Steam login is stored, or Steam rejected the stored one.
+  // Call @@PublishSteamSyncLoginParams.
+  PublishSteamSyncNotLoggedIn = 21000,
+  // No Steam publisher key is stored. Call @@PublishSteamSyncSetPublisherKeyParams.
+  PublishSteamSyncNoPublisherKey = 21001,
+  // The partner API rejected the publisher key.
+  PublishSteamSyncPublisherKeyInvalid = 21002,
+  // The user declined the login on their phone, or the challenge expired.
+  PublishSteamSyncLoginDenied = 21003,
+  // Another @@PublishSteamSyncLoginParams call is still waiting for approval.
+  PublishSteamSyncLoginInProgress = 21004,
 }
 
 /**
@@ -2579,6 +2590,148 @@ export const PublishListBuilds = createRequest<
  * undocumented
  */
 export type Cursor = string;
+
+/**
+ * Result for Publish.SteamSync.GetStatus
+ */
+export interface PublishSteamSyncGetStatusResult {
+  /** True when a Steam login is stored */
+  loggedIn: boolean;
+  /** Steam account name, when logged in */
+  accountName?: string;
+  /** 64-bit Steam ID as a string, when logged in */
+  steamId?: string;
+  /** True when a publisher Web API key is stored */
+  hasPublisherKey: boolean;
+}
+
+/**
+ * Reports what Steam credentials are stored. Reads a local file only;
+ * whether the login is still accepted by Steam is found out by the
+ * operations that use it, which fail with CodePublishSteamSyncNotLoggedIn.
+ */
+export const PublishSteamSyncGetStatus = createRequest<
+  PublishSteamSyncGetStatusParams,
+  PublishSteamSyncGetStatusResult
+>("Publish.SteamSync.GetStatus");
+
+/**
+ * Result for Publish.SteamSync.Login
+ */
+export interface PublishSteamSyncLoginResult {
+  /** Steam account name */
+  accountName: string;
+  /** 64-bit Steam ID as a string */
+  steamId: string;
+}
+
+/**
+ * Log in to a Steam account by QR code. Steam's mobile app scans the
+ * code and the user approves there; no password reaches butler.
+ *
+ * A @@PublishSteamSyncLoginChallengeNotification carries the URL to render as a QR
+ * code, and is sent again whenever Steam rotates the challenge. The
+ * request returns once the login is approved. Cancel it with
+ * @@PublishSteamSyncLoginCancelParams.
+ */
+export const PublishSteamSyncLogin = createRequest<
+  PublishSteamSyncLoginParams,
+  PublishSteamSyncLoginResult
+>("Publish.SteamSync.Login");
+
+/**
+ * Result for Publish.SteamSync.Login.Cancel
+ */
+export interface PublishSteamSyncLoginCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Cancel a pending @@PublishSteamSyncLoginParams.
+ */
+export const PublishSteamSyncLoginCancel = createRequest<
+  PublishSteamSyncLoginCancelParams,
+  PublishSteamSyncLoginCancelResult
+>("Publish.SteamSync.Login.Cancel");
+
+/**
+ * Result for Publish.SteamSync.Logout
+ */
+export interface PublishSteamSyncLogoutResult {
+  // no fields
+}
+
+/**
+ * Remove the stored Steam login, publisher key and cached depot keys.
+ * Nothing is revoked on Steam's side.
+ */
+export const PublishSteamSyncLogout = createRequest<
+  PublishSteamSyncLogoutParams,
+  PublishSteamSyncLogoutResult
+>("Publish.SteamSync.Logout");
+
+/**
+ * Result for Publish.SteamSync.SetPublisherKey
+ */
+export interface PublishSteamSyncSetPublisherKeyResult {
+  /** Number of apps the key controls */
+  appCount: number;
+}
+
+/**
+ * Store a Steam publisher Web API key after checking it with the partner
+ * API. The key proves which apps the developer controls; syncing is only
+ * allowed for those. Keys are created at
+ * https://partner.steamgames.com/pub/groups/ under a publisher group.
+ */
+export const PublishSteamSyncSetPublisherKey = createRequest<
+  PublishSteamSyncSetPublisherKeyParams,
+  PublishSteamSyncSetPublisherKeyResult
+>("Publish.SteamSync.SetPublisherKey");
+
+/**
+ * Result for Publish.SteamSync.RemovePublisherKey
+ */
+export interface PublishSteamSyncRemovePublisherKeyResult {
+  // no fields
+}
+
+/**
+ * Remove the stored publisher key, keeping the login.
+ */
+export const PublishSteamSyncRemovePublisherKey = createRequest<
+  PublishSteamSyncRemovePublisherKeyParams,
+  PublishSteamSyncRemovePublisherKeyResult
+>("Publish.SteamSync.RemovePublisherKey");
+
+/**
+ * Result for Publish.SteamSync.ListApps
+ */
+export interface PublishSteamSyncListAppsResult {
+  /** undocumented */
+  apps: PublishSteamSyncApp[];
+}
+
+/**
+ * List the Steam apps the stored publisher key controls.
+ */
+export const PublishSteamSyncListApps = createRequest<
+  PublishSteamSyncListAppsParams,
+  PublishSteamSyncListAppsResult
+>("Publish.SteamSync.ListApps");
+
+/**
+ * A Steam app the publisher key controls
+ */
+export interface PublishSteamSyncApp {
+  /** Steam app ID */
+  id: number;
+  /** Name on Steam */
+  name: string;
+  /** One of game, application, tool, demo, dlc, music */
+  type: string;
+}
 
 /**
  * undocumented
@@ -5295,4 +5448,75 @@ export interface PublishListBuildsParams {
    * stale started builds. Server-capped at 100 IDs.
    */
   startedBuildIds?: number[];
+}
+
+/**
+ * Params for Publish.SteamSync.GetStatus
+ */
+export interface PublishSteamSyncGetStatusParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.Login
+ */
+export interface PublishSteamSyncLoginParams {
+  /** ID that can be later used in @@PublishSteamSyncLoginCancelParams */
+  id: string;
+}
+
+/**
+ * Params for Publish.SteamSync.Login.Cancel
+ */
+export interface PublishSteamSyncLoginCancelParams {
+  /** The ID passed to @@PublishSteamSyncLoginParams */
+  id: string;
+}
+
+/**
+ * Payload for Publish.SteamSync.Login.Challenge
+ */
+export interface PublishSteamSyncLoginChallengeNotification {
+  /** The ID passed to @@PublishSteamSyncLoginParams */
+  id: string;
+  /** Challenge URL, to be rendered as a QR code */
+  url: string;
+}
+
+/**
+ * Sent during @@PublishSteamSyncLoginParams with the URL to show as a QR code.
+ * Show the URL as a link too, for people whose phone is this device.
+ */
+export const PublishSteamSyncLoginChallenge =
+  createNotification<PublishSteamSyncLoginChallengeNotification>(
+    "Publish.SteamSync.Login.Challenge"
+  );
+
+/**
+ * Params for Publish.SteamSync.Logout
+ */
+export interface PublishSteamSyncLogoutParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.SetPublisherKey
+ */
+export interface PublishSteamSyncSetPublisherKeyParams {
+  /** The publisher Web API key */
+  key: string;
+}
+
+/**
+ * Params for Publish.SteamSync.RemovePublisherKey
+ */
+export interface PublishSteamSyncRemovePublisherKeyParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.ListApps
+ */
+export interface PublishSteamSyncListAppsParams {
+  // no fields
 }

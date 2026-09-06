@@ -35,6 +35,7 @@ import notifications from "main/reactors/notifications";
 import clipboard from "main/reactors/clipboard";
 import silentLocationScan from "main/reactors/silent-location-scan";
 import upload from "main/reactors/upload";
+import steamSync from "main/reactors/steam-sync";
 
 import { Logger } from "common/logger";
 import { currentRuntime } from "common/os/runtime";
@@ -78,6 +79,7 @@ export default function getWatcher(logger: Logger) {
   clipboard(watcher);
   silentLocationScan(watcher);
   upload(watcher);
+  steamSync(watcher);
 
   watcher.validate();
   return watcher;

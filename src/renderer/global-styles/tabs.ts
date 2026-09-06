@@ -22,7 +22,9 @@ export default css`
       border-color 0.12s ease;
   }
 
-  .react-tabs__tab:hover {
+  .react-tabs__tab:not(.react-tabs__tab--disabled):not(
+      .react-tabs__tab--selected
+    ):hover {
     cursor: pointer;
     color: ${theme.baseText};
     background: rgba(255, 255, 255, 0.03);

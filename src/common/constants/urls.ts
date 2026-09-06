@@ -44,6 +44,7 @@ export default {
 
   termsOfService: `${itchio}/docs/legal/terms`,
   twoFactorHelp: `${itchio}/docs/advanced/two-factor-authentication`,
+  steamPartnerGroups: "https://partner.steamgames.com/pub/groups/",
   accountRegister: `${itchio}/register`,
   accountForgotPassword: `${itchio}/user/forgot-password`,
   dashboard: `${itchio}/dashboard`,

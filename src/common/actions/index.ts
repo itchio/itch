@@ -38,6 +38,8 @@ import {
   TabPage,
   TaskName,
   WindRole,
+  SteamSyncApp,
+  SteamSyncStatus,
 } from "common/types";
 import { SteamShortcutMode } from "common/types/steam";
 
@@ -969,6 +971,26 @@ export const actions = wireActions({
   dismissPushJob: action<{
     jobId: string;
   }>(),
+
+  // steam sync (Publish.SteamSync.*)
+
+  /** Toolbar entry point. Fetches status and opens onboarding or the app list. */
+  steamSyncOpen: action<{}>(),
+  steamSyncFetchStatus: action<{}>(),
+  steamSyncStatus: action<{ status: SteamSyncStatus }>(),
+  steamSyncStartLogin: action<{ id: string }>(),
+  steamSyncLoginChallenge: action<{ id: string; url: string }>(),
+  steamSyncLoginDone: action<{ id: string }>(),
+  steamSyncLoginFailed: action<{ id: string; message: LocalizedString }>(),
+  steamSyncCancelLogin: action<{ id: string }>(),
+  steamSyncSetPublisherKey: action<{ key: string }>(),
+  steamSyncKeySaved: action<{ appCount: number }>(),
+  steamSyncKeyFailed: action<{ message: LocalizedString }>(),
+  steamSyncDisconnect: action<{}>(),
+  steamSyncFetchApps: action<{}>(),
+  steamSyncApps: action<{ apps: SteamSyncApp[] }>(),
+  steamSyncAppsFailed: action<{ message: LocalizedString }>(),
+  steamSyncOpenApps: action<{}>(),
 
   // upload — preview (Publish.PushPreview, no side effects on itch.io)
 
