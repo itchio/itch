@@ -118,7 +118,7 @@ func downloadChromeDriver(r *runner) error {
 		}
 	}
 
-	r.logf("Attemting to run chromedriver...")
+	r.logf("Attempting to run chromedriver...")
 	currentVersion, err = getChromeDriverVersion()
 	must(err)
 	r.logf("%s", currentVersion)

@@ -149,7 +149,7 @@ interface Props extends MeatProps {
   profile: Profile;
   dispatch: Dispatch;
 
-  /** undefined when the url carries no parseable bundle id */
+  /** undefined when the url carries no parsable bundle id */
   bundleId: number | undefined;
   sortBy: string | undefined;
   sortDir: string | undefined;
