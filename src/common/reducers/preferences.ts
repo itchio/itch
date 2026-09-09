@@ -26,6 +26,7 @@ export const initialState: PreferencesState = {
   lastSuccessfulSetupVersion: undefined,
   importedOldInstallLocations: false,
   recentPushFolders: [],
+  steamSyncConnections: [],
 };
 
 export const MAX_RECENT_PUSH_FOLDERS = 5;

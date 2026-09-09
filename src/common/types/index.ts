@@ -592,6 +592,32 @@ export interface PreferencesState {
    *  so the modal's Recent folders list survives app restarts. Most
    *  recent first, capped at MAX_RECENT_PUSH_FOLDERS. */
   recentPushFolders: RecentPushFolder[];
+
+  /** Steam apps linked to itch.io projects for Sync from Steam. */
+  steamSyncConnections: SteamSyncConnection[];
+}
+
+/**
+ * One Steam app linked to one itch.io project. The fields butler's
+ * Publish.SteamSync.Sync takes, plus what the list needs to render
+ * without fetching. No password: private branches ask each time.
+ */
+export interface SteamSyncConnection {
+  /** itch.io profile the connection was made under */
+  profileId: number;
+  steamAppId: number;
+  steamAppName: string;
+  gameId: number;
+  gameTitle: string;
+  /** wharf target, user/slug */
+  target: string;
+  /** Steam branch, default public */
+  branch?: string;
+  passwordRequired?: boolean;
+  /** Steam build id of the last successful sync */
+  lastBuildId?: number;
+  /** Epoch ms of the last successful sync */
+  lastSyncedAt?: number;
 }
 
 export interface RecentPushFolder {

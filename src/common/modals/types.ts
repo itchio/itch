@@ -1,3 +1,4 @@
+import { SteamSyncApp, SteamSyncConnection } from "common/types";
 import {
   Game,
   PrereqStatus,
@@ -88,6 +89,14 @@ export interface SteamSyncOnboardingResponse {}
 export interface SteamSyncAppsParams {}
 
 export interface SteamSyncAppsResponse {}
+
+export interface SteamSyncSetupParams {
+  app: SteamSyncApp;
+  /** editing an existing connection */
+  connection?: SteamSyncConnection;
+}
+
+export interface SteamSyncSetupResponse {}
 
 //---------------------
 

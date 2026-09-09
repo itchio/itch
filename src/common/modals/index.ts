@@ -22,6 +22,8 @@ import {
   SteamSyncOnboardingResponse,
   SteamSyncAppsParams,
   SteamSyncAppsResponse,
+  SteamSyncSetupParams,
+  SteamSyncSetupResponse,
   SendFeedbackParams,
   ShowErrorParams,
   ShowErrorResponse,
@@ -142,6 +144,7 @@ export const prepModals = (uuid: () => string) => {
       SteamSyncOnboardingResponse
     >(uuid),
     steamSyncApps: widget<SteamSyncAppsParams, SteamSyncAppsResponse>(uuid),
+    steamSyncSetup: widget<SteamSyncSetupParams, SteamSyncSetupResponse>(uuid),
     showError: widget<ShowErrorParams, ShowErrorResponse>(uuid),
     twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(uuid),
     sendFeedback: widget<SendFeedbackParams, void>(uuid),

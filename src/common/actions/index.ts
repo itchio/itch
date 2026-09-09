@@ -39,6 +39,7 @@ import {
   TaskName,
   WindRole,
   SteamSyncApp,
+  SteamSyncConnection,
   SteamSyncStatus,
 } from "common/types";
 import { SteamShortcutMode } from "common/types/steam";
@@ -991,6 +992,19 @@ export const actions = wireActions({
   steamSyncApps: action<{ apps: SteamSyncApp[] }>(),
   steamSyncAppsFailed: action<{ message: LocalizedString }>(),
   steamSyncOpenApps: action<{}>(),
+  steamSyncOpenSetup: action<{
+    app: SteamSyncApp;
+    connection?: SteamSyncConnection;
+  }>(),
+  steamSyncSaveConnection: action<{ connection: SteamSyncConnection }>(),
+  steamSyncRemoveConnection: action<{
+    profileId: number;
+    steamAppId: number;
+  }>(),
+  steamSyncRun: action<{
+    connection: SteamSyncConnection;
+    password?: string;
+  }>(),
 
   // upload — preview (Publish.PushPreview, no side effects on itch.io)
 

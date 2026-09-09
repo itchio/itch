@@ -8,6 +8,7 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import modals from "main/modals";
+import uuid from "common/util/uuid";
 
 const logger = mainLogger.child(__filename);
 
@@ -69,6 +70,108 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.steamSyncOpenApps, async (store) => {
     openApps(store);
+  });
+
+  watcher.on(actions.steamSyncOpenSetup, async (store, action) => {
+    const { app, connection } = action.payload;
+    store.dispatch(
+      actions.openModal(
+        modals.steamSyncSetup.make({
+          wind: "root",
+          title: ["steam_sync.setup.title", { name: app.name }],
+          message: "",
+          widgetParams: { app, connection },
+        })
+      )
+    );
+  });
+
+  watcher.on(actions.steamSyncSaveConnection, async (store, action) => {
+    const { connection } = action.payload;
+    const prev = store.getState().preferences.steamSyncConnections ?? [];
+    const rest = prev.filter(
+      (c) =>
+        !(
+          c.profileId === connection.profileId &&
+          c.steamAppId === connection.steamAppId
+        )
+    );
+    store.dispatch(
+      actions.updatePreferences({
+        steamSyncConnections: [...rest, connection],
+      })
+    );
+  });
+
+  watcher.on(actions.steamSyncRemoveConnection, async (store, action) => {
+    const { profileId, steamAppId } = action.payload;
+    const prev = store.getState().preferences.steamSyncConnections ?? [];
+    store.dispatch(
+      actions.updatePreferences({
+        steamSyncConnections: prev.filter(
+          (c) => !(c.profileId === profileId && c.steamAppId === steamAppId)
+        ),
+      })
+    );
+  });
+
+  watcher.on(actions.steamSyncRun, async (store, action) => {
+    const { connection, password } = action.payload;
+    const id = uuid();
+    store.dispatch(
+      actions.statusMessage({
+        message: ["steam_sync.run.started", { name: connection.steamAppName }],
+      })
+    );
+    try {
+      const res = await mcall(
+        messages.PublishSteamSyncSync,
+        {
+          id,
+          profileId: connection.profileId,
+          appId: connection.steamAppId,
+          target: connection.target,
+          branch: connection.branch ?? "",
+          password: password ?? "",
+        },
+        (convo) => {
+          hookLogging(convo, logger);
+        }
+      );
+      store.dispatch(
+        actions.steamSyncSaveConnection({
+          connection: {
+            ...connection,
+            lastBuildId: res.buildId,
+            lastSyncedAt: Date.now(),
+          },
+        })
+      );
+      const pushed = res.channels.filter((c) => !c.upToDate).length;
+      store.dispatch(
+        actions.statusMessage({
+          message: pushed
+            ? [
+                "steam_sync.run.done",
+                { name: connection.steamAppName, count: pushed },
+              ]
+            : ["steam_sync.run.up_to_date", { name: connection.steamAppName }],
+        })
+      );
+    } catch (e) {
+      if (isCancelled(e)) {
+        return;
+      }
+      logger.warn(`steam sync failed: ${errorMessage(e)}`);
+      store.dispatch(
+        actions.statusMessage({
+          message: [
+            "steam_sync.run.failed",
+            { name: connection.steamAppName, message: errorMessage(e) },
+          ],
+        })
+      );
+    }
   });
 
   watcher.on(actions.steamSyncFetchStatus, async (store) => {

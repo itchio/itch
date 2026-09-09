@@ -15,6 +15,7 @@ import SecretSettings from "renderer/modal-widgets/SecretSettings";
 import SteamShortcuts from "renderer/modal-widgets/SteamShortcuts";
 import SteamSyncOnboarding from "renderer/modal-widgets/SteamSyncOnboarding";
 import SteamSyncApps from "renderer/modal-widgets/SteamSyncApps";
+import SteamSyncSetup from "renderer/modal-widgets/SteamSyncSetup";
 import ShowError from "renderer/modal-widgets/ShowError";
 import TwoFactorInput from "renderer/modal-widgets/TwoFactorInput";
 import ConfirmQuit from "renderer/modal-widgets/ConfirmQuit";
@@ -49,6 +50,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   steamShortcuts: SteamShortcuts,
   steamSyncOnboarding: SteamSyncOnboarding,
   steamSyncApps: SteamSyncApps,
+  steamSyncSetup: SteamSyncSetup,
   showError: ShowError,
   twoFactorInput: TwoFactorInput,
   confirmQuit: ConfirmQuit,

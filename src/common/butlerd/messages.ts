@@ -2734,6 +2734,179 @@ export interface PublishSteamSyncApp {
 }
 
 /**
+ * Result for Publish.SteamSync.Plan
+ */
+export interface PublishSteamSyncPlanResult {
+  /** undocumented */
+  plan: PublishSteamSyncPlan;
+}
+
+/**
+ * Works out what syncing a Steam app to an itch.io project would do:
+ * which depots go to which channel, what would be downloaded, and what
+ * is left out. Nothing is downloaded or pushed. Connects to Steam with
+ * the stored login, so it takes a few seconds.
+ *
+ * The result also lists every branch of the app, so the caller can offer
+ * a choice and call again with a different branch.
+ */
+export const PublishSteamSyncPlan = createRequest<
+  PublishSteamSyncPlanParams,
+  PublishSteamSyncPlanResult
+>("Publish.SteamSync.Plan");
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncPlan {
+  /** undocumented */
+  appId: number;
+  /** undocumented */
+  appName: string;
+  /** Branch the plan is for */
+  branch: string;
+  /** Steam build ID on that branch, used as the itch.io user version */
+  buildId: number;
+  /** undocumented */
+  target: string;
+  /** One itch.io channel per entry */
+  channels: PublishSteamSyncChannel[];
+  /** Depots left out, with the reason */
+  skipped: PublishSteamSyncSkippedDepot[];
+  /** undocumented */
+  warnings: string[];
+  /** Every branch of the app */
+  branches: PublishSteamSyncBranch[];
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncChannel {
+  /** itch.io channel name, e.g. "windows" or "linux-64" */
+  name: string;
+  /** itch.io platform the name maps to, empty when unknown */
+  os: string;
+  /** "32" or "64" when the channel is architecture specific */
+  arch: string;
+  /** undocumented */
+  depots: PublishSteamSyncDepot[];
+  /** Bytes on disk once assembled */
+  size: number;
+  /** Bytes to download from Steam */
+  download: number;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncDepot {
+  /** undocumented */
+  id: number;
+  /** undocumented */
+  name: string;
+  /** Manifest GID as a string */
+  manifest: string;
+  /** undocumented */
+  size: number;
+  /** undocumented */
+  download: number;
+  /** True when the depot is copied into every channel */
+  shared: boolean;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncSkippedDepot {
+  /** undocumented */
+  id: number;
+  /** undocumented */
+  name: string;
+  /** undocumented */
+  reason: string;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncBranch {
+  /** undocumented */
+  name: string;
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  description?: string;
+  /** True when the branch needs a password */
+  passwordRequired: boolean;
+  /** Unix seconds of the last build on the branch */
+  timeUpdated: number;
+}
+
+/**
+ * Result for Publish.SteamSync.Sync
+ */
+export interface PublishSteamSyncSyncResult {
+  /** Steam build ID that was synced */
+  buildId: number;
+  /** One entry per channel of the plan */
+  channels: PublishSteamSyncSyncedChannel[];
+}
+
+/**
+ * Syncs a Steam app to an itch.io project: plans, downloads the depots,
+ * assembles one directory per channel and pushes each, with the Steam
+ * build ID as the user version. Channels whose latest build already has
+ * that version are skipped unless Force is set.
+ *
+ * The work runs in a `butler steam-sync` worker subprocess, like
+ * @@PublishPushParams. Progress arrives as notifications: first
+ * @@PublishSteamSyncPlannedNotification, then
+ * @@PublishSteamSyncDepotProgressNotification while downloading, then per
+ * channel @@PublishSteamSyncPushStartedNotification,
+ * @@PublishSteamSyncBuildAssignedNotification and
+ * @@PublishSteamSyncPushProgressNotification, or
+ * @@PublishSteamSyncChannelUpToDateNotification when there is nothing to
+ * push. Cancel with @@PublishSteamSyncCancelParams.
+ *
+ * Downloads are kept in a per-app cache under butler's directory so the
+ * next sync of the same app only fetches what changed.
+ */
+export const PublishSteamSyncSync = createRequest<
+  PublishSteamSyncSyncParams,
+  PublishSteamSyncSyncResult
+>("Publish.SteamSync.Sync");
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncSyncedChannel {
+  /** undocumented */
+  channel: string;
+  /** itch.io build created for the channel, 0 when up to date */
+  buildId: number;
+  /** True when the channel already had this Steam build and was skipped */
+  upToDate: boolean;
+}
+
+/**
+ * Result for Publish.SteamSync.Cancel
+ */
+export interface PublishSteamSyncCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Cancels a running @@PublishSteamSyncSyncParams. The worker is killed;
+ * a push in flight leaves its build in the failed state on itch.io.
+ */
+export const PublishSteamSyncCancel = createRequest<
+  PublishSteamSyncCancelParams,
+  PublishSteamSyncCancelResult
+>("Publish.SteamSync.Cancel");
+
+/**
  * undocumented
  */
 export interface Host {
@@ -5519,4 +5692,198 @@ export interface PublishSteamSyncRemovePublisherKeyParams {
  */
 export interface PublishSteamSyncListAppsParams {
   // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.Plan
+ */
+export interface PublishSteamSyncPlanParams {
+  /** Steam app ID */
+  appId: number;
+  /** itch.io project in user/slug form, without a channel */
+  target: string;
+  /** Steam branch, default "public" */
+  branch?: string;
+  /** Password for a private branch */
+  password?: string;
+  /** Depot ID to channel name, overriding platform detection */
+  map?: { [key: string]: string };
+  /** Depot IDs to leave out */
+  skip?: number[];
+}
+
+/**
+ * Params for Publish.SteamSync.Sync
+ */
+export interface PublishSteamSyncSyncParams {
+  /** ID that can be later used in @@PublishSteamSyncCancelParams */
+  id: string;
+  /** itch.io profile to push as */
+  profileId: number;
+  /** Steam app ID */
+  appId: number;
+  /** itch.io project in user/slug form, without a channel */
+  target: string;
+  /** Steam branch, default "public" */
+  branch?: string;
+  /** Password for a private branch */
+  password?: string;
+  /** Depot ID to channel name, overriding platform detection */
+  map?: { [key: string]: string };
+  /** Depot IDs to leave out */
+  skip?: number[];
+  /** Push even when the channel already has this Steam build */
+  force?: boolean;
+  /** Mark new channels as hidden on creation */
+  hidden?: boolean;
+}
+
+/**
+ * Payload for Publish.SteamSync.Planned
+ */
+export interface PublishSteamSyncPlannedNotification {
+  /** undocumented */
+  plan: PublishSteamSyncPlan;
+}
+
+/**
+ * Sent once the worker has planned the sync, before any download.
+ */
+export const PublishSteamSyncPlanned =
+  createNotification<PublishSteamSyncPlannedNotification>(
+    "Publish.SteamSync.Planned"
+  );
+
+/**
+ * Payload for Publish.SteamSync.DepotProgress
+ */
+export interface PublishSteamSyncDepotProgressNotification {
+  /** undocumented */
+  depotId: number;
+  /** undocumented */
+  doneBytes: number;
+  /** undocumented */
+  totalBytes: number;
+}
+
+/**
+ * Download progress for one depot. Depots download one at a time; sum
+ * TotalBytes over the plan's channels for the whole picture, counting
+ * shared depots once.
+ */
+export const PublishSteamSyncDepotProgress =
+  createNotification<PublishSteamSyncDepotProgressNotification>(
+    "Publish.SteamSync.DepotProgress"
+  );
+
+/**
+ * Payload for Publish.SteamSync.ChannelUpToDate
+ */
+export interface PublishSteamSyncChannelUpToDateNotification {
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * The channel's latest build already has this Steam build ID, so it
+ * is skipped.
+ */
+export const PublishSteamSyncChannelUpToDate =
+  createNotification<PublishSteamSyncChannelUpToDateNotification>(
+    "Publish.SteamSync.ChannelUpToDate"
+  );
+
+/**
+ * Payload for Publish.SteamSync.PushStarted
+ */
+export interface PublishSteamSyncPushStartedNotification {
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * The channel's directory is assembled and its push is starting.
+ */
+export const PublishSteamSyncPushStarted =
+  createNotification<PublishSteamSyncPushStartedNotification>(
+    "Publish.SteamSync.PushStarted"
+  );
+
+/**
+ * Payload for Publish.SteamSync.BuildAssigned
+ */
+export interface PublishSteamSyncBuildAssignedNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  buildId: number;
+}
+
+/**
+ * The push for a channel has a build ID. Same meaning as
+ * @@PublishPushBuildAssignedNotification.
+ */
+export const PublishSteamSyncBuildAssigned =
+  createNotification<PublishSteamSyncBuildAssignedNotification>(
+    "Publish.SteamSync.BuildAssigned"
+  );
+
+/**
+ * Payload for Publish.SteamSync.BuildFailed
+ */
+export interface PublishSteamSyncBuildFailedNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  message: string;
+}
+
+/**
+ * The push for a channel failed after its build was created. The sync
+ * stops at the first failed channel.
+ */
+export const PublishSteamSyncBuildFailed =
+  createNotification<PublishSteamSyncBuildFailedNotification>(
+    "Publish.SteamSync.BuildFailed"
+  );
+
+/**
+ * Payload for Publish.SteamSync.PushProgress
+ */
+export interface PublishSteamSyncPushProgressNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  progress: number;
+  /** undocumented */
+  eta: number;
+  /** undocumented */
+  bps: number;
+  /** undocumented */
+  readBytes: number;
+  /** undocumented */
+  totalBytes: number;
+  /** undocumented */
+  uploadedBytes: number;
+  /** undocumented */
+  patchBytes: number;
+}
+
+/**
+ * Push progress for a channel. Fields as in
+ * @@PublishPushProgressNotification.
+ */
+export const PublishSteamSyncPushProgress =
+  createNotification<PublishSteamSyncPushProgressNotification>(
+    "Publish.SteamSync.PushProgress"
+  );
+
+/**
+ * Params for Publish.SteamSync.Cancel
+ */
+export interface PublishSteamSyncCancelParams {
+  /** undocumented */
+  id: string;
 }

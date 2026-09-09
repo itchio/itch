@@ -5,7 +5,13 @@ import {
   SteamSyncAppsParams,
   SteamSyncAppsResponse,
 } from "common/modals/types";
-import { Dispatch, RootState, SteamSyncState } from "common/types";
+import {
+  Dispatch,
+  RootState,
+  SteamSyncApp,
+  SteamSyncConnection,
+  SteamSyncState,
+} from "common/types";
 import { ambientWind } from "common/util/navigation";
 import { lighten, transparentize } from "polished";
 import React from "react";
@@ -46,7 +52,7 @@ const List = styled.div`
 
 const Row = styled.div`
   display: grid;
-  grid-template-columns: 1fr 90px 80px auto;
+  grid-template-columns: 1fr auto;
   gap: 12px;
   align-items: center;
   padding: 10px 14px;
@@ -62,6 +68,20 @@ const Name = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const Linked = styled.div`
+  color: ${(props) => props.theme.secondaryText};
+  font-size: ${(props) => props.theme.fontSizes.smaller};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 `;
 
 const Dim = styled.div`
@@ -115,6 +135,8 @@ interface Props
   extends ModalWidgetProps<SteamSyncAppsParams, SteamSyncAppsResponse> {
   dispatch: Dispatch;
   steamSync: SteamSyncState;
+  profileId: number | null;
+  connections: SteamSyncConnection[];
 }
 
 class SteamSyncApps extends React.PureComponent<Props> {
@@ -196,21 +218,68 @@ class SteamSyncApps extends React.PureComponent<Props> {
         </List>
       );
     }
+    return <List>{apps.map((a) => this.renderRow(a))}</List>;
+  }
+
+  renderRow(app: SteamSyncApp) {
+    const c = this.connectionFor(app);
     return (
-      <List>
-        {apps.map((a) => (
-          <Row key={a.id}>
-            <Name title={a.name}>{a.name}</Name>
-            <Dim>{a.id}</Dim>
-            <Dim>{a.type}</Dim>
-            <Button disabled hint={["steam_sync.apps.set_up_hint"]}>
-              {T(["steam_sync.apps.set_up"])}
+      <Row key={app.id}>
+        <div>
+          <Name title={app.name}>{app.name}</Name>
+          {c ? (
+            <Linked title={c.target}>
+              {T([
+                "steam_sync.apps.linked",
+                { title: c.gameTitle, branch: c.branch ?? "public" },
+              ])}
+            </Linked>
+          ) : (
+            <Dim>{app.type ? `${app.id} · ${app.type}` : app.id}</Dim>
+          )}
+        </div>
+        {c ? (
+          <Actions>
+            <Button onClick={() => this.onEdit(app, c)}>
+              {T(["steam_sync.apps.edit"])}
             </Button>
-          </Row>
-        ))}
-      </List>
+            <Button primary icon="steam" onClick={() => this.onSync(app, c)}>
+              {T(["steam_sync.apps.sync"])}
+            </Button>
+          </Actions>
+        ) : (
+          <Button onClick={() => this.onSetUp(app)}>
+            {T(["steam_sync.apps.set_up"])}
+          </Button>
+        )}
+      </Row>
     );
   }
+
+  connectionFor(app: SteamSyncApp): SteamSyncConnection | undefined {
+    const { profileId, connections } = this.props;
+    return connections.find(
+      (c) => c.profileId === profileId && c.steamAppId === app.id
+    );
+  }
+
+  onSetUp = (app: SteamSyncApp) => {
+    this.props.dispatch(actions.steamSyncOpenSetup({ app }));
+  };
+
+  onEdit = (app: SteamSyncApp, connection: SteamSyncConnection) => {
+    this.props.dispatch(actions.steamSyncOpenSetup({ app, connection }));
+  };
+
+  onSync = (app: SteamSyncApp, connection: SteamSyncConnection) => {
+    // No stored password, so a private branch goes through the setup
+    // dialog, which asks for it.
+    if (connection.passwordRequired) {
+      this.props.dispatch(actions.steamSyncOpenSetup({ app, connection }));
+      return;
+    }
+    this.props.dispatch(actions.steamSyncRun({ connection }));
+  };
 
   openPartnerSite = () => {
     this.props.dispatch(
@@ -235,4 +304,8 @@ class SteamSyncApps extends React.PureComponent<Props> {
 
 export default hookWithProps(SteamSyncApps)((map) => ({
   steamSync: map((rs: RootState) => rs.steamSync),
+  profileId: map((rs: RootState) => rs.profile?.profile?.id ?? null),
+  connections: map(
+    (rs: RootState) => rs.preferences.steamSyncConnections ?? []
+  ),
 }))(SteamSyncApps);
