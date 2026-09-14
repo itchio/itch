@@ -1,54 +1,33 @@
+import classNames from "classnames";
 import { actions } from "common/actions";
 import { Dispatch, RootState } from "common/types";
 import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
 import { urlWithParams } from "renderer/hocs/tab-utils";
+import {
+  FilterGroup,
+  FilterOptionButton,
+  FilterOptionIcon,
+} from "renderer/pages/common/SortsAndFilters";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
 
-const Bar = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-`;
+// match the height of the push new build button next to it
+const ToolbarFilterGroup = styled(FilterGroup)`
+  margin: 0;
 
-const FilterButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: ${(props) => props.theme.secondaryText};
-  font-size: ${(props) => props.theme.fontSizes.baseText};
-  cursor: pointer;
-
-  &:hover {
-    color: ${(props) => props.theme.baseText};
-  }
-
-  &.active {
-    background: ${(props) => props.theme.itemBackground};
-    color: ${(props) => props.theme.baseText};
-    border-color: ${(props) => props.theme.inputBorder};
+  > * {
+    min-height: 38px;
+    box-sizing: border-box;
   }
 `;
 
-const Badge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: 4px;
-  background: ${(props) => props.theme.sidebarBackground};
-  color: ${(props) => props.theme.baseText};
-  font-size: 80%;
+// goes inside the label span so it sits on the same baseline as the text
+const Count = styled.span`
+  margin-left: 0.5em;
+  font-size: 85%;
+  opacity: 0.6;
 `;
 
 export type StatusFilter = "" | "live" | "processing" | "failed";
@@ -92,18 +71,27 @@ class Filters extends React.PureComponent<Props> {
   override render() {
     const { status, totals } = this.props;
     return (
-      <Bar>
-        {FILTERS.map((f) => (
-          <FilterButton
-            key={f.value}
-            className={status === f.value ? "active" : ""}
-            onClick={() => this.setStatus(f.value)}
-          >
-            <span>{T(_(f.labelKey))}</span>
-            {totals ? <Badge>{totals[f.totalKey]}</Badge> : null}
-          </FilterButton>
-        ))}
-      </Bar>
+      <ToolbarFilterGroup>
+        {FILTERS.map((f) => {
+          const active = status === f.value;
+          return (
+            <FilterOptionButton
+              key={f.value}
+              className={classNames({ active })}
+              onClick={() => this.setStatus(f.value)}
+            >
+              <FilterOptionIcon
+                className={classNames({ inactive: !active })}
+                icon={active ? "checkbox-checked" : "filter"}
+              />
+              <span>
+                {T(_(f.labelKey))}
+                {totals ? <Count>{totals[f.totalKey]}</Count> : null}
+              </span>
+            </FilterOptionButton>
+          );
+        })}
+      </ToolbarFilterGroup>
     );
   }
 

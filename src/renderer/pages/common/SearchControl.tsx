@@ -1,4 +1,4 @@
-import { Dispatch } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -10,20 +10,41 @@ import { debounce } from "common/util/rate-limit";
 import { IntlShape } from "react-intl";
 import { injectIntl } from "renderer/hocs/injectIntl";
 
-class SearchControl extends React.PureComponent<Props> {
+class SearchControl extends React.PureComponent<Props, State> {
+  override state: State = { value: this.props.search ?? "" };
+
+  override componentDidUpdate(prevProps: Props) {
+    // the page can change the search from outside (clicking a channel on
+    // the builds page does this), cancel any pending debounced write so it
+    // doesn't overwrite the new value
+    if (
+      prevProps.search !== this.props.search &&
+      this.props.search !== this.state.value
+    ) {
+      this.setSearch.cancel();
+      this.setState({ value: this.props.search ?? "" });
+    }
+  }
+
+  override componentWillUnmount() {
+    this.setSearch.cancel();
+  }
+
   override render(): JSX.Element {
-    const { defaultValue } = this.props;
+    const { intl, placeholder } = this.props;
     return (
       <FilterInput
-        defaultValue={defaultValue}
-        placeholder={TString(this.props.intl, ["grid.criterion.filter"])}
+        value={this.state.value}
+        placeholder={TString(intl, placeholder ?? ["grid.criterion.filter"])}
         onChange={this.onSearchChange}
       />
     );
   }
 
   onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setSearch(e.currentTarget.value);
+    const value = e.currentTarget.value;
+    this.setState({ value });
+    this.setSearch(value);
   };
 
   setSearch = debounce((search: string) => {
@@ -44,17 +65,21 @@ interface Props {
   dispatch: Dispatch;
   intl: IntlShape;
 
+  placeholder?: LocalizedString;
+
   url: string | undefined;
-  defaultValue: string | undefined;
+  search: string | undefined;
+}
+
+interface State {
+  value: string;
 }
 
 export default withTab(
   injectIntl(
     hookWithProps(SearchControl)((map) => ({
       url: map((rs, props) => ambientTab(rs, props).location?.url),
-      defaultValue: map(
-        (rs, props) => ambientTab(rs, props).location?.query.search
-      ),
+      search: map((rs, props) => ambientTab(rs, props).location?.query.search),
     }))(SearchControl)
   )
 );

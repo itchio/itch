@@ -60,6 +60,12 @@ export const optionButtonLike = css`
     border-radius: ${borderRadius};
   }
 
+  /* keep the focus ring from getting covered by the button to the right */
+  &:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+
   &.active {
     background: ${activeBg};
     color: ${(props) => props.theme.baseText};

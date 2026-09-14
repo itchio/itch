@@ -389,6 +389,7 @@
   "upload.col.pushed": "Pushed",
   "upload.push_new_build": "Push new build",
   "upload.empty": "No builds yet. Push your first build to get started.",
+  "upload.empty_filtered": "No builds match the current filters.",
   "upload.loading": "Loading builds…",
   "upload.expanded.filename": "Filename",
   "upload.expanded.pushed_by": "Pushed",

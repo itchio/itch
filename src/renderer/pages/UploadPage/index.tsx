@@ -25,8 +25,8 @@ import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
 import BuildRow from "renderer/pages/UploadPage/BuildRow";
 import Filters, { StatusFilter } from "renderer/pages/UploadPage/Filters";
-import UploadSearch from "renderer/pages/UploadPage/UploadSearch";
 import Page from "renderer/pages/common/Page";
+import SearchControl from "renderer/pages/common/SearchControl";
 import { Title as BaseTitle, TitleBox } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
@@ -308,7 +308,9 @@ class UploadPage extends React.PureComponent<Props, State> {
 
             return (
               <>
-                <FiltersContainer loading={loading} />
+                <FiltersContainer loading={loading}>
+                  <SearchControl placeholder={_("upload.search_placeholder")} />
+                </FiltersContainer>
                 <Container>
                   <TitleBox>
                     <Title className="upload-title">
@@ -327,7 +329,6 @@ class UploadPage extends React.PureComponent<Props, State> {
                     </Subtitle>
                   </TitleBox>
                   <Toolbar>
-                    <UploadSearch />
                     <Filters
                       tab={tab}
                       totals={
@@ -357,7 +358,11 @@ class UploadPage extends React.PureComponent<Props, State> {
                   filtered.length === 0 &&
                   syntheticToShow.length === 0 ? (
                     <Empty>
-                      {loading ? T(_("upload.loading")) : T(_("upload.empty"))}
+                      {loading
+                        ? T(_("upload.loading"))
+                        : status || q
+                        ? T(_("upload.empty_filtered"))
+                        : T(_("upload.empty"))}
                     </Empty>
                   ) : (
                     <List>
