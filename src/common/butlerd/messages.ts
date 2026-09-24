@@ -41,6 +41,11 @@ export enum LaunchStrategy {
   HTML = "html",
   URL = "url",
   Shell = "shell",
+  // A payload (ROM, .love, Godot pack, ...) the client said it has a
+  // runtime for. FullTargetPath is the file or folder to run, and
+  // Candidate carries the flavor, engine, and version. Butler has no
+  // launcher for this strategy: the client runs it.
+  Runtime = "runtime",
 }
 
 /**
@@ -232,6 +237,68 @@ export const ProfileLoginWithOAuthCode = createRequest<
   ProfileLoginWithOAuthCodeParams,
   ProfileLoginWithOAuthCodeResult
 >("Profile.LoginWithOAuthCode");
+
+/**
+ * Result for Profile.LoginWithDevice
+ */
+export interface ProfileLoginWithDeviceResult {
+  /** Information for the new profile, now remembered */
+  profile: Profile;
+  /** Profile cookie for website */
+  cookie: { [key: string]: string };
+}
+
+/**
+ * Add a new profile by signing in from another device, for a client with
+ * no browser or keyboard. The server issues a code the user approves on
+ * their phone: the OAuth device grant (RFC 8628) with PKCE, ending in the
+ * same token exchange as @@ProfileLoginWithOAuthCodeParams.
+ *
+ * A @@ProfileLoginWithDeviceChallengeNotification carries the URL to show
+ * as a QR code and the user code to show under it, and is sent again with
+ * a new code whenever the previous one expires unanswered. Once the user
+ * approves, @@ProfileLoginWithDeviceRequestDeviceInfoParams asks what to
+ * tell the server about this device, then the request returns with the
+ * new profile. Cancel it with @@ProfileLoginWithDeviceCancelParams.
+ */
+export const ProfileLoginWithDevice = createRequest<
+  ProfileLoginWithDeviceParams,
+  ProfileLoginWithDeviceResult
+>("Profile.LoginWithDevice");
+
+/**
+ * Result for Profile.LoginWithDevice.Cancel
+ */
+export interface ProfileLoginWithDeviceCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Cancel a pending @@ProfileLoginWithDeviceParams.
+ */
+export const ProfileLoginWithDeviceCancel = createRequest<
+  ProfileLoginWithDeviceCancelParams,
+  ProfileLoginWithDeviceCancelResult
+>("Profile.LoginWithDevice.Cancel");
+
+/**
+ * Result for Profile.LoginWithDevice.RequestDeviceInfo
+ */
+export interface ProfileLoginWithDeviceRequestDeviceInfoResult {
+  /** Device information string, as in @@ProfileLoginWithOAuthCodeParams */
+  deviceInfo: string;
+}
+
+/**
+ * Sent during @@ProfileLoginWithDeviceParams once the user has approved,
+ * just before the token exchange. Answer with an empty string, or refuse
+ * the request, to share nothing.
+ */
+export const ProfileLoginWithDeviceRequestDeviceInfo = createRequest<
+  ProfileLoginWithDeviceRequestDeviceInfoParams,
+  ProfileLoginWithDeviceRequestDeviceInfoResult
+>("Profile.LoginWithDevice.RequestDeviceInfo");
 
 /**
  * Result for Profile.RequestCaptcha
@@ -452,6 +519,13 @@ export interface GameRecordsFilters {
    * ("windows", "linux", "osx"), or web-playable games ("web").
    */
   platform?: string;
+  /**
+   * Only include games whose scanned platforms (see Game.ScannedPlatforms)
+   * contain at least one of these entries (OR), e.g. "linux-arm64",
+   * "rom:gba". Games that haven't been scanned yet never match. An empty
+   * list applies no filter.
+   */
+  scannedPlatforms?: string[];
 }
 
 /**
@@ -612,6 +686,13 @@ export interface CollectionGamesFilters {
    * ("windows", "linux", "osx"), or web-playable games ("web").
    */
   platform?: string;
+  /**
+   * Only include games whose scanned platforms (see Game.ScannedPlatforms)
+   * contain at least one of these entries (OR), e.g. "linux-arm64",
+   * "rom:gba". Games that haven't been scanned yet never match. An empty
+   * list applies no filter.
+   */
+  scannedPlatforms?: string[];
 }
 
 /**
@@ -715,6 +796,13 @@ export interface ProfileOwnedKeysFilters {
    * ("windows", "linux", "osx"), or web-playable games ("web").
    */
   platform?: string;
+  /**
+   * Only include games whose scanned platforms (see Game.ScannedPlatforms)
+   * contain at least one of these entries (OR), e.g. "linux-arm64",
+   * "rom:gba". Games that haven't been scanned yet never match. An empty
+   * list applies no filter.
+   */
+  scannedPlatforms?: string[];
 }
 
 /**
@@ -770,6 +858,13 @@ export interface BundleGamesFilters {
    * ("windows", "linux", "osx"), or web-playable games ("web").
    */
   platform?: string;
+  /**
+   * Only include games whose scanned platforms (see Game.ScannedPlatforms)
+   * contain at least one of these entries (OR), e.g. "linux-arm64",
+   * "rom:gba". Games that haven't been scanned yet never match. An empty
+   * list applies no filter.
+   */
+  scannedPlatforms?: string[];
 }
 
 /**
@@ -2178,6 +2273,31 @@ export const HTMLLaunch = createRequest<HTMLLaunchParams, HTMLLaunchResult>(
 );
 
 /**
+ * Result for RuntimeLaunch
+ */
+export interface RuntimeLaunchResult {
+  // no fields
+}
+
+/**
+ * Ask the client to run a payload with a runtime of its own: a ROM in
+ * its emulator, a LÖVE game in its LÖVE. This is how a client that
+ * manages the game process itself keeps butler's bookkeeping. Sent
+ * during @@LaunchParams for a @@LaunchStrategyRuntime target, after
+ * @@LaunchRunningNotification; the play session and the cave's play
+ * time run from then until the reply.
+ *
+ * Reply when the game has exited. A plain reply is a normal exit, an
+ * error reply is a failure or crash and fails the launch. butler never
+ * sees the process, so it cannot end it: when the launch is cancelled,
+ * the client ends the game itself.
+ */
+export const RuntimeLaunch = createRequest<
+  RuntimeLaunchParams,
+  RuntimeLaunchResult
+>("RuntimeLaunch");
+
+/**
  * Result for URLLaunch
  */
 export interface URLLaunchResult {
@@ -2336,6 +2456,21 @@ export enum Code {
   SandboxNotAvailable = 19000,
   // The profile explicitly requested for an operation does not exist
   NoSuchProfile = 20000,
+  // No Steam login is stored, or Steam rejected the stored one.
+  // Call @@PublishSteamSyncLoginParams.
+  PublishSteamSyncNotLoggedIn = 21000,
+  // No Steam publisher key is stored. Call @@PublishSteamSyncSetPublisherKeyParams.
+  PublishSteamSyncNoPublisherKey = 21001,
+  // The partner API rejected the publisher key.
+  PublishSteamSyncPublisherKeyInvalid = 21002,
+  // The user declined the login on their phone, or the challenge expired.
+  PublishSteamSyncLoginDenied = 21003,
+  // Another @@PublishSteamSyncLoginParams call is still waiting for approval.
+  PublishSteamSyncLoginInProgress = 21004,
+  // The user pressed deny on the consent page.
+  ProfileLoginWithDeviceDenied = 22000,
+  // Another @@ProfileLoginWithDeviceParams call is still waiting for approval.
+  ProfileLoginWithDeviceInProgress = 22001,
 }
 
 /**
@@ -2581,6 +2716,321 @@ export const PublishListBuilds = createRequest<
 export type Cursor = string;
 
 /**
+ * Result for Publish.SteamSync.GetStatus
+ */
+export interface PublishSteamSyncGetStatusResult {
+  /** True when a Steam login is stored */
+  loggedIn: boolean;
+  /** Steam account name, when logged in */
+  accountName?: string;
+  /** 64-bit Steam ID as a string, when logged in */
+  steamId?: string;
+  /** True when a publisher Web API key is stored */
+  hasPublisherKey: boolean;
+}
+
+/**
+ * Reports what Steam credentials are stored. Reads a local file only;
+ * whether the login is still accepted by Steam is found out by the
+ * operations that use it, which fail with CodePublishSteamSyncNotLoggedIn.
+ */
+export const PublishSteamSyncGetStatus = createRequest<
+  PublishSteamSyncGetStatusParams,
+  PublishSteamSyncGetStatusResult
+>("Publish.SteamSync.GetStatus");
+
+/**
+ * Result for Publish.SteamSync.Login
+ */
+export interface PublishSteamSyncLoginResult {
+  /** Steam account name */
+  accountName: string;
+  /** 64-bit Steam ID as a string */
+  steamId: string;
+}
+
+/**
+ * Log in to a Steam account by QR code. Steam's mobile app scans the
+ * code and the user approves there; no password reaches butler.
+ *
+ * A @@PublishSteamSyncLoginChallengeNotification carries the URL to render as a QR
+ * code, and is sent again whenever Steam rotates the challenge. The
+ * request returns once the login is approved. Cancel it with
+ * @@PublishSteamSyncLoginCancelParams.
+ */
+export const PublishSteamSyncLogin = createRequest<
+  PublishSteamSyncLoginParams,
+  PublishSteamSyncLoginResult
+>("Publish.SteamSync.Login");
+
+/**
+ * Result for Publish.SteamSync.Login.Cancel
+ */
+export interface PublishSteamSyncLoginCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Cancel a pending @@PublishSteamSyncLoginParams.
+ */
+export const PublishSteamSyncLoginCancel = createRequest<
+  PublishSteamSyncLoginCancelParams,
+  PublishSteamSyncLoginCancelResult
+>("Publish.SteamSync.Login.Cancel");
+
+/**
+ * Result for Publish.SteamSync.Logout
+ */
+export interface PublishSteamSyncLogoutResult {
+  // no fields
+}
+
+/**
+ * Remove the stored Steam login, publisher key and cached depot keys.
+ * Nothing is revoked on Steam's side.
+ */
+export const PublishSteamSyncLogout = createRequest<
+  PublishSteamSyncLogoutParams,
+  PublishSteamSyncLogoutResult
+>("Publish.SteamSync.Logout");
+
+/**
+ * Result for Publish.SteamSync.SetPublisherKey
+ */
+export interface PublishSteamSyncSetPublisherKeyResult {
+  /** Number of apps the key controls */
+  appCount: number;
+}
+
+/**
+ * Store a Steam publisher Web API key after checking it with the partner
+ * API. The key proves which apps the developer controls; syncing is only
+ * allowed for those. Keys are created at
+ * https://partner.steamgames.com/pub/groups/ under a publisher group.
+ */
+export const PublishSteamSyncSetPublisherKey = createRequest<
+  PublishSteamSyncSetPublisherKeyParams,
+  PublishSteamSyncSetPublisherKeyResult
+>("Publish.SteamSync.SetPublisherKey");
+
+/**
+ * Result for Publish.SteamSync.RemovePublisherKey
+ */
+export interface PublishSteamSyncRemovePublisherKeyResult {
+  // no fields
+}
+
+/**
+ * Remove the stored publisher key, keeping the login.
+ */
+export const PublishSteamSyncRemovePublisherKey = createRequest<
+  PublishSteamSyncRemovePublisherKeyParams,
+  PublishSteamSyncRemovePublisherKeyResult
+>("Publish.SteamSync.RemovePublisherKey");
+
+/**
+ * Result for Publish.SteamSync.ListApps
+ */
+export interface PublishSteamSyncListAppsResult {
+  /** undocumented */
+  apps: PublishSteamSyncApp[];
+}
+
+/**
+ * List the Steam apps the stored publisher key controls.
+ */
+export const PublishSteamSyncListApps = createRequest<
+  PublishSteamSyncListAppsParams,
+  PublishSteamSyncListAppsResult
+>("Publish.SteamSync.ListApps");
+
+/**
+ * A Steam app the publisher key controls
+ */
+export interface PublishSteamSyncApp {
+  /** Steam app ID */
+  id: number;
+  /** Name on Steam */
+  name: string;
+  /** One of game, application, tool, demo, dlc, music */
+  type: string;
+}
+
+/**
+ * Result for Publish.SteamSync.Plan
+ */
+export interface PublishSteamSyncPlanResult {
+  /** undocumented */
+  plan: PublishSteamSyncPlan;
+}
+
+/**
+ * Works out what syncing a Steam app to an itch.io project would do:
+ * which depots go to which channel, what would be downloaded, and what
+ * is left out. Nothing is downloaded or pushed. Connects to Steam with
+ * the stored login, so it takes a few seconds.
+ *
+ * The result also lists every branch of the app, so the caller can offer
+ * a choice and call again with a different branch.
+ */
+export const PublishSteamSyncPlan = createRequest<
+  PublishSteamSyncPlanParams,
+  PublishSteamSyncPlanResult
+>("Publish.SteamSync.Plan");
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncPlan {
+  /** undocumented */
+  appId: number;
+  /** undocumented */
+  appName: string;
+  /** Branch the plan is for */
+  branch: string;
+  /** Steam build ID on that branch, used as the itch.io user version */
+  buildId: number;
+  /** undocumented */
+  target: string;
+  /** One itch.io channel per entry */
+  channels: PublishSteamSyncChannel[];
+  /** Depots left out, with the reason */
+  skipped: PublishSteamSyncSkippedDepot[];
+  /** undocumented */
+  warnings: string[];
+  /** Every branch of the app */
+  branches: PublishSteamSyncBranch[];
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncChannel {
+  /** itch.io channel name, e.g. "windows" or "linux-64" */
+  name: string;
+  /** itch.io platform the name maps to, empty when unknown */
+  os: string;
+  /** "32" or "64" when the channel is architecture specific */
+  arch: string;
+  /** undocumented */
+  depots: PublishSteamSyncDepot[];
+  /** Bytes on disk once assembled */
+  size: number;
+  /** Bytes to download from Steam */
+  download: number;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncDepot {
+  /** undocumented */
+  id: number;
+  /** undocumented */
+  name: string;
+  /** Manifest GID as a string */
+  manifest: string;
+  /** undocumented */
+  size: number;
+  /** undocumented */
+  download: number;
+  /** True when the depot is copied into every channel */
+  shared: boolean;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncSkippedDepot {
+  /** undocumented */
+  id: number;
+  /** undocumented */
+  name: string;
+  /** undocumented */
+  reason: string;
+}
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncBranch {
+  /** undocumented */
+  name: string;
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  description?: string;
+  /** True when the branch needs a password */
+  passwordRequired: boolean;
+  /** Unix seconds of the last build on the branch */
+  timeUpdated: number;
+}
+
+/**
+ * Result for Publish.SteamSync.Sync
+ */
+export interface PublishSteamSyncSyncResult {
+  /** Steam build ID that was synced */
+  buildId: number;
+  /** One entry per channel of the plan */
+  channels: PublishSteamSyncSyncedChannel[];
+}
+
+/**
+ * Syncs a Steam app to an itch.io project: plans, downloads the depots,
+ * assembles one directory per channel and pushes each, with the Steam
+ * build ID as the user version. Channels whose latest build already has
+ * that version are skipped unless Force is set.
+ *
+ * The work runs in a `butler steam-sync` worker subprocess, like
+ * @@PublishPushParams. Progress arrives as notifications: first
+ * @@PublishSteamSyncPlannedNotification, then
+ * @@PublishSteamSyncDepotProgressNotification while downloading, then per
+ * channel @@PublishSteamSyncPushStartedNotification,
+ * @@PublishSteamSyncBuildAssignedNotification and
+ * @@PublishSteamSyncPushProgressNotification, or
+ * @@PublishSteamSyncChannelUpToDateNotification when there is nothing to
+ * push. Cancel with @@PublishSteamSyncCancelParams.
+ *
+ * Downloads are kept in a per-app cache under butler's directory so the
+ * next sync of the same app only fetches what changed.
+ */
+export const PublishSteamSyncSync = createRequest<
+  PublishSteamSyncSyncParams,
+  PublishSteamSyncSyncResult
+>("Publish.SteamSync.Sync");
+
+/**
+ * undocumented
+ */
+export interface PublishSteamSyncSyncedChannel {
+  /** undocumented */
+  channel: string;
+  /** itch.io build created for the channel, 0 when up to date */
+  buildId: number;
+  /** True when the channel already had this Steam build and was skipped */
+  upToDate: boolean;
+}
+
+/**
+ * Result for Publish.SteamSync.Cancel
+ */
+export interface PublishSteamSyncCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Cancels a running @@PublishSteamSyncSyncParams. The worker is killed;
+ * a push in flight leaves its build in the failed state on itch.io.
+ */
+export const PublishSteamSyncCancel = createRequest<
+  PublishSteamSyncCancelParams,
+  PublishSteamSyncCancelResult
+>("Publish.SteamSync.Cancel");
+
+/**
  * undocumented
  */
 export interface Host {
@@ -2666,8 +3116,22 @@ export interface Candidate {
   scriptInfo?: ScriptInfo;
   /** JarInfo contains information specific to Java archives (`.jar` files) */
   jarInfo?: JarInfo;
+  /**
+   * Engine is what made this candidate. Set on natives when a known engine
+   * left its footprint next to them, and on payload flavors always.
+   */
+  engine?: EngineInfo;
   /** Any other info. */
   metadata?: { [key: string]: any };
+  /**
+   * Helper names the runtime a native belongs to when it is plumbing
+   * shipped next to the game rather than something a player launches:
+   * "renpy" for its python and zsync, "electron" or "nwjs" for crashpad
+   * and sandbox processes, "dotnet" for createdump, "java" for a bundled
+   * JRE, "node" for anything under node_modules, "unity" and "unreal"
+   * for their crash handlers. Filter drops helpers.
+   */
+  helper?: string;
 }
 
 /**
@@ -2694,6 +3158,42 @@ export enum Flavor {
   Love = "love",
   // Microsoft installer packages
   MSI = "msi",
+  // Godot pack file, standalone or embedded in an executable
+  GodotPck = "godot-pck",
+  // GameMaker data file (data.win, game.unx, game.ios, game.droid)
+  GameMakerData = "gamemaker-data",
+  // PICO-8 cartridge (.p8, .p8.png)
+  Pico8Cart = "pico8-cart",
+  // Picotron cartridge (.p64, .p64.png)
+  PicotronCart = "picotron-cart",
+  // Ren'Py project: the folder holding game/
+  Renpy = "renpy",
+  // RPG Maker MV/MZ project: the folder holding js/ and index.html
+  RPGMakerMV = "rpgmaker-mv",
+  // RPG Maker XP/VX/VX Ace project: the folder holding Game.ini
+  RPGMakerXP = "rpgmaker-xp",
+  // RPG Maker 2000/2003 project: the folder holding RPG_RT.ldb
+  RPGMaker2k = "rpgmaker-2k",
+  // Adventure Game Studio game: the exe with appended data, or a .ags file
+  AGS = "ags",
+  // Doom engine WAD or PK3
+  DoomWad = "doom-wad",
+  // Flash movie, standalone or in a projector exe
+  SWF = "swf",
+  // Folder holding 16-bit DOS executables
+  DOS = "dos",
+  // Pyxel application bundle (.pyxapp)
+  PyxelApp = "pyxel-app",
+  // Solarus quest (.solarus archive or folder holding data/quest.dat)
+  SolarusQuest = "solarus-quest",
+  // TIC-80 cartridge (.tic)
+  TIC80Cart = "tic80-cart",
+  // OpenBOR module (.pak)
+  OpenBORPak = "openbor-pak",
+  // Console ROM or disc image, system in Engine.Details["system"]
+  ROM = "rom",
+  // Playdate game bundle: the folder holding pdxinfo
+  PlaydatePdx = "playdate-pdx",
 }
 
 /**
@@ -2704,6 +3204,14 @@ export enum Arch {
   _386 = "386",
   // 64-bit
   Amd64 = "amd64",
+  // ARM 64-bit (Apple Silicon, aarch64 handhelds)
+  Arm64 = "arm64",
+  // ARM 32-bit (Raspberry Pi and older handhelds)
+  Arm = "arm",
+  // RISC-V 64-bit
+  Riscv64 = "riscv64",
+  // Universal binary (multiple architectures)
+  Universal = "universal",
 }
 
 /**
@@ -2719,6 +3227,21 @@ export interface WindowsInfo {
   gui?: boolean;
   /** Is this a .NET assembly? */
   dotNet?: boolean;
+  /** Machine type from the PE header */
+  arch?: Arch;
+  /** Imported DLLs, only filled when ConfigureParams.DeepProbe is set */
+  imports?: string[];
+  /**
+   * Strings from the VS_VERSIONINFO resource (ProductName, FileVersion,
+   * CompanyName, ...). Only filled when ConfigureParams.DeepProbe is set.
+   */
+  versionProperties?: { [key: string]: string };
+  /**
+   * requestedExecutionLevel from the embedded manifest ("asInvoker",
+   * "requireAdministrator", "highestAvailable"). Only filled when
+   * ConfigureParams.DeepProbe is set.
+   */
+  requestedExecutionLevel?: string;
 }
 
 /**
@@ -2740,14 +3263,76 @@ export enum WindowsInstallerType {
  * or app bundles.
  */
 export interface MacosInfo {
-  // no fields
+  /** All CPU architectures found in the binary (for universal/fat binaries) */
+  architectures?: Arch[];
 }
 
 /**
  * Contains information specific to native Linux executables
  */
 export interface LinuxInfo {
-  // no fields
+  /** Machine type from the ELF header */
+  arch?: Arch;
+  /**
+   * Operating system the ELF targets when it is not Linux: "freebsd",
+   * "openbsd", "netbsd" from the header's OS ABI byte, "haiku" from its
+   * imports (deep probe only). Such builds still get the linux flavor.
+   */
+  os?: string;
+  /**
+   * Calling convention for 32-bit ARM, from the ELF header flags:
+   * "eabihf" (hard-float, what Raspberry Pi and armhf distributions
+   * build) or "eabi" (soft-float). Empty for other architectures.
+   */
+  abi?: string;
+  /**
+   * Program interpreter (PT_INTERP), such as /lib/ld-linux-armhf.so.3
+   * or /lib/ld-musl-aarch64.so.1. Names the C library and ABI the
+   * executable was linked against. Only filled when DeepProbe is set.
+   */
+  interpreter?: string;
+  /**
+   * True when the executable has no program interpreter and no DT_NEEDED
+   * libraries. Only meaningful when ConfigureParams.DeepProbe is set.
+   */
+  static?: boolean;
+  /**
+   * Highest GLIBC_x.y symbol version the executable references.
+   * Only filled when ConfigureParams.DeepProbe is set.
+   */
+  glibcVersion?: string;
+  /**
+   * Shared libraries listed in DT_NEEDED, in link order.
+   * Only filled when ConfigureParams.DeepProbe is set.
+   */
+  imports?: string[];
+  /**
+   * SDL major version the executable uses, "2" or "3": imported, or
+   * linked in (see SDLBundled). Only filled when DeepProbe is set.
+   */
+  sdl?: string;
+  /**
+   * True when SDL is linked into the executable rather than imported,
+   * so it only has the display backends it was built with.
+   */
+  sdlBundled?: boolean;
+  /**
+   * True when a bundled SDL kept its dynamic API, the hook that lets a
+   * host substitute its own SDL at load time (SDL_DYNAMIC_API).
+   */
+  sdlDynamicApi?: boolean;
+  /**
+   * Windowing and graphics libraries the executable, or the SDL it
+   * bundles, can load: "x11", "wayland", "kmsdrm", "glfw", "egl", "gl",
+   * "gles", "vulkan". From DT_NEEDED and the library names it carries
+   * for dlopen. Only filled when DeepProbe is set.
+   */
+  display?: string[];
+  /**
+   * True when the executable keeps its symbol table.
+   * Only filled when DeepProbe is set.
+   */
+  symbols?: boolean;
 }
 
 /**
@@ -2772,6 +3357,66 @@ export interface ScriptInfo {
 export interface JarInfo {
   /** The main Java class as specified by the manifest included in the .jar (if any) */
   mainClass?: string;
+}
+
+/**
+ * Engine identifies the tool a game was made with. It is the key a consumer
+ * uses to pick a runtime: a native candidate carries it as extra context, a
+ * payload candidate carries it because the payload is nothing without it.
+ */
+export enum Engine {
+  Godot = "godot",
+  Unity = "unity",
+  Unreal = "unreal",
+  GameMaker = "gamemaker",
+  Love = "love",
+  Pico8 = "pico8",
+  Picotron = "picotron",
+  Renpy = "renpy",
+  RPGMaker = "rpgmaker",
+  AGS = "ags",
+  Doom = "doom",
+  Flash = "flash",
+  DOS = "dos",
+  Pyxel = "pyxel",
+  Solarus = "solarus",
+  TIC80 = "tic80",
+  OpenBOR = "openbor",
+  Playdate = "playdate",
+  // ROM images: the console lives in Details["system"]
+  ROM = "rom",
+  FNA = "fna",
+  MonoGame = "monogame",
+  XNA = "xna",
+  HashLink = "hashlink",
+  Defold = "defold",
+  Construct = "construct",
+  Electron = "electron",
+  NWJS = "nwjs",
+  Python = "python",
+  LibGDX = "libgdx",
+  LWJGL = "lwjgl",
+}
+
+/**
+ * EngineInfo describes what made a candidate and, for payloads, what runtime
+ * it needs.
+ */
+export interface EngineInfo {
+  /** undocumented */
+  engine: Engine;
+  /**
+   * Engine version, in the engine's own notation: "3.5.2", "2022.3.10f1",
+   * "11.5". Empty when it would cost too much to find out or is not
+   * recorded anywhere.
+   */
+  version?: string;
+  /**
+   * Free-form engine facts. Keys are documented per detector; the ones
+   * shared across engines are "confidence" ("ext" when only the file name
+   * was used) and "system" (console id for ROMs).
+   */
+  details?: { [key: string]: any };
 }
 
 /**
@@ -2833,6 +3478,14 @@ export interface Game {
   inPressSystem?: boolean;
   /** Platforms this game is available for */
   platforms: Platforms;
+  /**
+   * Exact platforms found by scanning the game's uploads, such as
+   * `linux-amd64`, `windows-386`, `rom:gba`, or a device profile id.
+   * Independent of Platforms, which comes from uploader-set tags.
+   * nil when the uploads haven't been scanned, empty when a scan
+   * found nothing.
+   */
+  scannedPlatforms?: string[];
   /** The user account this game is associated to */
   user?: User;
   /** ID of the user account this game is associated to */
@@ -2980,10 +3633,37 @@ export interface Upload {
   demo: boolean;
   /** Platforms this upload is compatible with */
   platforms: Platforms;
+  /**
+   * Launch targets found by scanning the upload's contents, as a
+   * marshaled []dash.LaunchTarget kept raw so this package doesn't
+   * depend on dash. nil when the upload hasn't been scanned, `[]`
+   * when a scan found nothing. For wharf uploads this describes the
+   * current build.
+   */
+  launchTargets?: any;
+  /**
+   * Where LaunchTargets came from: "server" for a wharfd scan,
+   * "client" for an unverified report from the pushing butler.
+   */
+  launchTargetsSource?: LaunchTargetsSource;
+  /** Identifies the client that produced a client report, e.g. "butler/15.26.0" */
+  launchTargetsScannerVersion?: string;
+  /** Size in bytes of the extracted files the launch targets were found in */
+  launchTargetsExtractedSize?: number;
   /** Date this upload was created at */
   createdAt?: RFCDate;
   /** Date this upload was last updated at (order changed, display name set, etc.) */
   updatedAt?: RFCDate;
+}
+
+/**
+ * LaunchTargetsSource describes who produced an upload's launch targets.
+ */
+export enum LaunchTargetsSource {
+  // LaunchTargetsSourceServer is a wharfd scan of the upload
+  Server = "server",
+  // LaunchTargetsSourceClient is the report butler sent when pushing the build
+  Client = "client",
 }
 
 /**
@@ -3669,6 +4349,60 @@ export interface ProfileLoginWithOAuthCodeParams {
   redirectUri: string;
   /** The OAuth client ID used in the authorization request */
   clientId: string;
+  /**
+   * Device information string
+   *
+   */
+  deviceInfo?: string;
+}
+
+/**
+ * Params for Profile.LoginWithDevice
+ */
+export interface ProfileLoginWithDeviceParams {
+  /** ID that can be later used in @@ProfileLoginWithDeviceCancelParams */
+  id: string;
+  /** The OAuth client ID registered for the device grant */
+  clientId: string;
+}
+
+/**
+ * Params for Profile.LoginWithDevice.Cancel
+ */
+export interface ProfileLoginWithDeviceCancelParams {
+  /** The ID passed to @@ProfileLoginWithDeviceParams */
+  id: string;
+}
+
+/**
+ * Payload for Profile.LoginWithDevice.Challenge
+ */
+export interface ProfileLoginWithDeviceChallengeNotification {
+  /** The ID passed to @@ProfileLoginWithDeviceParams */
+  id: string;
+  /** Consent page URL, to be rendered as a QR code */
+  url: string;
+  /** Short code to show under it; the consent page shows the same one */
+  userCode: string;
+  /** Seconds until this code expires and a new one is sent */
+  expiresIn: number;
+}
+
+/**
+ * Sent during @@ProfileLoginWithDeviceParams with what to put on screen.
+ * Show the URL as a link too, for people whose phone is this device.
+ */
+export const ProfileLoginWithDeviceChallenge =
+  createNotification<ProfileLoginWithDeviceChallengeNotification>(
+    "Profile.LoginWithDevice.Challenge"
+  );
+
+/**
+ * Params for Profile.LoginWithDevice.RequestDeviceInfo
+ */
+export interface ProfileLoginWithDeviceRequestDeviceInfoParams {
+  /** The ID passed to @@ProfileLoginWithDeviceParams */
+  id: string;
 }
 
 /**
@@ -4744,6 +5478,23 @@ export interface GameUpdateChoice {
 export interface LaunchGetTargetsParams {
   /** The ID of the cave to list launch targets for */
   caveId: string;
+  /**
+   * Payload flavors the client can run with a runtime of its own, in
+   * dash's vocabulary: "love", "godot-pck", "rom:nes", "rom:gba", or
+   * "rom" for every console. Matching payloads are returned with the
+   * @@LaunchStrategyRuntime strategy, for the client to launch itself;
+   * butler never runs them. When empty, payloads are only listed when
+   * nothing else is launchable, as before.
+   */
+  runtimes?: string[];
+  /**
+   * Fill the dependency record of native candidates: imports, glibc
+   * version, SDL version and how it is linked, display libraries
+   * (see LinuxInfo and WindowsInfo). Parses section tables of every
+   * native executable in the install folder, so it costs more than
+   * the default sniff; leave it off unless the client acts on it.
+   */
+  deepProbe?: boolean;
 }
 
 /**
@@ -4805,6 +5556,14 @@ export interface LaunchParams {
    */
   allowedStrategies?: LaunchStrategy[];
   /**
+   * Payload flavors the client runs with a runtime of its own, as for
+   * @@LaunchGetTargetsParams. Matching payloads become targets with the
+   * @@LaunchStrategyRuntime strategy, which are launched by asking the
+   * client (@@RuntimeLaunchParams). Pass the same list that produced the
+   * target being launched, or the target will not be found.
+   */
+  runtimes?: string[];
+  /**
    * Client-supplied defaults for knobs that both the explicit params and
    * the cave's settings leave unset, typically sourced from a frontend's
    * global preferences. Resolution order: explicit params, then cave
@@ -4820,7 +5579,15 @@ export interface LaunchParams {
  * Payload for LaunchRunning
  */
 export interface LaunchRunningNotification {
-  // no fields
+  /**
+   * The process butler started, when it runs the game itself: the
+   * game's, or the wrapper's around it (a sandbox, or `open` for a
+   * macOS bundle). Absent for a launch butler does not run (html, url,
+   * shell, runtime). A client that must name the game to something
+   * outside butler, such as a firmware's kill hotkey, names this.
+   *
+   */
+  pid?: number;
 }
 
 /**
@@ -4882,6 +5649,26 @@ export interface HTMLLaunchParams {
   args: string[];
   /** Environment variables, to pass as `global.Itch.env` */
   env: { [key: string]: string };
+}
+
+/**
+ * Params for RuntimeLaunch
+ */
+export interface RuntimeLaunchParams {
+  /**
+   * Absolute path of the payload: a file, or a folder for engines that
+   * run one (a LÖVE game with its main.lua at the root).
+   */
+  fullTargetPath: string;
+  /**
+   * What the payload is, as dash found it: the flavor, and for ROMs
+   * the system in Engine.Details.
+   */
+  candidate: Candidate;
+  /** Command-line arguments from the manifest action, if any */
+  args?: string[];
+  /** Environment variables from the manifest action, if any */
+  env?: { [key: string]: string };
 }
 
 /**
@@ -5295,4 +6082,269 @@ export interface PublishListBuildsParams {
    * stale started builds. Server-capped at 100 IDs.
    */
   startedBuildIds?: number[];
+}
+
+/**
+ * Params for Publish.SteamSync.GetStatus
+ */
+export interface PublishSteamSyncGetStatusParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.Login
+ */
+export interface PublishSteamSyncLoginParams {
+  /** ID that can be later used in @@PublishSteamSyncLoginCancelParams */
+  id: string;
+}
+
+/**
+ * Params for Publish.SteamSync.Login.Cancel
+ */
+export interface PublishSteamSyncLoginCancelParams {
+  /** The ID passed to @@PublishSteamSyncLoginParams */
+  id: string;
+}
+
+/**
+ * Payload for Publish.SteamSync.Login.Challenge
+ */
+export interface PublishSteamSyncLoginChallengeNotification {
+  /** The ID passed to @@PublishSteamSyncLoginParams */
+  id: string;
+  /** Challenge URL, to be rendered as a QR code */
+  url: string;
+}
+
+/**
+ * Sent during @@PublishSteamSyncLoginParams with the URL to show as a QR code.
+ * Show the URL as a link too, for people whose phone is this device.
+ */
+export const PublishSteamSyncLoginChallenge =
+  createNotification<PublishSteamSyncLoginChallengeNotification>(
+    "Publish.SteamSync.Login.Challenge"
+  );
+
+/**
+ * Params for Publish.SteamSync.Logout
+ */
+export interface PublishSteamSyncLogoutParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.SetPublisherKey
+ */
+export interface PublishSteamSyncSetPublisherKeyParams {
+  /** The publisher Web API key */
+  key: string;
+}
+
+/**
+ * Params for Publish.SteamSync.RemovePublisherKey
+ */
+export interface PublishSteamSyncRemovePublisherKeyParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.ListApps
+ */
+export interface PublishSteamSyncListAppsParams {
+  // no fields
+}
+
+/**
+ * Params for Publish.SteamSync.Plan
+ */
+export interface PublishSteamSyncPlanParams {
+  /** Steam app ID */
+  appId: number;
+  /** itch.io project in user/slug form, without a channel */
+  target: string;
+  /** Steam branch, default "public" */
+  branch?: string;
+  /** Password for a private branch */
+  password?: string;
+  /** Depot ID to channel name, overriding platform detection */
+  map?: { [key: string]: string };
+  /** Depot IDs to leave out */
+  skip?: number[];
+}
+
+/**
+ * Params for Publish.SteamSync.Sync
+ */
+export interface PublishSteamSyncSyncParams {
+  /** ID that can be later used in @@PublishSteamSyncCancelParams */
+  id: string;
+  /** itch.io profile to push as */
+  profileId: number;
+  /** Steam app ID */
+  appId: number;
+  /** itch.io project in user/slug form, without a channel */
+  target: string;
+  /** Steam branch, default "public" */
+  branch?: string;
+  /** Password for a private branch */
+  password?: string;
+  /** Depot ID to channel name, overriding platform detection */
+  map?: { [key: string]: string };
+  /** Depot IDs to leave out */
+  skip?: number[];
+  /** Push even when the channel already has this Steam build */
+  force?: boolean;
+  /** Mark new channels as hidden on creation */
+  hidden?: boolean;
+}
+
+/**
+ * Payload for Publish.SteamSync.Planned
+ */
+export interface PublishSteamSyncPlannedNotification {
+  /** undocumented */
+  plan: PublishSteamSyncPlan;
+}
+
+/**
+ * Sent once the worker has planned the sync, before any download.
+ */
+export const PublishSteamSyncPlanned =
+  createNotification<PublishSteamSyncPlannedNotification>(
+    "Publish.SteamSync.Planned"
+  );
+
+/**
+ * Payload for Publish.SteamSync.DepotProgress
+ */
+export interface PublishSteamSyncDepotProgressNotification {
+  /** undocumented */
+  depotId: number;
+  /** undocumented */
+  doneBytes: number;
+  /** undocumented */
+  totalBytes: number;
+}
+
+/**
+ * Download progress for one depot. Depots download one at a time; sum
+ * TotalBytes over the plan's channels for the whole picture, counting
+ * shared depots once.
+ */
+export const PublishSteamSyncDepotProgress =
+  createNotification<PublishSteamSyncDepotProgressNotification>(
+    "Publish.SteamSync.DepotProgress"
+  );
+
+/**
+ * Payload for Publish.SteamSync.ChannelUpToDate
+ */
+export interface PublishSteamSyncChannelUpToDateNotification {
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * The channel's latest build already has this Steam build ID, so it
+ * is skipped.
+ */
+export const PublishSteamSyncChannelUpToDate =
+  createNotification<PublishSteamSyncChannelUpToDateNotification>(
+    "Publish.SteamSync.ChannelUpToDate"
+  );
+
+/**
+ * Payload for Publish.SteamSync.PushStarted
+ */
+export interface PublishSteamSyncPushStartedNotification {
+  /** undocumented */
+  channel: string;
+}
+
+/**
+ * The channel's directory is assembled and its push is starting.
+ */
+export const PublishSteamSyncPushStarted =
+  createNotification<PublishSteamSyncPushStartedNotification>(
+    "Publish.SteamSync.PushStarted"
+  );
+
+/**
+ * Payload for Publish.SteamSync.BuildAssigned
+ */
+export interface PublishSteamSyncBuildAssignedNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  buildId: number;
+}
+
+/**
+ * The push for a channel has a build ID. Same meaning as
+ * @@PublishPushBuildAssignedNotification.
+ */
+export const PublishSteamSyncBuildAssigned =
+  createNotification<PublishSteamSyncBuildAssignedNotification>(
+    "Publish.SteamSync.BuildAssigned"
+  );
+
+/**
+ * Payload for Publish.SteamSync.BuildFailed
+ */
+export interface PublishSteamSyncBuildFailedNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  buildId: number;
+  /** undocumented */
+  message: string;
+}
+
+/**
+ * The push for a channel failed after its build was created. The sync
+ * stops at the first failed channel.
+ */
+export const PublishSteamSyncBuildFailed =
+  createNotification<PublishSteamSyncBuildFailedNotification>(
+    "Publish.SteamSync.BuildFailed"
+  );
+
+/**
+ * Payload for Publish.SteamSync.PushProgress
+ */
+export interface PublishSteamSyncPushProgressNotification {
+  /** undocumented */
+  channel: string;
+  /** undocumented */
+  progress: number;
+  /** undocumented */
+  eta: number;
+  /** undocumented */
+  bps: number;
+  /** undocumented */
+  readBytes: number;
+  /** undocumented */
+  totalBytes: number;
+  /** undocumented */
+  uploadedBytes: number;
+  /** undocumented */
+  patchBytes: number;
+}
+
+/**
+ * Push progress for a channel. Fields as in
+ * @@PublishPushProgressNotification.
+ */
+export const PublishSteamSyncPushProgress =
+  createNotification<PublishSteamSyncPushProgressNotification>(
+    "Publish.SteamSync.PushProgress"
+  );
+
+/**
+ * Params for Publish.SteamSync.Cancel
+ */
+export interface PublishSteamSyncCancelParams {
+  /** undocumented */
+  id: string;
 }
