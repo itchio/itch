@@ -13,16 +13,28 @@ import { injectIntl } from "renderer/hocs/injectIntl";
 class SearchControl extends React.PureComponent<Props, State> {
   override state: State = { value: this.props.search ?? "" };
 
+  // values we wrote whose location update hasn't come back yet, oldest first
+  inFlight: string[] = [];
+
   override componentDidUpdate(prevProps: Props) {
+    const search = this.props.search ?? "";
+    if ((prevProps.search ?? "") === search) {
+      return;
+    }
+    // our own write coming back: the input may already be ahead of it, so
+    // it must not be reset to this older value
+    const echoed = this.inFlight.indexOf(search);
+    if (echoed >= 0) {
+      this.inFlight.splice(0, echoed + 1);
+      return;
+    }
     // the page can change the search from outside (clicking a channel on
     // the builds page does this), cancel any pending debounced write so it
     // doesn't overwrite the new value
-    if (
-      prevProps.search !== this.props.search &&
-      this.props.search !== this.state.value
-    ) {
+    this.inFlight = [];
+    if (search !== this.state.value) {
       this.setSearch.cancel();
-      this.setState({ value: this.props.search ?? "" });
+      this.setState({ value: search });
     }
   }
 
@@ -52,6 +64,9 @@ class SearchControl extends React.PureComponent<Props, State> {
     if (!url) {
       // tab hasn't derived a location yet, nothing to evolve
       return;
+    }
+    if (search !== (this.props.search ?? "")) {
+      this.inFlight.push(search);
     }
     dispatchTabEvolve(this.props, {
       replace: true,
