@@ -37,6 +37,7 @@ import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
 import {
   AsyncIpcHandlers,
+  BROWSER_OPEN_GAME_COLLECTIONS_CHANNEL,
   BROWSER_REFRESH_PAGE_CHANNEL,
   SyncIpcHandlers,
 } from "common/ipc";
@@ -299,27 +300,38 @@ export function main() {
       store.dispatch(actions.quit({}));
     });
 
-    // pokes from the in-app browser bridge (inject-browser.ts). No payload
-    // is read; the sender must be the main frame of a tracked browser tab,
-    // on an itch.io origin, and pokes are throttled per webContents.
-    const lastRefreshPokes = new Map<number, number>();
-    ipcMain.on(BROWSER_REFRESH_PAGE_CHANNEL, (event) => {
+    // security boundary for the in-app browser bridge (inject-browser.ts),
+    // its own origin check runs in the renderer and can't be trusted
+    const bridgeSenderTab = (
+      event: Electron.IpcMainEvent,
+      lastCalls: Map<number, number>,
+      minIntervalMs: number
+    ) => {
       const frame = event.senderFrame;
       if (!frame || frame !== event.sender.mainFrame) {
-        return;
+        return null;
       }
       if (!isItchioOrigin(frame.url)) {
-        return;
+        return null;
       }
       const loc = findWebContentsTab(event.sender.id);
       if (!loc) {
-        return;
+        return null;
       }
       const now = Date.now();
-      if (now - (lastRefreshPokes.get(event.sender.id) ?? 0) < 250) {
+      if (now - (lastCalls.get(event.sender.id) ?? 0) < minIntervalMs) {
+        return null;
+      }
+      lastCalls.set(event.sender.id, now);
+      return loc;
+    };
+
+    const lastRefreshPokes = new Map<number, number>();
+    ipcMain.on(BROWSER_REFRESH_PAGE_CHANNEL, (event) => {
+      const loc = bridgeSenderTab(event, lastRefreshPokes, 250);
+      if (!loc) {
         return;
       }
-      lastRefreshPokes.set(event.sender.id, now);
       store.dispatch(
         actions.analyzePage({
           wind: loc.wind,
@@ -327,6 +339,19 @@ export function main() {
           url: event.sender.getURL(),
         })
       );
+    });
+
+    // any itch.io page can call this, which is fine since nothing is saved
+    // until the user confirms the dialog
+    const lastCollectionsCalls = new Map<number, number>();
+    ipcMain.on(BROWSER_OPEN_GAME_COLLECTIONS_CHANNEL, (event, gameId) => {
+      if (!Number.isSafeInteger(gameId) || gameId <= 0) {
+        return;
+      }
+      if (!bridgeSenderTab(event, lastCollectionsCalls, 500)) {
+        return;
+      }
+      store.dispatch(actions.openGameCollectionsDialog({ gameId }));
     });
 
     app.on("web-contents-created", (_event, contents) => {

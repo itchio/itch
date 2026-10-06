@@ -10,6 +10,15 @@ export type InjectName = "game" | "preload" | "browser";
  */
 export const BROWSER_REFRESH_PAGE_CHANNEL = "browser-refresh-page";
 
+/**
+ * Channel for the in-app browser bridge (inject-browser.ts). Carries a game
+ * id from the page. Lets the site's "Add to collection" buttons use the app's
+ * dialog, which works even when the in-app browser isn't logged in. Same
+ * sender checks as BROWSER_REFRESH_PAGE_CHANNEL.
+ */
+export const BROWSER_OPEN_GAME_COLLECTIONS_CHANNEL =
+  "browser-open-game-collections";
+
 // subsets of the systeminformation results: only what the feedback
 // form reports crosses the IPC boundary
 export type SysinfoCpu = {
