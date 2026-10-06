@@ -345,7 +345,7 @@
     "send_feedback.reminders.we_are_humans": "Vad du än skriver kommer läsas av människor.",
     "send_feedback.reminders.be_precise": "Var så exakt som du kan. Vi vill åtgärda problemet lika mycket som du vill!",
     "send_feedback.reminders.include_reproduce_steps": "Inkludera steg för att reproducera felet om du kan.",
-    "send_feedback.reminders.mention_itchio_account": "Nämn ditt itch.io-användarnamn och/eller sidan som gav dig problem om det är relavant.",
+    "send_feedback.reminders.mention_itchio_account": "Nämn ditt itch.io-användarnamn och/eller sidan som gav dig problem om det är relevant.",
     "send_feedback.reminders.thanks": "Tack för att du skickar oss feedback!",
     "send_feedback.questions.where_does_report_go": "Var hamnar min felrapport?",
     "send_feedback.consent.please_review": "Gå igenom informationen nedan för att vara säker på att du är bekväm med att den skickas:",

@@ -30,7 +30,7 @@ export class Space {
   suffix: string | undefined;
   private _instance: TabInstance;
   private _page: TabPage;
-  /** only set when the page has a parseable url */
+  /** only set when the page has a parsable url */
   private _protocol: string | undefined;
   private _hostname: string | undefined;
   private _pathname: string | undefined;

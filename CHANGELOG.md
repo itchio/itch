@@ -14,7 +14,7 @@ Shortcuts are added to an "itch.io" collection in Steam so they are grouped. For
 
 Games can now be launched without the app running using `itch-setup --run-game <gameId> [--profile-id <profileId>]`. We introduced this primarily for the Steam shortcuts functionality, but it can be used for any other launcher or shortcut system.
 
-This is built on a new `butler launch` subcommand that runs the launch machinery in-process against an existing `butler.db` without the need for a daemon process. `itch-setup` handles the app-specific parts: it locates your app's installation and settings, and generates and executes the corresponding `butler launch` command to start the game. Executables launched this way will preserve all app settings and per-game launch options, supporting sandboxing, prerequisates, play time tracking, API key, etc..
+This is built on a new `butler launch` subcommand that runs the launch machinery in-process against an existing `butler.db` without the need for a daemon process. `itch-setup` handles the app-specific parts: it locates your app's installation and settings, and generates and executes the corresponding `butler launch` command to start the game. Executables launched this way will preserve all app settings and per-game launch options, supporting sandboxing, prerequisites, play time tracking, API key, etc..
 
 Not every launch can run this way. HTML5 games need a browser window, soundtracks and books need the OS shell, and an unaccepted license or a failed prerequisite install needs a client to prompt the user. For cases when `itch-setup` can't start the game directly, the full app is started or brought to the foreground on the associated game's launch dialog.
 
@@ -22,9 +22,9 @@ Not every launch can run this way. HTML5 games need a browser window, soundtrack
 
 ### Manually link pre-existing downloads to a game
 
-If you've downloaded a game on itch.io outside the app, but want it to be registered within the app you can now use the "Link existing folder...". Consider this a power user tool, as no files are verified when you do this. This features exists as an escape hatch to get your games showing up in the app without having to redownload them, or if the game itself doesn't support a download that the app can process (like external download links). [#3493](https://github.com/itchio/itch/issues/3493)
+If you've downloaded a game on itch.io outside the app, but want it to be registered within the app you can now use the "Link existing folder...". Consider this a power user tool, as no files are verified when you do this. This feature exists as an escape hatch to get your games showing up in the app without having to redownload them, or if the game itself doesn't support a download that the app can process (like external download links). [#3493](https://github.com/itchio/itch/issues/3493)
 
-### Elevate mode for `itch-steup`
+### Elevate mode for `itch-setup`
 
 `itch-setup` now supports an *elevate* mode for applying updates in scenarios where the app has been installed into a protected folder on Windows like Program Files. Previously, auto-update would fail and the app would never get updated. Note that in order for this to take effect, you may have to manually apply at least one update pass by re-running itch-setup.
 
@@ -89,18 +89,18 @@ This release adds per-game launch settings, lets you install downloads that aren
 ### Launch settings
 
 - Each installed game now has a Launch settings screen, reachable from the manage dialog, with per-game sandbox, network access, and environment variable options ([#366](https://github.com/itchio/itch/issues/366), [#3102](https://github.com/itchio/itch/issues/3102))
-- Introduces a "Command Pattern" launch options: support either plain arguments to add or a `%command%` pattern to add wrapper commands or environment variables ([#342](https://github.com/itchio/itch/issues/342), [#3238](https://github.com/itchio/itch/issues/3238), [#2713](https://github.com/itchio/itch/issues/2713))
+- Introduces "Command Pattern" launch options: support either plain arguments to add or a `%command%` pattern to add wrapper commands or environment variables ([#342](https://github.com/itchio/itch/issues/342), [#3238](https://github.com/itchio/itch/issues/3238), [#2713](https://github.com/itchio/itch/issues/2713))
 
 ### Installing
 
-- Downloads that aren't tagged for your platform are now able to be revealed and intsalled. ([#3430](https://github.com/itchio/itch/issues/3430), [#3237](https://github.com/itchio/itch/issues/3237), [#3270](https://github.com/itchio/itch/issues/3270), [#2929](https://github.com/itchio/itch/issues/2929), [#2556](https://github.com/itchio/itch/issues/2556), [#2446](https://github.com/itchio/itch/issues/2446), [#2275](https://github.com/itchio/itch/issues/2275))
+- Downloads that aren't tagged for your platform are now able to be revealed and installed. ([#3430](https://github.com/itchio/itch/issues/3430), [#3237](https://github.com/itchio/itch/issues/3237), [#3270](https://github.com/itchio/itch/issues/3270), [#2929](https://github.com/itchio/itch/issues/2929), [#2556](https://github.com/itchio/itch/issues/2556), [#2446](https://github.com/itchio/itch/issues/2446), [#2275](https://github.com/itchio/itch/issues/2275))
 - `itch://install` accepts a `launch` parameter, which opens the launch dialog instead of reinstalling when the upload is already downloaded
 
 ### Search
 
 The sidebar search has been replaced:
 * Autocomplete candidates now only show locally available projects, eg. things you have bought, or synced from collections or bundles.
-* Autocomplete results now include Collections and Bundles, making it easy to naviagte directly to the corresponding page in the app.
+* Autocomplete results now include Collections and Bundles, making it easy to navigate directly to the corresponding page in the app.
 * There's now a *Search on itch.io...* option presented first that will take you to itch.io's full search page to search across the site.
 
 This replaces the old API search autocomplete which presented items in a confusing order that made it hard to actually find anything. We feel that autocomplete works best for things you already have, and everything else should go through the site's full search experience.
@@ -230,7 +230,7 @@ Every program started via itch now has `ITCHIO_APP=1` set in its environment. Ga
 - Don't crash the React render when the saved locale code is invalid; locale codes are now normalized to BCP 47 (`pt_BR` → `pt-BR`) and validated via `Intl` before use, falling back to English on invalid values ([#2619](https://github.com/itchio/itch/issues/2619))
 - Sidebar tab list now scrolls vertically when there are more tabs than fit, instead of clipping ([#3401](https://github.com/itchio/itch/issues/3401))
 - Fixed the "disable network in sandbox" checkbox in preferences being toggled when clicking elsewhere in the surrounding row
-- Fixed a bug where auto-update could get stuck cyling between items and never finishing any of them
+- Fixed a bug where auto-update could get stuck cycling between items and never finishing any of them
 
 ### Accessibility
 
@@ -386,7 +386,7 @@ This release upgrades from Electron 33 to Electron 40, adds Linux sandboxing ove
 
 This release upgrades from Electron 25 to Electron 33. **macOS 10.15 (Catalina) is no longer supported** macOS 11 (Big Sur) or later is now required.
 
-This is release is made available as an intermediate for upcoming Electron to allow for us to bisect for any issues.
+This release is made available as an intermediate for upcoming Electron to allow for us to bisect for any issues.
 
 ### Electron
 
