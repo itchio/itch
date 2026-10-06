@@ -215,6 +215,15 @@ function isWindowsExe(path: string): boolean {
   return /\.exe$/i.test(path);
 }
 
+function isDirectExeEntry(entry: VdfObject): boolean {
+  const exe = getField(entry, "Exe");
+  return (
+    entryMode(entry) === "direct" &&
+    typeof exe === "string" &&
+    isWindowsExe(unquote(exe))
+  );
+}
+
 // stable per-game id key: deriving from the title (as Steam does for its
 // own shortcuts) would collide across same-titled games and change on
 // renames
@@ -466,12 +475,15 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
 
   const kept: VdfObject[] = [];
   const removed: VdfObject[] = [];
+  // before any rewrite, to tell later which entries gained or lost a .exe
+  const wasDirectExe = new Map<VdfObject, boolean>();
   for (const entry of Object.values(table)) {
     if (typeof entry !== "object") {
       // reindexing would re-key values we don't understand; leave the
       // file alone instead
       throw new Error("unexpected non-object entry in shortcuts table");
     }
+    wasDirectExe.set(entry, isDirectExeEntry(entry));
     const entryId = entryGameId(entry);
     if (entryId !== null && removeSet.has(entryId)) {
       removed.push(entry);
@@ -626,9 +638,32 @@ async function performApply(input: ApplyShortcutsInput): Promise<void> {
     }
   }
 
-  const compatSync = compatPlatform
-    ? planCompatToolSync(ctx.root, kept, removed, ensure, appidRenames)
-    : null;
+  let compatSync: CompatToolSync | null = null;
+  if (compatPlatform) {
+    try {
+      compatSync = planCompatToolSync(
+        ctx.root,
+        kept,
+        removed,
+        ensure,
+        appidRenames
+      );
+    } catch (e) {
+      // config.vdf only has to be readable when this save adds or drops a
+      // .exe entry, where a mapping would be missing or left behind. Other
+      // saves go ahead without healing mappings.
+      const exeEntriesChanged =
+        removed.some((entry) => wasDirectExe.get(entry)) ||
+        kept.some(
+          (entry) =>
+            (wasDirectExe.get(entry) ?? false) !== isDirectExeEntry(entry)
+        );
+      if (exeEntriesChanged) {
+        throw e;
+      }
+      logger.warn(`could not read Steam compat tool mappings, skipping: ${e}`);
+    }
+  }
   const compatChanged =
     compatSync !== null &&
     (compatSync.ensure.size > 0 || compatSync.remove.length > 0);
