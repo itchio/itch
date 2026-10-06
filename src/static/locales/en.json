@@ -583,7 +583,6 @@
   "collection.order.intro": "Drag the projects into the order you want, then save. You can also use the arrow keys while a drag handle is focused.",
   "collection.order.remove": "Remove from collection",
   "collection.order.undo": "Undo",
-  "collection.order.removed_notice": "{count, plural, one {# project} other {# projects}} will be removed from this collection when you save.",
   "collection.order.truncated": "This collection is too large to fully reorder. Only the first {count} projects are shown; saving keeps the rest in place.",
   "collection.order.empty": "This collection is empty.",
   "collection.order.save": "Save order",

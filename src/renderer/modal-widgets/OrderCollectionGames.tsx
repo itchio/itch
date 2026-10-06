@@ -65,8 +65,13 @@ const List = styled.div`
   margin: 14px 8px 0 8px;
 `;
 
+// one row plus its gap. close enough to the rendered size that the dialog
+// opens at about its final height instead of growing once the list loads
+const estimatedRowHeight = 65;
+const maxRowsHeight = 380;
+
 const Rows = styled(SortableList)`
-  max-height: 380px;
+  max-height: ${maxRowsHeight}px;
   padding-right: 4px;
 
   [data-sortable-row] + [data-sortable-row] {
@@ -156,6 +161,13 @@ const UndoButton = styled(Button)`
   font-size: ${(props) => props.theme.fontSizes.smaller};
 `;
 
+const Loading = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+`;
+
 const Empty = styled.div`
   padding: 20px 12px;
   color: ${(props) => props.theme.secondaryText};
@@ -171,16 +183,15 @@ const Notice = styled.div`
   line-height: 1.45;
 `;
 
-const RemovedNotice = styled.div`
-  padding: 14px 20px 0 20px;
-  color: ${(props) => props.theme.secondaryText};
-  font-size: ${(props) => props.theme.fontSizes.smaller};
-`;
-
 const Footer = styled(ModalButtons)`
   align-items: center;
   gap: 8px;
   padding: 20px;
+
+  .summary {
+    color: ${(props) => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.smaller};
+  }
 `;
 
 interface State {
@@ -280,9 +291,19 @@ class OrderCollectionGames extends React.PureComponent<Props, State> {
 
         <List>
           {loading ? (
-            <Empty>
+            <Loading
+              style={{
+                height: Math.min(
+                  maxRowsHeight,
+                  Math.max(
+                    0,
+                    (collection.gamesCount ?? 0) * estimatedRowHeight - 2
+                  )
+                ),
+              }}
+            >
               <LoadingCircle progress={-1} />
-            </Empty>
+            </Loading>
           ) : error ? (
             <ErrorState error={error} />
           ) : games.length === 0 ? (
@@ -305,13 +326,12 @@ class OrderCollectionGames extends React.PureComponent<Props, State> {
           </Notice>
         ) : null}
 
-        {removedCount > 0 ? (
-          <RemovedNotice>
-            {T(["collection.order.removed_notice", { count: removedCount }])}
-          </RemovedNotice>
-        ) : null}
-
         <Footer>
+          {removedCount > 0 ? (
+            <span className="summary">
+              {T(["collection.dialog.summary_remove", { count: removedCount }])}
+            </span>
+          ) : null}
           <Filler />
           <Button onClick={this.onCancel} disabled={saving}>
             {T(["prompt.action.cancel"])}
