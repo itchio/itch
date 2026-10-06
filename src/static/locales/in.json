@@ -7,7 +7,7 @@
     "grid.item.install": "Menginstall",
     "grid.item.installing": "Menginstall…",
     "grid.item.launch": "Menjalankan",
-    "grid.item.queued": "Diantrikan",
+    "grid.item.queued": "Dalam antrian",
     "grid.item.running": "Sedang menjalankan…",
     "grid.item.uninstall": "Uninstall",
     "login.action.login": "Masuk",
@@ -217,7 +217,7 @@
     "preferences.behavior.prevent_display_sleep": "Cegah layar untuk tidur selama bermain",
     "collection.item_count": "{itemCount} item",
     "duration.seconds": "{x} detik",
-    "bundle.item_count": "{itemCount} game",
+    "bundle.item_count": "{itemCount} permainan",
     "duration.precise.hours_minutes": "{hours} jam {minutes} menit",
     "duration.precise.hours_only": "{hours} jam",
     "duration.precise.minutes_only": "{minutes} menit",
@@ -273,5 +273,6 @@
     "prompt.confirm_quit.title": "Apakah Anda yakin ingin keluar?",
     "prompt.action.quit_and_close_all": "Keluar dan tutup semua",
     "prompt.confirm_quit.message": "Semua game dan aplikasi yang berjalan akan ditutup.",
-    "prompt.action.back": "Kembali"
+    "prompt.action.back": "Kembali",
+    "bundle.info.acquired": "Didapatkan"
 }

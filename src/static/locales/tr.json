@@ -429,5 +429,8 @@
     "browser.forward": "İleri git",
     "browser.stop": "Yüklemeyi durdur",
     "browser.reload": "Sayfayı yenile",
-    "game.manage": "Oyunu yönet"
+    "game.manage": "Oyunu yönet",
+    "preferences.security.sandbox.no_network.title": "Sandbox'ta ağ erişimini devre dışı bırak",
+    "preferences.security.sandbox.allow_env.label": "İzin verilen ortam değişkeni adları (virgül veya boşlukla ayrılmış)",
+    "preferences.security.sandbox.save_warning": "Sandbox ayarlarını değiştirmek, mevcut oyun kayıt dosyalarına erişimi etkileyebilir."
 }

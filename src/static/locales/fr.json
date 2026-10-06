@@ -20,7 +20,7 @@
     "grid.item.uninstalling": "Désinstallation en cours…",
     "login.action.login": "Connexion",
     "login.action.register": "Inscription",
-    "login.action.reset_password": "Mot de passe oublié ?",
+    "login.action.reset_password": "Mot de passe oublié",
     "login.action.show_form": "Connexion via un autre compte",
     "login.action.show_saved_logins": "Comptes sauvegardés",
     "login.field.password": "Mot de passe",
@@ -379,5 +379,17 @@
     "prompt.sla.accept": "Accepter les conditions d'utilisation",
     "prompt.sla.message": "Pour utiliser ce logiciel, vous devez accepter la licence suivante :",
     "plan_install.computing_space_requirements": "Calcul de l'espace nécessaire",
-    "filter_by.games.classification.physical_game": "Jeux physiques"
+    "filter_by.games.classification.physical_game": "Jeux physiques",
+    "preferences.security.sandbox.type.auto": "Auto",
+    "bundle.info.acquired": "Acquis",
+    "game.install.folder_disappeared.message": "Le dossier où <strong>{title}</strong> a été installé n'existe plus.",
+    "game.install.folder_disappeared.detail": "Cela signifie que nous ne pouvons pas l'ouvrir.",
+    "grid.item.steam_shortcuts": "Raccourcis Steam...",
+    "grid.item.collections": "Ajouter ou modifier les collections...",
+    "preferences.advanced.steam_shortcuts": "Gérer les raccourcis Steam...",
+    "steam.dialog.title": "Raccourcis Steam",
+    "browser.back": "Précédent",
+    "browser.forward": "Suivant",
+    "browser.more_menu": "Plus d'options",
+    "browser.reload": "Recharger la page"
 }
