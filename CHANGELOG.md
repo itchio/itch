@@ -1,5 +1,51 @@
 # Changelog
 
+## [26.22.0] - 2026-10-06
+
+This release adds collection editing to the app, fixes a number of problems with the Steam shortcuts manager, adds Proton support for Windows games in Steam shortcuts on Linux, and updates butler to 15.32.0 and Electron to 44.5.1.
+
+### Collections
+
+You can now manage your itch.io collections from the app. To choose which of your collections a game is in, right click its cover and pick "Add or edit collections...", or use the new collections button next to the install button on the game's page. You can also create a collection from the same dialog by typing a name that doesn't exist yet.
+
+From a collection's page you can edit its title and privacy, delete it, or change the order of its games by dragging them. Games can be removed from the collection in the same place. New collections can be created from the menu on the collections page.
+
+The "Add to collection" buttons on itch.io pages viewed in the app open the app's dialog, so they work even when the in-app browser isn't logged in to the site.
+
+### Steam shortcuts
+
+- Fixed the Steam shortcuts dialog failing with "Could not determine which Steam user to add shortcuts for" when more than one Steam account had been used on the computer ([#3504](https://github.com/itchio/itch/issues/3504)). When Steam doesn't record which account was used last, the most recently active one is picked, and account folders left over from logins that never finished are ignored
+- With more than one Steam account, you can choose which one to add shortcuts to, and the choice is remembered
+- If no Steam account has signed in on the computer yet, the dialog says so instead of showing a generic error
+- On Linux and Steam Deck, Windows-only games can be added as direct shortcuts. Steam runs them through Proton Experimental, and you can pick a different compatibility tool in the shortcut's properties in Steam ([#3495](https://github.com/itchio/itch/issues/3495), [#3362](https://github.com/itchio/itch/issues/3362), [#2797](https://github.com/itchio/itch/issues/2797))
+- `itch://steam-shortcuts` opens the Steam shortcuts dialog, optionally for a specific game with `?game_id=`
+
+### butler 15.32.0
+
+The app now requires butler 15.32.0. Changes you'll notice in the app:
+
+- Better launch target detection: arm64 builds are no longer mistaken for amd64, helper executables like crash handlers and prerequisite installers are no longer offered as launch options, and more engines are recognized (Godot, PICO-8, Ren'Py, RPG Maker, and more)
+- Soundtracks, source code, mods and other content uploads no longer always open in the file manager. If there's something runnable inside, it's offered alongside "Open folder"
+- Update checks stay on the installed upload's platform, so a Linux install is no longer offered a Windows-only upload because wine is installed
+- Uploads that are a single Linux or macOS executable with no file extension can now be installed ([itchio/hush#9](https://github.com/itchio/hush/issues/9))
+- Fixed a stale install folder lock that could block operations on a game after a crash or reboot
+- Hardening against malicious archives
+
+Full butler release notes: <https://github.com/itchio/butler/releases/tag/v15.32.0>
+
+### Misc changes
+
+- Electron updated to 44.5.1 (Chromium 152.0.7977.130)
+- `itch --shutdown` asks a running instance to quit, the same as File > Quit
+
+### Translations
+
+Thank you to all our contributors who contributed translations for this version. You can contribute on weblate: <https://weblate.itch.zone/projects/itchio/itch/>.
+
+### Bugs
+
+- Fixed search fields (library, collections, dashboard) dropping characters typed while the previous search was still applying
+
 ## [26.20.0] - 2026-08-31
 
 This release adds a Steam shortcuts manager, a method for linking downloads you already have on disk to your library, and a UI refresh over many shared components of the app. Electron has been updated to version 44, and we did a round of security hardening and code and dependency cleanup.
