@@ -5,6 +5,7 @@ import defaultManifestIcons from "common/constants/default-manifest-icons";
 import {
   Action,
   Flavor,
+  LaunchStrategy,
   LaunchTarget,
   Platform,
 } from "common/butlerd/messages";
@@ -168,12 +169,34 @@ const flavorIcons: { [key: string]: string } = {
   [Flavor.HTML]: "html5",
 };
 
+// flavors that run on one OS. payloads (ROMs, .love, carts) don't, so the
+// host platform butler scanned for says nothing about them
+const platformFlavors = new Set<string>([
+  Flavor.NativeLinux,
+  Flavor.NativeWindows,
+  Flavor.NativeMacos,
+  Flavor.AppMacos,
+  Flavor.Script,
+  Flavor.ScriptWindows,
+  Flavor.MSI,
+]);
+
+// butler has no launcher for most payloads and opens their folder instead
+function opensFolder(action: Action, target: LaunchTarget | null): boolean {
+  return (
+    target?.strategy.strategy === LaunchStrategy.Shell && action.path !== "."
+  );
+}
+
 function targetIcon(action: Action, target: LaunchTarget | null): string {
   if (action.icon) {
     return action.icon;
   }
   if (defaultManifestIcons[action.name]) {
     return defaultManifestIcons[action.name];
+  }
+  if (opensFolder(action, target)) {
+    return "folder-open";
   }
   const flavor = target?.strategy.candidate?.flavor;
   if (flavor && flavorIcons[flavor]) {
@@ -274,12 +297,23 @@ class PickManifestAction extends React.PureComponent<Props, State> {
       detail.push(<span key="size">{fileSize(size)}</span>);
     }
     const platform = target?.host.runtime.platform;
-    if (platform && platformLabels[platform]) {
+    const flavor = target?.strategy.candidate?.flavor;
+    if (
+      platform &&
+      platformLabels[platform] &&
+      flavor &&
+      platformFlavors.has(flavor)
+    ) {
       detail.push(<span key="platform">{T([platformLabels[platform]])}</span>);
     }
     if (target?.host.wrapper) {
       detail.push(
         <span key="wine">{T(["prompt.manifest_action.via_wine"])}</span>
+      );
+    }
+    if (opensFolder(action, target)) {
+      detail.push(
+        <span key="folder">{T(["prompt.manifest_action.opens_folder"])}</span>
       );
     }
 

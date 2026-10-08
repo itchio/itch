@@ -262,6 +262,7 @@
   "prompt.manifest_action.platform.windows": "Windows",
   "prompt.manifest_action.platform.osx": "macOS",
   "prompt.manifest_action.via_wine": "runs through wine",
+  "prompt.manifest_action.opens_folder": "opens the folder",
   "prompt.manifest_action.remember": "Remember my choice for this game",
   "prompt.manifest_action.remember_hint": "You can change it later under Manage › Launch settings.",
   "prompt.action.quit_and_close_all": "Quit and close all",
