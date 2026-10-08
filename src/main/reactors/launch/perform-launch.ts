@@ -133,7 +133,13 @@ export async function performLaunch(
           hookLogging(convo, logger);
 
           convo.onRequest(messages.PickManifestAction, async ({ actions }) => {
-            const index = await pickManifestAction(store, actions, game);
+            const index = await pickManifestAction(
+              store,
+              logger,
+              actions,
+              cave.id,
+              game
+            );
             return { index };
           });
 

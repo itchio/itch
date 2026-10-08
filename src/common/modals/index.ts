@@ -8,6 +8,8 @@ import {
   ExploreJsonResponse,
   ManageCaveParams,
   ManageCaveResponse,
+  PickManifestActionParams,
+  PickManifestActionResponse,
   ManageGameParams,
   ManageGameResponse,
   PlanInstallParams,
@@ -152,15 +154,12 @@ export const prepModals = (uuid: () => string) => {
       OrderCollectionGamesResponse
     >(uuid),
 
-    // dummy widgets
-
     pickManifestAction: widget<
-      {},
-      {
-        /** index of the manifest action that was picked when launching a game */
-        index: number;
-      }
+      PickManifestActionParams,
+      PickManifestActionResponse
     >(uuid),
+
+    // dummy widgets
 
     sandboxBlessing: widget<
       {},

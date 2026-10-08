@@ -21,6 +21,7 @@ import GameCollections from "renderer/modal-widgets/GameCollections";
 import EditCollection from "renderer/modal-widgets/EditCollection";
 import ConfirmDeleteCollection from "renderer/modal-widgets/ConfirmDeleteCollection";
 import OrderCollectionGames from "renderer/modal-widgets/OrderCollectionGames";
+import PickManifestAction from "renderer/modal-widgets/PickManifestAction";
 
 type ModalRegistry = typeof modals;
 
@@ -54,9 +55,9 @@ export const modalWidgets: ModalWidgetRegistry = {
   editCollection: EditCollection,
   confirmDeleteCollection: ConfirmDeleteCollection,
   orderCollectionGames: OrderCollectionGames,
+  pickManifestAction: PickManifestAction,
 
   // dummies
-  pickManifestAction: null,
   sandboxBlessing: null,
   naked: null,
 };

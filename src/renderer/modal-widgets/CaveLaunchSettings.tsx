@@ -4,12 +4,23 @@ import { injectIntl } from "renderer/hocs/injectIntl";
 
 import * as messages from "common/butlerd/messages";
 import { getErrorMessage } from "common/butlerd/errors";
-import { CaveSettings, SandboxType } from "common/butlerd/messages";
-import { parseSandboxAllowEnv } from "common/util/launch-settings";
+import {
+  CaveSettings,
+  LaunchTarget,
+  SandboxType,
+} from "common/butlerd/messages";
+import { LocalizedString } from "common/types";
+import {
+  launchTargetDisplayName,
+  launchTargetKey,
+  normalizeTargetPath,
+  parseSandboxAllowEnv,
+} from "common/util/launch-settings";
 import { rcall } from "renderer/butlerd/rcall";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
+import { OptionComponentProps } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
 import { hook } from "renderer/hocs/hook";
-import styled from "renderer/styles";
+import styled, { singleLine } from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { rendererLogger } from "renderer/logger";
 
@@ -193,6 +204,68 @@ const CommandRow = styled(StandaloneRow)`
   margin-bottom: 8px;
 `;
 
+/* target names and paths run long, so the select gets the full width and
+   its popup is capped at the control instead of spilling out of the modal */
+const TargetRow = styled(StandaloneRow)`
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: 0;
+  margin-bottom: 8px;
+
+  ${SettingControl} {
+    width: 100%;
+  }
+
+  [role="listbox"] {
+    width: 100%;
+    max-width: 100%;
+  }
+`;
+
+const StaleNote = styled(InactiveNote)`
+  width: 100%;
+  padding-bottom: 0;
+`;
+
+const TargetOptionDiv = styled.div`
+  display: flex;
+  flex-flow: row;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+
+  > span {
+    ${singleLine};
+  }
+
+  .detail {
+    flex-shrink: 10;
+    color: ${(props) => props.theme.secondaryText};
+    font-size: ${(props) => props.theme.fontSizes.small};
+  }
+`;
+
+interface TargetOption extends BaseOptionType {
+  detail?: LocalizedString;
+}
+
+class TargetOptionComponent extends React.PureComponent<
+  OptionComponentProps<TargetOption>
+> {
+  override render() {
+    const { option } = this.props;
+    return (
+      <TargetOptionDiv>
+        <span>{T(option.label)}</span>
+        {option.detail ? (
+          <span className="detail">{T(option.detail)}</span>
+        ) : null}
+      </TargetOptionDiv>
+    );
+  }
+}
+
 const CommandInput = styled.textarea`
   &&& {
     width: 100%;
@@ -260,11 +333,17 @@ function fromTriState(value: TriState): boolean | undefined {
 
 const INHERIT = "inherit";
 
+// launch targets are free-form names and paths, so the "no preference"
+// option needs a value outside that namespace
+const NO_TARGET = null;
+
 class CaveLaunchSettings extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       settings: null,
+      targets: null,
+      targetsLoading: true,
       commandTemplateText: "",
       allowEnvText: "",
       saveError: null,
@@ -282,6 +361,15 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
       });
     } catch (e) {
       logger.error(`could not fetch cave settings: ${e}`);
+    }
+
+    // scans the install folder, so it comes after the settings are shown
+    try {
+      const { targets } = await rcall(messages.LaunchGetTargets, { caveId });
+      this.setState({ targets: targets ?? [], targetsLoading: false });
+    } catch (e) {
+      logger.error(`could not fetch launch targets: ${e}`);
+      this.setState({ targetsLoading: false });
     }
   }
 
@@ -303,6 +391,8 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
     return (
       <LaunchSettingsDiv>
         <SectionHeading>{T(["manage_cave.launch_settings"])}</SectionHeading>
+
+        {this.renderTargetRow(settings)}
 
         <CommandRow>
           <SettingLabel>
@@ -353,6 +443,80 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
           <GroupRows>{this.renderSandboxRows(settings)}</GroupRows>
         </Group>
       </LaunchSettingsDiv>
+    );
+  }
+
+  renderTargetRow(settings: CaveSettings): JSX.Element {
+    const { targets, targetsLoading } = this.state;
+    const labelId = this.fieldId("launch-target");
+    const saved = settings.launchTarget || NO_TARGET;
+
+    const options: TargetOption[] = [
+      { label: ["manage_cave.launch_settings.use_default"], value: NO_TARGET },
+    ];
+    // the same action shows up once per host (wine adds a windows host on
+    // linux), butler launches the first match, so list each key once
+    const seen = new Set<string>();
+    for (const target of targets ?? []) {
+      const { action, host } = target;
+      if (!action.path) {
+        continue;
+      }
+      const key = launchTargetKey(action);
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      const path = normalizeTargetPath(action.path);
+      const detail = host.wrapper
+        ? ["manage_cave.launch_settings.launch_target.detail_wine", { path }]
+        : path;
+      options.push({
+        label: [
+          `action.name.${action.name}`,
+          { defaultValue: launchTargetDisplayName(action) },
+        ],
+        value: key,
+        detail,
+      });
+    }
+
+    const stale = saved !== NO_TARGET && targets !== null && !seen.has(saved);
+    if (saved !== NO_TARGET && !seen.has(saved)) {
+      options.push({
+        label: saved,
+        value: saved,
+        detail: stale
+          ? ["manage_cave.launch_settings.launch_target.not_found"]
+          : undefined,
+      });
+    }
+
+    return (
+      <TargetRow>
+        <SettingLabel>
+          <Label id={labelId}>
+            {T(["manage_cave.launch_settings.launch_target"])}
+          </Label>
+          <Hint>{T(["manage_cave.launch_settings.launch_target.hint"])}</Hint>
+        </SettingLabel>
+        <SettingControl>
+          <SettingSelect
+            className={saved === NO_TARGET ? "is-default" : undefined}
+            ariaLabelledBy={labelId}
+            options={options}
+            value={options.find((o) => o.value === saved)}
+            onChange={this.onLaunchTargetChange}
+            isLoading={targetsLoading}
+            OptionComponent={TargetOptionComponent}
+          />
+        </SettingControl>
+        {stale ? (
+          <StaleNote>
+            {T(["manage_cave.launch_settings.launch_target.stale"])}
+          </StaleNote>
+        ) : null}
+      </TargetRow>
     );
   }
 
@@ -491,6 +655,12 @@ class CaveLaunchSettings extends React.PureComponent<Props, State> {
     ];
   }
 
+  onLaunchTargetChange = (option: BaseOptionType) => {
+    this.save({
+      launchTarget: option.value === NO_TARGET ? undefined : option.value,
+    });
+  };
+
   onSandboxChange = (option: BaseOptionType) => {
     this.save({ sandbox: fromTriState(option.value) });
   };
@@ -569,6 +739,9 @@ interface Props {
 
 interface State {
   settings: CaveSettings | null;
+  /** null until Launch.GetTargets answers */
+  targets: LaunchTarget[] | null;
+  targetsLoading: boolean;
   commandTemplateText: string;
   allowEnvText: string;
   saveError: string | null;

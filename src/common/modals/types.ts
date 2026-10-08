@@ -5,6 +5,8 @@ import {
   Upload,
   Build,
   Collection,
+  Action,
+  LaunchTarget,
 } from "common/butlerd/messages";
 import {
   SteamDirectTarget,
@@ -128,6 +130,21 @@ export interface ManageCaveParams {
 }
 
 export interface ManageCaveResponse {}
+
+export interface PickManifestActionParams {
+  /** launch targets butler found, shown in this order */
+  actions: Action[];
+  /** the full target for each action, where one could be matched up */
+  targets: (LaunchTarget | null)[];
+  game: Game;
+}
+
+export interface PickManifestActionResponse {
+  /** index of the manifest action that was picked when launching a game */
+  index: number;
+  /** save the pick as the cave's launch target so we stop asking */
+  remember?: boolean;
+}
 
 //---------------------
 
