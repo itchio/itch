@@ -74,6 +74,14 @@ const CallToAction = styled.div`
   gap: 1em;
 `;
 
+const OfflineActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+  margin: 1em 0;
+`;
+
 const BigButton = styled(Button)`
   font-size: 150% !important;
 `;
@@ -322,12 +330,37 @@ class ReportIssue extends React.PureComponent<Props, State> {
   }
 
   renderFailed() {
-    const { errorMessage } = this.state;
+    const { errorMessage, isServiceOffline, reportText, copiedToClipboard } =
+      this.state;
+    const textToDisplay = reportText || this.buildReportText();
 
     return (
       <SendFeedbackDiv>
-        <p>{T(["send_feedback.error.intro"])}</p>
-        <InfoBlock>{errorMessage}</InfoBlock>
+        <p>
+          {isServiceOffline
+            ? T(["send_feedback.error.service_offline"])
+            : T(["send_feedback.error.intro"])}
+        </p>
+        {errorMessage ? (
+          <p>
+            <em>{errorMessage}</em>
+          </p>
+        ) : null}
+        <InfoBlock>{textToDisplay}</InfoBlock>
+        <OfflineActions>
+          <Button
+            icon={copiedToClipboard ? "checkmark" : "copy"}
+            primary={copiedToClipboard}
+            onClick={this.onCopyToClipboard}
+          >
+            {copiedToClipboard
+              ? T(["send_feedback.error.copied"])
+              : T(["send_feedback.error.copy_report"])}
+          </Button>
+          <Button icon={"link"} onClick={this.onOpenGitHubIssue}>
+            {T(["send_feedback.error.open_github"])}
+          </Button>
+        </OfflineActions>
         <Filler />
         <ModalButtons>
           <Button icon={"cross"} onClick={this.onBailOut}>
@@ -337,6 +370,50 @@ class ReportIssue extends React.PureComponent<Props, State> {
       </SendFeedbackDiv>
     );
   }
+
+  buildReportText = (): string => {
+    const { system, includeSystemInfo, message } = this.state;
+    const { log } = this.props.modal.widgetParams;
+
+    return [
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "> Message",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "",
+      message,
+      "",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "> System Information",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "",
+      includeSystemInfo ? JSON.stringify(system, null, 2) : "(redacted)",
+      "",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "> Log",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "",
+      log || "(no log output available)",
+    ].join("\n");
+  };
+
+  onCopyToClipboard = () => {
+    const { dispatch } = this.props;
+    const text = this.state.reportText || this.buildReportText();
+    dispatch(actions.copyToClipboard({ text }));
+    this.setState({ copiedToClipboard: true });
+    setTimeout(() => {
+      this.setState({ copiedToClipboard: false });
+    }, 3000);
+  };
+
+  onOpenGitHubIssue = () => {
+    const { dispatch } = this.props;
+    dispatch(
+      actions.openInExternalBrowser({
+        url: "https://github.com/itchio/itch/issues/new",
+      })
+    );
+  };
 
   onViewReport = () => {
     const { dispatch } = this.props;
@@ -358,8 +435,9 @@ class ReportIssue extends React.PureComponent<Props, State> {
 
     doAsync(async () => {
       const daleURL = "https://dale.itch.zone";
-      const { system, includeSystemInfo, message } = this.state;
-      const { log } = this.props.modal.widgetParams;
+      const { system, includeSystemInfo } = this.state;
+      const reportText = this.buildReportText();
+
       try {
         const params = new URLSearchParams();
         if (includeSystemInfo) {
@@ -367,34 +445,54 @@ class ReportIssue extends React.PureComponent<Props, State> {
         } else {
           params.set("system", "(redacted)");
         }
-        params.set(
-          "log",
-          `
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> Message
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        params.set("log", reportText);
 
-${message}
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> Log
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-${log}
-`
-        );
-        const body = await fetch(daleURL, {
-          method: "post",
-          // fetch *can* take a URLSearchParams, thank you very much
-          body: params as any,
-        });
-        if (body.status != 200) {
-          throw new Error(
-            `Post ${daleURL}: got HTTP ${
-              body.status
-            }. Body: ${await body.text()}`
-          );
+        let body: Response;
+        try {
+          body = await fetch(daleURL, {
+            method: "post",
+            // fetch *can* take a URLSearchParams, thank you very much
+            body: params as any,
+          });
+        } catch (fetchErr) {
+          this.setState({
+            stage: ReportStage.Failed,
+            isServiceOffline: true,
+            reportText,
+            errorMessage:
+              "Could not reach crash report server (dale.itch.zone). The server is offline or unreachable.",
+          });
+          return;
         }
+
+        if (
+          body.status === 404 ||
+          body.status === 502 ||
+          body.status === 503 ||
+          body.status === 504
+        ) {
+          this.setState({
+            stage: ReportStage.Failed,
+            isServiceOffline: true,
+            reportText,
+            errorMessage: `The crash report server (dale.itch.zone) is currently offline (HTTP ${body.status}).`,
+          });
+          return;
+        }
+
+        if (body.status !== 200) {
+          const bodyText = await body.text().catch(() => "");
+          this.setState({
+            stage: ReportStage.Failed,
+            isServiceOffline: false,
+            reportText,
+            errorMessage: `Server returned HTTP ${body.status}: ${
+              bodyText || "Unknown server response"
+            }`,
+          });
+          return;
+        }
+
         const res = await body.json();
         if (res.success) {
           this.setState({
@@ -404,13 +502,20 @@ ${log}
           return;
         }
 
-        throw new Error(
-          `Creating report failed: ${JSON.stringify(res, null, 2)}`
-        );
+        this.setState({
+          stage: ReportStage.Failed,
+          isServiceOffline: false,
+          reportText,
+          errorMessage:
+            (res && res.error) ||
+            `Creating report failed: ${JSON.stringify(res, null, 2)}`,
+        });
       } catch (e) {
         this.setState({
           stage: ReportStage.Failed,
-          errorMessage: getErrorStack(e),
+          isServiceOffline: false,
+          reportText,
+          errorMessage: (e as any)?.message || getErrorStack(e),
         });
       }
     });
@@ -498,6 +603,9 @@ interface State {
   tabIndex: number;
   reportURL?: string;
   errorMessage?: string;
+  isServiceOffline?: boolean;
+  copiedToClipboard?: boolean;
+  reportText?: string;
 }
 
 export default injectIntl(
