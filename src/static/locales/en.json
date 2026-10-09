@@ -674,5 +674,9 @@
   "browser.stop": "Stop loading",
   "browser.reload": "Reload page",
   "browser.more_menu": "More options",
-  "game.manage": "Manage game"
+  "game.manage": "Manage game",
+  "send_feedback.error.service_offline": "The crash reporting service is currently offline. You can copy your report and file an issue on GitHub instead:",
+  "send_feedback.error.copy_report": "Copy report to clipboard",
+  "send_feedback.error.copied": "Copied to clipboard!",
+  "send_feedback.error.open_github": "File issue on GitHub"
 }
