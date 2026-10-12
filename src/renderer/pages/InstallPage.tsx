@@ -26,7 +26,7 @@ class InstallPage extends React.PureComponent<Props> {
     }
     if (gameId === undefined) {
       logger.warn(
-        "missing or unparseable game_id in install page URL, not navigating"
+        "missing or unparsable game_id in install page URL, not navigating"
       );
       return;
     }
