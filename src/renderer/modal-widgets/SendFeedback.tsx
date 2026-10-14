@@ -327,8 +327,9 @@ class ReportIssue extends React.PureComponent<Props, State> {
   }
 
   renderFailed() {
-    const { errorMessage, isServiceOffline, copiedToClipboard } = this.state;
+    const { error, isServiceOffline, copiedToClipboard } = this.state;
     const textToDisplay = this.getReportText();
+    const errorMessage = error ? getErrorMessage(error) : null;
 
     return (
       <SendFeedbackDiv>
@@ -368,8 +369,10 @@ class ReportIssue extends React.PureComponent<Props, State> {
   }
 
   getReportText = (): string => {
-    const { system, includeSystemInfo, message, errorStack } = this.state;
+    const { system, includeSystemInfo, message, error } = this.state;
     const { log } = this.props.modal.widgetParams;
+    const errorStack =
+      error instanceof Error && error.stack ? getErrorStack(error) : undefined;
     return buildReportText({
       system,
       includeSystemInfo,
@@ -442,9 +445,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           this.setState({
             stage: ReportStage.Failed,
             isServiceOffline: true,
-            errorMessage:
-              "Could not reach crash report server (dale.itch.zone). The server is offline or unreachable.",
-            errorStack: getErrorStack(fetchErr),
+            error: fetchErr,
           });
           return;
         }
@@ -453,7 +454,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           this.setState({
             stage: ReportStage.Failed,
             isServiceOffline: true,
-            errorMessage: `The crash report server (dale.itch.zone) is currently offline (HTTP ${body.status}).`,
+            error: `The crash report server (dale.itch.zone) is currently offline (HTTP ${body.status}).`,
           });
           return;
         }
@@ -470,7 +471,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           this.setState({
             stage: ReportStage.Failed,
             isServiceOffline: false,
-            errorMessage: `Server returned HTTP ${body.status}${
+            error: `Server returned HTTP ${body.status}${
               bodyText ? `: ${bodyText}` : ""
             }`,
           });
@@ -484,10 +485,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           this.setState({
             stage: ReportStage.Failed,
             isServiceOffline: false,
-            errorMessage: `Failed to parse response from server: ${getErrorMessage(
-              jsonErr
-            )}`,
-            errorStack: getErrorStack(jsonErr),
+            error: jsonErr,
           });
           return;
         }
@@ -504,7 +502,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
         this.setState({
           stage: ReportStage.Failed,
           isServiceOffline: false,
-          errorMessage:
+          error:
             (res && res.error) ||
             `Creating report failed: ${JSON.stringify(resData, null, 2)}`,
         });
@@ -512,8 +510,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
         this.setState({
           stage: ReportStage.Failed,
           isServiceOffline: false,
-          errorMessage: getErrorMessage(e),
-          errorStack: getErrorStack(e),
+          error: e,
         });
       }
     });
@@ -600,8 +597,7 @@ interface State {
   includeSystemInfo: boolean;
   tabIndex: number;
   reportURL?: string;
-  errorMessage?: string;
-  errorStack?: string;
+  error?: unknown;
   isServiceOffline?: boolean;
   copiedToClipboard?: boolean;
 }
