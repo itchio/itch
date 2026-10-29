@@ -1,6 +1,7 @@
 import { getErrorStack, getErrorMessage } from "common/butlerd/errors";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
+import uuid from "common/util/uuid";
 import { Logger } from "common/logger";
 import { PackageState, ProgressInfo, Store } from "common/types";
 import { MinimalContext } from "main/context";
@@ -92,10 +93,14 @@ export class Package implements PackageLike {
     return `${this.baseURL}/${cleanPath}${query}`;
   }
 
-  buildDownloadURL(version: Version, path: string) {
+  buildDownloadURL(
+    version: Version,
+    path: string,
+    queryParams?: { [key: string]: any }
+  ) {
     const cleanPath = path.replace(/^\//, "");
     const remoteVersionFolder = version;
-    return this.buildURL(`/${remoteVersionFolder}/${cleanPath}`);
+    return this.buildURL(`/${remoteVersionFolder}/${cleanPath}`, queryParams);
   }
 
   /** fetch latest version number from repo */
@@ -332,7 +337,8 @@ export class Package implements PackageLike {
       const archiveName = `${this.name}.zip`;
       const archiveUrl = this.buildDownloadURL(
         latestVersion,
-        `/${archiveName}`
+        `/${archiveName}`,
+        { downloadSessionId: uuid() }
       );
 
       await sf.wipe(this.getDownloadsDir());
