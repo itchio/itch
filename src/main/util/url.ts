@@ -14,7 +14,7 @@ export function openExternalURL(url: string) {
   try {
     protocol = new URL(url).protocol;
   } catch {
-    logger.warn(`Refusing to open unparseable external URL: ${url}`);
+    logger.warn(`Refusing to open unparsable external URL: ${url}`);
     return;
   }
   if (!allowedExternalProtocols.has(protocol)) {
