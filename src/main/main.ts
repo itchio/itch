@@ -265,7 +265,9 @@ export function main() {
             args: argv,
           })
         );
-        store.dispatch(actions.focusWind({ wind: "root" }));
+        if (!argv.includes("--hidden")) {
+          store.dispatch(actions.focusWind({ wind: "root" }));
+        }
       });
     }
 
