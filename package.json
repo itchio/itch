@@ -50,7 +50,7 @@
     "semver": "^7.3.4",
     "split2": "^4.2.0",
     "styled-components": "^5.3.11",
-    "systeminformation": "^5.31.13",
+    "systeminformation": "^5.33.16",
     "term-color": "^1.0.1",
     "vivus": "^0.4.5",
     "which": "^6.0.1",
