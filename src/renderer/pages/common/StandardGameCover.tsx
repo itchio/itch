@@ -150,6 +150,9 @@ class StandardGameCover extends React.PureComponent<Props> {
     }
     const { clientX, clientY } = ev;
     ev.preventDefault();
+    // a parent with its own game menu (the browser context bar) would
+    // otherwise pop a second native menu that closes this one
+    ev.stopPropagation();
     const wind = ambientWind();
     dispatch(
       actions.openGameContextMenu({
