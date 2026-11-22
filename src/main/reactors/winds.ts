@@ -62,6 +62,17 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = process.platform === "darwin";
 
+function shouldStartHidden(store: Store): boolean {
+  // Windows and Linux autostart entries pass --hidden. macOS reports whether
+  // this launch came from a login item instead.
+  return (
+    process.argv.includes("--hidden") ||
+    (macOs &&
+      store.getState().preferences.openAsHidden &&
+      app.getLoginItemSettings().wasOpenedAtLogin)
+  );
+}
+
 function dispatchBootWhenReady(store: Store) {
   if (dispatchedBoot) {
     return;
@@ -92,12 +103,7 @@ async function createRootWindow(store: Store) {
   const { width, height } = bounds;
   const center = bounds.x === -1 && bounds.y === -1;
 
-  // The --hidden flag is injected into the Exec= line of the autostart
-  // .desktop file (see open-at-login.ts), so it's only present on launches
-  // triggered by login autostart — not on manual launches via menu/desktop.
-  // We can't use the openAsHidden preference directly here because the user
-  // expects manual launches to still show a window.
-  const startHidden = process.argv.includes("--hidden");
+  const startHidden = shouldStartHidden(store);
 
   let opts: Electron.BrowserWindowConstructorOptions = {
     ...commonBrowserWindowOpts(store),
@@ -271,8 +277,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.preferencesLoaded, async (store, action) => {
-    const hidden = process.argv.includes("--hidden");
-    if (!hidden) {
+    if (!shouldStartHidden(store)) {
       store.dispatch(actions.focusWind({ wind: "root" }));
     }
 

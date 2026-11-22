@@ -133,21 +133,29 @@ async function updateOpenAtLoginState(
   } else if (process.platform === "win32") {
     // Without an explicit path the Run key points at process.execPath,
     // the versioned app-X.Y.Z executable, which goes stale on the next
-    // self-update. No login item flag to start hidden, so openAsHidden
-    // is ignored.
+    // self-update. Forward --hidden to the app after the launcher's argument
+    // separator so it isn't interpreted as an installer option.
     const launcherPath = resolveWindowsLauncherPath(env.appName);
     if (launcherPath) {
       app.setLoginItemSettings({
         openAtLogin,
         path: launcherPath,
-        args: ["--prefer-launch", "--appname", env.appName],
+        args: [
+          "--prefer-launch",
+          "--appname",
+          env.appName,
+          ...(openAsHidden ? ["--", "--hidden"] : []),
+        ],
       });
     } else {
-      app.setLoginItemSettings({ openAtLogin });
+      app.setLoginItemSettings({
+        openAtLogin,
+        args: openAsHidden ? ["--hidden"] : [],
+      });
     }
   } else {
-    // macOS: no login item flag to start hidden, so openAsHidden is
-    // ignored here.
+    // macOS reports login launches through wasOpenedAtLogin. Window creation
+    // applies openAsHidden there, since the native hidden setting is obsolete.
     app.setLoginItemSettings({ openAtLogin });
   }
 }
