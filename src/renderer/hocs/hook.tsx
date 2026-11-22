@@ -57,11 +57,11 @@ export function hookWithProps<InputProps>(
     ): React.ComponentType<
       Subtract<InputProps, Pick<InputProps, K> & DispatchProp<any>>
     > {
-      return connect(
-        createStructuredSelector<RootState, InputProps, Pick<InputProps, K>>(
-          selectors
-        )
-      )(component as any) as any;
+      const mapState = createStructuredSelector(selectors) as unknown as (
+        state: RootState,
+        props: InputProps
+      ) => Pick<InputProps, K>;
+      return connect(mapState)(component as any) as any;
     };
   };
 }

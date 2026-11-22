@@ -8,9 +8,10 @@ import {
   FetchRes,
   RecordComponentProps,
 } from "renderer/series/Series";
-import { createStructuredSelector } from "reselect";
 
 interface GenericExtraProps<Item> {}
+
+const emptyExtraProps = {};
 
 interface CollectionSeriesProps<Params, Item>
   extends BaseSeriesProps<Params, Item, Collection>,
@@ -34,7 +35,7 @@ export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
 
     constructor(props: Props, context: any) {
       super(props, context);
-      this.selector = createStructuredSelector({});
+      this.selector = () => emptyExtraProps;
     }
 
     override render() {
