@@ -6,7 +6,7 @@ export interface ProfileContextProps {
   profile: Profile;
 }
 
-const profileContext = React.createContext<Profile | null>(null);
+export const profileContext = React.createContext<Profile | null>(null);
 export const ProfileProvider = profileContext.Provider;
 export const ProfileConsumer = profileContext.Consumer;
 

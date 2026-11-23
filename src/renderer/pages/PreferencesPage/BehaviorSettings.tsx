@@ -2,7 +2,6 @@ import React from "react";
 
 import { actions } from "common/actions";
 import { SandboxType } from "common/butlerd/messages";
-import { Dispatch, PreferencesState } from "common/types";
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import OpenAtLoginErrorMessage from "renderer/pages/PreferencesPage/OpenAtLoginErrorMessage";
 import {
@@ -10,7 +9,7 @@ import {
   SettingsGroupRow,
 } from "renderer/pages/PreferencesPage/SettingsGroup";
 import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import Icon from "renderer/basics/Icon";
 import styled from "renderer/styles";
 
@@ -40,151 +39,47 @@ const SandboxAllowEnvInput = styled.input`
   }
 `;
 
-class BehaviorSettings extends React.PureComponent<Props> {
-  override render() {
-    const {
-      linux,
-      isolateApps,
-      linuxSandboxType,
-      linuxSandboxNoNetwork,
-      linuxSandboxAllowEnv,
-    } = this.props;
-    const sandboxTypeOptions: BaseOptionType[] = [
-      {
-        label: ["preferences.security.sandbox.type.auto"],
-        value: SandboxType.Auto,
-      },
-      {
-        label: "Bubblewrap",
-        value: SandboxType.Bubblewrap,
-      },
-      {
-        label: "Firejail",
-        value: SandboxType.Firejail,
-      },
-    ];
+const sandboxTypeOptions: BaseOptionType[] = [
+  {
+    label: ["preferences.security.sandbox.type.auto"],
+    value: SandboxType.Auto,
+  },
+  {
+    label: "Bubblewrap",
+    value: SandboxType.Bubblewrap,
+  },
+  {
+    label: "Firejail",
+    value: SandboxType.Firejail,
+  },
+];
 
-    return (
-      <>
-        <h2>{T(["preferences.security"])}</h2>
-        <SettingsGroup className="security-form">
-          <Checkbox
-            name="isolateApps"
-            label={T(["preferences.security.sandbox.title"])}
-          />
+const BehaviorSettings = () => {
+  const dispatch = useAppDispatch();
+  const linux = useAppSelector((rs) => rs.system.linux);
+  const isolateApps = useAppSelector((rs) => rs.preferences.isolateApps);
+  const linuxSandboxType = useAppSelector(
+    (rs) => rs.preferences.linuxSandboxType
+  );
+  const linuxSandboxAllowEnv = useAppSelector(
+    (rs) => rs.preferences.linuxSandboxAllowEnv
+  );
 
-          {linux && isolateApps ? (
-            <SettingsGroup>
-              <SandboxTypeRow active>
-                <span>{T(["preferences.security.sandbox.type.label"])}</span>
-                <SandboxTypeSelect
-                  onChange={this.onSandboxTypeChange}
-                  options={sandboxTypeOptions}
-                  value={
-                    sandboxTypeOptions.find(
-                      (o) => o.value === linuxSandboxType
-                    ) || sandboxTypeOptions[0]
-                  }
-                />
-              </SandboxTypeRow>
-
-              <Checkbox
-                name="linuxSandboxNoNetwork"
-                label={T(["preferences.security.sandbox.no_network.title"])}
-                onChange={this.onSandboxNoNetworkChange}
-              />
-
-              <SandboxTypeRow active={!!linuxSandboxAllowEnv}>
-                <span>
-                  {T(["preferences.security.sandbox.allow_env.label"])}
-                </span>
-                <SandboxAllowEnvInput
-                  type="text"
-                  value={linuxSandboxAllowEnv || ""}
-                  onChange={this.onSandboxAllowEnvChange}
-                />
-              </SandboxTypeRow>
-            </SettingsGroup>
-          ) : null}
-        </SettingsGroup>
-
-        <p className="explanation">
-          {T(["preferences.security.sandbox.description"])}{" "}
-          <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
-        </p>
-
-        <p className="explanation">
-          <Icon icon="warning" />{" "}
-          {T(["preferences.security.sandbox.save_warning"])}{" "}
-          <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
-        </p>
-
-        <h2>{T(["preferences.behavior"])}</h2>
-        <SettingsGroup className="behavior-form">
-          <Checkbox
-            name="enableTabs"
-            label={T(["preferences.behavior.enable_tabs"])}
-          />
-
-          <Checkbox
-            name="openAtLogin"
-            label={T(["preferences.behavior.open_at_login"])}
-          />
-
-          <OpenAtLoginErrorMessage />
-
-          <Checkbox
-            name="openAsHidden"
-            label={T(["preferences.behavior.open_as_hidden"])}
-          />
-
-          <Checkbox
-            name="closeToTray"
-            label={T(["preferences.behavior.close_to_tray"])}
-          />
-
-          <Checkbox
-            name="manualGameUpdates"
-            label={T(["preferences.behavior.manual_game_updates"])}
-          />
-
-          <Checkbox
-            name="preventDisplaySleep"
-            label={T(["preferences.behavior.prevent_display_sleep"])}
-          />
-        </SettingsGroup>
-
-        <h2>{T(["preferences.notifications"])}</h2>
-        <SettingsGroup className="behavior-form">
-          <Checkbox
-            name="readyNotification"
-            label={T(["preferences.notifications.ready_notification"])}
-          />
-        </SettingsGroup>
-      </>
-    );
-  }
-
-  onSandboxTypeChange = (option: BaseOptionType) => {
+  const onSandboxTypeChange = (option: BaseOptionType) => {
     if (!option) {
       return;
     }
-
-    const selectedSandboxType =
-      option.value === SandboxType.Auto
-        ? undefined
-        : (option.value as SandboxType);
-
-    const { dispatch } = this.props;
     dispatch(
       actions.updatePreferences({
-        linuxSandboxType: selectedSandboxType,
+        linuxSandboxType:
+          option.value === SandboxType.Auto
+            ? undefined
+            : (option.value as SandboxType),
       })
     );
   };
 
-  onSandboxNoNetworkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { dispatch } = this.props;
+  const onSandboxNoNetworkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
       actions.updatePreferences({
         linuxSandboxNoNetwork: e.currentTarget.checked ? true : undefined,
@@ -192,8 +87,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
     );
   };
 
-  onSandboxAllowEnvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { dispatch } = this.props;
+  const onSandboxAllowEnvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawText = e.currentTarget.value;
     dispatch(
       actions.updatePreferences({
@@ -201,21 +95,104 @@ class BehaviorSettings extends React.PureComponent<Props> {
       })
     );
   };
-}
 
-export default hook((map) => ({
-  linux: map((rs) => rs.system.linux),
-  isolateApps: map((rs) => rs.preferences.isolateApps),
-  linuxSandboxType: map((rs) => rs.preferences.linuxSandboxType),
-  linuxSandboxNoNetwork: map((rs) => rs.preferences.linuxSandboxNoNetwork),
-  linuxSandboxAllowEnv: map((rs) => rs.preferences.linuxSandboxAllowEnv),
-}))(BehaviorSettings);
+  return (
+    <>
+      <h2>{T(["preferences.security"])}</h2>
+      <SettingsGroup className="security-form">
+        <Checkbox
+          name="isolateApps"
+          label={T(["preferences.security.sandbox.title"])}
+        />
 
-interface Props {
-  dispatch: Dispatch;
-  linux: boolean;
-  isolateApps: boolean;
-  linuxSandboxType: PreferencesState["linuxSandboxType"];
-  linuxSandboxNoNetwork: PreferencesState["linuxSandboxNoNetwork"];
-  linuxSandboxAllowEnv: PreferencesState["linuxSandboxAllowEnv"];
-}
+        {linux && isolateApps ? (
+          <SettingsGroup>
+            <SandboxTypeRow active>
+              <span>{T(["preferences.security.sandbox.type.label"])}</span>
+              <SandboxTypeSelect
+                onChange={onSandboxTypeChange}
+                options={sandboxTypeOptions}
+                value={
+                  sandboxTypeOptions.find(
+                    (o) => o.value === linuxSandboxType
+                  ) || sandboxTypeOptions[0]
+                }
+              />
+            </SandboxTypeRow>
+
+            <Checkbox
+              name="linuxSandboxNoNetwork"
+              label={T(["preferences.security.sandbox.no_network.title"])}
+              onChange={onSandboxNoNetworkChange}
+            />
+
+            <SandboxTypeRow active={!!linuxSandboxAllowEnv}>
+              <span>{T(["preferences.security.sandbox.allow_env.label"])}</span>
+              <SandboxAllowEnvInput
+                type="text"
+                value={linuxSandboxAllowEnv || ""}
+                onChange={onSandboxAllowEnvChange}
+              />
+            </SandboxTypeRow>
+          </SettingsGroup>
+        ) : null}
+      </SettingsGroup>
+
+      <p className="explanation">
+        {T(["preferences.security.sandbox.description"])}{" "}
+        <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
+      </p>
+
+      <p className="explanation">
+        <Icon icon="warning" />{" "}
+        {T(["preferences.security.sandbox.save_warning"])}{" "}
+        <a href={urls.sandboxDocs}>{T(["docs.learn_more"])}</a>
+      </p>
+
+      <h2>{T(["preferences.behavior"])}</h2>
+      <SettingsGroup className="behavior-form">
+        <Checkbox
+          name="enableTabs"
+          label={T(["preferences.behavior.enable_tabs"])}
+        />
+
+        <Checkbox
+          name="openAtLogin"
+          label={T(["preferences.behavior.open_at_login"])}
+        />
+
+        <OpenAtLoginErrorMessage />
+
+        <Checkbox
+          name="openAsHidden"
+          label={T(["preferences.behavior.open_as_hidden"])}
+        />
+
+        <Checkbox
+          name="closeToTray"
+          label={T(["preferences.behavior.close_to_tray"])}
+        />
+
+        <Checkbox
+          name="manualGameUpdates"
+          label={T(["preferences.behavior.manual_game_updates"])}
+        />
+
+        <Checkbox
+          name="preventDisplaySleep"
+          label={T(["preferences.behavior.prevent_display_sleep"])}
+        />
+      </SettingsGroup>
+
+      <h2>{T(["preferences.notifications"])}</h2>
+      <SettingsGroup className="behavior-form">
+        <Checkbox
+          name="readyNotification"
+          label={T(["preferences.notifications.ready_notification"])}
+        />
+      </SettingsGroup>
+    </>
+  );
+};
+
+export default BehaviorSettings;

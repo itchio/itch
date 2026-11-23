@@ -1,10 +1,9 @@
 import React from "react";
-import { Dispatch } from "common/types";
-import { hook } from "renderer/hocs/hook";
 import { T } from "renderer/t";
 import styled from "renderer/styles";
 import Button from "renderer/basics/Button";
 import { actions } from "common/actions";
+import { useAppDispatch } from "renderer/hooks/redux";
 
 const ControlButtonsDiv = styled.div`
   padding: 0 15px;
@@ -13,24 +12,10 @@ const ControlButtonsDiv = styled.div`
   align-items: center;
 `;
 
-class InstallLocationSettings extends React.Component<Props> {
-  override render() {
-    return (
-      <>
-        <h2>{T(["preferences.install_locations"])}</h2>
-        <ControlButtonsDiv>
-          <Button
-            icon="cog"
-            label={T(["install_locations.manage"])}
-            onClick={this.onManage}
-          />
-        </ControlButtonsDiv>
-      </>
-    );
-  }
+const InstallLocationSettings = () => {
+  const dispatch = useAppDispatch();
 
-  onManage = () => {
-    const { dispatch } = this.props;
+  const onManage = () => {
     dispatch(
       actions.navigate({
         wind: "root",
@@ -38,10 +23,19 @@ class InstallLocationSettings extends React.Component<Props> {
       })
     );
   };
-}
 
-interface Props {
-  dispatch: Dispatch;
-}
+  return (
+    <>
+      <h2>{T(["preferences.install_locations"])}</h2>
+      <ControlButtonsDiv>
+        <Button
+          icon="cog"
+          label={T(["install_locations.manage"])}
+          onClick={onManage}
+        />
+      </ControlButtonsDiv>
+    </>
+  );
+};
 
-export default hook()(InstallLocationSettings);
+export default InstallLocationSettings;

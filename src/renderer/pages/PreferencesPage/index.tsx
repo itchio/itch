@@ -1,8 +1,7 @@
-import { Dispatch } from "common/types";
-import React from "react";
-import { hook } from "renderer/hocs/hook";
+import React, { useEffect } from "react";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppDispatch } from "renderer/hooks/redux";
+import { useTab } from "renderer/hooks/useTab";
 import AdvancedSettings from "renderer/pages/PreferencesPage/AdvancedSettings";
 import BehaviorSettings from "renderer/pages/PreferencesPage/BehaviorSettings";
 import LanguageSettings from "renderer/pages/PreferencesPage/LanguageSettings";
@@ -115,30 +114,27 @@ const PreferencesContentDiv = styled.div`
   }
 `;
 
-class PreferencesPage extends React.PureComponent<Props> {
-  override componentDidMount() {
-    dispatchTabPageUpdate(this.props, {
-      label: ["sidebar.preferences"],
-    });
-  }
+const PreferencesPage = (_props: MeatProps) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
 
-  override render() {
-    return (
-      <PreferencesDiv>
-        <PreferencesContentDiv>
-          <LanguageSettings />
-          <InstallLocationSettings />
-          <BehaviorSettings />
-          <AdvancedSettings />
-        </PreferencesContentDiv>
-      </PreferencesDiv>
+  useEffect(() => {
+    dispatchTabPageUpdate(
+      { tab, dispatch },
+      { label: ["sidebar.preferences"] }
     );
-  }
-}
+  }, [tab, dispatch]);
 
-interface Props extends MeatProps {
-  tab: string;
-  dispatch: Dispatch;
-}
+  return (
+    <PreferencesDiv>
+      <PreferencesContentDiv>
+        <LanguageSettings />
+        <InstallLocationSettings />
+        <BehaviorSettings />
+        <AdvancedSettings />
+      </PreferencesContentDiv>
+    </PreferencesDiv>
+  );
+};
 
-export default hook()(withTab(PreferencesPage));
+export default PreferencesPage;

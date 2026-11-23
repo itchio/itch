@@ -2,54 +2,63 @@ import * as messages from "common/butlerd/messages";
 import { ModalWidgetProps } from "common/modals";
 import { ConfirmQuitParams, ConfirmQuitResponse } from "common/modals/types";
 import React from "react";
-import butlerCaller from "renderer/hocs/butlerCaller";
+import ErrorState from "renderer/basics/ErrorState";
+import Floater from "renderer/basics/Floater";
+import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
+import { useButlerd } from "renderer/hooks/useButlerd";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 
-const FetchGame = butlerCaller(messages.FetchGame);
-
-class RunningGame extends React.PureComponent<{ gameId: number }> {
-  override render() {
-    const { gameId } = this.props;
-    return <FetchGame params={{ gameId }} render={this.renderGame} />;
-  }
-
-  renderGame = FetchGame.renderCallback(({ result }) => {
-    if (result && result.game) {
-      const { game } = result;
-      return (
-        <Box>
-          <BoxInner>
-            <StandardGameCover game={game} disableLink />
-            <FilterSpacer />
-            <StandardGameDesc game={game} disableLink />
-            <FilterSpacer />
-          </BoxInner>
-        </Box>
-      );
-    }
-    return null;
+const RunningGame = ({ gameId }: { gameId: number }) => {
+  const { loading, result, error } = useButlerd(messages.FetchGame, {
+    gameId,
   });
-}
 
-export default class ConfirmQuit extends React.PureComponent<Props> {
-  override render() {
-    const { gameIds } = this.props.modal.widgetParams;
-
+  // a cached game stays up even if refreshing it failed
+  const game = result?.game;
+  if (game) {
     return (
-      <ModalWidgetDiv>
-        {gameIds.map((gameId) => (
-          <RunningGame gameId={gameId} key={gameId} />
-        ))}
-      </ModalWidgetDiv>
+      <Box>
+        <BoxInner>
+          <StandardGameCover game={game} disableLink />
+          <FilterSpacer />
+          <StandardGameDesc game={game} disableLink />
+          <FilterSpacer />
+        </BoxInner>
+      </Box>
     );
   }
-}
 
-// props
+  if (error) {
+    return <ErrorState error={error} />;
+  }
 
-interface Props
-  extends ModalWidgetProps<ConfirmQuitParams, ConfirmQuitResponse> {}
+  if (loading) {
+    return (
+      <LoadingStateDiv>
+        <Floater />
+      </LoadingStateDiv>
+    );
+  }
+
+  return null;
+};
+
+type Props = ModalWidgetProps<ConfirmQuitParams, ConfirmQuitResponse>;
+
+const ConfirmQuit = ({ modal }: Props) => {
+  const { gameIds } = modal.widgetParams;
+
+  return (
+    <ModalWidgetDiv>
+      {gameIds.map((gameId) => (
+        <RunningGame gameId={gameId} key={gameId} />
+      ))}
+    </ModalWidgetDiv>
+  );
+};
+
+export default ConfirmQuit;

@@ -1,71 +1,57 @@
+import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import butlerCaller from "renderer/hocs/butlerCaller";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import { Dispatch } from "redux";
-import { hookWithProps } from "renderer/hocs/hook";
-import { withTab } from "renderer/hocs/withTab";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import { dispatchTabEvolve } from "renderer/hocs/tab-utils";
-import { actions } from "common/actions";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useTab } from "renderer/hooks/useTab";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
-const FetchCave = butlerCaller(messages.FetchCave);
+const LaunchCave = ({ caveId }: { caveId: string }) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
 
-class CavePage extends React.PureComponent<Props> {
-  override render() {
-    const { caveId } = this.props;
-    if (!caveId) {
-      return <ErrorState error={new Error("Missing cave id in URL")} />;
+  const { loading, error } = useButlerd(
+    messages.FetchCave,
+    { caveId },
+    {
+      onResult: ({ cave }) => {
+        if (cave && cave.game) {
+          dispatch(actions.queueLaunch({ cave }));
+          dispatchTabEvolve(
+            { tab, dispatch },
+            {
+              replace: true,
+              url: cave.game.url,
+              resource: `games/${cave.game.id}`,
+            }
+          );
+        } else {
+          // TODO: handle caves not found, etc.
+        }
+      },
     }
+  );
 
-    return (
-      <FetchCave
-        params={{ caveId }}
-        loadingHandled
-        render={this.renderFetchContents}
-        onResult={this.onResult}
-      />
-    );
+  if (error) {
+    return <ErrorState error={error} />;
   }
+  return <FiltersContainer loading={loading} />;
+};
 
-  renderFetchContents = FetchCave.renderCallback(({ loading }) => (
-    <FiltersContainer loading={loading} />
-  ));
+const CavePage = (_props: MeatProps) => {
+  const tab = useTab();
+  const caveId = useAppSelector(
+    (rs) => ambientTab(rs, { tab }).location?.firstPathElement
+  );
 
-  onResult = FetchCave.onResultCallback((result) => {
-    if (result) {
-      const { cave } = result;
-      if (cave && cave.game) {
-        this.props.dispatch(actions.queueLaunch({ cave }));
-        dispatchTabEvolve(this.props, {
-          replace: true,
-          url: cave.game.url,
-          resource: `games/${cave.game.id}`,
-        });
-      } else {
-        // TODO: handle caves not found, etc.
-      }
-    }
-  });
-}
+  if (!caveId) {
+    return <ErrorState error={new Error("Missing cave id in URL")} />;
+  }
+  return <LaunchCave caveId={caveId} />;
+};
 
-interface Props extends MeatProps {
-  tab: string;
-  dispatch: Dispatch;
-
-  caveId: string | undefined;
-  actionName: string | undefined;
-}
-
-export default withTab(
-  hookWithProps(CavePage)((map) => ({
-    caveId: map(
-      (rs, props) => ambientTab(rs, props).location?.firstPathElement
-    ),
-    actionName: map(
-      (rs, props) => ambientTab(rs, props).location?.secondPathElement
-    ),
-  }))(CavePage)
-);
+export default CavePage;

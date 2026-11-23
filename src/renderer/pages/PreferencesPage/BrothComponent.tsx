@@ -1,11 +1,11 @@
 import { actions } from "common/actions";
-import { Dispatch, PackageState } from "common/types";
+import { PackageState } from "common/types";
 import urls from "common/constants/urls";
-import React from "react";
+import React, { useState } from "react";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { hookWithProps } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import styled, * as styles from "renderer/styles";
 
 const BrothComponentButton = styled.button`
@@ -74,181 +74,146 @@ const releasesPages: Record<string, string> = {
   "itch-setup": urls.itchSetupReleasesPage,
 };
 
-interface State {
-  expanded: boolean;
-}
+const stageIcons: Record<PackageState["stage"], string> = {
+  idle: "checkmark",
+  assess: "stopwatch",
+  download: "download",
+  install: "install",
+  "need-restart": "repeat",
+};
 
-class BrothComponent extends React.PureComponent<Props, State> {
-  override state: State = {
-    expanded: false,
-  };
-
-  toggleExpanded = () => {
-    this.setState((state) => ({ expanded: !state.expanded }));
-  };
-
-  openReleaseNotes = () => {
-    const { name, dispatch } = this.props;
-    const url = releasesPages[name];
-    if (url) {
-      dispatch(actions.openInExternalBrowser({ url }));
-    }
-  };
-
-  override render() {
-    const { name, pkg } = this.props;
-    const { expanded } = this.state;
-
-    return (
-      <div>
-        <BrothComponentButton
-          className="section component"
-          onClick={this.toggleExpanded}
-        >
-          <Icon
-            icon="triangle-right"
-            className={`turner ${expanded ? "turned" : ""}`}
-          />
-          <Spacer />
-          {this.renderIcon()}
-          <Spacer />
-          {name} @ {this.formatPackageVersion(pkg.version)}
-          <Spacer />
-          {this.renderProgress()}
-        </BrothComponentButton>
-        {expanded && this.renderDetails()}
-      </div>
-    );
+function formatPackageVersion(v: string | undefined): string {
+  if (!v) {
+    return "∅";
   }
 
-  renderDetails() {
-    const { name, pkg } = this.props;
-
-    const executablePath = pkg.versionPrefix
-      ? `${pkg.versionPrefix}${
-          pkg.versionPrefix.endsWith("/") ? "" : "/"
-        }${name}`
-      : "N/A";
-    const installDir = pkg.versionPrefix || "N/A";
-    const fullVersion = pkg.version || "N/A";
-    const sourceUrl = pkg.channel
-      ? `${urls.brothRepo}/${name}/${pkg.channel}`
-      : null;
-    const releasesUrl = releasesPages[name];
-
-    return (
-      <ComponentDetails>
-        <div className="detail-row">
-          <span className="detail-label">Executable:</span>
-          <span className="detail-value">{executablePath}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Version:</span>
-          <span className="detail-value">{fullVersion}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Directory:</span>
-          <span className="detail-value">{installDir}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Stage:</span>
-          <span className="detail-value">{pkg.stage}</span>
-        </div>
-        {pkg.stage === "need-restart" && pkg.availableVersion && (
-          <div className="detail-row">
-            <span className="detail-label">Pending:</span>
-            <span className="detail-value">{pkg.availableVersion}</span>
-          </div>
-        )}
-        {sourceUrl && (
-          <div className="detail-row">
-            <span className="detail-label">Source:</span>
-            <span className="detail-value">{sourceUrl}</span>
-          </div>
-        )}
-        {releasesUrl && (
-          <div className="detail-row">
-            <span className="detail-label">Release Notes:</span>
-            <button
-              type="button"
-              className="detail-link"
-              onClick={this.openReleaseNotes}
-            >
-              {releasesUrl}
-            </button>
-          </div>
-        )}
-      </ComponentDetails>
-    );
-  }
-
-  renderIcon() {
-    switch (this.props.pkg.stage) {
-      case "idle":
-        return <Icon icon="checkmark" />;
-      case "assess":
-        return <Icon icon="stopwatch" />;
-      case "download":
-        return <Icon icon="download" />;
-      case "install":
-        return <Icon icon="install" />;
-      case "need-restart":
-        return <Icon icon="repeat" />;
-    }
-    return null;
-  }
-
-  renderProgress() {
-    const { pkg } = this.props;
-    const { progressInfo } = pkg;
-    if (progressInfo) {
-      const { eta = 0, bps = 0 } = progressInfo;
-      return (
-        <>
-          <Spacer />
-          <LoadingCircle progress={progressInfo.progress} />
-          <Spacer />
-          <DownloadProgressSpan eta={eta} bps={bps} downloadsPaused={false} />
-        </>
-      );
-    }
-
-    if (pkg.stage === "assess" || pkg.stage === "install") {
-      return (
-        <>
-          <Spacer />
-          <LoadingCircle progress={-1} />
-        </>
-      );
-    }
-
-    return null;
-  }
-
-  formatPackageVersion(v: string | undefined): string {
-    if (!v) {
-      return "∅";
-    }
-
-    // Show full version for local dev builds
-    if (v.startsWith("head")) {
-      return v;
-    }
-
-    if (/[a-z0-9]/.test(v)) {
-      return v.substr(0, 7);
-    }
+  // Show full version for local dev builds
+  if (v.startsWith("head")) {
     return v;
   }
+
+  if (/[a-z0-9]/.test(v)) {
+    return v.substr(0, 7);
+  }
+  return v;
 }
 
-interface Props {
-  name: string;
-  dispatch: Dispatch;
+const Progress = ({ pkg }: { pkg: PackageState }) => {
+  const { progressInfo } = pkg;
+  if (progressInfo) {
+    const { eta = 0, bps = 0 } = progressInfo;
+    return (
+      <>
+        <Spacer />
+        <LoadingCircle progress={progressInfo.progress} />
+        <Spacer />
+        <DownloadProgressSpan eta={eta} bps={bps} downloadsPaused={false} />
+      </>
+    );
+  }
 
+  if (pkg.stage === "assess" || pkg.stage === "install") {
+    return (
+      <>
+        <Spacer />
+        <LoadingCircle progress={-1} />
+      </>
+    );
+  }
+
+  return null;
+};
+
+interface DetailsProps {
+  name: string;
   pkg: PackageState;
 }
 
-export default hookWithProps(BrothComponent)((map) => ({
-  pkg: map((rs, props) => rs.broth.packages[props.name]),
-}))(BrothComponent);
+const Details = ({ name, pkg }: DetailsProps) => {
+  const dispatch = useAppDispatch();
+
+  const executablePath = pkg.versionPrefix
+    ? `${pkg.versionPrefix}${pkg.versionPrefix.endsWith("/") ? "" : "/"}${name}`
+    : "N/A";
+  const installDir = pkg.versionPrefix || "N/A";
+  const fullVersion = pkg.version || "N/A";
+  const sourceUrl = pkg.channel
+    ? `${urls.brothRepo}/${name}/${pkg.channel}`
+    : null;
+  const releasesUrl: string | undefined = releasesPages[name];
+
+  return (
+    <ComponentDetails>
+      <div className="detail-row">
+        <span className="detail-label">Executable:</span>
+        <span className="detail-value">{executablePath}</span>
+      </div>
+      <div className="detail-row">
+        <span className="detail-label">Version:</span>
+        <span className="detail-value">{fullVersion}</span>
+      </div>
+      <div className="detail-row">
+        <span className="detail-label">Directory:</span>
+        <span className="detail-value">{installDir}</span>
+      </div>
+      <div className="detail-row">
+        <span className="detail-label">Stage:</span>
+        <span className="detail-value">{pkg.stage}</span>
+      </div>
+      {pkg.stage === "need-restart" && pkg.availableVersion && (
+        <div className="detail-row">
+          <span className="detail-label">Pending:</span>
+          <span className="detail-value">{pkg.availableVersion}</span>
+        </div>
+      )}
+      {sourceUrl && (
+        <div className="detail-row">
+          <span className="detail-label">Source:</span>
+          <span className="detail-value">{sourceUrl}</span>
+        </div>
+      )}
+      {releasesUrl && (
+        <div className="detail-row">
+          <span className="detail-label">Release Notes:</span>
+          <button
+            type="button"
+            className="detail-link"
+            onClick={() =>
+              dispatch(actions.openInExternalBrowser({ url: releasesUrl }))
+            }
+          >
+            {releasesUrl}
+          </button>
+        </div>
+      )}
+    </ComponentDetails>
+  );
+};
+
+const BrothComponent = ({ name }: { name: string }) => {
+  const pkg = useAppSelector((rs) => rs.broth.packages[name]);
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <BrothComponentButton
+        className="section component"
+        onClick={() => setExpanded((expanded) => !expanded)}
+      >
+        <Icon
+          icon="triangle-right"
+          className={`turner ${expanded ? "turned" : ""}`}
+        />
+        <Spacer />
+        <Icon icon={stageIcons[pkg.stage]} />
+        <Spacer />
+        {name} @ {formatPackageVersion(pkg.version)}
+        <Spacer />
+        <Progress pkg={pkg} />
+      </BrothComponentButton>
+      {expanded && <Details name={name} pkg={pkg} />}
+    </div>
+  );
+};
+
+export default BrothComponent;

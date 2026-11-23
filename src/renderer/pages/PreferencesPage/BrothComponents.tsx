@@ -1,8 +1,7 @@
 import { actions } from "common/actions";
-import { Dispatch } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import BrothComponent from "renderer/pages/PreferencesPage/BrothComponent";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
@@ -14,35 +13,25 @@ const CheckUpdatesButton = styled.button`
   cursor: pointer;
 `;
 
-class BrothComponents extends React.Component<Props> {
-  override render() {
-    const { packageNames } = this.props;
+const BrothComponents = () => {
+  const dispatch = useAppDispatch();
+  const packageNames = useAppSelector((rs) => rs.broth.packageNames);
 
-    return (
-      <div className="section">
-        <Icon icon="list" /> {T(["preferences.advanced.components"])}
-        <CheckUpdatesButton type="button" onClick={this.checkForUpdates}>
-          {T(["menu.help.check_for_update"])}
-        </CheckUpdatesButton>
-        {packageNames.map((name) => (
-          <BrothComponent key={name} name={name} />
-        ))}
-      </div>
-    );
-  }
-
-  checkForUpdates = () => {
-    const { dispatch } = this.props;
+  const checkForUpdates = () => {
     dispatch(actions.checkForComponentUpdates({ manual: true }));
   };
-}
 
-interface Props {
-  dispatch: Dispatch;
+  return (
+    <div className="section">
+      <Icon icon="list" /> {T(["preferences.advanced.components"])}
+      <CheckUpdatesButton type="button" onClick={checkForUpdates}>
+        {T(["menu.help.check_for_update"])}
+      </CheckUpdatesButton>
+      {packageNames.map((name) => (
+        <BrothComponent key={name} name={name} />
+      ))}
+    </div>
+  );
+};
 
-  packageNames: string[];
-}
-
-export default hook((map) => ({
-  packageNames: map((rs) => rs.broth.packageNames),
-}))(BrothComponents);
+export default BrothComponents;

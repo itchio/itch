@@ -1,64 +1,42 @@
-import * as messages from "common/butlerd/messages";
-import { Dispatch } from "common/types";
-import { ambientTab, urlForGame } from "common/util/navigation";
-import React from "react";
-import FiltersContainer from "renderer/basics/FiltersContainer";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hookWithProps } from "renderer/hocs/hook";
-import {
-  dispatchTabEvolve,
-  dispatchTabPageUpdate,
-} from "renderer/hocs/tab-utils";
-import { withTab } from "renderer/hocs/withTab";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { actions } from "common/actions";
+import { ambientTab, urlForGame } from "common/util/navigation";
+import { useEffect } from "react";
+import { dispatchTabEvolve } from "renderer/hocs/tab-utils";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useTab } from "renderer/hooks/useTab";
 import { rendererLogger } from "renderer/logger";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 const logger = rendererLogger.child("InstallPage");
 
-class InstallPage extends React.PureComponent<Props> {
-  override componentDidMount() {
-    const { dispatch, url, gameId } = this.props;
+const InstallPage = (_props: MeatProps) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
+  const location = useAppSelector((rs) => ambientTab(rs, { tab }).location);
+
+  // hands the URL to the install flow once, then turns into the game's tab
+  useEffect(() => {
+    const url = location?.url;
     if (url) {
       dispatch(actions.handleItchioURI({ uri: url }));
     } else {
       logger.warn("no URL for install page tab, not handling itchio URI");
     }
-    if (gameId === undefined) {
+
+    const gameId = parseInt(location?.query.game_id ?? "", 10);
+    if (Number.isNaN(gameId)) {
       logger.warn(
         "missing or unparseable game_id in install page URL, not navigating"
       );
       return;
     }
-    dispatchTabEvolve(this.props, {
-      url: urlForGame(gameId),
-      replace: true,
-    });
-  }
+    dispatchTabEvolve(
+      { tab, dispatch },
+      { url: urlForGame(gameId), replace: true }
+    );
+  }, []);
 
-  override render(): React.ReactNode {
-    return null;
-  }
-}
+  return null;
+};
 
-interface Props extends MeatProps {
-  tab: string;
-  dispatch: Dispatch;
-
-  url: string | undefined;
-  gameId: number | undefined;
-}
-
-export default withTab(
-  hookWithProps(InstallPage)((map) => ({
-    url: map((rs, props) => ambientTab(rs, props).location?.url),
-    gameId: map((rs, props) => {
-      const raw = ambientTab(rs, props).location?.query.game_id;
-      if (!raw) {
-        return undefined;
-      }
-      const gameId = parseInt(raw, 10);
-      return Number.isNaN(gameId) ? undefined : gameId;
-    }),
-  }))(InstallPage)
-);
+export default InstallPage;

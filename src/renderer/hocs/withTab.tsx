@@ -5,9 +5,9 @@ export interface TabContextProps {
   tab: string;
 }
 
-const spaceContext = React.createContext<string | undefined>(undefined);
-export const TabProvider = spaceContext.Provider;
-export const TabConsumer = spaceContext.Consumer;
+export const tabContext = React.createContext<string | undefined>(undefined);
+export const TabProvider = tabContext.Provider;
+export const TabConsumer = tabContext.Consumer;
 
 // withTab consumers only mount under a TabProvider (see HubScene/Meats)
 export const withTab =
