@@ -68,12 +68,12 @@ const uploadIcons = {
   [UploadType.Book]: "book",
   [UploadType.Video]: "video",
   [UploadType.Documentation]: "book",
-  [UploadType.Mod]: "shirt",
+  [UploadType.Mod]: "t-shirt",
   [UploadType.AudioAssets]: "file-music",
   [UploadType.GraphicalAssets]: "images",
   [UploadType.Sourcecode]: "code",
 
-  [UploadType.Other]: "zip",
+  [UploadType.Other]: "file",
 };
 
 export function uploadIcon(upload: Upload): string {
