@@ -1,15 +1,14 @@
 import { RequestCreator } from "@itchio/butlerd";
-import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
-import { Dispatch, LocalizedString } from "common/types";
-import { ambientTab, ambientWind } from "common/util/navigation";
+import { LocalizedString } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import Floater from "renderer/basics/Floater";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook, hookWithProps } from "renderer/hocs/hook";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useTab } from "renderer/hooks/useTab";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
@@ -78,112 +77,80 @@ interface GenericProps<Params, Item> {
   /** every game in this stripe is owned (e.g. owned-bundle contents) */
   forceOwned?: boolean;
 
-  dispatch: Dispatch;
-  tab: string;
-
-  sequence: number;
   linkId?: string; // useful for integration tests
 }
 
 const stripeLimit = 12;
 
+const placeholders = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+interface StripeItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  game?: Game;
+  forceOwned?: boolean;
+}
+
+const StripeItem = React.memo(
+  ({ game, forceOwned, ...restProps }: StripeItemProps) => (
+    <StripeItemDiv {...restProps}>
+      <StandardGameCover game={game} showInfo forceOwned={forceOwned} />
+    </StripeItemDiv>
+  )
+);
+
+function identity<T>(t: T) {
+  return t;
+}
+
 export function makeGameStripe<Params, Res extends FetchRes<any>>(
   rc: RequestCreator<Params, Res>
 ) {
-  const Call = butlerCaller(rc);
   type Item = Res["items"][0];
-
-  const hasItems = (result: Res | undefined): boolean => {
-    if (!result) {
-      return false;
-    }
-    return !!result.items && result.items.length > 0;
-  };
-
   type Props = GenericProps<Params, Item>;
 
-  class Stripe extends React.PureComponent<Props> {
-    override render() {
-      const { params, sequence } = this.props;
+  const Stripe = ({
+    title,
+    href,
+    params,
+    renderTitleExtras,
+    getGame,
+    forceOwned,
+    linkId,
+  }: Props) => {
+    const tab = useTab();
+    const sequence = useAppSelector((rs) => ambientTab(rs, { tab }).sequence);
+    const { loading, error, result } = useButlerd(
+      rc,
+      { ...(params as any), limit: stripeLimit },
+      { sequence }
+    );
 
-      return (
-        <Call
-          params={{ ...(params as any), limit: stripeLimit }}
-          sequence={sequence}
-          loadingHandled
-          errorsHandled
-          render={this.renderCallContents}
-        />
-      );
-    }
+    const items: Item[] = result?.items ?? [];
+    const doneSet = new Set<number>();
 
-    renderCallContents = Call.renderCallback(({ result, error, loading }) => (
+    return (
       <>
-        {this.renderTitle(loading, result, error)}
+        <TitleBox>
+          <Title>
+            <a id={linkId} href={href}>
+              {T(title)}
+            </a>
+            {renderTitleExtras?.()}
+          </Title>
+        </TitleBox>
+        {
+          // a network error is not worth showing over cached items
+          error && !(items.length > 0 && isNetworkError(error)) ? (
+            <ErrorState error={error} />
+          ) : null
+        }
         <StripeDiv>
           {loading ? (
             <FloaterContainer>
               <Floater />
             </FloaterContainer>
           ) : null}
-          {this.renderViewAll()}
-          {this.renderItems(result)}
-          {this.renderEmpty()}
-        </StripeDiv>
-      </>
-    ));
-
-    renderTitle(
-      loading: boolean,
-      result: Res | undefined,
-      error: any
-    ): JSX.Element {
-      const {
-        linkId,
-        href,
-        title,
-        renderTitleExtras = renderNoop,
-      } = this.props;
-      return (
-        <>
-          <TitleBox>
-            <Title>
-              <a id={linkId} href={href}>
-                {T(title)}
-              </a>
-              {renderTitleExtras()}
-            </Title>
-          </TitleBox>
-          {this.renderError(result, error)}
-        </>
-      );
-    }
-
-    renderError(result: Res | undefined, error: Error | undefined) {
-      if (!error) {
-        return null;
-      }
-
-      if (hasItems(result) && isNetworkError(error)) {
-        return null;
-      }
-      return <ErrorState error={error} />;
-    }
-
-    renderItems(result: Res | undefined): JSX.Element | null {
-      if (!result) {
-        return null;
-      }
-
-      if (!result.items || result.items.length === 0) {
-        return null;
-      }
-
-      const doneSet = new Set<number>();
-      const { getGame, forceOwned } = this.props;
-      return (
-        <>
-          {result.items.map((item) => {
+          <ViewAll href={href}>{T(["game_stripe.view_all"])}</ViewAll>
+          {items.map((item) => {
             const game = getGame(item);
             if (!game || doneSet.has(game.id)) {
               return null;
@@ -199,60 +166,18 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
               />
             );
           })}
-        </>
-      );
-    }
-
-    renderEmpty(): JSX.Element {
-      const { dispatch } = this.props;
-      return (
-        <>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((id) => (
+          {placeholders.map((id) => (
             <StripeItem key={`empty-${id}`} />
           ))}
-        </>
-      );
-    }
-
-    renderViewAll(): JSX.Element {
-      return (
-        <ViewAll href={this.props.href}>{T(["game_stripe.view_all"])}</ViewAll>
-      );
-    }
-  }
-  let result = withTab(
-    hookWithProps(Stripe)((map) => ({
-      sequence: map((rs, props) => ambientTab(rs, props).sequence),
-    }))(Stripe)
-  );
-  type ResultType = typeof result;
-  function identity<T>(t: T) {
-    return t;
-  }
-  let augmentedResult: ResultType & {
-    getGameCallback(
-      f: (item: Item) => Game | undefined
-    ): (item: Item) => Game | undefined;
-  } = Object.assign(result, { getGameCallback: identity });
-  return augmentedResult;
-}
-
-function renderNoop(): JSX.Element | null {
-  return null;
-}
-
-class StripeItem extends React.PureComponent<
-  {
-    game?: Game;
-    forceOwned?: boolean;
-  } & React.HTMLAttributes<HTMLDivElement>
-> {
-  override render() {
-    const { game, forceOwned, ...restProps } = this.props;
-    return (
-      <StripeItemDiv {...restProps}>
-        <StandardGameCover game={game} showInfo forceOwned={forceOwned} />
-      </StripeItemDiv>
+        </StripeDiv>
+      </>
     );
-  }
+  };
+
+  return Object.assign(React.memo(Stripe), {
+    // only here to infer the item type at call sites
+    getGameCallback: identity as (
+      f: (item: Item) => Game | undefined
+    ) => (item: Item) => Game | undefined,
+  });
 }

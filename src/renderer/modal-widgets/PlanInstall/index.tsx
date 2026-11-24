@@ -35,7 +35,7 @@ import { ModalButtons } from "renderer/basics/modal-styles";
 import SimpleSelect from "renderer/basics/SimpleSelect";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
-import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
+import { LoadingStateDiv } from "renderer/basics/LoadingState";
 import { hook } from "renderer/hocs/hook";
 import { Watcher } from "common/util/watcher";
 import { watchStore } from "renderer/hooks/useWatcher";

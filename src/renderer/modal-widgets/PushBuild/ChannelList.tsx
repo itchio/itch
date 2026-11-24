@@ -1,12 +1,12 @@
 import { darken, transparentize } from "polished";
-import React from "react";
+import React, { useState } from "react";
 import * as messages from "common/butlerd/messages";
 import { PublishChannel } from "common/butlerd/messages";
-import butlerCaller from "renderer/hocs/butlerCaller";
+import ErrorState from "renderer/basics/ErrorState";
+import LoadingState from "renderer/basics/LoadingState";
+import { useButlerd } from "renderer/hooks/useButlerd";
 import styled, * as styles from "renderer/styles";
 import { T, _ } from "renderer/t";
-
-const FetchChannels = butlerCaller(messages.PublishListChannels);
 
 const Wrapper = styled.div`
   margin: 16px 0;
@@ -124,6 +124,65 @@ function channelHeadLabel(ch: PublishChannel): string {
   return `build #${b.id}`;
 }
 
+interface ChannelsProps {
+  target: string;
+  profileId: number;
+  selectedChannel: string | null;
+  onPick: (channel: string) => void;
+  onExistingChannels?: (names: ReadonlySet<string> | null) => void;
+}
+
+const Channels = ({
+  target,
+  profileId,
+  selectedChannel,
+  onPick,
+  onExistingChannels,
+}: ChannelsProps) => {
+  const { loading, error, result } = useButlerd(
+    messages.PublishListChannels,
+    { profileId, target },
+    {
+      onResult: ({ channels }) => {
+        onExistingChannels?.(channels ? new Set(Object.keys(channels)) : null);
+      },
+    }
+  );
+
+  if (loading && !result) {
+    return <LoadingState />;
+  }
+  if (error) {
+    return <ErrorState error={error} />;
+  }
+
+  const channels: PublishChannel[] = result?.channels
+    ? Object.values(result.channels).sort((a, b) =>
+        a.name.localeCompare(b.name)
+      )
+    : [];
+  if (channels.length === 0) {
+    return <Empty>{T(_("upload.no_channels"))}</Empty>;
+  }
+
+  return (
+    <>
+      {channels.map((ch) => (
+        <ChannelRow
+          key={ch.name}
+          type="button"
+          className={selectedChannel === ch.name ? "active" : ""}
+          aria-pressed={selectedChannel === ch.name}
+          onClick={() => onPick(ch.name)}
+        >
+          <ChannelName>{ch.name}</ChannelName>
+          <ChannelMeta>{channelHeadLabel(ch)}</ChannelMeta>
+        </ChannelRow>
+      ))}
+    </>
+  );
+};
+
 interface Props {
   /** wharf target ("user/slug"), or null when no game is picked */
   target: string | null;
@@ -137,85 +196,51 @@ interface Props {
   onExistingChannels?: (names: ReadonlySet<string> | null) => void;
 }
 
-interface State {
-  newChannel: string;
-}
+const ChannelList = ({
+  target,
+  profileId,
+  selectedChannel,
+  onChange,
+  onExistingChannels,
+}: Props) => {
+  const [newChannel, setNewChannel] = useState("");
 
-export default class ChannelList extends React.PureComponent<Props, State> {
-  override state: State = { newChannel: "" };
-
-  override render() {
-    if (!this.props.target) {
-      return null;
-    }
-    const { target, profileId, selectedChannel } = this.props;
-    const { newChannel } = this.state;
-
-    return (
-      <Wrapper>
-        <Header>{T(_("upload.pick_channel"))}</Header>
-        <FetchChannels
-          params={{ profileId, target }}
-          onResult={this.handleChannelsResult}
-          render={({ result }) => {
-            const channels: PublishChannel[] = result?.channels
-              ? Object.values(result.channels).sort((a, b) =>
-                  a.name.localeCompare(b.name)
-                )
-              : [];
-            if (channels.length === 0) {
-              return <Empty>{T(_("upload.no_channels"))}</Empty>;
-            }
-            return (
-              <>
-                {channels.map((ch) => (
-                  <ChannelRow
-                    key={ch.name}
-                    type="button"
-                    className={selectedChannel === ch.name ? "active" : ""}
-                    aria-pressed={selectedChannel === ch.name}
-                    onClick={() => this.handlePick(ch.name)}
-                  >
-                    <ChannelName>{ch.name}</ChannelName>
-                    <ChannelMeta>{channelHeadLabel(ch)}</ChannelMeta>
-                  </ChannelRow>
-                ))}
-              </>
-            );
-          }}
-        />
-        <NewChannelRow>
-          <NewChannelInput
-            type="text"
-            placeholder={"+ new channel (e.g. win-64, linux, mac)"}
-            value={newChannel}
-            onChange={this.handleNewChannelChange}
-          />
-        </NewChannelRow>
-      </Wrapper>
-    );
+  if (!target) {
+    return null;
   }
 
-  handlePick = (channel: string) => {
-    this.setState({ newChannel: "" });
-    this.props.onChange(channel);
+  const onPick = (channel: string) => {
+    setNewChannel("");
+    onChange(channel);
   };
 
-  handleNewChannelChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+  const onNewChannelChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const v = ev.target.value;
-    this.setState({ newChannel: v });
-    this.props.onChange(v.trim() || null);
+    setNewChannel(v);
+    onChange(v.trim() || null);
   };
 
-  handleChannelsResult = (
-    result: messages.PublishListChannelsResult | undefined
-  ) => {
-    const { onExistingChannels } = this.props;
-    if (!onExistingChannels) return;
-    if (!result?.channels) {
-      onExistingChannels(null);
-      return;
-    }
-    onExistingChannels(new Set(Object.keys(result.channels)));
-  };
-}
+  return (
+    <Wrapper>
+      <Header>{T(_("upload.pick_channel"))}</Header>
+      <Channels
+        key={target}
+        target={target}
+        profileId={profileId}
+        selectedChannel={selectedChannel}
+        onPick={onPick}
+        onExistingChannels={onExistingChannels}
+      />
+      <NewChannelRow>
+        <NewChannelInput
+          type="text"
+          placeholder={"+ new channel (e.g. win-64, linux, mac)"}
+          value={newChannel}
+          onChange={onNewChannelChange}
+        />
+      </NewChannelRow>
+    </Wrapper>
+  );
+};
+
+export default ChannelList;

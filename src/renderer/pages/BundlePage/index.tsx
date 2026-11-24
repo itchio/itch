@@ -1,17 +1,16 @@
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import { GameClassification, Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { classificationFromQuery } from "common/helpers/classification-from-query";
-import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
-import React from "react";
+import React, { useEffect } from "react";
+import ErrorState from "renderer/basics/ErrorState";
 import MoreMenuButton from "renderer/pages/common/MoreMenuButton";
-import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
-import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
-import { withProfile } from "renderer/hocs/withProfile";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useProfile } from "renderer/hooks/useProfile";
+import { useTab } from "renderer/hooks/useTab";
 import {
   FilterGroupGameClassification,
   FilterGroupPlatform,
@@ -29,68 +28,61 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
 import { _ } from "renderer/t";
 
-const FetchProfileOwnedBundles = butlerCaller(
-  messages.FetchProfileOwnedBundles
-);
 const BundleGameSeries = makeGameSeries(messages.FetchBundleGames);
 
-class BundlePage extends React.PureComponent<Props> {
-  override render() {
-    const {
-      profile,
-      bundleId,
-      sortBy,
-      sortDir,
-      search,
-      filterClassification,
-      filterInstalled,
-      filterPlatform,
-    } = this.props;
+const getRecord = BundleGameSeries.getRecordCallback((bg) => bg.game);
+const renderItemExtras = BundleGameSeries.renderItemExtrasCallback((bg) => (
+  <StandardMainAction game={bg.game} forceOwned />
+));
 
-    if (bundleId === undefined) {
-      // the tab has no parsed location (yet)
-      return null;
+const renderExtraFilters = () => (
+  <SortsAndFilters>
+    <FilterGroup>
+      <SortOption sortBy="title" label={_("sort_by.games.title")} />
+    </FilterGroup>
+    <FilterSpacer />
+    <FilterGroup>
+      <FilterOption
+        optionKey="installed"
+        optionValue="true"
+        label={_("filter_by.games.status.installed")}
+      />
+    </FilterGroup>
+    <FilterSpacer />
+    <FilterGroupPlatform />
+    <FilterSpacer />
+    <FilterGroupGameClassification />
+  </SortsAndFilters>
+);
+
+const Bundle = ({ bundleId }: { bundleId: number }) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
+  const profile = useProfile();
+  const query = useAppSelector((rs) => ambientTab(rs, { tab }).location?.query);
+
+  const { error, result } = useButlerd(messages.FetchProfileOwnedBundles, {
+    profileId: profile.id,
+    limit: 100,
+  });
+
+  // an effect rather than onResult, the tab can move to another bundle
+  // without the list being fetched again
+  useEffect(() => {
+    if (!result) {
+      return;
     }
+    let label = "Bundle not found";
+    const bundle = (result.items ?? []).find(
+      (item) => item.bundleId === bundleId
+    )?.bundle;
+    if (bundle) {
+      label = `${bundle.title} (${bundle.gamesCount})`;
+    }
+    dispatchTabPageUpdate({ tab, dispatch }, { label });
+  }, [result, bundleId]);
 
-    return (
-      <>
-        <FetchProfileOwnedBundles
-          params={{ profileId: profile.id, limit: 100 }}
-          loadingHandled
-          render={renderNoop}
-          onResult={this.onFetchedBundles}
-        />
-
-        <BundleGameSeries
-          label={undefined}
-          forceOwned
-          params={{
-            profileId: profile.id,
-            bundleId,
-            sortBy: sortBy,
-            reverse: sortDir === "reverse",
-            search: search,
-            filters: {
-              classification: filterClassification,
-              installed: filterInstalled,
-              platform: filterPlatform,
-            },
-          }}
-          getRecord={this.getRecord}
-          renderItemExtras={this.renderItemExtras}
-          renderMainFilters={this.renderMainFilters}
-          renderExtraFilters={this.renderExtraFilters}
-        />
-      </>
-    );
-  }
-
-  getRecord = BundleGameSeries.getRecordCallback((bg) => bg.game);
-  renderItemExtras = BundleGameSeries.renderItemExtrasCallback((bg) => (
-    <StandardMainAction game={bg.game} forceOwned />
-  ));
-  renderMainFilters = () => {
-    const { bundleId } = this.props;
+  const renderMainFilters = () => {
     // we don't know the slug, the website will redirect to the proper one
     const url = `${urls.itchio}/b/${bundleId}/hello`;
     return (
@@ -108,76 +100,46 @@ class BundlePage extends React.PureComponent<Props> {
     );
   };
 
-  renderExtraFilters = (): JSX.Element => {
-    return (
-      <SortsAndFilters>
-        <FilterGroup>
-          <SortOption sortBy="title" label={_("sort_by.games.title")} />
-        </FilterGroup>
-        <FilterSpacer />
-        <FilterGroup>
-          <FilterOption
-            optionKey="installed"
-            optionValue="true"
-            label={_("filter_by.games.status.installed")}
-          />
-        </FilterGroup>
-        <FilterSpacer />
-        <FilterGroupPlatform />
-        <FilterSpacer />
-        <FilterGroupGameClassification />
-      </SortsAndFilters>
-    );
-  };
+  return (
+    <>
+      {error ? <ErrorState error={error} /> : null}
 
-  onFetchedBundles = FetchProfileOwnedBundles.onResultCallback((result) => {
-    const { bundleId } = this.props;
-    let label = "Bundle not found";
-    const bundleKey = (result?.items ?? []).find(
-      (item) => item.bundleId === bundleId
-    );
-    if (bundleKey && bundleKey.bundle) {
-      const b = bundleKey.bundle;
-      label = `${b.title} (${b.gamesCount})`;
-    }
-    dispatchTabPageUpdate(this.props, { label });
-  });
-}
+      <BundleGameSeries
+        label={undefined}
+        forceOwned
+        params={{
+          profileId: profile.id,
+          bundleId,
+          sortBy: query?.sortBy,
+          reverse: query?.sortDir === "reverse",
+          search: query?.search,
+          filters: {
+            classification: classificationFromQuery(query?.classification),
+            installed: query?.installed === "true",
+            platform: query?.platform,
+          },
+        }}
+        getRecord={getRecord}
+        renderItemExtras={renderItemExtras}
+        renderMainFilters={renderMainFilters}
+        renderExtraFilters={renderExtraFilters}
+      />
+    </>
+  );
+};
 
-interface Props extends MeatProps {
-  tab: string;
-  profile: Profile;
-  dispatch: Dispatch;
+const BundlePage = (_props: MeatProps) => {
+  const tab = useTab();
+  const rawBundleId = useAppSelector(
+    (rs) => ambientTab(rs, { tab }).location?.secondPathElement
+  );
 
-  /** undefined when the url carries no parseable bundle id */
-  bundleId: number | undefined;
-  sortBy: string | undefined;
-  sortDir: string | undefined;
-  search: string | undefined;
-  filterClassification: GameClassification | undefined;
-  filterInstalled: boolean;
-  filterPlatform: string | undefined;
-}
+  const bundleId = rawBundleId ? parseInt(rawBundleId, 10) : NaN;
+  if (Number.isNaN(bundleId)) {
+    // the tab has no parsed location (yet)
+    return null;
+  }
+  return <Bundle bundleId={bundleId} />;
+};
 
-const hooked = hookWithProps(BundlePage)((map) => ({
-  bundleId: map((rs, props) => {
-    const raw = ambientTab(rs, props).location?.secondPathElement;
-    const n = raw ? parseInt(raw, 10) : NaN;
-    return Number.isNaN(n) ? undefined : n;
-  }),
-  sortBy: map((rs, props) => ambientTab(rs, props).location?.query.sortBy),
-  sortDir: map((rs, props) => ambientTab(rs, props).location?.query.sortDir),
-  search: map((rs, props) => ambientTab(rs, props).location?.query.search),
-  filterClassification: map((rs, props) =>
-    classificationFromQuery(
-      ambientTab(rs, props).location?.query.classification
-    )
-  ),
-  filterInstalled: map(
-    (rs, props) => ambientTab(rs, props).location?.query.installed === "true"
-  ),
-  filterPlatform: map(
-    (rs, props) => ambientTab(rs, props).location?.query.platform
-  ),
-}))(BundlePage);
-export default withProfile(withTab(hooked));
+export default BundlePage;

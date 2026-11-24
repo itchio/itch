@@ -42,7 +42,6 @@ export default Thing;
 | `withTab`                     | `useTab()`                                         |
 | `withProfile`                 | `useProfile()`                                     |
 | `injectIntl`                  | `useIntl()` from react-intl                        |
-| `butlerCaller(method)`        | `useButlerd(method, params, options)`              |
 | `watchStore` in mount/unmount | `useWatcher()`                                     |
 
 ## Store
@@ -64,8 +63,9 @@ const { loading, error, result } = useButlerd(messages.FetchGame, { gameId });
 - `result` is undefined until the first fetch succeeds, and keeps the last
   good value while refetching. That includes after params change, so give
   the component a `key` if showing the previous result would be wrong.
-- The component decides what loading and errors look like. There's no
-  default spinner like `butlerCaller` had.
+- The component decides what loading and errors look like. For the plain
+  case use `basics/LoadingState` and `basics/ErrorState`:
+  `if (loading) return <LoadingState />`.
 - Pass a page's `sequence` to refetch fresh on reload.
 - `onResult` is for side effects like setting the tab label.
 - Hooks can't be called conditionally. When a param might be missing, check

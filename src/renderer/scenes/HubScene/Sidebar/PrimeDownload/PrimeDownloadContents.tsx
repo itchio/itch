@@ -2,24 +2,24 @@ import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
 import { Game } from "common/butlerd/messages";
 import { formatTask, taskIcon } from "common/format/operation";
-import { Dispatch, ProgressInfo, TaskName } from "common/types";
+import { ProgressInfo, TaskName } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
+import ErrorState from "renderer/basics/ErrorState";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import LoadingState from "renderer/basics/LoadingState";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
-import { hook } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
 import { GameTitle } from "renderer/scenes/HubScene/Sidebar/PrimeDownload/GameTitle";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import LastPlayed from "renderer/basics/LastPlayed";
-import butlerCaller from "renderer/hocs/butlerCaller";
 import StandardGameCover from "renderer/pages/common/StandardGameCover";
 import { getCaveSummary } from "common/butlerd/utils";
-
-const FetchCave = butlerCaller(messages.FetchCave);
 
 const CompactLastPlayed = styled(LastPlayed)`
   max-width: 90%;
@@ -87,31 +87,89 @@ const ProgressContainer = styled.div`
   justify-content: center;
 `;
 
-class PrimeDownloadContents extends React.PureComponent<Props> {
-  override render() {
-    const { game } = this.props;
+const CaveLastPlayed = ({ caveId, game }: { caveId: string; game: Game }) => {
+  const profileId = useAppSelector((rs) => rs.profile.profile?.id);
+  const { loading, error, result } = useButlerd(messages.FetchCave, {
+    caveId,
+    profileId,
+  });
+
+  if (loading && !result) {
+    return <LoadingState />;
+  }
+  if (error) {
+    return <ErrorState error={error} />;
+  }
+  if (!result?.cave) {
+    return null;
+  }
+  return <CompactLastPlayed cave={getCaveSummary(result.cave)} game={game} />;
+};
+
+interface Props {
+  game: Game;
+  kind: Kind;
+  taskName?: TaskName;
+  caveId?: string | null;
+  progress?: ProgressInfo | null;
+}
+
+const Progress = ({ game, taskName, caveId, progress }: Props) => {
+  const downloadsPaused = useAppSelector((rs) => rs.downloads.paused);
+
+  if (taskName) {
     return (
-      <PrimeDownloadButton
-        type="button"
-        onClick={this.onMainClick}
-        onContextMenu={this.onContextMenu}
-      >
-        <GameCover game={game} showGifMarker={false} disableLink>
-          <Overlay>
-            <TitleBlock>
-              <GameTitle title={game.title} />
-            </TitleBlock>
-            {this.renderProgress()}
-          </Overlay>
-        </GameCover>
-      </PrimeDownloadButton>
+      <>
+        <ProgressContainer>
+          <EnormousIcon icon={taskIcon(taskName)} />
+        </ProgressContainer>
+        <TitleBlock>{T(formatTask(taskName))}</TitleBlock>
+      </>
     );
   }
 
-  onMainClick = () => {
-    doAsync(async () => {
-      const { dispatch, kind, game, taskName, caveId } = this.props;
+  if (caveId) {
+    return (
+      <>
+        <ProgressContainer>
+          <EnormousIcon icon="play2" />
+        </ProgressContainer>
+        <TitleBlock>
+          <CaveLastPlayed key={caveId} caveId={caveId} game={game} />
+        </TitleBlock>
+      </>
+    );
+  }
 
+  if (!progress) {
+    return (
+      <>
+        <ProgressContainer>
+          <EnormousIcon icon="stopwatch" />
+        </ProgressContainer>
+        <TitleBlock>{T(["grid.item.queued"])}</TitleBlock>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ProgressContainer>
+        <LoadingCircle progress={progress.progress} huge />
+      </ProgressContainer>
+      <TitleBlock>
+        <DownloadProgressSpan {...progress} downloadsPaused={downloadsPaused} />
+      </TitleBlock>
+    </>
+  );
+};
+
+const PrimeDownloadContents = (props: Props) => {
+  const { game, kind, taskName, caveId } = props;
+  const dispatch = useAppDispatch();
+
+  const onMainClick = () => {
+    doAsync(async () => {
       if (kind === "task") {
         if (taskName === "launch") {
           dispatch(actions.forceCloseGameRequest({ game }));
@@ -140,74 +198,9 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
     });
   };
 
-  renderProgress(): JSX.Element {
-    const { progress, downloadsPaused, caveId, taskName, game } = this.props;
-    if (taskName) {
-      return (
-        <>
-          <ProgressContainer>
-            <EnormousIcon icon={taskIcon(taskName)} />
-          </ProgressContainer>
-          <TitleBlock>{T(formatTask(taskName))}</TitleBlock>
-        </>
-      );
-    }
-
-    if (caveId) {
-      return (
-        <>
-          <ProgressContainer>
-            <EnormousIcon icon="play2" />
-          </ProgressContainer>
-          <TitleBlock>
-            <FetchCave
-              params={{ caveId, profileId: this.props.profileId }}
-              render={this.renderLastPlayed}
-            />
-          </TitleBlock>
-        </>
-      );
-    }
-
-    if (!progress) {
-      return (
-        <>
-          <ProgressContainer>
-            <EnormousIcon icon="stopwatch" />
-          </ProgressContainer>
-          <TitleBlock>{T(["grid.item.queued"])}</TitleBlock>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <ProgressContainer>
-          <LoadingCircle progress={progress.progress} huge />
-        </ProgressContainer>
-        <TitleBlock>
-          <DownloadProgressSpan
-            {...progress}
-            downloadsPaused={downloadsPaused}
-          />
-        </TitleBlock>
-      </>
-    );
-  }
-
-  renderLastPlayed = FetchCave.renderCallback(({ result }) => {
-    if (result && result.cave) {
-      const { cave } = result;
-      const { game } = this.props;
-      return <CompactLastPlayed cave={getCaveSummary(cave)} game={game} />;
-    }
-    return null;
-  });
-
-  onContextMenu = (ev: React.MouseEvent<any>) => {
+  const onContextMenu = (ev: React.MouseEvent<any>) => {
     ev.preventDefault();
     const { clientX, clientY } = ev;
-    const { game, dispatch } = this.props;
     dispatch(
       actions.openGameContextMenu({
         wind: ambientWind(),
@@ -217,21 +210,23 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
       })
     );
   };
-}
 
-interface Props {
-  game: Game;
-  kind: Kind;
-  taskName?: TaskName;
-  caveId?: string | null;
-  progress?: ProgressInfo | null;
+  return (
+    <PrimeDownloadButton
+      type="button"
+      onClick={onMainClick}
+      onContextMenu={onContextMenu}
+    >
+      <GameCover game={game} showGifMarker={false} disableLink>
+        <Overlay>
+          <TitleBlock>
+            <GameTitle title={game.title} />
+          </TitleBlock>
+          <Progress {...props} />
+        </Overlay>
+      </GameCover>
+    </PrimeDownloadButton>
+  );
+};
 
-  downloadsPaused: boolean;
-  dispatch: Dispatch;
-  profileId: number | undefined;
-}
-
-export default hook((map) => ({
-  downloadsPaused: map((rs) => rs.downloads.paused),
-  profileId: map((rs) => rs.profile.profile?.id),
-}))(PrimeDownloadContents);
+export default PrimeDownloadContents;

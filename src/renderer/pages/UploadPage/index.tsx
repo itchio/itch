@@ -1,28 +1,28 @@
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import { Build, Profile } from "common/butlerd/messages";
+import { Build } from "common/butlerd/messages";
 import modals from "renderer/modals";
 import {
   selectPushJobBuildIds,
   selectPushJobsByBuildId,
   selectRowlessPushJobs,
 } from "common/reducers/upload";
-import { Dispatch, PushJob, RootState } from "common/types";
+import { PushJob } from "common/types";
 import { ambientTab, ambientWind } from "common/util/navigation";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "renderer/basics/Button";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import { rcall } from "renderer/butlerd/rcall";
-import butlerCaller from "renderer/hocs/butlerCaller";
 import { rendererLogger } from "renderer/logger";
-import { hookWithProps } from "renderer/hocs/hook";
 import {
   dispatchTabEvolve,
   dispatchTabPageUpdate,
   urlWithParams,
 } from "renderer/hocs/tab-utils";
-import { withProfile } from "renderer/hocs/withProfile";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useProfile } from "renderer/hooks/useProfile";
+import { useTab } from "renderer/hooks/useTab";
 import BuildRow from "renderer/pages/UploadPage/BuildRow";
 import Filters, { StatusFilter } from "renderer/pages/UploadPage/Filters";
 import Page from "renderer/pages/common/Page";
@@ -31,8 +31,6 @@ import { Title as BaseTitle, TitleBox } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
-
-const FetchBuilds = butlerCaller(messages.PublishListBuilds);
 
 const Container = styled.div`
   flex: 1;
@@ -88,35 +86,6 @@ const List = styled.div`
   background: ${(props) => props.theme.itemBackground};
 `;
 
-interface Props extends MeatProps {
-  profile: Profile;
-  tab: string;
-  dispatch: Dispatch;
-
-  status: StatusFilter;
-  search: string;
-  url: string | undefined;
-
-  /** Push jobs without a buildId yet — rendered as synthetic rows on top. */
-  rowlessJobs: PushJob[];
-  /** Push jobs with a confirmed buildId, keyed by buildId — overlay onto
-   *  the matching server build row to surface live progress / errors. */
-  pushJobsByBuildId: { [buildId: number]: PushJob };
-  /** Build IDs of those overlay jobs, for opting them into the list query
-   *  (otherwise started-state builds aren't returned by /profile/builds). */
-  pushJobBuildIds: number[];
-}
-
-interface State {
-  /** Per-build overlay populated by polling Publish.GetBuild on pending
-   *  builds. Merged on top of the cached PublishListBuilds result before
-   *  rendering so a row can transition Processing → Live without a list
-   *  refetch. Pruned on each list fetch so the list result becomes
-   *  authoritative again once it catches up. */
-  polledBuilds: { [buildId: number]: Build };
-  listRefreshSequence: number;
-}
-
 const POLL_INTERVAL_MS = 10_000;
 const logger = rendererLogger.child("UploadPage");
 
@@ -128,74 +97,40 @@ function isPendingBuild(b: Build): boolean {
   );
 }
 
-class UploadPage extends React.PureComponent<Props, State> {
-  override state: State = { polledBuilds: {}, listRefreshSequence: 0 };
-  /** Build IDs we're currently polling. Maintained outside React state
-   *  because changes don't drive rendering — only the polled results do. */
-  private pendingIds: Set<number> = new Set();
-  private listedBuildIds: Set<number> = new Set();
-  private pollTimer?: ReturnType<typeof setInterval>;
-  private ticking = false;
-  private mounted = false;
+type BuildsById = { [buildId: number]: Build };
 
-  override componentDidMount() {
-    this.mounted = true;
-    dispatchTabPageUpdate(this.props, { label: ["sidebar.upload"] });
-  }
+/**
+ * Polls Publish.GetBuild for the pending builds of the last list result,
+ * so a row can go from Processing to Live without a list refetch.
+ */
+function usePendingBuildPolling(profileId: number) {
+  /** Overlay merged on top of the list result. Pruned on each list fetch
+   *  so the list becomes authoritative again once it catches up. */
+  const [polledBuilds, setPolledBuilds] = useState<BuildsById>({});
+  /** bumped when a polled build leaves the pending state */
+  const [listRefreshSequence, setListRefreshSequence] = useState(0);
 
-  override componentWillUnmount() {
-    this.mounted = false;
-    this.stopPolling();
-  }
+  // not state: only the polled results drive rendering
+  const poll = useRef({
+    pendingIds: new Set<number>(),
+    listedBuildIds: new Set<number>(),
+    timer: undefined as ReturnType<typeof setInterval> | undefined,
+    ticking: false,
+    mounted: false,
+  }).current;
 
-  handleResult = (result: messages.PublishListBuildsResult) => {
-    if (!this.mounted) return;
-    const buildIds = new Set<number>();
-    const pendingIds = new Set<number>();
-    for (const b of result?.builds ?? []) {
-      buildIds.add(b.id);
-      if (isPendingBuild(b)) pendingIds.add(b.id);
-    }
-    this.listedBuildIds = buildIds;
-    this.pendingIds = pendingIds;
-    this.setState((s) => {
-      const polledBuilds: { [buildId: number]: Build } = {};
-      for (const buildId of pendingIds) {
-        const b = s.polledBuilds[buildId];
-        if (b) {
-          polledBuilds[buildId] = b;
-        }
-      }
-      return { polledBuilds };
-    });
-    this.updatePolling();
-  };
-
-  updatePolling = () => {
-    if (this.pendingIds.size > 0 && !this.pollTimer) {
-      this.pollTimer = setInterval(this.tick, POLL_INTERVAL_MS);
-      // Don't wait a full interval for the first poll — kick one off
-      // immediately so a build that just transitioned out of pending is
-      // reflected without a 10s delay.
-      this.tick();
-    } else if (this.pendingIds.size === 0) {
-      this.stopPolling();
+  const stopPolling = () => {
+    if (poll.timer) {
+      clearInterval(poll.timer);
+      poll.timer = undefined;
     }
   };
 
-  stopPolling = () => {
-    if (this.pollTimer) {
-      clearInterval(this.pollTimer);
-      this.pollTimer = undefined;
-    }
-  };
-
-  tick = async () => {
-    if (this.ticking) return;
-    this.ticking = true;
+  const tick = async () => {
+    if (poll.ticking) return;
+    poll.ticking = true;
     try {
-      const ids = [...this.pendingIds];
-      const profileId = this.props.profile.id;
+      const ids = [...poll.pendingIds];
       const polled = await Promise.all(
         ids.map(async (buildId) => {
           try {
@@ -210,213 +145,144 @@ class UploadPage extends React.PureComponent<Props, State> {
           }
         })
       );
-      if (!this.mounted) {
+      if (!poll.mounted) {
         return;
       }
-      const updates: { [id: number]: Build } = {};
+      const updates: BuildsById = {};
       let shouldRefreshList = false;
       for (const b of polled) {
         if (!b) continue;
-        if (this.listedBuildIds.has(b.id)) {
+        if (poll.listedBuildIds.has(b.id)) {
           updates[b.id] = b;
         }
         if (!isPendingBuild(b)) {
-          this.pendingIds.delete(b.id);
+          poll.pendingIds.delete(b.id);
           shouldRefreshList = true;
         }
       }
-      if (Object.keys(updates).length > 0 || shouldRefreshList) {
-        this.setState((s) => ({
-          polledBuilds: { ...s.polledBuilds, ...updates },
-          listRefreshSequence: shouldRefreshList
-            ? s.listRefreshSequence + 1
-            : s.listRefreshSequence,
-        }));
+      if (Object.keys(updates).length > 0) {
+        setPolledBuilds((polledBuilds) => ({ ...polledBuilds, ...updates }));
       }
-      if (this.pendingIds.size === 0) {
-        this.stopPolling();
+      if (shouldRefreshList) {
+        setListRefreshSequence((sequence) => sequence + 1);
+      }
+      if (poll.pendingIds.size === 0) {
+        stopPolling();
       }
     } finally {
-      this.ticking = false;
+      poll.ticking = false;
     }
   };
 
-  override render() {
-    const {
-      profile,
-      tab,
-      status,
-      search,
-      rowlessJobs,
-      pushJobsByBuildId,
-      pushJobBuildIds,
-      sequence,
-    } = this.props;
-    const { polledBuilds, listRefreshSequence } = this.state;
-
-    return (
-      <Page>
-        <FetchBuilds
-          params={{
-            profileId: profile.id,
-            page: 1,
-            perPage: 50,
-            state: status || undefined,
-            includeTotals: true,
-            // Opt our in-flight pushes (state="started" until upload
-            // completes) into the listing so they render as real server
-            // rows from the moment CreateBuild returns.
-            startedBuildIds:
-              pushJobBuildIds.length > 0 ? pushJobBuildIds : undefined,
-          }}
-          sequence={sequence + listRefreshSequence}
-          errorsHandled
-          loadingHandled
-          onResult={this.handleResult}
-          render={({ result, loading, error }) => {
-            const builds = (result?.builds ?? []).map(
-              (b) => polledBuilds[b.id] ?? b
-            );
-            const totals = result?.totals;
-
-            const q = (search || "").trim().toLowerCase();
-            const filtered = q
-              ? builds.filter((b) => buildMatchesSearch(b, q))
-              : builds;
-
-            // Synthetic top-rows cover the windows where no real server
-            // row is available: pre-CreateBuild (no buildId), mid-upload
-            // (list refetch hasn't caught up to startedBuildIds yet), or
-            // a terminal local failure that the server still sees as
-            // started. Drop any whose server row is in the list (overlay
-            // covers them — dedupe against the unfiltered list so search
-            // hiding the server row doesn't unmask a synthetic), then
-            // tab-filter and search-filter so synthetic rows respect the
-            // same filters and query as real rows.
-            const syntheticToShow = rowlessJobs.filter((j) => {
-              if (j.buildId && builds.some((b) => b.id === j.buildId)) {
-                return false;
-              }
-              if (!jobMatchesStatusFilter(j, status)) {
-                return false;
-              }
-              if (q && !pushJobMatchesSearch(j, q)) {
-                return false;
-              }
-              return true;
-            });
-
-            return (
-              <>
-                <FiltersContainer loading={loading}>
-                  <SearchControl placeholder={_("upload.search_placeholder")} />
-                </FiltersContainer>
-                <Container>
-                  <TitleBox>
-                    <Title className="upload-title">
-                      {T(_("upload.title"))}
-                    </Title>
-                    <Subtitle className="upload-subtitle">
-                      {totals
-                        ? T([
-                            "upload.subtitle",
-                            {
-                              builds: totals.all,
-                              projects: totals.projectCount,
-                            },
-                          ])
-                        : T(_("upload.subtitle_loading"))}
-                    </Subtitle>
-                  </TitleBox>
-                  <Toolbar>
-                    <Filters
-                      tab={tab}
-                      totals={
-                        totals
-                          ? {
-                              all: totals.all,
-                              live: totals.live,
-                              processing: totals.processing,
-                              failed: totals.failed,
-                            }
-                          : undefined
-                      }
-                    />
-                    <Spacer />
-                    <Button
-                      primary
-                      icon="upload"
-                      onClick={this.handlePushNewBuild}
-                    >
-                      {T(_("upload.push_new_build"))}
-                    </Button>
-                  </Toolbar>
-
-                  {error ? <Empty>{error.message}</Empty> : null}
-
-                  {!error &&
-                  filtered.length === 0 &&
-                  syntheticToShow.length === 0 ? (
-                    <Empty>
-                      {loading
-                        ? T(_("upload.loading"))
-                        : status || q
-                        ? T(_("upload.empty_filtered"))
-                        : T(_("upload.empty"))}
-                    </Empty>
-                  ) : (
-                    <List>
-                      <Columns>
-                        <span />
-                        <span>{T(_("upload.col.project"))}</span>
-                        <span>{T(_("upload.col.channel"))}</span>
-                        <span>{T(_("upload.col.version"))}</span>
-                        <span>{T(_("upload.col.status"))}</span>
-                        <span>{T(_("upload.col.size"))}</span>
-                        <span>{T(_("upload.col.pushed"))}</span>
-                        <span />
-                      </Columns>
-                      {syntheticToShow.map((job) => (
-                        <BuildRow
-                          key={`syn-${job.id}`}
-                          build={null}
-                          pushJob={job}
-                          onSetSearch={this.setSearch}
-                        />
-                      ))}
-                      {filtered.map((build) => (
-                        <BuildRow
-                          key={`${build.id}-${build.uploadId}`}
-                          build={build}
-                          pushJob={pushJobsByBuildId[build.id]}
-                          onSetSearch={this.setSearch}
-                        />
-                      ))}
-                    </List>
-                  )}
-                </Container>
-              </>
-            );
-          }}
-        />
-      </Page>
-    );
-  }
-
-  setSearch = (search: string) => {
-    const { url } = this.props;
-    if (!url) {
-      // tab hasn't derived a location yet, nothing to evolve
-      return;
+  const onListResult = (result: messages.PublishListBuildsResult) => {
+    const buildIds = new Set<number>();
+    const pendingIds = new Set<number>();
+    for (const b of result.builds ?? []) {
+      buildIds.add(b.id);
+      if (isPendingBuild(b)) pendingIds.add(b.id);
     }
-    dispatchTabEvolve(this.props, {
-      replace: true,
-      url: urlWithParams(url, { search }),
+    poll.listedBuildIds = buildIds;
+    poll.pendingIds = pendingIds;
+    setPolledBuilds((polledBuilds) => {
+      const pruned: BuildsById = {};
+      for (const buildId of pendingIds) {
+        const b = polledBuilds[buildId];
+        if (b) {
+          pruned[buildId] = b;
+        }
+      }
+      return pruned;
     });
+
+    if (pendingIds.size > 0 && !poll.timer) {
+      poll.timer = setInterval(tick, POLL_INTERVAL_MS);
+      // Don't wait a full interval for the first poll: kick one off
+      // immediately so a build that just transitioned out of pending is
+      // reflected without a 10s delay.
+      void tick();
+    } else if (pendingIds.size === 0) {
+      stopPolling();
+    }
   };
 
-  handlePushNewBuild = () => {
-    this.props.dispatch(
+  useEffect(() => {
+    poll.mounted = true;
+    return () => {
+      poll.mounted = false;
+      stopPolling();
+    };
+  }, []);
+
+  return { polledBuilds, listRefreshSequence, onListResult };
+}
+
+const UploadPage = ({ sequence }: MeatProps) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
+  const profile = useProfile();
+
+  const query = useAppSelector((rs) => ambientTab(rs, { tab }).location?.query);
+  const url = useAppSelector((rs) => ambientTab(rs, { tab }).location?.url);
+  /** Push jobs without a buildId yet, rendered as synthetic rows on top. */
+  const rowlessJobs = useAppSelector((rs) => selectRowlessPushJobs(rs.upload));
+  /** Push jobs with a confirmed buildId, keyed by buildId. Overlaid onto
+   *  the matching server build row to surface live progress / errors. */
+  const pushJobsByBuildId = useAppSelector((rs) =>
+    selectPushJobsByBuildId(rs.upload)
+  );
+  /** Build IDs of those overlay jobs, for opting them into the list query
+   *  (otherwise started-state builds aren't returned by /profile/builds). */
+  const pushJobBuildIds = useAppSelector((rs) =>
+    selectPushJobBuildIds(rs.upload)
+  );
+
+  const rawStatus = query?.status;
+  const status: StatusFilter =
+    rawStatus === "live" || rawStatus === "processing" || rawStatus === "failed"
+      ? rawStatus
+      : "";
+  const search = query?.search ?? "";
+
+  useEffect(() => {
+    dispatchTabPageUpdate({ tab, dispatch }, { label: ["sidebar.upload"] });
+  }, [tab, dispatch]);
+
+  const { polledBuilds, listRefreshSequence, onListResult } =
+    usePendingBuildPolling(profile.id);
+
+  const { loading, error, result } = useButlerd(
+    messages.PublishListBuilds,
+    {
+      profileId: profile.id,
+      page: 1,
+      perPage: 50,
+      state: status || undefined,
+      includeTotals: true,
+      // Opt our in-flight pushes (state="started" until upload
+      // completes) into the listing so they render as real server
+      // rows from the moment CreateBuild returns.
+      startedBuildIds: pushJobBuildIds.length > 0 ? pushJobBuildIds : undefined,
+    },
+    { sequence: sequence + listRefreshSequence, onResult: onListResult }
+  );
+
+  // BuildRow is memoized, keep this stable
+  const setSearch = useCallback(
+    (search: string) => {
+      if (!url) {
+        // tab hasn't derived a location yet, nothing to evolve
+        return;
+      }
+      dispatchTabEvolve(
+        { tab, dispatch },
+        { replace: true, url: urlWithParams(url, { search }) }
+      );
+    },
+    [tab, dispatch, url]
+  );
+
+  const handlePushNewBuild = () => {
+    dispatch(
       actions.openModal(
         modals.pushBuild.make({
           wind: ambientWind(),
@@ -427,7 +293,119 @@ class UploadPage extends React.PureComponent<Props, State> {
       )
     );
   };
-}
+
+  const builds = (result?.builds ?? []).map((b) => polledBuilds[b.id] ?? b);
+  const totals = result?.totals;
+
+  const q = (search || "").trim().toLowerCase();
+  const filtered = q ? builds.filter((b) => buildMatchesSearch(b, q)) : builds;
+
+  // Synthetic top-rows cover the windows where no real server
+  // row is available: pre-CreateBuild (no buildId), mid-upload
+  // (list refetch hasn't caught up to startedBuildIds yet), or
+  // a terminal local failure that the server still sees as
+  // started. Drop any whose server row is in the list (overlay
+  // covers them — dedupe against the unfiltered list so search
+  // hiding the server row doesn't unmask a synthetic), then
+  // tab-filter and search-filter so synthetic rows respect the
+  // same filters and query as real rows.
+  const syntheticToShow = rowlessJobs.filter((j) => {
+    if (j.buildId && builds.some((b) => b.id === j.buildId)) {
+      return false;
+    }
+    if (!jobMatchesStatusFilter(j, status)) {
+      return false;
+    }
+    if (q && !pushJobMatchesSearch(j, q)) {
+      return false;
+    }
+    return true;
+  });
+
+  return (
+    <Page>
+      <FiltersContainer loading={loading}>
+        <SearchControl placeholder={_("upload.search_placeholder")} />
+      </FiltersContainer>
+      <Container>
+        <TitleBox>
+          <Title className="upload-title">{T(_("upload.title"))}</Title>
+          <Subtitle className="upload-subtitle">
+            {totals
+              ? T([
+                  "upload.subtitle",
+                  {
+                    builds: totals.all,
+                    projects: totals.projectCount,
+                  },
+                ])
+              : T(_("upload.subtitle_loading"))}
+          </Subtitle>
+        </TitleBox>
+        <Toolbar>
+          <Filters
+            tab={tab}
+            totals={
+              totals
+                ? {
+                    all: totals.all,
+                    live: totals.live,
+                    processing: totals.processing,
+                    failed: totals.failed,
+                  }
+                : undefined
+            }
+          />
+          <Spacer />
+          <Button primary icon="upload" onClick={handlePushNewBuild}>
+            {T(_("upload.push_new_build"))}
+          </Button>
+        </Toolbar>
+
+        {error ? <Empty>{error.message}</Empty> : null}
+
+        {!error && filtered.length === 0 && syntheticToShow.length === 0 ? (
+          <Empty>
+            {loading
+              ? T(_("upload.loading"))
+              : status || q
+              ? T(_("upload.empty_filtered"))
+              : T(_("upload.empty"))}
+          </Empty>
+        ) : (
+          <List>
+            <Columns>
+              <span />
+              <span>{T(_("upload.col.project"))}</span>
+              <span>{T(_("upload.col.channel"))}</span>
+              <span>{T(_("upload.col.version"))}</span>
+              <span>{T(_("upload.col.status"))}</span>
+              <span>{T(_("upload.col.size"))}</span>
+              <span>{T(_("upload.col.pushed"))}</span>
+              <span />
+            </Columns>
+            {syntheticToShow.map((job) => (
+              <BuildRow
+                key={`syn-${job.id}`}
+                build={null}
+                pushJob={job}
+                onSetSearch={setSearch}
+              />
+            ))}
+            {filtered.map((build) => (
+              <BuildRow
+                key={`${build.id}-${build.uploadId}`}
+                build={build}
+                pushJob={pushJobsByBuildId[build.id]}
+                onSetSearch={setSearch}
+              />
+            ))}
+          </List>
+        )}
+      </Container>
+    </Page>
+  );
+};
 
 function jobMatchesStatusFilter(j: PushJob, status: StatusFilter): boolean {
   switch (status) {
@@ -462,27 +440,4 @@ function pushJobMatchesSearch(j: PushJob, q: string): boolean {
   return title.includes(q) || target.includes(q) || channel.includes(q);
 }
 
-export default withProfile(
-  withTab(
-    hookWithProps(UploadPage)((map) => ({
-      status: map((rs: RootState, props: any) => {
-        const q = ambientTab(rs, props).location?.query;
-        const s = (q?.status ?? "") as StatusFilter;
-        if (s === "live" || s === "processing" || s === "failed") return s;
-        return "" as StatusFilter;
-      }),
-      search: map(
-        (rs: RootState, props: any) =>
-          ambientTab(rs, props).location?.query.search ?? ""
-      ),
-      url: map(
-        (rs: RootState, props: any) => ambientTab(rs, props).location?.url
-      ),
-      rowlessJobs: map((rs: RootState) => selectRowlessPushJobs(rs.upload)),
-      pushJobsByBuildId: map((rs: RootState) =>
-        selectPushJobsByBuildId(rs.upload)
-      ),
-      pushJobBuildIds: map((rs: RootState) => selectPushJobBuildIds(rs.upload)),
-    }))(UploadPage)
-  )
-);
+export default UploadPage;

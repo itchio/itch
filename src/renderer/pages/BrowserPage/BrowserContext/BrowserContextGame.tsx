@@ -6,15 +6,14 @@ import getGameStatus, {
   withOwnedAccess,
 } from "common/helpers/get-game-status";
 import { ambientWind } from "common/util/navigation";
-import React from "react";
-import { Dispatch } from "redux";
+import React, { useEffect } from "react";
 import Filler from "renderer/basics/Filler";
 import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
 import PlaylistAddIcon from "renderer/basics/icons/PlaylistAddIcon";
 import MainAction from "renderer/basics/MainAction";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hookWithProps } from "renderer/hocs/hook";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 import StandardGameCover, {
   standardCoverHeight,
@@ -22,8 +21,6 @@ import StandardGameCover, {
 } from "renderer/pages/common/StandardGameCover";
 import styled from "renderer/styles";
 import { _ } from "renderer/t";
-
-const FetchGameOwnership = butlerCaller(messages.FetchGameOwnership);
 
 const Spacer = styled.div`
   flex-basis: 16px;
@@ -59,79 +56,101 @@ const BrowserContextDiv = styled.div`
   align-items: center;
 `;
 
-class BrowserContextGame extends React.PureComponent<Props> {
-  // last ownership answer, captured at render time so the context menu
-  // (opened later by user gesture) can carry the hint
-  private owned = false;
+interface ContextProps {
+  game: Game;
+  status: GameStatus;
+  owned: boolean;
+}
 
-  override render() {
-    const { game, profileId } = this.props;
+const Context = ({ game, status, owned }: ContextProps) => {
+  const dispatch = useAppDispatch();
 
-    if (!profileId) {
-      return this.renderContext(this.props.status);
-    }
+  const onContextMenu = (ev: React.MouseEvent<any>) => {
+    ev.preventDefault();
+    const { clientX, clientY } = ev;
+    dispatch(
+      actions.openGameContextMenu({
+        wind: ambientWind(),
+        game,
+        forceOwned: owned,
+        clientX,
+        clientY,
+      })
+    );
+  };
 
-    // ownership can come from an owned bundle without a materialized
-    // download key, which commons (and thus getGameStatus) knows nothing
-    // about — layer Fetch.GameOwnership on top
-    return (
-      <FetchGameOwnership
-        params={{ profileId, gameId: game.id }}
-        loadingHandled
-        errorsHandled
-        render={this.renderWithOwnership}
+  return (
+    <BrowserContextDiv
+      onContextMenu={onContextMenu}
+      role="region"
+      aria-label="Game"
+    >
+      <SmallerGameCover game={game} showInfo={false} forceOwned={owned} />
+      <Spacer />
+      <GameStats game={game} status={status} />
+      <Filler />
+      <MainAction game={game} status={status} wide />
+      <Spacer />
+      <IconButton
+        className="game-collections"
+        huge
+        emphasized
+        icon={<PlaylistAddIcon />}
+        hint={_("collection.dialog.hint")}
+        onClick={() =>
+          dispatch(actions.openGameCollectionsDialog({ gameId: game.id }))
+        }
       />
-    );
-  }
+      <IconSpacer />
+      <IconButton
+        className="manage-game"
+        huge
+        emphasized
+        icon="cog"
+        hint={_("game.manage")}
+        onClick={() => dispatch(actions.manageGame({ game }))}
+      />
+    </BrowserContextDiv>
+  );
+};
 
-  renderWithOwnership = FetchGameOwnership.renderCallback(({ result }) => {
-    const { status } = this.props;
-    this.owned = !!(result && result.owned);
-    return this.renderContext(this.owned ? withOwnedAccess(status) : status);
+// ownership can come from an owned bundle without a materialized
+// download key, which commons (and thus getGameStatus) knows nothing
+// about, so Fetch.GameOwnership is layered on top
+const OwnershipContext = ({
+  game,
+  status,
+  profileId,
+}: {
+  game: Game;
+  status: GameStatus;
+  profileId: number;
+}) => {
+  const { result } = useButlerd(messages.FetchGameOwnership, {
+    profileId,
+    gameId: game.id,
   });
+  const owned = !!result?.owned;
 
-  renderContext(status: GameStatus) {
-    const { game } = this.props;
+  return (
+    <Context
+      game={game}
+      status={owned ? withOwnedAccess(status) : status}
+      owned={owned}
+    />
+  );
+};
 
-    return (
-      <BrowserContextDiv
-        onContextMenu={this.onContextMenu}
-        role="region"
-        aria-label="Game"
-      >
-        <SmallerGameCover
-          game={game}
-          showInfo={false}
-          forceOwned={this.owned}
-        />
-        <Spacer />
-        <GameStats game={game} status={status} />
-        <Filler />
-        <MainAction game={game} status={status} wide />
-        <Spacer />
-        <IconButton
-          className="game-collections"
-          huge
-          emphasized
-          icon={<PlaylistAddIcon />}
-          hint={_("collection.dialog.hint")}
-          onClick={this.onCollections}
-        />
-        <IconSpacer />
-        <IconButton
-          className="manage-game"
-          huge
-          emphasized
-          icon="cog"
-          hint={_("game.manage")}
-          onClick={this.onManage}
-        />
-      </BrowserContextDiv>
-    );
-  }
+interface Props {
+  game: Game;
+}
 
-  override componentDidMount() {
-    const { status, dispatch } = this.props;
+const BrowserContextGame = ({ game }: Props) => {
+  const dispatch = useAppDispatch();
+  const status = useAppSelector((rs) => getGameStatus(rs, game));
+  const profileId = useAppSelector((rs) => rs.profile.profile?.id);
+
+  useEffect(() => {
     if (!status.operation && !status.update && status.cave) {
       // this logic is inferred from the onClick handler
       // defined in MainAction
@@ -142,43 +161,12 @@ class BrowserContextGame extends React.PureComponent<Props> {
         })
       );
     }
+  }, []);
+
+  if (!profileId) {
+    return <Context game={game} status={status} owned={false} />;
   }
+  return <OwnershipContext game={game} status={status} profileId={profileId} />;
+};
 
-  onContextMenu = (ev: React.MouseEvent<any>) => {
-    ev.preventDefault();
-    const { clientX, clientY } = ev;
-    const { game, dispatch } = this.props;
-    dispatch(
-      actions.openGameContextMenu({
-        wind: ambientWind(),
-        game,
-        forceOwned: this.owned,
-        clientX,
-        clientY,
-      })
-    );
-  };
-
-  onManage = () => {
-    const { game, dispatch } = this.props;
-    dispatch(actions.manageGame({ game }));
-  };
-
-  onCollections = () => {
-    const { game, dispatch } = this.props;
-    dispatch(actions.openGameCollectionsDialog({ gameId: game.id }));
-  };
-}
-
-interface Props {
-  game: Game;
-  dispatch: Dispatch<any>;
-
-  status: GameStatus;
-  profileId: number | null;
-}
-
-export default hookWithProps(BrowserContextGame)((map) => ({
-  status: map((rs, props) => getGameStatus(rs, props.game)),
-  profileId: map((rs) => (rs.profile.profile ? rs.profile.profile.id : null)),
-}))(BrowserContextGame);
+export default BrowserContextGame;

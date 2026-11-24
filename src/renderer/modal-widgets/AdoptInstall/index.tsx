@@ -29,7 +29,7 @@ import SimpleSelect from "renderer/basics/SimpleSelect";
 import { electron, files } from "renderer/bridge";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
-import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
+import { LoadingStateDiv } from "renderer/basics/LoadingState";
 import { hook } from "renderer/hocs/hook";
 import { injectIntl } from "renderer/hocs/injectIntl";
 import { watchStore } from "renderer/hooks/useWatcher";

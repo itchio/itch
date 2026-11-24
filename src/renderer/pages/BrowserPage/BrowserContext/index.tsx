@@ -1,15 +1,14 @@
 import * as messages from "common/butlerd/messages";
-import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hookWithProps } from "renderer/hocs/hook";
-import { withTab } from "renderer/hocs/withTab";
+import ErrorState from "renderer/basics/ErrorState";
+import LoadingState from "renderer/basics/LoadingState";
+import { useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useTab } from "renderer/hooks/useTab";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 import BrowserContextGame from "renderer/pages/BrowserPage/BrowserContext/BrowserContextGame";
 import styled from "renderer/styles";
-
-const FetchGame = butlerCaller(messages.FetchGame);
 
 const BrowserContextContainer = styled.div`
   height: ${browserContextHeight}px;
@@ -19,49 +18,46 @@ const BrowserContextContainer = styled.div`
   justify-content: center;
 `;
 
-class BrowserContext extends React.PureComponent<Props> {
-  override render() {
-    const { gameId, sequence } = this.props;
-    if (!gameId) {
-      return null;
-    }
+const FetchedGame = ({ gameId }: { gameId: number }) => {
+  const tab = useTab();
+  const sequence = useAppSelector((rs) => ambientTab(rs, { tab }).sequence);
+  const { loading, error, result } = useButlerd(
+    messages.FetchGame,
+    { gameId },
+    { sequence }
+  );
 
-    return (
-      <BrowserContextContainer>
-        <FetchGame
-          params={{ gameId }}
-          sequence={sequence}
-          render={this.renderFetchContents}
-        />
-      </BrowserContextContainer>
-    );
+  if (loading && !result) {
+    return <LoadingState />;
   }
+  if (error) {
+    return <ErrorState error={error} />;
+  }
+  if (!result?.game) {
+    return null;
+  }
+  return <BrowserContextGame game={result.game} />;
+};
 
-  renderFetchContents = FetchGame.renderCallback(({ result }) => {
-    if (!result || !result.game) {
-      return null;
+const BrowserContext = () => {
+  const tab = useTab();
+  const gameId = useAppSelector((rs) => {
+    const { resource } = ambientTab(rs, { tab });
+    if (resource && resource.prefix === "games") {
+      // also turns NaN into null, see hooks/README.md
+      return resource.numericId || null;
     }
-    return <BrowserContextGame game={result.game} />;
+    return null;
   });
-}
 
-interface Props {
-  tab: string;
-  dispatch: Dispatch;
+  if (!gameId) {
+    return null;
+  }
+  return (
+    <BrowserContextContainer>
+      <FetchedGame key={gameId} gameId={gameId} />
+    </BrowserContextContainer>
+  );
+};
 
-  gameId: number | null | undefined;
-  sequence: number;
-}
-
-export default withTab(
-  hookWithProps(BrowserContext)((map) => ({
-    sequence: map((rs, props) => ambientTab(rs, props).sequence),
-    gameId: map((rs, props) => {
-      const { resource } = ambientTab(rs, props);
-      if (resource && resource.prefix === "games") {
-        return resource.numericId;
-      }
-      return null;
-    }),
-  }))(BrowserContext)
-);
+export default BrowserContext;

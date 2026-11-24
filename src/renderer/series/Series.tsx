@@ -8,10 +8,10 @@ import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import Floater from "renderer/basics/Floater";
-import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
+import { useButlerd } from "renderer/hooks/useButlerd";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import styled from "renderer/styles";
@@ -81,45 +81,36 @@ interface Snapshot {
 
 const limit = 15;
 
+export function renderNoop(): JSX.Element | null {
+  return null;
+}
+
+interface NextPageButtonProps {
+  cursor: string;
+  // wired as a ref callback, so React calls it with null on unmount
+  gotLoadMore: (el: HTMLDivElement | null) => void;
+  loadNextPage: (cursor: string) => void;
+}
+
+const NextPageButton = ({
+  cursor,
+  gotLoadMore,
+  loadNextPage,
+}: NextPageButtonProps) => (
+  <LoadMoreContainer ref={gotLoadMore} onClick={() => loadNextPage(cursor)}>
+    <LoadMoreText>Load more...</LoadMoreText>
+  </LoadMoreContainer>
+);
+
 export function makeSeries<
   Params,
   Res extends FetchRes<any>,
   Record,
   ExtraProps
 >(rc: RequestCreator<Params, Res>) {
-  const Call = butlerCaller(rc);
-
-  const hasItems = (result: Res | undefined): boolean => {
-    if (!result) {
-      return false;
-    }
-    return !!result.items && result.items.length > 0;
-  };
-
   type Item = Res["items"][0];
   type Props = GenericProps<Params, Item, Record, ExtraProps>;
   type State = GenericState<Params>;
-
-  class NextPageButton extends React.PureComponent<{
-    cursor: string;
-    // wired as a ref callback, so React calls it with null on unmount
-    gotLoadMore: (el: HTMLDivElement | null) => void;
-    loadNextPage: (cursor: string) => void;
-  }> {
-    override render() {
-      const { gotLoadMore } = this.props;
-      return (
-        <LoadMoreContainer ref={gotLoadMore} onClick={this.loadNextPage}>
-          <LoadMoreText>Load more...</LoadMoreText>
-        </LoadMoreContainer>
-      );
-    }
-
-    loadNextPage = () => {
-      const { cursor, loadNextPage } = this.props;
-      loadNextPage(cursor);
-    };
-  }
 
   type PageProps = {
     cursor: string | null;
@@ -138,44 +129,66 @@ export function makeSeries<
     | "extraProps"
   >;
 
-  class SeriesPage extends React.PureComponent<PageProps> {
-    override render() {
-      const { params, cursor, limit, sequence } = this.props;
-      return (
-        <Call
-          errorsHandled
-          loadingHandled
-          params={{ ...(params as any), cursor, limit }}
-          sequence={sequence}
-          render={this.renderCallContents}
-        />
-      );
-    }
+  const SeriesPage = React.memo((props: PageProps) => {
+    const { params, cursor, limit, sequence, isLast } = props;
+    const { loading, error, result } = useButlerd(
+      rc,
+      { ...(params as any), cursor, limit },
+      { sequence }
+    );
 
-    renderCallContents = Call.renderCallback(({ result, loading, error }) => {
-      return (
-        <>
-          {this.renderError(result, error)}
-          {this.renderItems(result, loading)}
-          {this.renderNextPage(result, loading)}
-        </>
-      );
-    });
+    const items: Item[] = result?.items ?? [];
 
-    renderNextPage(result: Res | undefined, loading: boolean) {
-      const { gotLoadMore, loadNextPage, isLast } = this.props;
-
-      if (result && result.nextCursor && isLast) {
+    const renderItems = () => {
+      if (items.length === 0) {
+        if (loading || error) {
+          return null;
+        }
         return (
-          <NextPageButton
-            cursor={result.nextCursor}
-            gotLoadMore={gotLoadMore}
-            loadNextPage={loadNextPage}
+          <EmptyState
+            bigText={_("empty_state.nothing_to_see_here")}
+            icon="neutral"
           />
         );
       }
 
-      if (!hasItems(result) && loading) {
+      const { fallbackGetKey, getKey, getRecord, RecordComponent, extraProps } =
+        props;
+      const doneSet = new Set<any>();
+      return items.map((item) => {
+        const record = getRecord(item);
+        if (!record) {
+          return null;
+        }
+        const key = getKey ? getKey(item) : fallbackGetKey(record);
+        if (doneSet.has(key)) {
+          return null;
+        }
+        doneSet.add(key);
+        return (
+          <RecordComponent
+            key={key}
+            item={item}
+            record={record}
+            {...extraProps}
+          />
+        );
+      });
+    };
+
+    const renderNextPage = () => {
+      // while loading the cursor may belong to the previous params
+      if (result?.nextCursor && isLast && !loading) {
+        return (
+          <NextPageButton
+            cursor={result.nextCursor}
+            gotLoadMore={props.gotLoadMore}
+            loadNextPage={props.loadNextPage}
+          />
+        );
+      }
+
+      if (items.length === 0 && loading) {
         return (
           <LoadMoreContainer>
             <Floater />
@@ -184,67 +197,21 @@ export function makeSeries<
       }
 
       return null;
-    }
+    };
 
-    renderError(result: Res | undefined, error: Error | undefined) {
-      if (!error) {
-        return null;
-      }
-
-      if (hasItems(result) && isNetworkError(error)) {
-        return null;
-      }
-      return <ErrorState error={error} />;
-    }
-
-    renderItems(result: Res | undefined, loading: boolean): JSX.Element | null {
-      if (!result || !hasItems(result)) {
-        if (loading) {
-          return null;
-        } else {
-          return this.renderEmpty();
+    return (
+      <>
+        {
+          // a network error is not worth showing over cached items
+          error && !(items.length > 0 && isNetworkError(error)) ? (
+            <ErrorState error={error} />
+          ) : null
         }
-      }
-      const { items } = result;
-
-      const { fallbackGetKey, getKey, getRecord, RecordComponent, extraProps } =
-        this.props;
-
-      let doneSet = new Set<any>();
-      return (
-        <>
-          {items.map((item) => {
-            const record = getRecord(item);
-            if (!record) {
-              return null;
-            }
-            const key = getKey ? getKey(item) : fallbackGetKey(record);
-            if (doneSet.has(key)) {
-              return null;
-            }
-            doneSet.add(key);
-            return (
-              <RecordComponent
-                key={key}
-                item={item}
-                record={record}
-                {...extraProps}
-              />
-            );
-          })}
-        </>
-      );
-    }
-
-    renderEmpty(): JSX.Element {
-      return (
-        <EmptyState
-          bigText={_("empty_state.nothing_to_see_here")}
-          icon="neutral"
-        />
-      );
-    }
-  }
+        {renderItems()}
+        {renderNextPage()}
+      </>
+    );
+  });
 
   class Series extends React.PureComponent<Props, State> {
     restoreScrollInterval: number | null = null;

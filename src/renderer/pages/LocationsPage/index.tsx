@@ -1,15 +1,15 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import * as messages from "common/butlerd/messages";
-import { InstallLocationsListResult } from "common/butlerd/messages";
-import { Dispatch } from "common/types";
+import { InstallLocationSummary } from "common/butlerd/messages";
 import { ambientWind } from "common/util/navigation";
-import React from "react";
+import React, { useEffect } from "react";
+import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
+import { useButlerd } from "renderer/hooks/useButlerd";
+import { useTab } from "renderer/hooks/useTab";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import {
@@ -26,107 +26,98 @@ import { T } from "renderer/t";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import styled from "renderer/styles";
 
-const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
-
 const Spacer = styled.div`
   width: 8px;
 `;
 
-class LocationsPage extends React.PureComponent<Props> {
-  override render() {
+const LocationList = ({
+  locations,
+}: {
+  locations: InstallLocationSummary[];
+}) => (
+  <ItemList>
+    {[...locations]
+      .sort(
+        (a, b) =>
+          (b.sizeInfo?.installedSize ?? 0) - (a.sizeInfo?.installedSize ?? 0)
+      )
+      .map((location) => (
+        <LocationSummary
+          key={location.id}
+          location={location}
+          numLocations={locations.length}
+        />
+      ))}
+  </ItemList>
+);
+
+const LocationsPage = ({ sequence }: MeatProps) => {
+  const tab = useTab();
+  const dispatch = useAppDispatch();
+  const locationScanProgress = useAppSelector(
+    (rs) => rs.system.locationScanProgress
+  );
+  const scanningLocations = locationScanProgress !== null;
+
+  useEffect(() => {
+    dispatchTabPageUpdate(
+      { tab, dispatch },
+      { label: ["install_locations.manage"] }
+    );
+  }, [tab, dispatch]);
+
+  const { loading, error, result } = useButlerd(
+    messages.InstallLocationsList,
+    {},
+    { sequence }
+  );
+
+  if (error) {
     return (
       <Page>
-        <ListInstallLocations
-          params={{ sequence: this.props.sequence }}
-          loadingHandled
-          render={this.renderCallContents}
-        />
+        <ErrorState error={error} />
       </Page>
     );
   }
 
-  renderCallContents = ListInstallLocations.renderCallback(
-    ({ loading, result }) => {
-      const { scanningLocations, locationScanProgress } = this.props;
-      return (
-        <>
-          <FiltersContainer loading={loading} />
-          <SortsAndFilters>
-            <FilterGroup>
-              <FilterOptionLink
-                href="itch://scan-install-locations"
-                className={classNames({ disabled: scanningLocations })}
-              >
-                <FilterOptionIcon icon="search" />
-                {T(["preferences.scan_install_locations"])}
-                {scanningLocations && locationScanProgress != null ? (
-                  <>
-                    <Spacer />
-                    <LoadingCircle progress={locationScanProgress} />
-                  </>
-                ) : null}
-              </FilterOptionLink>
-            </FilterGroup>
-            <FilterSpacer />
-            <FilterGroup>
-              <FilterOptionButton onClick={this.onAddLocation}>
-                <FilterOptionIcon icon="plus" />
-                {T(["preferences.install_location.add"])}
-              </FilterOptionButton>
-            </FilterGroup>
-          </SortsAndFilters>
-          {this.renderList(result)}
-        </>
-      );
-    }
+  const locations = result?.installLocations;
+
+  return (
+    <Page>
+      <FiltersContainer loading={loading} />
+      <SortsAndFilters>
+        <FilterGroup>
+          <FilterOptionLink
+            href="itch://scan-install-locations"
+            className={classNames({ disabled: scanningLocations })}
+          >
+            <FilterOptionIcon icon="search" />
+            {T(["preferences.scan_install_locations"])}
+            {scanningLocations && locationScanProgress != null ? (
+              <>
+                <Spacer />
+                <LoadingCircle progress={locationScanProgress} />
+              </>
+            ) : null}
+          </FilterOptionLink>
+        </FilterGroup>
+        <FilterSpacer />
+        <FilterGroup>
+          <FilterOptionButton
+            onClick={() =>
+              dispatch(actions.addInstallLocation({ wind: ambientWind() }))
+            }
+          >
+            <FilterOptionIcon icon="plus" />
+            {T(["preferences.install_location.add"])}
+          </FilterOptionButton>
+        </FilterGroup>
+      </SortsAndFilters>
+      {locations && locations.length > 0 ? (
+        <LocationList locations={locations} />
+      ) : null}
+    </Page>
   );
+};
 
-  renderList = (result: InstallLocationsListResult | undefined) => {
-    if (!result?.installLocations || result.installLocations.length === 0) {
-      return null;
-    }
-    const locations = result.installLocations;
-    const numLocations = locations.length;
-
-    return (
-      <ItemList>
-        {[...locations]
-          .sort(
-            (a, b) =>
-              (b.sizeInfo?.installedSize ?? 0) -
-              (a.sizeInfo?.installedSize ?? 0)
-          )
-          .map((location) => (
-            <LocationSummary
-              key={location.id}
-              location={location}
-              numLocations={numLocations}
-            />
-          ))}
-      </ItemList>
-    );
-  };
-
-  onAddLocation = (ev: React.MouseEvent<any>) => {
-    const { dispatch } = this.props;
-    dispatch(actions.addInstallLocation({ wind: ambientWind() }));
-  };
-
-  override componentDidMount() {
-    dispatchTabPageUpdate(this.props, { label: ["install_locations.manage"] });
-  }
-}
-
-interface Props extends MeatProps {
-  dispatch: Dispatch;
-  tab: string;
-  scanningLocations: boolean;
-  locationScanProgress: number | null | undefined;
-}
-
-export default withTab(
-  hook((map) => ({
-    scanningLocations: map((rs) => rs.system.locationScanProgress !== null),
-    locationScanProgress: map((rs) => rs.system.locationScanProgress),
-  }))(LocationsPage)
-);
+export default LocationsPage;

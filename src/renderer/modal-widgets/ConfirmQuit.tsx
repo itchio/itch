@@ -3,8 +3,7 @@ import { ModalWidgetProps } from "common/modals";
 import { ConfirmQuitParams, ConfirmQuitResponse } from "common/modals/types";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
-import Floater from "renderer/basics/Floater";
-import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
+import LoadingState from "renderer/basics/LoadingState";
 import { useButlerd } from "renderer/hooks/useButlerd";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
@@ -37,11 +36,7 @@ const RunningGame = ({ gameId }: { gameId: number }) => {
   }
 
   if (loading) {
-    return (
-      <LoadingStateDiv>
-        <Floater />
-      </LoadingStateDiv>
-    );
+    return <LoadingState />;
   }
 
   return null;
