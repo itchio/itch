@@ -3,70 +3,44 @@ import { Collection } from "common/butlerd/messages";
 import React from "react";
 import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
 import {
-  makeSeries,
   BaseSeriesProps,
   FetchRes,
+  makeSeries,
   RecordComponentProps,
 } from "renderer/series/Series";
 
-interface GenericExtraProps<Item> {}
+interface ExtraProps {}
 
-const emptyExtraProps = {};
+const emptyExtraProps: ExtraProps = {};
 
-interface CollectionSeriesProps<Params, Item>
-  extends BaseSeriesProps<Params, Item, Collection>,
-    GenericExtraProps<Item> {}
+const fallbackGetKey = (c: Collection) => c.id;
 
-let fallbackGetKey = (c: Collection) => c.id;
+const CollectionRecord = React.memo(
+  ({ record }: RecordComponentProps<unknown, Collection, ExtraProps>) => (
+    <CollectionPreview coll={record} />
+  )
+);
 
 export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
   rc: RequestCreator<Params, Res>
 ) {
   type Record = Collection;
   type Item = Res["items"][0];
-  type ExtraProps = GenericExtraProps<Item>;
   const Series = makeSeries<Params, Res, Record, ExtraProps>(rc);
-  type Props = CollectionSeriesProps<Params, Item>;
+  type Props = BaseSeriesProps<Params, Item, Record>;
 
-  class CollectionRecordComponent extends GenericCollectionRecordComponent<Item> {}
+  const CollectionSeries = (props: Props) => (
+    <Series
+      {...props}
+      fallbackGetKey={fallbackGetKey}
+      RecordComponent={CollectionRecord}
+      extraProps={emptyExtraProps}
+    />
+  );
 
-  class CollectionSeries extends React.PureComponent<Props> {
-    selector: (props: Props) => GenericExtraProps<Item>;
-
-    constructor(props: Props, context: any) {
-      super(props, context);
-      this.selector = () => emptyExtraProps;
-    }
-
-    override render() {
-      const { props } = this;
-      return (
-        <Series
-          {...props}
-          fallbackGetKey={fallbackGetKey}
-          RecordComponent={CollectionRecordComponent}
-          extraProps={this.selector(props)}
-        />
-      );
-    }
-
-    static getRecordCallback(f: (item: Item) => Record) {
-      return f;
-    }
-
-    static renderItemExtrasCallback(f: (item: Item) => JSX.Element) {
-      return f;
-    }
-  }
-  return CollectionSeries;
-}
-
-class GenericCollectionRecordComponent<Item> extends React.PureComponent<
-  RecordComponentProps<Item, Collection, GenericExtraProps<Item>>
-> {
-  override render() {
-    const { item, record } = this.props;
-    const coll = record;
-    return <CollectionPreview coll={coll} />;
-  }
+  // identity helpers, see GameSeries
+  return Object.assign(CollectionSeries, {
+    getRecordCallback: (f: (item: Item) => Record) => f,
+    renderItemExtrasCallback: (f: (item: Item) => JSX.Element) => f,
+  });
 }

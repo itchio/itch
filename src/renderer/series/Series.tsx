@@ -1,17 +1,24 @@
 import { RequestCreator } from "@itchio/butlerd";
-import { Dispatch, LocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import { ambientPage, ambientTab } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
-import React from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import equal from "react-fast-compare";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import Floater from "renderer/basics/Floater";
-import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
-import { withTab } from "renderer/hocs/withTab";
+import { useAppDispatch, useAppSelector } from "renderer/hooks/redux";
 import { useButlerd } from "renderer/hooks/useButlerd";
+import { useTab } from "renderer/hooks/useTab";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import styled from "renderer/styles";
@@ -46,18 +53,6 @@ interface GenericProps<Params, Item, Record, ExtraProps>
     RecordComponentProps<Item, Record, ExtraProps>
   >;
   extraProps: ExtraProps;
-
-  dispatch: Dispatch;
-  tab: string;
-
-  sequence: number;
-  restoredScrollTop: number | undefined;
-}
-
-interface GenericState<Params> {
-  /** the first page's cursor is always null */
-  cursors: (string | null)[];
-  lastParams: Params | null;
 }
 
 const LoadMoreContainer = styled.div`
@@ -74,10 +69,6 @@ const LoadMoreContainer = styled.div`
 const LoadMoreText = styled.div`
   font-size: ${(props) => props.theme.fontSizes.huge};
 `;
-
-interface Snapshot {
-  resetScroll?: boolean;
-}
 
 const limit = 15;
 
@@ -110,18 +101,19 @@ export function makeSeries<
 >(rc: RequestCreator<Params, Res>) {
   type Item = Res["items"][0];
   type Props = GenericProps<Params, Item, Record, ExtraProps>;
-  type State = GenericState<Params>;
 
   type PageProps = {
     cursor: string | null;
     limit: number;
     isLast: boolean;
+    /** called when this page turns out to be the end of the list */
+    gotEnd: () => void;
     gotLoadMore: (loadMore: HTMLDivElement | null) => void;
     loadNextPage: (cursor: string) => void;
+    sequence: number;
   } & Pick<
     Props,
     | "params"
-    | "sequence"
     | "fallbackGetKey"
     | "getKey"
     | "getRecord"
@@ -136,6 +128,14 @@ export function makeSeries<
       { ...(params as any), cursor, limit },
       { sequence }
     );
+
+    // a failed fetch has no result, that's not the end
+    const atEnd = isLast && !loading && !!result && !result.nextCursor;
+    useEffect(() => {
+      if (atEnd) {
+        props.gotEnd();
+      }
+    }, [atEnd]);
 
     const items: Item[] = result?.items ?? [];
 
@@ -213,184 +213,152 @@ export function makeSeries<
     );
   });
 
-  class Series extends React.PureComponent<Props, State> {
-    restoreScrollInterval: number | null = null;
+  const Series = (props: Props) => {
+    const {
+      label,
+      renderMainFilters = renderNoop,
+      renderExtraFilters = renderNoop,
+      fallbackGetKey,
+      getKey,
+      getRecord,
+      RecordComponent,
+      extraProps,
+    } = props;
+    const tab = useTab();
+    const dispatch = useAppDispatch();
+    const sequence = useAppSelector((rs) => ambientTab(rs, { tab }).sequence);
+    const restoredScrollTop = useAppSelector(
+      (rs) => ambientPage(rs, { tab }).restoredScrollTop
+    );
 
-    constructor(props: Props, context: any) {
-      super(props, context);
-      this.state = {
-        cursors: [null],
-        lastParams: null,
-      };
+    // callers pass a new params object every render
+    const [params, setParams] = useState(props.params);
+    // the first page's cursor is always null
+    const [cursors, setCursors] = useState<(string | null)[]>([null]);
+    if (!equal(params, props.params)) {
+      setParams(props.params);
+      setCursors([null]);
+    }
 
-      if (props.restoredScrollTop) {
-        const { restoredScrollTop } = props;
-        console.log(`Aiming for scrollTop ${restoredScrollTop}`);
-        this.restoreScrollInterval = window.setInterval(() => {
-          if (this.itemList) {
-            this.itemList.scrollTop = restoredScrollTop;
+    const itemList = useRef<HTMLDivElement | null>(null);
+    const loadMore = useRef<HTMLDivElement | null>(null);
+    const lastScrollTop = useRef(0);
+    const restoreScrollInterval = useRef<number | null>(null);
+    const reachedEnd = useRef(false);
 
-            const { scrollTop } = this.itemList;
-            if (scrollTop === restoredScrollTop) {
-              console.log(`Done adjusting, final scrollTop = ${scrollTop}`);
-              if (this.restoreScrollInterval) {
-                clearInterval(this.restoreScrollInterval);
-                this.restoreScrollInterval = null;
-              }
+    const stopRestoringScroll = () => {
+      if (restoreScrollInterval.current) {
+        clearInterval(restoreScrollInterval.current);
+        restoreScrollInterval.current = null;
+      }
+    };
+
+    useEffect(() => {
+      if (label) {
+        dispatchTabPageUpdate({ tab, dispatch }, { label });
+      }
+
+      // items come in page by page, so keep trying until the list is tall
+      // enough to reach the scroll position we had before
+      if (restoredScrollTop) {
+        restoreScrollInterval.current = window.setInterval(() => {
+          if (itemList.current) {
+            itemList.current.scrollTop = restoredScrollTop;
+            if (
+              itemList.current.scrollTop === restoredScrollTop ||
+              // the list got shorter, this is as close as it gets
+              reachedEnd.current
+            ) {
+              stopRestoringScroll();
             }
           }
         }, 160);
       }
-    }
+      return stopRestoringScroll;
+    }, []);
 
-    override componentWillUnmount() {
-      if (this.restoreScrollInterval) {
-        clearInterval(this.restoreScrollInterval);
-        this.restoreScrollInterval = null;
-      }
-    }
-
-    static getDerivedStateFromProps(
-      props: Props,
-      state: State
-    ): Partial<State> | null {
-      if (!equal(props.params, state.lastParams)) {
-        return {
-          cursors: [null],
-          lastParams: props.params,
-        };
-      }
-
-      return null;
-    }
-
-    override getSnapshotBeforeUpdate(
-      prevProps: Props,
-      prevState: State
-    ): Snapshot | null {
-      if (!equal(this.props.params, prevProps.params)) {
-        return {
-          resetScroll: true,
-        };
-      }
-      return null;
-    }
-
-    override componentDidUpdate(
-      props: Props,
-      state: State,
-      snapshot: Snapshot | null
-    ) {
-      if (snapshot && snapshot.resetScroll && this.itemList) {
-        console.log(`resetting scrollTop!`);
-        this.itemList.scrollTop = 0;
-        dispatchTabPageUpdate(this.props, { scrollTop: 0 });
-      }
-    }
-
-    override componentDidMount() {
-      const { label } = this.props;
-      if (label) {
-        dispatchTabPageUpdate(this.props, { label });
-      }
-    }
-
-    override render() {
-      const { params, sequence } = this.props;
-      const {
-        renderMainFilters = renderNoop,
-        renderExtraFilters = renderNoop,
-        fallbackGetKey,
-        getKey,
-        getRecord,
-        RecordComponent,
-        extraProps,
-      } = this.props;
-      const { cursors } = this.state;
-
-      return (
-        <Page>
-          <FiltersContainer loading={false}>
-            {renderMainFilters ? renderMainFilters() : null}
-          </FiltersContainer>
-          {renderExtraFilters ? renderExtraFilters() : null}
-          <ItemList
-            className="series--itemlist"
-            onScroll={this.onScroll}
-            ref={this.gotItemList}
-          >
-            {cursors.map((cursor, i) => (
-              <SeriesPage
-                key={i}
-                params={params}
-                cursor={cursor}
-                limit={limit}
-                sequence={sequence}
-                isLast={i === cursors.length - 1}
-                gotLoadMore={this.gotLoadMore}
-                loadNextPage={this.loadNextPage}
-                fallbackGetKey={fallbackGetKey}
-                getKey={getKey}
-                getRecord={getRecord}
-                RecordComponent={RecordComponent}
-                extraProps={extraProps}
-              />
-            ))}
-          </ItemList>
-        </Page>
-      );
-    }
-
-    itemList: HTMLElement | null = null;
-    gotItemList = (itemList: HTMLElement | null) => {
-      this.itemList = itemList;
-    };
-
-    lastScrollTop = 0;
-
-    onScroll = throttle(() => {
-      const { itemList } = this;
-      if (!itemList) {
+    const scrolledParams = useRef(params);
+    useLayoutEffect(() => {
+      if (scrolledParams.current === params) {
         return;
       }
-
-      const { scrollTop, scrollHeight, clientHeight } = itemList;
-      if (scrollTop < this.lastScrollTop) {
-        if (this.restoreScrollInterval) {
-          console.log(`Cancelling scroll restore (scrolled up!)`);
-          clearInterval(this.restoreScrollInterval);
-          this.restoreScrollInterval = null;
-        }
+      scrolledParams.current = params;
+      // the saved position was for the previous params
+      stopRestoringScroll();
+      if (itemList.current) {
+        itemList.current.scrollTop = 0;
+        dispatchTabPageUpdate({ tab, dispatch }, { scrollTop: 0 });
       }
-      this.lastScrollTop = scrollTop;
+    }, [params]);
 
-      const runwayLeft = scrollHeight - clientHeight - scrollTop;
-      const shouldLoadMore = runwayLeft < 1200;
-      const { loadMore } = this;
-      if (shouldLoadMore && loadMore) {
-        loadMore.click();
-      }
+    const onScroll = useMemo(
+      () =>
+        throttle(() => {
+          if (!itemList.current) {
+            return;
+          }
 
-      dispatchTabPageUpdate(this.props, { scrollTop });
-    }, 100);
+          const { scrollTop, scrollHeight, clientHeight } = itemList.current;
+          if (scrollTop < lastScrollTop.current) {
+            // scrolled up, the user has taken over
+            stopRestoringScroll();
+          }
+          lastScrollTop.current = scrollTop;
 
-    loadMore: HTMLDivElement | null = null;
-    gotLoadMore = (loadMore: HTMLDivElement | null) => {
-      this.loadMore = loadMore;
-    };
+          const runwayLeft = scrollHeight - clientHeight - scrollTop;
+          if (runwayLeft < 1200 && loadMore.current) {
+            loadMore.current.click();
+          }
 
-    loadNextPage = (cursor: string) => {
-      this.setState((state) => ({
-        cursors: [...state.cursors, cursor],
-      }));
-    };
-  }
-  return withTab(
-    hookWithProps(Series)((map) => ({
-      sequence: map((rs, props) => ambientTab(rs, props).sequence),
-      restoredScrollTop: map(
-        (rs, props) => ambientPage(rs, props).restoredScrollTop
-      ),
-    }))(Series)
-  );
+          dispatchTabPageUpdate({ tab, dispatch }, { scrollTop });
+        }, 100),
+      [tab, dispatch]
+    );
+
+    // these go to SeriesPage, which is memoized
+    const gotEnd = useCallback(() => {
+      reachedEnd.current = true;
+    }, []);
+    const gotLoadMore = useCallback((el: HTMLDivElement | null) => {
+      loadMore.current = el;
+    }, []);
+    const loadNextPage = useCallback((cursor: string) => {
+      setCursors((cursors) => [...cursors, cursor]);
+    }, []);
+
+    return (
+      <Page>
+        <FiltersContainer loading={false}>
+          {renderMainFilters()}
+        </FiltersContainer>
+        {renderExtraFilters()}
+        <ItemList
+          className="series--itemlist"
+          onScroll={onScroll}
+          ref={itemList}
+        >
+          {cursors.map((cursor, i) => (
+            <SeriesPage
+              key={i}
+              params={params}
+              cursor={cursor}
+              limit={limit}
+              sequence={sequence}
+              isLast={i === cursors.length - 1}
+              gotEnd={gotEnd}
+              gotLoadMore={gotLoadMore}
+              loadNextPage={loadNextPage}
+              fallbackGetKey={fallbackGetKey}
+              getKey={getKey}
+              getRecord={getRecord}
+              RecordComponent={RecordComponent}
+              extraProps={extraProps}
+            />
+          ))}
+        </ItemList>
+      </Page>
+    );
+  };
+
+  return Series;
 }
